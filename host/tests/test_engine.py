@@ -56,6 +56,30 @@ class MailboxTests(unittest.TestCase):
 
 
 class ControllerTests(unittest.TestCase):
+    def test_stop_during_load_does_not_create_draft_or_begin_prefill(self):
+        entered=threading.Event();release=threading.Event();instances=[]
+        class LoadingNative:
+            def __init__(self):self.calls=[];self.was_cancelled=False;instances.append(self)
+            def call(self,op,**args):
+                self.calls.append(op)
+                if op=='load':entered.set();release.wait(2);return {'tokenizer_fingerprint':'test'}
+                raise AssertionError('no inference should start after stop')
+            def cancel(self):self.was_cancelled=True
+            def close(self):pass
+        with tempfile.TemporaryDirectory() as folder:
+            engine=Controller(State(Path(folder)));engine.busy=True
+            run={'id':'load-stop','mode':'local_draft','draft_policy':'fixed','prompt':'Hello','max_tokens':32,
+                 'draft_k':4,'text':'','metrics':{},'blocks':[]}
+            config={'n_ctx':256,'target_model':'target','draft_model':'draft','threads':4,'gpu_layers':0}
+            with patch('nodelift.engine.Native',LoadingNative),patch.object(engine,'_sha',return_value='test'):
+                thread=threading.Thread(target=engine._execute,args=(run,config));thread.start()
+                try:
+                    self.assertTrue(entered.wait(1));engine.stop()
+                finally:release.set();thread.join(2)
+            self.assertFalse(thread.is_alive());self.assertEqual(run['status'],'cancelled')
+            self.assertEqual(len(instances),1);self.assertTrue(instances[0].was_cancelled)
+            self.assertEqual(instances[0].calls,['load'])
+
     def test_adaptive_cold_draft_cost_is_measured_and_short_run_never_loads_it(self):
         now=[0.0];loads=[]
         class ColdNative:

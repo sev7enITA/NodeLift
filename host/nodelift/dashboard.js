@@ -25,7 +25,7 @@ let clientKeyVisible = false;
 const configFields = [['target-model','target_model'],['draft-model','draft_model'],['context-size','n_ctx'],['threads','threads'],['gpu-layers','gpu_layers']];
 const sessionMessage = 'Questa scheda non ha una sessione NodeLift valida. Sul Mac apri scripts/open-dashboard.command dalla cartella del progetto per riaprire la dashboard con accesso. Non serve reinstallare l’app sul telefono.';
 const modeNames = {host: 'Solo computer', local_draft: 'Proposte locali', remote_draft: 'Proposte dal telefono', lookup: 'Riuso del contesto'};
-const draftReasons = {no_measured_gain:'nessun vantaggio misurato',probe_cost_exceeded:'tentativo troppo costoso',remote_failure:'proposta remota non disponibile',local_draft_failure:'modello draft non disponibile'};
+const draftReasons = {no_measured_gain:'nessun vantaggio misurato',probe_cost_exceeded:'tentativo troppo costoso',remote_probe_timeout:'prova remota scaduta: velocità non determinata',remote_failure:'proposta remota non disponibile',local_draft_failure:'modello draft non disponibile'};
 const stateNames = {completed:'Completata', running:'In corso', queued:'In attesa', failed:'Non riuscita', cancelled:'Interrotta', timed_out:'Tempo scaduto', expired:'Scaduta', thermal_pause:'Pausa termica', loading:'Caricamento', stopped:'Interrotta'};
 function el(tag, text, cls) { const n = document.createElement(tag); if (text !== undefined) n.textContent = text; if (cls) n.className = cls; return n; }
 function showError(error, id='error') { $(id).textContent = error.message || String(error); $(id).hidden = false; }

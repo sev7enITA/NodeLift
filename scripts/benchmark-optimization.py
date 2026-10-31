@@ -64,6 +64,9 @@ def worker(args):
                     if time.monotonic()>deadline:engine.stop();raise TimeoutError('worker run deadline')
                     time.sleep(.002)
                 run=engine.status()['runs'][0]
+                if 'identity' in run:
+                    lock=args.baseline/'native/llama.lock' if args.worker=='baseline' else ROOT/'native/llama.lock'
+                    run['identity']['llama_commit']=lock.read_text().strip()
                 for field in ('target_model','draft_model'):
                     if 'identity' in run:run['identity']['config'][field]=Path(run['identity']['config'][field]).name
                 print(json.dumps(run,ensure_ascii=False),flush=True)
@@ -109,11 +112,14 @@ def main(args):
     plan=[(p,r,v) for p in range(len(PROMPTS)) for r in range(args.repetitions) for v in VARIANTS]
     random.Random(args.seed).shuffle(plan)
     sources=[Path(__file__),ROOT/'host/nodelift/engine.py',ROOT/'host/nodelift/native.py',ROOT/'host/nodelift/scheduling.py',ROOT/'native/core.cpp',ROOT/'native/llama.lock']
+    baseline=json.loads((args.baseline/'manifest.json').read_text())
+    for name,expected in baseline['files'].items():
+        if digest(args.baseline/name)!=expected:raise RuntimeError('baseline identity mismatch: '+name)
     manifest={'started_unix':time.time(),'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
               'working_tree_dirty':any(subprocess.check_output(['git','show','HEAD:'+str(p.relative_to(ROOT))],cwd=ROOT)!=p.read_bytes() for p in sources),
               'dirty_check_scope':[str(p.relative_to(ROOT)) for p in sources],
               'source_sha256':{str(p.relative_to(ROOT)):digest(p) for p in sources},
-              'baseline':json.loads((args.baseline/'manifest.json').read_text()),
+              'baseline':baseline,
               'candidate_library_sha256':digest(ROOT/'native/build/host/lib/libnodelift.dylib'),
               'models':{p.name:digest(p) for p in (args.target,args.draft)},
               'prompts':PROMPTS,'variants':VARIANTS,'plan':plan,'seed':args.seed,'tokens_max':args.tokens,'draft_k':4,
@@ -144,7 +150,8 @@ def main(args):
                 print(f'{index+1}/{len(plan)} {variant} p{p} r{repetition}: {run["status"]} {len(run.get("tokens",[]))} tokens',flush=True)
         summary=summarize(rows)
         (args.output/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
-        print(json.dumps({group:{v:round(s['median_speedup_vs_baseline_host'],3) if s['median_speedup_vs_baseline_host'] is not None else None for v,s in variants.items()}
+        print(json.dumps({group:{v:{'same_output_median_speedup':round(s['median_speedup_vs_baseline_host'],3) if s['median_speedup_vs_baseline_host'] is not None else None,
+                                  'exact_pairs':s['exact_pairs'],'completed':s['completed'],'runs':s['runs']} for v,s in variants.items()}
                           for group,variants in summary.items()},indent=2))
         if not all(r['status']=='completed' for r in rows):raise RuntimeError('failed runs retained')
         if not all(s['all_tokens_equal'] for s in summary['all'].values()):raise RuntimeError('token mismatch retained; inspect before any performance claim')

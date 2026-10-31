@@ -92,7 +92,7 @@ with tempfile.TemporaryDirectory(prefix='nodelift-protocol-') as temp, Native() 
         behavior['mode']='slow'
         value=run('remote_draft','adaptive')
         assert value['tokens']==baseline['tokens'] and value['metrics']['fallbacks']==1
-        assert value['metrics']['draft_disabled_reason']=='remote_failure'
+        assert value['metrics']['draft_disabled_reason']=='remote_probe_timeout'
         assert late_received.wait(3),'late result was not observed/rejected'
         deadlines=[b['effective_timeout_ms'] for b in value['blocks'] if b.get('effective_timeout_ms') is not None]
         assert len(deadlines)==1 and 0<deadlines[0]<=500

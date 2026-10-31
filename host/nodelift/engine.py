@@ -200,13 +200,18 @@ class Controller:
         identity={**config,'target_sha256':self._sha(config['target_model']),
                   'draft_sha256':self._sha(config['draft_model']) if config['draft_model'] else None}
         if self.loaded!=identity:
-            for engine in (self.target,self.draft):
-                if engine:engine.close()
-            self.target=Native();self.draft=None;self.loaded=None
+            with self.lock:
+                if self.cancelled.is_set():raise RuntimeError('cancelled')
+                for engine in (self.target,self.draft):
+                    if engine:engine.close()
+                self.target=Native();self.draft=None;self.loaded=None
             self.target_info=self.target.call('load',path=config['target_model'],n_ctx=config['n_ctx'],threads=config['threads'],gpu_layers=config['gpu_layers'])
+            if self.cancelled.is_set():raise RuntimeError('cancelled')
             self.loaded=identity
         if use_draft and self.draft is None:
-            self.draft=Native()
+            with self.lock:
+                if self.cancelled.is_set():raise RuntimeError('cancelled')
+                self.draft=Native()
             try:self.draft_info=self.draft.call('load',path=config['draft_model'],n_ctx=config['n_ctx'],threads=config['threads'],gpu_layers=config['gpu_layers'])
             except Exception:self.draft.close();self.draft=None;raise
         if use_draft and self.draft_info['tokenizer_fingerprint']!=self.target_info['tokenizer_fingerprint']:
@@ -239,6 +244,7 @@ class Controller:
                              'tokenizer_fingerprint':fingerprint,'config':config,'llama_commit':(ROOT/'native/llama.lock').read_text().strip()}
             if gate:run['identity']['draft_policy_version']=gate.version
             started=time.perf_counter();run['status']='running';self._publish(run)
+            if self.cancelled.is_set():raise RuntimeError('cancelled')
             self.target.call('prefill',prefix=prefix)
             if self.cancelled.is_set():raise RuntimeError('cancelled')
             if run['mode']=='local_draft' and self.draft is not None:
@@ -285,7 +291,7 @@ class Controller:
                         except Exception as error:
                             if self.cancelled.is_set():raise
                             fallbacks+=1;mode=step_mode='host';proposal=[];run['fallback_reason']=str(error)[:300]
-                            if gate:gate.disable('remote_failure')
+                            if gate:gate.disable('remote_probe_timeout' if isinstance(error,TimeoutError) else 'remote_failure')
                     draft_ms=(time.perf_counter()-dstart)*1000
                     if self.cancelled.is_set():raise RuntimeError('cancelled')
                     if run['mode']=='remote_draft':remote_wait_ms+=draft_ms
