@@ -1,0 +1,59 @@
+{
+  "created_utc": "2026-10-31T22:01:06.343176+00:00",
+  "base_url": "https://www.fabriziodegni.com/NodeLift/",
+  "files": {
+    "assets/nodelift-emblem.png": {
+      "bytes": 1077866,
+      "sha256": "377278075d7b2718ea72d9d74d20455ae2a90cad0d772807ee59c2c9afafb46d"
+    },
+    "assets/nodelift-mark.svg": {
+      "bytes": 349,
+      "sha256": "882967df9afbd509ac5633c8cf2d1d693d6fd73c2b2f85a49da845fda93404ca"
+    },
+    "assets/showcase.css": {
+      "bytes": 60437,
+      "sha256": "4125213947b807639d86d4f37fcf4600b1919c748eab64cdff2dce75da932748"
+    },
+    "assets/showcase.js": {
+      "bytes": 21633,
+      "sha256": "b6c356c8eb926a3b56404438bcceeac9c9b6872a9b3e95ee2814e3374d610672"
+    },
+    "data/assessment.md": {
+      "bytes": 9337,
+      "sha256": "c7314ea2464d6f1e3a9eca77cfaf456bc3ffaa627bd40e68699307e9284e852b"
+    },
+    "data/comparison.csv": {
+      "bytes": 62238,
+      "sha256": "e268b281659dfb73715e611c931205d93e2655e38e8429069b7a6c01a983af7d"
+    },
+    "data/comparison.json": {
+      "bytes": 95698,
+      "sha256": "d3f3d69319b5947e91aaddd8c32b7b81a131073a6337457ed8b037c7172d769e"
+    },
+    "data/comparison.md": {
+      "bytes": 90946,
+      "sha256": "23e6fb931ac1cc53132702c5d85b43ed03aa40898a5683577e45a64e7bbec573"
+    },
+    "data/manifest.json": {
+      "bytes": 884,
+      "sha256": "49217b1ae7f61edc0a0d3afad47c7e061a9bfc4c6a5090eb672557763467cad7"
+    },
+    "data/methodology.md": {
+      "bytes": 7010,
+      "sha256": "0b6c07ca733f81f3f7c4f1ff458eb161b822d789ba4de7d8b3ce467ef1335a62"
+    },
+    "data/source-inventory.json": {
+      "bytes": 14950,
+      "sha256": "d8fd90027152f1ff1af89fc975230440419566d38f1dc8f63ebbddb9a8647067"
+    },
+    "index.html": {
+      "bytes": 41380,
+      "sha256": "8cd73f729e72116fef310d77a9cc69442a7b0da7adf29a0b27777a9ad424d174"
+    }
+  },
+  "archive": {
+    "name": "NodeLift-showcase-eaa8665678af.zip",
+    "bytes": 1111197,
+    "sha256": "8c41f34fdc37385456ce4b1fdc8dcd051436ee756784d38752a940a4af48860d"
+  }
+}

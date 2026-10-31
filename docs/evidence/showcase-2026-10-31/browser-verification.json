@@ -1,0 +1,33 @@
+{
+  "captured_date_utc": "2026-10-31",
+  "url": "https://www.fabriziodegni.com/NodeLift/",
+  "source_commit": "659477656bad3de2317032913a0ee11533609d95",
+  "capture": "Browser screenshot with document clip matching observed CSS viewport. No image edits. Mobile viewport emulation, not a physical phone.",
+  "images": [
+    {
+      "file": "live-desktop.jpg",
+      "width": 1685,
+      "height": 950,
+      "sha256": "3da11d3db4061542ac0c745b56077132268e06adb440c99b13b060b5d8a66a64",
+      "bytes": 89749
+    },
+    {
+      "file": "live-mobile.jpg",
+      "width": 375,
+      "height": 812,
+      "sha256": "2bf185b09f87f4b42899ac6e5c8a8ffcd3548e54f051b3af323e67b2ea8fd11d",
+      "bytes": 38713
+    }
+  ],
+  "observed_checks": [
+    "55 projects loaded",
+    "DistAI search returned one project",
+    "DistAI dialog: 18 fields and two source links",
+    "Reset restored atlas",
+    "English and Italian navigation switched",
+    "Original hero emblem loaded",
+    "375px viewport: no horizontal document overflow",
+    "Temporary viewport override reset"
+  ],
+  "external_resources": "Public source commit CI and full 12-file HTTP/hash readback are documented in SHOWCASE_DEPLOYMENT.md."
+}
