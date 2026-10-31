@@ -6,7 +6,7 @@
 
 NodeLift is an experimental local inference workbench and mobile companion system. A small model on a phone proposes tokens; a larger model on the computer verifies them before anything reaches the user. The project measures when delegation helps and when the computer alone is faster.
 
-**0.2.1 experimental, 31 October 2026.** Native inference, authenticated mobile work leases, an OpenAI-style text gateway, Android/iOS companion sources and an LM Studio generator adapter are implemented. **Phone inference speedup, pooled RAM, large hybrid-model speculation and sustained mobile operation are not yet qualified.** The first real-weight control experiments found local drafting slower than target-only inference on the small test pair. Negative results are published.
+**[0.2.1 experimental prerelease](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.1), 31 October 2026.** Native inference, authenticated mobile work leases, an OpenAI-style text gateway, Android/iOS companion sources and an LM Studio generator adapter are implemented. **Phone inference speedup, pooled RAM, large hybrid-model speculation and sustained mobile operation are not yet qualified.** The first real-weight control experiments found local drafting slower than target-only inference on the small test pair. Negative results are published.
 
 ## Implementation and evidence
 
@@ -21,6 +21,8 @@ NodeLift is an experimental local inference workbench and mobile companion syste
 | Integration | Authenticated text chat gateway and LM Studio generator | Real-weight HTTP/adapter-handler tests; LM Studio GUI qualification open |
 
 This is **not an Ollama backend patch**. Clients with a custom OpenAI-style endpoint can call NodeLift within its text/greedy subset. The LM Studio adapter selects NodeLift as a generator; it does not split LM Studio's own loaded model across phones.
+
+[Download Android 0.2.1](https://github.com/sev7enITA/NodeLift/releases/download/v0.2.1/NodeLift-0.2.1-android-debug.apk) · [Source checks](https://github.com/sev7enITA/NodeLift/actions)
 
 ## Start on the host
 

@@ -1,0 +1,66 @@
+{
+  "source_commit": "d5e0f5d42a4a8b7a673af1b09810251691fe6992",
+  "date": "2026-10-31",
+  "host": "Apple M3 Max, 64 GiB, macOS / Metal",
+  "host_tests": {
+    "passed": 26,
+    "scope": "protocol, mailbox, controller, startup and stubbed HTTP contracts"
+  },
+  "native_real_weight_checks": 29,
+  "tls_loopback_fault_cases": 4,
+  "adapter_stream_tests": 3,
+  "android": {
+    "version": "0.2.1",
+    "version_code": 3,
+    "abi": "arm64-v8a",
+    "build": "debug",
+    "signature_verified": true,
+    "physical_native_inference_tested": false
+  },
+  "ios": {
+    "version": "0.2.1",
+    "build": 3,
+    "sdk": "iphoneos",
+    "configuration": "Release",
+    "signed": false,
+    "physical_native_inference_tested": false
+  },
+  "connected_runner": {
+    "offline_gate_observed": true,
+    "physical_sequence_tested": false
+  },
+  "ci": {
+    "url": "https://github.com/sev7enITA/NodeLift/actions/runs/41242051838",
+    "source_commit": "d5e0f5d42a4a8b7a673af1b09810251691fe6992",
+    "conclusion": "success",
+    "jobs": [
+      "protocol (3.12)",
+      "protocol (3.14)",
+      "lmstudio"
+    ]
+  },
+  "native_library_sha256": "196ebdaf516939bc585afb9704ea7d56003d05f0f458061fe9aa56cf056b435d",
+  "evidence_sha256": {
+    "remote-loopback.json": "0786d62a436933d66b204f08bbef8bbfb67ac7aacb138faab45864985de6f59f",
+    "gateway-live.json": "0cbe30aee4d095424ca3a2d140b2d38eb8ee345d29ef924773da143ba9da1885",
+    "lmstudio-live.json": "eff951cd707aeb22bbbf9515c350b2c7081211266666a8e06b8466a9be529af5",
+    "native-correctness-expanded.json": "06e0b86c6f7751660793d3ca8aeb1a633b751dbf8e73aabca727619b9059c884",
+    "lmstudio-install-status.json": "1b223582bb23e44cb155fd7d9d027d35938eefcd419738d244ac26c880d7df7b"
+  },
+  "source_sha256": {
+    "native/core.cpp": "716aa9753c909448a29e14e612cd4290dc81ff12360d69c56f72546bacaabe42",
+    "native/core.h": "ba705eed0ca8303a1cb0b4dbf616f57790ad77de00f73a0225f016c8783ba6a0",
+    "native/llama.lock": "8a8fe6f5935b1b6525a1d3e558f23d304586054c461a8a3d7449f49dddfc9482",
+    "scripts/check-native.py": "fafbdaca5b194703956f12f5b73e9db20b987056f296d4db247126a20761af74",
+    "scripts/check-remote-loopback.py": "3d4b9448d5e14f545d55fbfa1de0103606203d89294e1616ea903213c7c62b9d",
+    "host/nodelift/engine.py": "4f20c5d3dccc0479631ccccb77b56f22d074a6b84eea7363bfb331b0095658d0",
+    "host/nodelift/gateway.py": "95826055ba168d48bb1b0f27326c54a1228e3e5ecbf509bae34dee78a689244e",
+    "host/nodelift/host.py": "633c1c3b882fb569d6d7ee7341de247a27a831d44622731ad26b3047efe9f99f"
+  },
+  "limits": [
+    "No physical native mobile inference/speedup yet",
+    "No signed iOS distribution",
+    "No LM Studio installed GUI runtime qualification",
+    "Native single/batch equivalence is scoped to checked builds, weights and prompts"
+  ]
+}
