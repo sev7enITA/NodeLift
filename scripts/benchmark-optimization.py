@@ -110,8 +110,8 @@ def main(args):
     random.Random(args.seed).shuffle(plan)
     sources=[Path(__file__),ROOT/'host/nodelift/engine.py',ROOT/'host/nodelift/native.py',ROOT/'host/nodelift/scheduling.py',ROOT/'native/core.cpp',ROOT/'native/llama.lock']
     manifest={'started_unix':time.time(),'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),
-              'working_tree_dirty':bool(subprocess.check_output(['git','status','--porcelain','--','host','native','scripts'],cwd=ROOT,text=True).strip()),
-              'dirty_check_scope':['host','native','scripts'],
+              'working_tree_dirty':any(subprocess.check_output(['git','show','HEAD:'+str(p.relative_to(ROOT))],cwd=ROOT)!=p.read_bytes() for p in sources),
+              'dirty_check_scope':[str(p.relative_to(ROOT)) for p in sources],
               'source_sha256':{str(p.relative_to(ROOT)):digest(p) for p in sources},
               'baseline':json.loads((args.baseline/'manifest.json').read_text()),
               'candidate_library_sha256':digest(ROOT/'native/build/host/lib/libnodelift.dylib'),
