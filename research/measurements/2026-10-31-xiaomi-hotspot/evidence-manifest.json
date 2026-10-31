@@ -1,0 +1,67 @@
+{
+  "records": [
+    {
+      "file": "REPORT.md",
+      "sha256": "9d0854c12cbd989e23d2bc6eba5b07a9c8f5f42f655daa066fc4a568eb9a5913"
+    },
+    {
+      "file": "after.json",
+      "sha256": "607d5cdfa034d74fb183c30df699dcde0bbf433be675b8af37423e3e94c0f8d6"
+    },
+    {
+      "file": "analyze.py",
+      "sha256": "ef8d8f101a15a036ed89f1298da2d3565bd59c4b11c518ae55bada863359ffe8"
+    },
+    {
+      "file": "before.json",
+      "sha256": "bc33f09439c21e6b5d7c3e4fc2087bb858eaf082190ec5efe47ab462d42f2b14"
+    },
+    {
+      "file": "conditions.json",
+      "sha256": "ecf75c2f2ee553bdd65001fa96880cf4268819aa452d98953c84e2768943bdf4"
+    },
+    {
+      "file": "cpu.json",
+      "sha256": "5012698b3c0fc1049e2b96c942192bd277c5a4304e5b5f388846d4f333c6b7a9"
+    },
+    {
+      "file": "jobs.json",
+      "sha256": "4066bd425091a67ebf6a12ce48c210592ecdaf571edd9bb77cb732f5a460566b"
+    },
+    {
+      "file": "network.json",
+      "sha256": "a5dc9b75b217961d00e3415b9654e4b7ec326f08271f9fbbb807c59dd789a6cb"
+    },
+    {
+      "file": "network_paced.json",
+      "sha256": "e274cd4404a75d89ac7b8c560cd3d90643cb13de290ba70bd6e96edcb5599c67"
+    },
+    {
+      "file": "network_paced_repeat.json",
+      "sha256": "607d5cdfa034d74fb183c30df699dcde0bbf433be675b8af37423e3e94c0f8d6"
+    },
+    {
+      "file": "summary.json",
+      "sha256": "b24dc6b25298bf825cb22ae8f784b02a73a8471fcba3c826918db49fb44d47e2"
+    }
+  ],
+  "runtime_sources": [
+    {
+      "file": "host/nodelift/host.py",
+      "sha256": "dfb428ce19929e58423585a5994ff42262fae5ce652a043e154626b2a7306c60"
+    },
+    {
+      "file": "host/nodelift/state.py",
+      "sha256": "ca1fd5941b7113fa02f99627f32aff1fc82d5400d35f585644e9184354b80c67"
+    },
+    {
+      "file": "apps/android/app/src/main/java/dev/nodelift/companion/NodeService.kt",
+      "sha256": "3b22b353b92defac58d8948ac45c48a75079e02faaa5c7b7dee7d93261f8c312"
+    },
+    {
+      "file": "apps/android/app/src/main/java/dev/nodelift/companion/Protocol.kt",
+      "sha256": "22050c020fecd9b60a0d786d7edb129c47969e06ed09f6a14d562abc6cd323c9"
+    }
+  ],
+  "device_binary_hash_attested": false
+}

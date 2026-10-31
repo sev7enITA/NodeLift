@@ -1,0 +1,87 @@
+{
+  "kind": "published-data arithmetic and static inspection; NOT a new hardware benchmark",
+  "commit": "b1c17109498e87b3db99f8f23648d84483b68bb9",
+  "source_files": 37,
+  "all_source_blobs_match": true,
+  "published_rows": {
+    "quality": 17,
+    "optimization": 89,
+    "prefill": 27
+  },
+  "optimization_rows_with_error_field": 14,
+  "queue_comparison": {
+    "sequential_host_s": 202.7,
+    "batched_host_s": 106.4,
+    "cluster_s": 67.7,
+    "speedup_vs_sequential": 2.9940915805022152,
+    "speedup_vs_batched": 1.5716395864106352,
+    "wall_time_reduction_vs_batched_pct": 36.372180451127825,
+    "passed": [
+      20,
+      20,
+      20
+    ],
+    "total": [
+      22,
+      22,
+      22
+    ],
+    "note": "One published batch per setup; no confidence interval or independent replication."
+  },
+  "group_anagrams_suspected_oracle_error": {
+    "confirmed": false,
+    "expected": [
+      [
+        "ate",
+        "eat",
+        "tea"
+      ],
+      [
+        "bat"
+      ],
+      [
+        "nat",
+        "tan"
+      ]
+    ],
+    "reference": [
+      [
+        "ate",
+        "eat",
+        "tea"
+      ],
+      [
+        "bat"
+      ],
+      [
+        "nat",
+        "tan"
+      ]
+    ],
+    "oracle_matches_correct_reference": true,
+    "note": "Initial suspicion withdrawn; do not report this as a defect."
+  },
+  "prefill_turn_projections": [
+    {
+      "label": "7B Q4_K_M, PC 14 layer + Samsung 14 layer via tethering, patch SPENTA",
+      "observed_generation_lengths": [
+        64,
+        64
+      ],
+      "projected_300_token_turn_using_script_formula_s": 445.43816543816547,
+      "projected_300_token_turn_using_long_context_rate_s": 469.1610628272251,
+      "note": "Both are extrapolations from shorter runs, not measured 300-token end-to-end turns."
+    },
+    {
+      "label": "7B Q4_K_M, PC 14 layer + Samsung 14 layer via tethering, patch ACCESA",
+      "observed_generation_lengths": [
+        64,
+        64
+      ],
+      "projected_300_token_turn_using_script_formula_s": 304.6963789340149,
+      "projected_300_token_turn_using_long_context_rate_s": 328.14115873015874,
+      "note": "Both are extrapolations from shorter runs, not measured 300-token end-to-end turns."
+    }
+  ],
+  "diffusion_results_file_in_published_tree": false
+}

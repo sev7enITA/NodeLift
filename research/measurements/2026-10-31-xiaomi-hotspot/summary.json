@@ -1,0 +1,191 @@
+[
+  {
+    "job_id": "a6c09bdce544072713a9d86f",
+    "kind": "network",
+    "raw_file": "network.json",
+    "started_rome": "2026-10-31T20:53:00.180974+01:00",
+    "elapsed_host_seconds": 0.6856122016906738,
+    "sample_count": 48,
+    "rtt": [
+      {
+        "requested_pause_ms": 0,
+        "n": 32,
+        "p50_ms": 6.27599,
+        "p95_ms": 8.246354,
+        "max_ms": 8.789375,
+        "over_20_ms": 0,
+        "connections": 1
+      }
+    ],
+    "transfers": [
+      {
+        "direction": "Mac → Xiaomi",
+        "bytes_per_request": 16384,
+        "n": 4,
+        "aggregate_MB_per_second": 2.3290086492378856
+      },
+      {
+        "direction": "Mac → Xiaomi",
+        "bytes_per_request": 1048576,
+        "n": 4,
+        "aggregate_MB_per_second": 36.11056297745742
+      },
+      {
+        "direction": "Xiaomi → Mac",
+        "bytes_per_request": 16384,
+        "n": 4,
+        "aggregate_MB_per_second": 1.1938473143317494
+      },
+      {
+        "direction": "Xiaomi → Mac",
+        "bytes_per_request": 1048576,
+        "n": 4,
+        "aggregate_MB_per_second": 19.88558085784132
+      }
+    ]
+  },
+  {
+    "job_id": "edb7d9242924cdeaa406246a",
+    "kind": "network_paced",
+    "raw_file": "network_paced.json",
+    "started_rome": "2026-10-31T20:53:31.265783+01:00",
+    "elapsed_host_seconds": 25.56465792655945,
+    "sample_count": 616,
+    "rtt": [
+      {
+        "requested_pause_ms": 0,
+        "n": 200,
+        "p50_ms": 7.67526,
+        "p95_ms": 11.30026,
+        "max_ms": 90.554011,
+        "over_20_ms": 1,
+        "connections": 1
+      },
+      {
+        "requested_pause_ms": 30,
+        "n": 200,
+        "p50_ms": 8.304427,
+        "p95_ms": 14.244219,
+        "max_ms": 95.034792,
+        "over_20_ms": 8,
+        "connections": 1
+      },
+      {
+        "requested_pause_ms": 60,
+        "n": 200,
+        "p50_ms": 8.906927,
+        "p95_ms": 79.881406,
+        "max_ms": 89.192761,
+        "over_20_ms": 15,
+        "connections": 1
+      }
+    ],
+    "transfers": [
+      {
+        "direction": "Mac → Xiaomi",
+        "bytes_per_request": 16384,
+        "n": 4,
+        "aggregate_MB_per_second": 2.374125366324653
+      },
+      {
+        "direction": "Mac → Xiaomi",
+        "bytes_per_request": 1048576,
+        "n": 4,
+        "aggregate_MB_per_second": 42.97224723717647
+      },
+      {
+        "direction": "Xiaomi → Mac",
+        "bytes_per_request": 16384,
+        "n": 4,
+        "aggregate_MB_per_second": 1.1370621787503523
+      },
+      {
+        "direction": "Xiaomi → Mac",
+        "bytes_per_request": 1048576,
+        "n": 4,
+        "aggregate_MB_per_second": 37.11713571204953
+      }
+    ]
+  },
+  {
+    "job_id": "a1413634f16b77be915fd7f4",
+    "kind": "cpu",
+    "raw_file": "cpu.json",
+    "started_rome": "2026-10-31T20:53:59.865206+01:00",
+    "elapsed_host_seconds": 1.5138969421386719,
+    "sample_count": 1,
+    "rtt": [],
+    "transfers": [],
+    "cpu": [
+      {
+        "kind": "cpu",
+        "iterations": 14115,
+        "ms": 1500.053594,
+        "checksum": 5.203762054443359
+      }
+    ]
+  },
+  {
+    "job_id": "9f6780f2d1dc91e7a6cc5e34",
+    "kind": "network_paced",
+    "raw_file": "network_paced_repeat.json",
+    "started_rome": "2026-10-31T20:54:28.814279+01:00",
+    "elapsed_host_seconds": 25.1219642162323,
+    "sample_count": 616,
+    "rtt": [
+      {
+        "requested_pause_ms": 0,
+        "n": 200,
+        "p50_ms": 6.212344,
+        "p95_ms": 8.269948,
+        "max_ms": 94.695781,
+        "over_20_ms": 2,
+        "connections": 1
+      },
+      {
+        "requested_pause_ms": 30,
+        "n": 200,
+        "p50_ms": 7.801354,
+        "p95_ms": 11.770781,
+        "max_ms": 98.559896,
+        "over_20_ms": 8,
+        "connections": 1
+      },
+      {
+        "requested_pause_ms": 60,
+        "n": 200,
+        "p50_ms": 8.798802,
+        "p95_ms": 68.374687,
+        "max_ms": 97.955416,
+        "over_20_ms": 14,
+        "connections": 1
+      }
+    ],
+    "transfers": [
+      {
+        "direction": "Mac → Xiaomi",
+        "bytes_per_request": 16384,
+        "n": 4,
+        "aggregate_MB_per_second": 2.339548795082035
+      },
+      {
+        "direction": "Mac → Xiaomi",
+        "bytes_per_request": 1048576,
+        "n": 4,
+        "aggregate_MB_per_second": 42.148006175511576
+      },
+      {
+        "direction": "Xiaomi → Mac",
+        "bytes_per_request": 16384,
+        "n": 4,
+        "aggregate_MB_per_second": 1.0783602940684045
+      },
+      {
+        "direction": "Xiaomi → Mac",
+        "bytes_per_request": 1048576,
+        "n": 4,
+        "aggregate_MB_per_second": 36.735647370072435
+      }
+    ]
+  }
+]

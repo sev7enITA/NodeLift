@@ -1,0 +1,59 @@
+{
+  "recorded_on": "2026-10-31",
+  "project_name": "NodeLift",
+  "network": {
+    "type": "hotspot",
+    "provider_label_from_user": "TIM",
+    "access_point_device": "Xiaomi 17 Ultra",
+    "measured": true,
+    "measurement_scope": "First application-level HTTPS qualification, not sustained link/PHY or LLM benchmark",
+    "topology_source": "User confirmation 2026-10-31",
+    "report": "research/measurements/2026-10-31-xiaomi-hotspot/REPORT.md"
+  },
+  "host": {
+    "model_observed": "Apple M3 Max",
+    "physical_memory_bytes_observed": 68719476736,
+    "cpu_cores_observed": 16,
+    "inference_benchmarked": false
+  },
+  "mobile": [
+    {
+      "user_label": "Xiaomi 17 Ultra",
+      "planned_companion": "Android",
+      "hardware_verified": false,
+      "ram_variant": null,
+      "enrollment_observed": true,
+      "physical_qualification_jobs_completed": 4,
+      "companion_reported_model": "Xiaomi 25128PNA1C",
+      "companion_reported_os": "Android 17 / API 37",
+      "physical_memory_bytes_reported": 15843803136,
+      "telemetry_provenance": "Companion self-report; not independent attestation",
+      "report": "research/measurements/2026-10-31-xiaomi-hotspot/REPORT.md"
+    },
+    {
+      "user_label": "Oppo Find X6 Ultra",
+      "planned_companion": "Android",
+      "hardware_verified": false,
+      "model_identity_note": "Preserve the user label. Read the actual model code from the companion; do not silently substitute X6 Pro or X7 Ultra.",
+      "ram_variant": null
+    },
+    {
+      "user_label": "Oppo Find N5",
+      "planned_companion": "Android",
+      "hardware_verified": false,
+      "ram_variant": null
+    },
+    {
+      "user_label": "iPhone 15 Pro Max",
+      "planned_companion": "iOS",
+      "hardware_verified": false
+    },
+    {
+      "user_label": "Huawei Pura 70 Ultra",
+      "os_reported_by_user": "HarmonyOS NEXT 7",
+      "planned_companion": "Native HarmonyOS ArkTS",
+      "hardware_verified": false,
+      "sdk_and_signing_pending": true
+    }
+  ]
+}

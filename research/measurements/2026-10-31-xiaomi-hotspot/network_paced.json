@@ -1,0 +1,4652 @@
+{
+  "protocol": 1,
+  "version": "0.1.0",
+  "inference_available": false,
+  "nodes": [
+    {
+      "id": "93950706170a118069ae5197",
+      "name": "Xiaomi 25128PNA1C",
+      "capabilities": {
+        "model": "Xiaomi 25128PNA1C",
+        "os": "Android 17 / API 37",
+        "app_version": "0.1.0",
+        "thermal": "nominal",
+        "transport": "altro / non rilevato",
+        "lifecycle": "foreground-service",
+        "physical_memory_bytes": 15843803136,
+        "available_memory_bytes": 5331820544,
+        "process_memory_bytes": 101367808,
+        "battery_percent": 45,
+        "cpu_cores": 8,
+        "inference_available": false,
+        "supported_jobs": [
+          "cpu",
+          "network",
+          "network_paced"
+        ],
+        "evidence": "self-reported device telemetry"
+      },
+      "last_seen": 1793476436.823798,
+      "revoked": 0,
+      "online": true
+    }
+  ],
+  "jobs": [
+    {
+      "id": "edb7d9242924cdeaa406246a",
+      "node": "93950706170a118069ae5197",
+      "kind": "network_paced",
+      "state": "completed",
+      "created": 1793476408.714853,
+      "started": 1793476411.265783,
+      "finished": 1793476436.830441,
+      "result": {
+        "status": "completed",
+        "samples": [
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.99151,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.099375,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.992656,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.081459,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.918177,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 13.493386,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.229271,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.621041,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.586302,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.464167,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.23526,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.666823,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.592657,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.18776,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.198438,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.436927,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.828229,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.361146,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.257813,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 12.820365,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.628125,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.976563,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.934739,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.838281,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 12.77349,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.988125,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.560886,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.211667,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.632031,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.081094,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.494375,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.700885,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.442291,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.409115,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.571093,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.133073,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.739635,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.208177,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.092916,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.102864,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.829948,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 15.014583,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.189531,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.74901,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.840885,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.768958,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.27625,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.891563,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.413385,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.891354,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.599583,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.556927,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 13.071614,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.077968,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.802135,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.936459,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.462969,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.444115,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 14.643333,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.122344,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.49026,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.242865,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.872136,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.903802,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.323125,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.486146,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.611458,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.031615,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.088854,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.433178,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.397657,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.009323,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.146355,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.956927,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.262864,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.817604,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.060677,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.742344,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.932135,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.393333,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.148177,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.501198,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.507083,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.537448,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.369219,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.7975,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.618177,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.910313,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.644115,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.715677,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.244948,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.047812,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.670677,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.821562,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.577656,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 12.627552,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.01901,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.805156,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.56849,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 4.842761,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 4.464166,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.322656,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.627761,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.555312,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.177604,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.739427,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.825729,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.615937,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 90.554011,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.180989,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.750677,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.279948,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.11151,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.262813,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.048645,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 12.901303,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.30026,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.427344,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.794271,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.285625,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.221145,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.433333,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.315521,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.253073,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.395937,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.863542,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.041354,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.681511,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.196354,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.361407,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.746511,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.644739,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.917448,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.966719,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.880729,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.67224,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.550156,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.15125,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.797395,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.150261,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.295573,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.559531,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.385156,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.242395,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.746667,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.83224,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.582448,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.705781,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.567865,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.768854,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.584167,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.462552,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.424896,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.929895,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.161302,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 4.808334,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.70526,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.426979,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.474896,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.129532,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.589062,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.296615,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.305677,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.662239,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.715938,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.350625,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.520156,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.607239,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.369323,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.658281,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.112292,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.281875,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.24224,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.059844,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.071094,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.512552,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.952136,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.161927,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.489687,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.67526,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.345417,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.05625,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 4.870365,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.716927,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.201875,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.536615,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.193802,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.240469,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.026094,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.90474,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.917552,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.454271,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.280104,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.53375,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.298698,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.64625,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.858906,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.279895,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.467656,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.166927,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.552969,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.682396,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.130156,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.482656,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.070989,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.756041,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 93.9925,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.170209,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.77276,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.326406,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.063958,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.072084,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.684583,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.76974,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.920053,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.840625,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.962344,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 16.744167,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 13.372969,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.664635,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.974479,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.570156,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 12.702657,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.373594,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.13323,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.365052,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.100417,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.528177,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.818229,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.43,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 94.573229,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.417812,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.16026,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.403698,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.874636,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.441927,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.877135,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.616875,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.652084,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.858854,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 18.444739,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.25677,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.507708,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.873489,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.320573,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.311979,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.015208,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.117031,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.879792,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.464323,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.815781,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.243594,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.992761,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.104063,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.80401,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 91.221823,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.507031,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 12.972135,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.490261,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.926823,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.163645,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.728177,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.645052,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.740521,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.352709,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.176094,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.242187,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.271666,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.022187,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.855,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.463385,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.421146,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.890938,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.074635,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.204114,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.801146,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.55026,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.693802,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.342604,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.190781,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 86.88875,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.695885,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.748073,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.268438,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.055781,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.018386,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.196094,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.356771,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.179011,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.923906,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.016666,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.623021,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.305833,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.375782,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.281667,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.263698,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.514375,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.686511,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.83375,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.252031,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.095208,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.252656,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.53724,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.927812,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.710834,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 93.854896,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.713854,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 12.501093,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.86724,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.324115,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.956094,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.235625,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.642031,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.320312,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.758125,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.818333,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.233958,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.518282,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.154688,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.192708,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.779062,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.82526,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.472656,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.819636,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.464271,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.434896,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.684844,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.198073,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.280417,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.603021,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 68.718854,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.709323,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.474792,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.439323,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.865989,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.666614,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.851667,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.304427,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.274583,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.718541,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.038854,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.648542,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.468593,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.294063,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.22,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.497656,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.752969,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.225,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.560678,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.447656,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.11375,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.22573,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.693645,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.565208,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.283854,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 88.459271,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.265729,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.837344,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.770105,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.386406,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.559687,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.235625,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.129427,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.860364,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.780677,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 14.244219,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.269427,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.295052,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.770729,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.86802,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.530209,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.106667,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.704479,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.88802,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.953542,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.321146,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.793958,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.351562,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.534271,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 95.034792,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.619947,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.778802,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.626042,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.381354,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.374271,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.667865,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.170782,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.421146,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.842344,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.607292,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.071041,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.504323,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.4625,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.268541,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.846458,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.05651,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.390416,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.271771,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.137708,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.403542,
+            "pace_ms": 30,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.943959,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.62125,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 69.843073,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.171146,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.214479,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.739531,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.701875,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.286823,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.72974,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.036459,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.735209,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.639896,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.424375,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.340208,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.552291,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.196093,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 89.192761,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.196146,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.440313,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.2225,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.656198,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.101979,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.486823,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.130208,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.263073,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.164375,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.52599,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.350886,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.616406,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.707552,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 87.333697,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.497448,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.329948,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.511771,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.675937,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.331614,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.95625,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.9275,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.599219,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.746511,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.106875,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.731823,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.276927,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.845469,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 88.066979,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.929583,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.539063,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.549583,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.118437,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.352708,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.295208,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.092448,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.170834,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.702188,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.939063,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.193958,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.570417,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.656511,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 79.881406,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.076875,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.228855,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.373072,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.93625,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.067656,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.906927,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.665208,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.448594,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.330208,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.031927,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.747136,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.348646,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.097083,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 88.872396,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.962031,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.397239,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.574166,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.798802,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.944323,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.020729,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.278906,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.381459,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.057084,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.142917,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.494583,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.006354,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.58401,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 71.524948,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.30776,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.012812,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.15151,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.123594,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.913958,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.785782,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.321459,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.662813,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.984531,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.761823,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.201198,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.772968,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.195521,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 84.947292,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.43724,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.689896,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.289114,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.752604,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.296146,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.770885,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.389427,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.897448,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.346614,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.908646,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.936823,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.538646,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.608385,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 84.511354,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.263802,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.289635,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.321822,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.601094,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.585625,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.469687,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.265573,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.423594,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.387969,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.801666,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.337448,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.005364,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.768646,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 84.225416,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.36375,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.864375,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.253542,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.583802,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.377188,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.622709,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.327396,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.144948,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.938698,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.322865,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.351355,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.478646,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.303958,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 86.869062,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.334636,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.921094,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.066927,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.639687,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.720781,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 12.991302,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.568073,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.755469,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.703073,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.793177,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.43776,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.368854,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.05323,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 86.567917,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.934531,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.609479,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.01073,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.284219,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.543802,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.191771,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.842344,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.613386,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.281614,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.723906,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.538125,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.302917,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.31052,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 81.066615,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.112813,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.262604,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.619896,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 13.129896,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 12.572083,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.849844,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.693958,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.222031,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.157813,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.857968,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.734323,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.250573,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.343021,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 73.59375,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.122916,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.072968,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.003281,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 10.288438,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 12.242291,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 11.576563,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 9.713438,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.635677,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.593229,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.379479,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.87,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.121823,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.575677,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 75.235417,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.584896,
+            "pace_ms": 60,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "download",
+            "bytes": 16384,
+            "ms": 5.672083
+          },
+          {
+            "kind": "upload",
+            "bytes": 16384,
+            "ms": 15.192083
+          },
+          {
+            "kind": "download",
+            "bytes": 16384,
+            "ms": 7.510573
+          },
+          {
+            "kind": "upload",
+            "bytes": 16384,
+            "ms": 14.403854
+          },
+          {
+            "kind": "download",
+            "bytes": 16384,
+            "ms": 7.622032
+          },
+          {
+            "kind": "upload",
+            "bytes": 16384,
+            "ms": 13.931146
+          },
+          {
+            "kind": "download",
+            "bytes": 16384,
+            "ms": 6.799583
+          },
+          {
+            "kind": "upload",
+            "bytes": 16384,
+            "ms": 14.109167
+          },
+          {
+            "kind": "download",
+            "bytes": 1048576,
+            "ms": 24.519896
+          },
+          {
+            "kind": "upload",
+            "bytes": 1048576,
+            "ms": 39.465
+          },
+          {
+            "kind": "download",
+            "bytes": 1048576,
+            "ms": 24.450625
+          },
+          {
+            "kind": "upload",
+            "bytes": 1048576,
+            "ms": 21.532813
+          },
+          {
+            "kind": "download",
+            "bytes": 1048576,
+            "ms": 24.216928
+          },
+          {
+            "kind": "upload",
+            "bytes": 1048576,
+            "ms": 26.901562
+          },
+          {
+            "kind": "download",
+            "bytes": 1048576,
+            "ms": 24.4175
+          },
+          {
+            "kind": "upload",
+            "bytes": 1048576,
+            "ms": 25.102448
+          }
+        ],
+        "note": "600 RTT in gruppi con pause 0/30/60ms; confrontare ogni gruppo separatamente. Test HTTPS applicativo, non LLM.",
+        "measurement": "application-level qualification; not LLM performance"
+      }
+    },
+    {
+      "id": "a6c09bdce544072713a9d86f",
+      "node": "93950706170a118069ae5197",
+      "kind": "network",
+      "state": "completed",
+      "created": 1793476379.741587,
+      "started": 1793476380.180974,
+      "finished": 1793476380.8665862,
+      "result": {
+        "status": "completed",
+        "samples": [
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.018594,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.873906,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.27599,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.105729,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.10901,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.340469,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.451875,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.120885,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.543073,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.431979,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.657344,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.437552,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.950573,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.023177,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.401302,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.432969,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.778645,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.456354,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.005834,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.748073,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.246354,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.473698,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.191459,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.14875,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.789375,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.574948,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.063802,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 4.432969,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.640989,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.962656,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.28651,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.240625,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "download",
+            "bytes": 16384,
+            "ms": 6.965521
+          },
+          {
+            "kind": "upload",
+            "bytes": 16384,
+            "ms": 13.826823
+          },
+          {
+            "kind": "download",
+            "bytes": 16384,
+            "ms": 5.675
+          },
+          {
+            "kind": "upload",
+            "bytes": 16384,
+            "ms": 14.921354
+          },
+          {
+            "kind": "download",
+            "bytes": 16384,
+            "ms": 7.821927
+          },
+          {
+            "kind": "upload",
+            "bytes": 16384,
+            "ms": 14.222865
+          },
+          {
+            "kind": "download",
+            "bytes": 16384,
+            "ms": 7.676563
+          },
+          {
+            "kind": "upload",
+            "bytes": 16384,
+            "ms": 11.92375
+          },
+          {
+            "kind": "download",
+            "bytes": 1048576,
+            "ms": 40.389532
+          },
+          {
+            "kind": "upload",
+            "bytes": 1048576,
+            "ms": 55.629115
+          },
+          {
+            "kind": "download",
+            "bytes": 1048576,
+            "ms": 29.763386
+          },
+          {
+            "kind": "upload",
+            "bytes": 1048576,
+            "ms": 24.312968
+          },
+          {
+            "kind": "download",
+            "bytes": 1048576,
+            "ms": 23.930677
+          },
+          {
+            "kind": "upload",
+            "bytes": 1048576,
+            "ms": 20.124896
+          },
+          {
+            "kind": "download",
+            "bytes": 1048576,
+            "ms": 22.068125
+          },
+          {
+            "kind": "upload",
+            "bytes": 1048576,
+            "ms": 110.854896
+          }
+        ],
+        "note": "Diagnostica breve: 32 RTT, p95 esplorativo. Warmup escluso; non \u00e8 un benchmark LLM.",
+        "measurement": "application-level qualification; not LLM performance"
+      }
+    }
+  ]
+}

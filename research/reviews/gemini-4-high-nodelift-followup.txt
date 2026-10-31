@@ -1,0 +1,239 @@
+2026-10-31 — selected Gemini 4 Argon / Alta. Design review, not code or hardware validation.
+
+PROMPT
+Riesame mirato NodeLift (nuovo nome ExpandMyHW). Rispondi SOLO in chat, massimo600parole, niente PDF/file, nessun benchmark inventato. Host M3Max64GiB. Dispositivi dichiarati: Xiaomi17Ultra, Oppo FindN5, iPhone15ProMax, Oppo indicato dall’utente come FindX6Ultra (identità da rilevare), Huawei Pura70Ultra con HarmonyOS NEXT7 dichiarato. Rete attuale hotspot, misure mancanti. DistAI verificato commit b1c17109498e87b3db99f8f23648d84483b68bb9: coda202.7s PCseq,106.4 PC4slot,67.7 cluster;3x vsseq ma1.57x vsbatched, non chat singola.445→305s proiezione300token da64, decode lungo1.91→1.89. FrazioniRAM0.5/0.6,hop10ms, microbench minimi. Draft RPC pertoken peggiora; distinto da draft autonomo a blocchi. Ridurre experts modifica target. Non assumere no-go universale per ogni speculation quando target entra in RAM: overlap/contesa verificare contro migliore draft locale async. Exo PLATFORMS attuale macOS Tier1, Linux Planned. LMStudio documenta generator plugin che consuma APIesterno; non shardinginterno. Si stanno preparando companion di QUALIFICAZIONE, non motoreLLM: host PythonTLS+dashboardloopback; invito128+bit monouso5min, certificato host ancorato/pinnato, bearer pernode revocabile, credenziali AndroidKeystore/iOSKeychain. Job limitati rete e CPU sintetica; TTL120s e niente replay di risultati; memoria OS etichettata, nessuna RAM pooled promessa. Android servizio connectedDevice, iOS pausa entrando background; Harmony ArkTS rete-only candidato, nessun SDK DevEco disponibile quindi buildnonverificata. Testrete32RTT64B e4upload/download per16KiB/1MiB, warmupescluso; CPUmatvecFP32 256x2561.5s NON predittoretokens/s. Esamina lacune del protocollo e dell’esperimento, specificamente hotspot/radioidle, differenze framework/keepalive, sample insufficiente p95, rischio lifecycle e Harmony. Poi3 esperimenti falsificabili per accelerazione singlechat stesso target: draftautonomo contro localdraftasync; capacityoverspill separato; trasportiablation. Distingui critiche dimostrate da ipotesi e indica priorità. Questo è riesame del disegno descritto, NON audit del codice e NON convalida hardware.
+
+RESPONSE
+Gemini ha detto
+1. Fatti Dimostrati vs Ipotesi da Verificare
+
+Critiche dimostrate dai dati e dalla documentazione:
+
+DistAi (b1c1710...): Dimostra speedup solo sul throughput multi-richiesta in coda (
+67.7
+ s
+67.7 s cluster vs 
+106.4
+ s
+106.4 s PC 4-slot, 
+1.57
+×
+1.57×). Sulla chat singola, la riduzione 
+445
+→
+305
+ s
+445→305 s è una proiezione lineare a 300 token calcolata su soli 64 token (dominata dal prefill); il decode lungo mostra in realtà una lieve regressione (
+1.91
+→
+1.89
+ tok/s
+1.91→1.89 tok/s) con hop di 
+≈
+10
+ ms
+≈10 ms.
+
+Invarianza del modello: Ridurre gli expert attivi in un MoE altera la distribuzione dei logit e viola il requisito di parità qualitativa.
+
+Ecosistema attuale: Exo (PLATFORMS.md) certifica solo macOS come Tier 1 (Linux Planned). LM Studio documenta generator plugin capaci di consumare API esterne nella GUI, senza offrire sharding interno del runtime.
+
+Microbenchmark CPU: Una moltiplicazione matvec FP32 
+256
+×
+256
+256×256 occupa 
+256
+ KiB
+256 KiB: risiede interamente nella cache L1/L2, misurando i FLOPs in-cache e non la banda DRAM o i backend GPU/Metal/Vulkan da cui dipende il decode.
+
+Ipotesi aperta (non escludibile a priori):
+
+A differenza del draft RPC per-token (perdente per via di 
+𝛾
+γ round-trip), un draft autonomo a blocchi sul telefono (che genera localmente 
+𝛾
+γ token candidati e invia l'intero blocco/albero in un singolo hop) eseguito in overlap asincrono con la verifica sul Mac potrebbe ridurre la contesa sulla banda unificata dell'M3 Max rispetto a un draft locale concorrente. Questa ipotesi va testata contro il miglior draft locale asincrono sul Mac.
+
+2. Lacune del Disegno di Qualificazione e Rischi Piattaforma
+
+Validità Statistica (
+𝑁
+N insufficiente): 
+𝑁
+=
+32
+N=32 campioni RTT (
+64
+ B
+64 B) e 
+𝑁
+=
+4
+N=4 trasferimenti (
+16
+ KiB
+/
+1
+ MiB
+16 KiB/1 MiB) non permettono di calcolare il p95. Con 
+𝑁
+=
+32
+N=32 il 95° percentile dipende da un singolo outlier; con 
+𝑁
+=
+4
+N=4 è statisticamente nullo. Servono almeno 
+𝑁
+=
+200
+N=200 campioni per RTT e 
+𝑁
+=
+50
+N=50 per payload da 
+16
+ KiB
+16 KiB.
+
+Hotspot e Radio Idle (PSM/U-APSD): I test back-to-back mantengono il modem Wi-Fi in stato attivo continuo. Nel decode reale, il nodo mobile attende 
+20
+–
+80
+ ms
+20–80 ms tra le richieste: in hotspot, questo intervallo innesca il power-save radio, aggiungendo 
+5
+–
+15
+ ms
+5–15 ms di wake-up latency invisibili a un test ravvicinato. Inoltre, il NAT/soft-AP introduce jitter assente su switch o cavo.
+
+Asimmetria TLS/Keepalive: L'host Python (asyncio/ssl) e gli stack nativi (URLSession, OkHttp, @ohos.net.http) gestiscono diversamente Nagle e delayed ACK. Se TCP_NODELAY non è forzato esplicitamente su entrambi gli endpoint e la sessione TLS 1.3 non riusa lo stesso socket persistente, i pacchetti da 
+64
+ B–
+16
+ KiB
+64 B–16 KiB subiscono stalli fino a 
+40
+ ms
+40 ms.
+
+Rischi Hardware, Lifecycle e HarmonyOS NEXT 7:
+
+Identità Dispositivi: "Oppo Find X6 Ultra" non esiste commercialmente (esiste Find X6 Pro); il companion deve interrogare ro.product.model, SoC e tetto reale di allocazione (ActivityManager / os_proc_available_memory) ignorando i nomi dichiarati.
+
+Android (connectedDevice): Su Android 14/15+ (HyperOS su Xiaomi 17 Ultra, ColorOS su Find N5), il servizio connectedDevice senza associazione USB/Bluetooth attiva può essere terminato dal sistema o dal power manager OEM.
+
+iOS (iPhone 15 Pro Max): La pausa in background obbliga a un'esecuzione in foreground con schermo attivo (isIdleTimerDisabled = true), aumentando il carico termico.
+
+HarmonyOS NEXT 7 (Pura 70 Ultra): Privo di runtime Android. Senza build verificata su DevEco SDK, il modulo ArkTS presenta rischio critico su certificate pinning custom, socket raw a bassa latenza e lifecycle di rete.
+
+3. Tre Esperimenti Falsificabili (in Ordine di Priorità)
+
+Priorità 1 — Ablation dei Trasporti con Pacing Intermittente:
+
+Disegno: Eseguire 
+𝑁
+=
+300
+N=300 scambi bidirezionali (
+64
+ B
+64 B e 
+16
+ KiB
+16 KiB) inserendo pause fisse di 
+0
+ ms
+0 ms, 
+30
+ ms
+30 ms e 
+60
+ ms
+60 ms tra i pacchetti su: (A) Hotspot, (B) Router Wi-Fi 6E/7, (C) Cavo USB-C / Ethernet.
+
+Falsificazione: L'Hotspot è squalificato per inferenza sincrona se con pausa di 
+30
+–
+60
+ ms
+30–60 ms presenta 
+RTT
+p95
+>
+4
+ ms
+RTT
+p95
+	​
+
+>4 ms o jitter superiore di oltre 
+3
+×
+3× rispetto al cavo.
+
+Priorità 2 — Speculazione a Blocchi in Overlap vs Draft Locale Async (Target in-RAM 
+≤
+48
+ GiB
+≤48 GiB):
+
+Disegno: Stesso modello target su M3 Max (temp=0). Confrontare TPOT p50/p95 tra: (A) Solo Target su Mac; (B) Target + miglior Draft locale async su Mac; (C) Target su Mac + Draft autonomo a blocchi (
+𝛾
+=
+4
+–
+8
+γ=4–8 token per hop) su Xiaomi 17 Ultra / iPhone 15 Pro Max sul miglior trasporto dell'Exp 1.
+
+Falsificazione: Il draft remoto è falsificato se 
+TPOT
+p50
+(
+𝐶
+)
+≥
+min
+⁡
+(
+TPOT
+(
+𝐴
+)
+,
+TPOT
+(
+𝐵
+)
+)
+TPOT
+p50
+	​
+
+(C)≥min(TPOT(A),TPOT(B)).
+
+Priorità 3 — Capacity Overspill Isolato (Target 
+>
+54
+ GiB
+>54 GiB):
+
+Disegno: Modello che forza lo swap su SSD sul solo Mac, fissando i soli layer eccedenti nella RAM di Xiaomi 17 Ultra / Find N5 (escludendo HarmonyOS finché non compilato).
+
+Falsificazione: Falsificato se dopo 30 minuti continui il TPOT p95 del cluster non supera di almeno il 
+25
+%
+25% il Mac singolo in swap SSD.
+
+
+
+
+Argon
+Alta
+
+Gemini è un'AI e può fare errori, anche in merito a persone. La tua privacy e Gemini
+Si apre in una nuova finestra
+
+Analyzing potential performance limitations

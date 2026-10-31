@@ -1,0 +1,356 @@
+{
+  "protocol": 1,
+  "version": "0.1.0",
+  "inference_available": false,
+  "nodes": [
+    {
+      "id": "93950706170a118069ae5197",
+      "name": "Xiaomi 25128PNA1C",
+      "capabilities": {
+        "model": "Xiaomi 25128PNA1C",
+        "os": "Android 17 / API 37",
+        "app_version": "0.1.0",
+        "thermal": "nominal",
+        "transport": "altro / non rilevato",
+        "lifecycle": "foreground-service",
+        "physical_memory_bytes": 15843803136,
+        "available_memory_bytes": 5340254208,
+        "process_memory_bytes": 124328960,
+        "battery_percent": 45,
+        "cpu_cores": 8,
+        "inference_available": false,
+        "supported_jobs": [
+          "cpu",
+          "network",
+          "network_paced"
+        ],
+        "evidence": "self-reported device telemetry"
+      },
+      "last_seen": 1793476405.1422331,
+      "revoked": 0,
+      "online": true
+    }
+  ],
+  "jobs": [
+    {
+      "id": "a6c09bdce544072713a9d86f",
+      "node": "93950706170a118069ae5197",
+      "kind": "network",
+      "state": "completed",
+      "created": 1793476379.741587,
+      "started": 1793476380.180974,
+      "finished": 1793476380.8665862,
+      "result": {
+        "status": "completed",
+        "samples": [
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.018594,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.873906,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.27599,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.105729,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.10901,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.340469,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.451875,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.120885,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.543073,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.431979,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.657344,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.437552,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.950573,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.023177,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.401302,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.432969,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.778645,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.456354,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.005834,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 7.748073,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.246354,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.473698,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.191459,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.14875,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 8.789375,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 6.574948,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.063802,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 4.432969,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.640989,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.962656,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.28651,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "rtt",
+            "bytes": 64,
+            "ms": 5.240625,
+            "pace_ms": 0,
+            "connection_id": "2d4c4e69a042a9e3"
+          },
+          {
+            "kind": "download",
+            "bytes": 16384,
+            "ms": 6.965521
+          },
+          {
+            "kind": "upload",
+            "bytes": 16384,
+            "ms": 13.826823
+          },
+          {
+            "kind": "download",
+            "bytes": 16384,
+            "ms": 5.675
+          },
+          {
+            "kind": "upload",
+            "bytes": 16384,
+            "ms": 14.921354
+          },
+          {
+            "kind": "download",
+            "bytes": 16384,
+            "ms": 7.821927
+          },
+          {
+            "kind": "upload",
+            "bytes": 16384,
+            "ms": 14.222865
+          },
+          {
+            "kind": "download",
+            "bytes": 16384,
+            "ms": 7.676563
+          },
+          {
+            "kind": "upload",
+            "bytes": 16384,
+            "ms": 11.92375
+          },
+          {
+            "kind": "download",
+            "bytes": 1048576,
+            "ms": 40.389532
+          },
+          {
+            "kind": "upload",
+            "bytes": 1048576,
+            "ms": 55.629115
+          },
+          {
+            "kind": "download",
+            "bytes": 1048576,
+            "ms": 29.763386
+          },
+          {
+            "kind": "upload",
+            "bytes": 1048576,
+            "ms": 24.312968
+          },
+          {
+            "kind": "download",
+            "bytes": 1048576,
+            "ms": 23.930677
+          },
+          {
+            "kind": "upload",
+            "bytes": 1048576,
+            "ms": 20.124896
+          },
+          {
+            "kind": "download",
+            "bytes": 1048576,
+            "ms": 22.068125
+          },
+          {
+            "kind": "upload",
+            "bytes": 1048576,
+            "ms": 110.854896
+          }
+        ],
+        "note": "Diagnostica breve: 32 RTT, p95 esplorativo. Warmup escluso; non \u00e8 un benchmark LLM.",
+        "measurement": "application-level qualification; not LLM performance"
+      }
+    }
+  ]
+}

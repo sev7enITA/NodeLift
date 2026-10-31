@@ -1,0 +1,20 @@
+[
+  {
+    "kind": "network",
+    "job_id": "a6c09bdce544072713a9d86f"
+  },
+  {
+    "kind": "network_paced",
+    "job_id": "edb7d9242924cdeaa406246a"
+  },
+  {
+    "kind": "cpu",
+    "job_id": "a1413634f16b77be915fd7f4"
+  },
+  {
+    "kind": "network_paced",
+    "record_file": "network_paced_repeat.json",
+    "reason": "Exploratory repeat after 60ms group tail latency in initial run",
+    "job_id": "9f6780f2d1dc91e7a6cc5e34"
+  }
+]

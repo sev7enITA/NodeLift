@@ -1,0 +1,35 @@
+{
+  "protocol": 1,
+  "version": "0.1.0",
+  "inference_available": false,
+  "nodes": [
+    {
+      "id": "93950706170a118069ae5197",
+      "name": "Xiaomi 25128PNA1C",
+      "capabilities": {
+        "model": "Xiaomi 25128PNA1C",
+        "os": "Android 17 / API 37",
+        "app_version": "0.1.0",
+        "thermal": "nominal",
+        "transport": "altro / non rilevato",
+        "lifecycle": "foreground-service",
+        "physical_memory_bytes": 15843803136,
+        "available_memory_bytes": 5231337472,
+        "process_memory_bytes": 103926784,
+        "battery_percent": 45,
+        "cpu_cores": 8,
+        "inference_available": false,
+        "supported_jobs": [
+          "cpu",
+          "network",
+          "network_paced"
+        ],
+        "evidence": "self-reported device telemetry"
+      },
+      "last_seen": 1793476377.1557279,
+      "revoked": 0,
+      "online": true
+    }
+  ],
+  "jobs": []
+}

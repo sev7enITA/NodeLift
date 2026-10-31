@@ -1,0 +1,24 @@
+{
+  "started_at": "2026-10-31T20:52:59.740766+01:00",
+  "purpose": "First physical qualification; not LLM speed benchmark",
+  "topology": "Xiaomi 17 Ultra provides hotspot; Mac connected as Wi-Fi client",
+  "topology_source": "User confirmed in this chat",
+  "node_id": "93950706170a118069ae5197",
+  "host": "Apple M3 Max 64 GiB (previously observed)",
+  "conditions_unmeasured": [
+    "Wi-Fi band/channel/PHY",
+    "distance and interference",
+    "concurrent traffic",
+    "device charging and screen state"
+  ],
+  "order": [
+    "network",
+    "network_paced",
+    "cpu"
+  ],
+  "limitations": [
+    "single session",
+    "application HTTPS timing includes stack and server",
+    "OS memory availability is not tested allocatable LLM memory"
+  ]
+}

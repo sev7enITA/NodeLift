@@ -1,0 +1,4 @@
+{
+  "name": "nodelift", "version": "0.1.0", "description": "NodeLift native HarmonyOS qualification candidate",
+  "dependencies": {}, "devDependencies": {}
+}

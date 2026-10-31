@@ -1,0 +1,187 @@
+[
+  {
+    "path": "LICENSE",
+    "git_blob_verified": true,
+    "sha256": "81fdad3aacdfa56837e2d3a490d9b283bd7b5d17df1fc96cd78a796690b3134e"
+  },
+  {
+    "path": "NOTES.md",
+    "git_blob_verified": true,
+    "sha256": "00d5d20c364c50875f170513926bcb58da3e6a03f1a8368ee7d8291496559aa4"
+  },
+  {
+    "path": "README.md",
+    "git_blob_verified": true,
+    "sha256": "264a8ecf652e5e10a152cfb49f3f33bf3f147bf5ad60824e6dcee7514e4f3d62"
+  },
+  {
+    "path": "ROADMAP.md",
+    "git_blob_verified": true,
+    "sha256": "ce327bd102562d40dfd691b47bfd7c960c12f0f7477efd6e24de8056fc434f0f"
+  },
+  {
+    "path": "THIRD_PARTY_NOTICES.md",
+    "git_blob_verified": true,
+    "sha256": "4b2c36db0bdec5e238bd899ff47d768347ed3ae3c11a0617999568cdb02afc8a"
+  },
+  {
+    "path": "app/src/main/AndroidManifest.xml",
+    "git_blob_verified": true,
+    "sha256": "42a61ab9baec5de7659928ac26c43550dfb937d5790d83829de14a027d363e75"
+  },
+  {
+    "path": "app/src/main/java/com/distai/app/Cluster.kt",
+    "git_blob_verified": true,
+    "sha256": "d43d6820fb678ef39cd587e26d7876712a098a853217bc20b96a05d8a4660625"
+  },
+  {
+    "path": "app/src/main/java/com/distai/app/Gguf.kt",
+    "git_blob_verified": true,
+    "sha256": "b9a59cf2e5bc2ded3a01fa88094b9864775a966944a1a8af2e53f98b36b95d8f"
+  },
+  {
+    "path": "app/src/main/java/com/distai/app/Keepalive.kt",
+    "git_blob_verified": true,
+    "sha256": "a59669700298d5b4cb19ea55ec92b41393e6917e12883a20f623ca73a0588c69"
+  },
+  {
+    "path": "app/src/main/java/com/distai/app/ModelStore.kt",
+    "git_blob_verified": true,
+    "sha256": "b5e67dc54b55c4e4a21c7d279c05ed97e342d33ac2edd4e4f901736f7a247865"
+  },
+  {
+    "path": "app/src/main/java/com/distai/app/Native.kt",
+    "git_blob_verified": true,
+    "sha256": "461c95d03c2935f829cb5d4dd486e457c772b6e0ac3d08645f7485af3051e2f9"
+  },
+  {
+    "path": "app/src/main/java/com/distai/app/NodeService.kt",
+    "git_blob_verified": true,
+    "sha256": "b458dbc27c6e5cba2921b8bb0a38e867beb43f33706d5a79f1a989fb392f5482"
+  },
+  {
+    "path": "app/src/main/java/com/distai/app/Router.kt",
+    "git_blob_verified": true,
+    "sha256": "afd429c3ce930a2276401d63310a9eb48f778ba3c2569a819d46339a29cf0d76"
+  },
+  {
+    "path": "app/src/main/java/com/distai/app/RpcBench.kt",
+    "git_blob_verified": true,
+    "sha256": "11fa465519eeaf5debdebcfa8bbf3ff05d3a2fc6db20f5f81e2658b25ca27850"
+  },
+  {
+    "path": "app/src/main/java/com/distai/app/SelfBench.kt",
+    "git_blob_verified": true,
+    "sha256": "5e7038e92b2f1da1e6a6127d811fe1c6cd603523b60cad2722905863b5c0af56"
+  },
+  {
+    "path": "app/src/main/java/com/distai/app/Speculative.kt",
+    "git_blob_verified": true,
+    "sha256": "a2c85851cb6ff6f0cdd2d546314ec620fcc6d8b1836bd71a073ade3252ab8442"
+  },
+  {
+    "path": "app/src/main/java/com/distai/app/SplitPlan.kt",
+    "git_blob_verified": true,
+    "sha256": "8f084e44b99757fc0562b5bf56191ee715f2a5ad83c91770649b9aeebc30dac0"
+  },
+  {
+    "path": "app/src/main/java/com/distai/app/StatusServer.kt",
+    "git_blob_verified": true,
+    "sha256": "5e9e50eca51bb81a25f76aafc38fd01dbaea82ec29bdb3a5f1e96ef28c466a62"
+  },
+  {
+    "path": "native/build-android.sh",
+    "git_blob_verified": true,
+    "sha256": "65bfb5b0a7b15faf4d254334eab40212a6f2c695dc24a8eb09e850d974954dab"
+  },
+  {
+    "path": "native/build-pc.py",
+    "git_blob_verified": true,
+    "sha256": "9c7de336a0915de64b2dfaac487758a230b9cb218ead356224e313a4b7406204"
+  },
+  {
+    "path": "native/patches-sperimentali/README.md",
+    "git_blob_verified": true,
+    "sha256": "92e536734070af813047f4e42990f73907ae3e59d8a322302e5d68a6c91d7fb0"
+  },
+  {
+    "path": "native/patches-sperimentali/bd3-cli.patch",
+    "git_blob_verified": true,
+    "sha256": "f9a04146fdb1326cedecb85b097aa3f5455748c2a7f6e9203fd74f39db850b46"
+  },
+  {
+    "path": "native/patches/rpc-repack.patch",
+    "git_blob_verified": true,
+    "sha256": "7c5b8b96b2c190cf34fd593bcb9768005cc6985c4a8e4b6567229d1408829dbc"
+  },
+  {
+    "path": "native/patches/rpc-threadpool.patch",
+    "git_blob_verified": true,
+    "sha256": "c40cc44a0acb9ecc4cbb823d55800b60e51cdc17c4dd29dfcd35c911535ccf45"
+  },
+  {
+    "path": "tools/bd3eval.py",
+    "git_blob_verified": true,
+    "sha256": "56613449cdc32f52e348a4efa4854c5ae83d0bd292a5bc7fc5c60b542e093174"
+  },
+  {
+    "path": "tools/codeeval.py",
+    "git_blob_verified": true,
+    "sha256": "6e8768b22398d858963c3ca933622cc5ac519d4059555f9fe381e80be29f1ee2"
+  },
+  {
+    "path": "tools/d3.py",
+    "git_blob_verified": true,
+    "sha256": "45d7026f8e074856fdcea94cf360c2e53da72d91beda285f50a1082fb00f41b7"
+  },
+  {
+    "path": "tools/d3_rpc.py",
+    "git_blob_verified": true,
+    "sha256": "190eae4117426d4b1b48e5946533d474ca7361b9d6cb67f5c67dbc5bb8b49cd4"
+  },
+  {
+    "path": "tools/d3_solo.py",
+    "git_blob_verified": true,
+    "sha256": "6099ea0755d3d70bb31cfc06f0f2ebb73930349a1f6bce86bf60fd1493dfacf1"
+  },
+  {
+    "path": "tools/devbench.py",
+    "git_blob_verified": true,
+    "sha256": "99e22d30f41ac0a547804d2b57eedffddb72734892d2b26dfc0e7c56b004ffe9"
+  },
+  {
+    "path": "tools/lbench.py",
+    "git_blob_verified": true,
+    "sha256": "39a1e1c1e609be8bc61eed27f2d7275aaace2f5029c9fe72f4f46d69a82c6dc9"
+  },
+  {
+    "path": "tools/pcnode.py",
+    "git_blob_verified": true,
+    "sha256": "e3cc75a828842d5d0d14c0f9f8f9a32a5c9999ddc454fedc04655872c0516e2a"
+  },
+  {
+    "path": "tools/plan.py",
+    "git_blob_verified": true,
+    "sha256": "3c1d76eb3bfd41bb5930cfab28620486b3c363dd4e9f858f224d2f62f842d28f"
+  },
+  {
+    "path": "tools/prefillbench.py",
+    "git_blob_verified": true,
+    "sha256": "11bb0ed91cb56d9cbc70e21cc81245ba7e1d6b3581c86dc69b1f63bf7982a9c2"
+  },
+  {
+    "path": "tools/results-codeeval.jsonl",
+    "git_blob_verified": true,
+    "sha256": "05872c294ae479c7a40e9754605e836426a9aaa332afedc5febc73f1e3677a6e"
+  },
+  {
+    "path": "tools/results-ottimizzazione.jsonl",
+    "git_blob_verified": true,
+    "sha256": "07216958460cc8b07981980a629b81d66ba73b0f5bbb15935f0c0e427aed6134"
+  },
+  {
+    "path": "tools/results-prefill.jsonl",
+    "git_blob_verified": true,
+    "sha256": "5bc8df74317b9a8ef2e22ca71041fae24b5c24cd30f584098b73d1870e628ae3"
+  }
+]

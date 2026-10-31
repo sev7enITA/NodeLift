@@ -1,0 +1,560 @@
+{
+  "repository": "https://github.com/alex8819/DistAi",
+  "commit": "b1c17109498e87b3db99f8f23648d84483b68bb9",
+  "assessment_date": "2026-10-31",
+  "commits": [
+    {
+      "sha": "b1c17109498e87b3db99f8f23648d84483b68bb9",
+      "date": "2026-10-16T22:17:19Z",
+      "message": "Add step-by-step guide for running a 14B model on three phones over USB\n\n- README: enable USB debugging, install the APK, build the PC side, download the model, launch the cluster and generate from the dashboard.\n- tools/video14b.py: fall back to native/build-pc when build-x86c is missing; LLAMA_SERVER overrides the binary."
+    },
+    {
+      "sha": "af2919c05b847ff440b78a26c28cece3234bbd5d",
+      "date": "2026-10-16T22:05:36Z",
+      "message": "Add cluster view, coordinator stats, language switch and PC dashboard\n\n- App: ClusterView and CoordStats show per-node load and coordinator stats; Lang adds Italian/English UI.\n- tools/dashboard.py + dashboard.html: PC dashboard with real per-phone CPU/RAM and live chat stream.\n- tools/video14b.py: launches a 14B model split evenly over three phones via adb forward (serials from SERIAL_* env vars)."
+    },
+    {
+      "sha": "c97f5d4eadd7a6e5128bd375af36e3a46f8dd05a",
+      "date": "2026-10-16T20:47:12Z",
+      "message": "Add README banner and third-party license notice"
+    },
+    {
+      "sha": "566dca1012acfba84e2c2257dfb48088d443c793",
+      "date": "2026-10-16T20:32:58Z",
+      "message": "DistAI: one LLM across several Android phones (first public release)"
+    }
+  ],
+  "tree_entries": [
+    {
+      "path": ".gitattributes",
+      "git_blob_sha": "da05f2953c55e90f67ef565cb0b5a0f8163269f5",
+      "size": 206
+    },
+    {
+      "path": ".gitignore",
+      "git_blob_sha": "fb9836bc9dd6894d03908ba34ac3bdd28f997e0d",
+      "size": 226
+    },
+    {
+      "path": "LICENSE",
+      "git_blob_sha": "38a81e04eb3195ed4878f5202f6b65172f412b0b",
+      "size": 1076
+    },
+    {
+      "path": "NOTES.md",
+      "git_blob_sha": "64dd4b72f2654e935d359ae2ea5b926e3086543b",
+      "size": 11801
+    },
+    {
+      "path": "README.md",
+      "git_blob_sha": "b2d4e2192a636dada9d5a485f044cb9e59bd7ca9",
+      "size": 14456
+    },
+    {
+      "path": "ROADMAP.md",
+      "git_blob_sha": "38655bc7af464c0665b4de0fb1878a45a706585c",
+      "size": 6299
+    },
+    {
+      "path": "THIRD_PARTY_NOTICES.md",
+      "git_blob_sha": "59a77a732244061a7d7abf5bce3c2e1f1fba35ce",
+      "size": 1280
+    },
+    {
+      "path": "app/build.gradle.kts",
+      "git_blob_sha": "3573e11fb266908256acbd9faa027c8a708e2f49",
+      "size": 1016
+    },
+    {
+      "path": "app/src/main/AndroidManifest.xml",
+      "git_blob_sha": "3aa837623835286780502bb33ef34a2dd969cafd",
+      "size": 2274
+    },
+    {
+      "path": "app/src/main/assets/chat.html",
+      "git_blob_sha": "b32c5123d0070dabce5fa05eaa116740bab28248",
+      "size": 4594
+    },
+    {
+      "path": "app/src/main/java/com/distai/app/ChatActivity.kt",
+      "git_blob_sha": "0d3c2e3276a9273180aabd6efd09c3b3686b265b",
+      "size": 942
+    },
+    {
+      "path": "app/src/main/java/com/distai/app/Cluster.kt",
+      "git_blob_sha": "d34771d6e7b0b9a37ac44620909371f42de9cbcd",
+      "size": 13897
+    },
+    {
+      "path": "app/src/main/java/com/distai/app/ClusterView.kt",
+      "git_blob_sha": "2b19a08cbf2505d64c53862f3e616a79734aa3eb",
+      "size": 5772
+    },
+    {
+      "path": "app/src/main/java/com/distai/app/CoordStats.kt",
+      "git_blob_sha": "9db58c3481178ad3d1088b9d2b75d27873072d8a",
+      "size": 1446
+    },
+    {
+      "path": "app/src/main/java/com/distai/app/Discovery.kt",
+      "git_blob_sha": "7be25f40859fefb09a64b6a5c6ada1d0c92d76a4",
+      "size": 10505
+    },
+    {
+      "path": "app/src/main/java/com/distai/app/Gguf.kt",
+      "git_blob_sha": "a42747975a096885bbb8167693482ddbadfa7d29",
+      "size": 6323
+    },
+    {
+      "path": "app/src/main/java/com/distai/app/Keepalive.kt",
+      "git_blob_sha": "7e3b7cdbe755208a8330ac750377a6638aaa6d17",
+      "size": 2721
+    },
+    {
+      "path": "app/src/main/java/com/distai/app/Lang.kt",
+      "git_blob_sha": "3caac112cfbf0fb58572149ee53a8af248d5bf64",
+      "size": 571
+    },
+    {
+      "path": "app/src/main/java/com/distai/app/MainActivity.kt",
+      "git_blob_sha": "26e59a81f83cb1ac8ee3ae822fa6b8d5c64be168",
+      "size": 34651
+    },
+    {
+      "path": "app/src/main/java/com/distai/app/MemoryCleaner.kt",
+      "git_blob_sha": "76e798a2b784a4dbccdd595d6a8866aead78dca8",
+      "size": 3198
+    },
+    {
+      "path": "app/src/main/java/com/distai/app/ModelStore.kt",
+      "git_blob_sha": "c9c24ed807ba1fd1e6ba07b6841748332a5cd2af",
+      "size": 3368
+    },
+    {
+      "path": "app/src/main/java/com/distai/app/Native.kt",
+      "git_blob_sha": "d48548ce37fb4a2829183ea316cce1d85b6d8125",
+      "size": 5585
+    },
+    {
+      "path": "app/src/main/java/com/distai/app/NodeService.kt",
+      "git_blob_sha": "fac986e300ec6342ef168ff4ea4ae5ca000c25de",
+      "size": 21473
+    },
+    {
+      "path": "app/src/main/java/com/distai/app/NodeState.kt",
+      "git_blob_sha": "1ae0211e6546ebebbea09e52779fa31be3ad6d8f",
+      "size": 1986
+    },
+    {
+      "path": "app/src/main/java/com/distai/app/Router.kt",
+      "git_blob_sha": "648eef5ba8a87355318de2c97dbf8050d35630e6",
+      "size": 9908
+    },
+    {
+      "path": "app/src/main/java/com/distai/app/RpcBench.kt",
+      "git_blob_sha": "4167855433b76395555f9bc247187fd428316325",
+      "size": 8397
+    },
+    {
+      "path": "app/src/main/java/com/distai/app/SelfBench.kt",
+      "git_blob_sha": "a65a6db3450935d7cfcade8561eecf4e098f1634",
+      "size": 5659
+    },
+    {
+      "path": "app/src/main/java/com/distai/app/Speculative.kt",
+      "git_blob_sha": "47409456fe304576e00465a2d1f8e72da65463a1",
+      "size": 6079
+    },
+    {
+      "path": "app/src/main/java/com/distai/app/SplitPlan.kt",
+      "git_blob_sha": "135163dbc9c01083f4722fb01be24c098f7c6010",
+      "size": 11383
+    },
+    {
+      "path": "app/src/main/java/com/distai/app/StatusServer.kt",
+      "git_blob_sha": "d7a36a7577345c761370c4bedfcf89a2e975bfe7",
+      "size": 13493
+    },
+    {
+      "path": "app/src/main/java/com/distai/app/WorkerStats.kt",
+      "git_blob_sha": "efdae5cb601b04aedf06e987fbf8fd1531c5df12",
+      "size": 2686
+    },
+    {
+      "path": "app/src/main/jniLibs/arm64-v8a/libllamaserver_v8.so",
+      "git_blob_sha": "1e1952a40cd2783e49e3a3a06615f6a2dc278cc3",
+      "size": 10810296
+    },
+    {
+      "path": "app/src/main/jniLibs/arm64-v8a/libllamaserver_v82.so",
+      "git_blob_sha": "119e34c849ac30c870f459a2b8e0390cab7a8566",
+      "size": 10817944
+    },
+    {
+      "path": "app/src/main/jniLibs/arm64-v8a/libllamaserver_v86.so",
+      "git_blob_sha": "dee26372cdfcea158be094cd5e9fa2f6f2c125dc",
+      "size": 10741016
+    },
+    {
+      "path": "app/src/main/jniLibs/arm64-v8a/librpcserver_v8.so",
+      "git_blob_sha": "1dc80e97c4d0cc5b9a35a29fd08ab6f9ec92e540",
+      "size": 1626600
+    },
+    {
+      "path": "app/src/main/jniLibs/arm64-v8a/librpcserver_v82.so",
+      "git_blob_sha": "9a778f0a5661f9523dbe141b9bb63c92bb8ef42c",
+      "size": 1634264
+    },
+    {
+      "path": "app/src/main/jniLibs/arm64-v8a/librpcserver_v86.so",
+      "git_blob_sha": "446280ecf8d0b0da333efab55b4a880f9d8885dc",
+      "size": 1557352
+    },
+    {
+      "path": "app/src/main/res/drawable/card.xml",
+      "git_blob_sha": "c25983b734dbcc448e19292080f5728cf030aae4",
+      "size": 191
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_home.xml",
+      "git_blob_sha": "f57cd109b2c602316c092c24ba301dbf6d1e3b93",
+      "size": 339
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_launcher.xml",
+      "git_blob_sha": "a6c393b49fdc63646191b26f7b083ab47353b36d",
+      "size": 745
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_usb.xml",
+      "git_blob_sha": "a6ebfafb97c962ec5d3cca3a87c643f7dfeb31fb",
+      "size": 650
+    },
+    {
+      "path": "app/src/main/res/drawable/ic_wifi.xml",
+      "git_blob_sha": "6e2a77a674e9de3d01c44e47f08f3e13f5bf9a63",
+      "size": 490
+    },
+    {
+      "path": "app/src/main/res/layout/activity_main.xml",
+      "git_blob_sha": "87795e6fb54dc2712bae88836b26942b3ac678ed",
+      "size": 13324
+    },
+    {
+      "path": "app/src/main/res/values/styles.xml",
+      "git_blob_sha": "e06f905fabdceaed26c2e7002816e282be48caf6",
+      "size": 1299
+    },
+    {
+      "path": "app/src/main/res/xml/network_security.xml",
+      "git_blob_sha": "cec241f4fc61ff62ab3894e9a398165aa8ccaa25",
+      "size": 209
+    },
+    {
+      "path": "app/src/test/java/com/distai/app/SplitPlanTest.kt",
+      "git_blob_sha": "27b405bd4a9d277f48f3ab1be5627456f4c1ff6f",
+      "size": 5041
+    },
+    {
+      "path": "build.gradle.kts",
+      "git_blob_sha": "17e07a48043a883b3a3f7ca09e7bb5f7f88b11b0",
+      "size": 143
+    },
+    {
+      "path": "docs/banner.png",
+      "git_blob_sha": "397ecff8d5d44d96e07821a3efe8233c795673f9",
+      "size": 1636863
+    },
+    {
+      "path": "gradle.properties",
+      "git_blob_sha": "2430f7ad2eea8cb2f5f18dc918246e09626d8687",
+      "size": 100
+    },
+    {
+      "path": "gradle/wrapper/gradle-wrapper.jar",
+      "git_blob_sha": "1b33c55baabb587c669f562ae36f953de2481846",
+      "size": 43764
+    },
+    {
+      "path": "gradle/wrapper/gradle-wrapper.properties",
+      "git_blob_sha": "d4081da476bb3ee087bb538a0bb6718958af29a4",
+      "size": 253
+    },
+    {
+      "path": "gradlew",
+      "git_blob_sha": "23d15a9367071145e9c79bb4ddf879d1fbe78b5d",
+      "size": 8733
+    },
+    {
+      "path": "gradlew.bat",
+      "git_blob_sha": "db3a6ac207e507b0bc1635a9f2c18d3b174e682e",
+      "size": 2843
+    },
+    {
+      "path": "native/build-android.sh",
+      "git_blob_sha": "422c5113a473ba3cf10b92c9f241b6bc1a3eff87",
+      "size": 2861
+    },
+    {
+      "path": "native/build-diffusion-android.sh",
+      "git_blob_sha": "84128757585c5c41d8e9c52f28ba2ea9dc7730e2",
+      "size": 1644
+    },
+    {
+      "path": "native/build-pc.py",
+      "git_blob_sha": "b55ede0e64caca7734768ab92ef1e4022e09292b",
+      "size": 2975
+    },
+    {
+      "path": "native/cross-pi.sh",
+      "git_blob_sha": "92e0a580f8ee22c182edb2d87e305ab1adb59380",
+      "size": 1486
+    },
+    {
+      "path": "native/patches-sperimentali/README.md",
+      "git_blob_sha": "c36edc190ca56d28d2e9ad5873806577f50eca0d",
+      "size": 2020
+    },
+    {
+      "path": "native/patches-sperimentali/bd3-cli.patch",
+      "git_blob_sha": "8ec540ea7c7c4a3786e8a92dbfca0990a7c0ad9b",
+      "size": 9713
+    },
+    {
+      "path": "native/patches-sperimentali/rpc-stats.patch",
+      "git_blob_sha": "43c3379f947a0db5a4579e4d99dde7caee3a2d14",
+      "size": 2455
+    },
+    {
+      "path": "native/patches-sperimentali/vocab-subset.patch",
+      "git_blob_sha": "4a87320078107592f41cc1b0713a0e87637d389c",
+      "size": 8095
+    },
+    {
+      "path": "native/patches/rpc-repack.patch",
+      "git_blob_sha": "cae098cc7811719d7c9b82b74f3793e1e56200ce",
+      "size": 9792
+    },
+    {
+      "path": "native/patches/rpc-threadpool.patch",
+      "git_blob_sha": "68a591d8044162dad2cefb8e33694ad94b8a9707",
+      "size": 1969
+    },
+    {
+      "path": "native/unbuffer.c",
+      "git_blob_sha": "64b6b88e09d284cacc09b8b113a4f30f5a4aae13",
+      "size": 259
+    },
+    {
+      "path": "settings.gradle.kts",
+      "git_blob_sha": "3dc8b48362602b2fd2153e09c0fa0316853280e3",
+      "size": 279
+    },
+    {
+      "path": "tools/bd3eval.py",
+      "git_blob_sha": "8b911ec5026e38ca1d09555586409bfcd711d3f0",
+      "size": 2865
+    },
+    {
+      "path": "tools/bench.sh",
+      "git_blob_sha": "519f3801a6dae31bf8875fdd8657f54cd80c2913",
+      "size": 781
+    },
+    {
+      "path": "tools/cluster.py",
+      "git_blob_sha": "06c96d76b67ed1d8c7feabd761b14fdb339231c3",
+      "size": 3697
+    },
+    {
+      "path": "tools/codeeval.py",
+      "git_blob_sha": "e6e113dd16e2f2a37d242bb167e4445fa297afb4",
+      "size": 9755
+    },
+    {
+      "path": "tools/d3.py",
+      "git_blob_sha": "bac08b92c56c95a09f18b45cb05879a2203df538",
+      "size": 3052
+    },
+    {
+      "path": "tools/d3_rpc.py",
+      "git_blob_sha": "40f79d27b6feae4b85168f8f1baf22af0a6cca9f",
+      "size": 6147
+    },
+    {
+      "path": "tools/d3_solo.py",
+      "git_blob_sha": "c180a00ca27239b12e7f098c4401d455fea5c93c",
+      "size": 2530
+    },
+    {
+      "path": "tools/d3_t1.py",
+      "git_blob_sha": "bb0b8f9d33b26e2511eaa8435338bba885f8772e",
+      "size": 1736
+    },
+    {
+      "path": "tools/d3_t1b.py",
+      "git_blob_sha": "53394c688806bc60dd5f402729ebb4a2950381c2",
+      "size": 1078
+    },
+    {
+      "path": "tools/dashboard.html",
+      "git_blob_sha": "2edc8589f4c6348ca43526a645da917ed0ffbd0d",
+      "size": 7134
+    },
+    {
+      "path": "tools/dashboard.py",
+      "git_blob_sha": "097eb3ed793490871fca3b8fd50f36846b362443",
+      "size": 3183
+    },
+    {
+      "path": "tools/devbench.py",
+      "git_blob_sha": "891670f756e4ae1f0f5ef732d462c23812fd04ba",
+      "size": 13987
+    },
+    {
+      "path": "tools/distrun.py",
+      "git_blob_sha": "0464143e03fb04a94e8b58381db129522746ed95",
+      "size": 3661
+    },
+    {
+      "path": "tools/echo_cli.py",
+      "git_blob_sha": "9ae105a3b108425c352f1d3b81bb939fc2c33d3c",
+      "size": 528
+    },
+    {
+      "path": "tools/echosrv.c",
+      "git_blob_sha": "7ebba79598f54fccf2b79d929dd2d858bb7c9709",
+      "size": 847
+    },
+    {
+      "path": "tools/latsweep.sh",
+      "git_blob_sha": "17e602709a2e0b5d901d4c8a5eccba36f991bb61",
+      "size": 869
+    },
+    {
+      "path": "tools/lbench.py",
+      "git_blob_sha": "1fea0c391cbe718291e121e08cfd8b82bb61c773",
+      "size": 9869
+    },
+    {
+      "path": "tools/multibench.py",
+      "git_blob_sha": "9c64a22c8c82dbf759b354e415ef37f3ac466fdf",
+      "size": 1156
+    },
+    {
+      "path": "tools/parbench.py",
+      "git_blob_sha": "f768af51784f166d7e2b6025f151362ad9bc17dd",
+      "size": 1059
+    },
+    {
+      "path": "tools/pc.sh",
+      "git_blob_sha": "fa052c04c9e3abab048ea952ac2b66aee551b850",
+      "size": 426
+    },
+    {
+      "path": "tools/pcnode.py",
+      "git_blob_sha": "c1ead9ef29500d93814815c5b6aef0f096633465",
+      "size": 41609
+    },
+    {
+      "path": "tools/pcrun.sh",
+      "git_blob_sha": "803d4935f34c8d8216b84950138c7c7579f6f413",
+      "size": 685
+    },
+    {
+      "path": "tools/pi.sh",
+      "git_blob_sha": "2d380a376ba87f13ed7ff413f78d82590583a172",
+      "size": 496
+    },
+    {
+      "path": "tools/plan.py",
+      "git_blob_sha": "b157b694072a01e26b9733d3f783338b814ee061",
+      "size": 8310
+    },
+    {
+      "path": "tools/prefillbench.py",
+      "git_blob_sha": "2ebb857fce6943dca2cbb6f2f7a47ad8cc8136d6",
+      "size": 3128
+    },
+    {
+      "path": "tools/results-codeeval.jsonl",
+      "git_blob_sha": "83c4e2729244b24b93af83fa2e216e1c51880573",
+      "size": 18629
+    },
+    {
+      "path": "tools/results-ottimizzazione.jsonl",
+      "git_blob_sha": "b8140cd017ba3e2c5ec8370b7f3b5876a4807556",
+      "size": 36262
+    },
+    {
+      "path": "tools/results-prefill.jsonl",
+      "git_blob_sha": "2d26cbed19b632a1e2d1f99d58622e8818c2e841",
+      "size": 10404
+    },
+    {
+      "path": "tools/rpcbench.py",
+      "git_blob_sha": "c5dbee5e77ab50a280fc35f0d10808ecc7a6dedb",
+      "size": 6004
+    },
+    {
+      "path": "tools/rpcrelay.py",
+      "git_blob_sha": "9b097bb611214de070f3f991295f59919a6e503a",
+      "size": 2320
+    },
+    {
+      "path": "tools/sdc_prompt.py",
+      "git_blob_sha": "c661195d04c7a98f376a0f7155497568fd74b871",
+      "size": 395
+    },
+    {
+      "path": "tools/sot.py",
+      "git_blob_sha": "b8b0de4fb935f08365e218a50cd883827df80fae",
+      "size": 17255
+    },
+    {
+      "path": "tools/sotbench.py",
+      "git_blob_sha": "b5dce883ac62b7f10dff6a8481617fe7f67dc773",
+      "size": 4531
+    },
+    {
+      "path": "tools/split3b.sh",
+      "git_blob_sha": "0b217c334422e450923e6ece13db3b6c8a993245",
+      "size": 647
+    },
+    {
+      "path": "tools/srv.sh",
+      "git_blob_sha": "901ccfcd40b6b149be1b2c296fa5ba66aaddf61a",
+      "size": 451
+    },
+    {
+      "path": "tools/tokbench.py",
+      "git_blob_sha": "940941b92b1cc6fb7a484183018b34ff1b3f9a17",
+      "size": 2290
+    },
+    {
+      "path": "tools/tput.py",
+      "git_blob_sha": "d8efcacfdb09db2ebb4b5878d0bdfb19b97f903e",
+      "size": 1869
+    },
+    {
+      "path": "tools/udpkeep.py",
+      "git_blob_sha": "c17c81559d4f95315508a1fcac26528291ce8fae",
+      "size": 363
+    },
+    {
+      "path": "tools/ui.py",
+      "git_blob_sha": "502d2cfcca70459dac4a6c3ab4bc6d84c98542d4",
+      "size": 1196
+    },
+    {
+      "path": "tools/video14b.py",
+      "git_blob_sha": "9a79f883e376acee9d3028a6d90958260fa9b574",
+      "size": 2249
+    },
+    {
+      "path": "tools/vocabsub.py",
+      "git_blob_sha": "8f041181a616eb11d43f2ffc09bf3ae0a18cb6d1",
+      "size": 5844
+    }
+  ],
+  "scope": "Selected text sources retrieved read-only through GitHub connector. No upstream binaries or generated model code executed."
+}

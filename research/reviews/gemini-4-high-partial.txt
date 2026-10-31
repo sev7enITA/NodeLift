@@ -1,0 +1,618 @@
+Conversazione con Gemini
+Hai detto Assessment tecnico indipendente, in italiano, al 31 ottobre 2026. Non implementare codice e non inve…
+
+Assessment tecnico indipendente, in italiano, al 31 ottobre 2026. Non implementare codice e non inventare benchmark. Progetto ExpandMyHW: usare computer + smartphone/tablet Android e iOS locali come nodi per LLM Hugging Face, tramite modulo/runtime interoperabile con Ollama, LM Studio e altri client. Obiettivo PRIORITARIO esplicito: velocità superiore al computer da solo, oltre a poter eseguire modelli più grandi. Hardware preciso ancora da identificare. L'utente ipotizza Wi-Fi più veloce; confrontare seriamente Wi-Fi 6/6E/7, USB networking/tethering/forwarding e Ethernet via adattatore, throughput utile, RTT p50/p95, jitter, airtime condiviso e termica. Non confondere PHY teorico e misure. Non chiamare RAM remota equivalente alla RAM locale.
+
+Fonti primarie già individuate da verificare: https://github.com/exo-explore/exo e PLATFORMS.md (supporto attuale non uguale ai vecchi claim iPhone/Android); https://github.com/OpenCPIL/prima.cpp e https://arxiv.org/abs/2504.08791v3; https://github.com/ggml-org/llama.cpp/tree/master/tools/rpc (README avverte proof-of-concept fragile/insecure); https://github.com/b4rtaz/distributed-llama ; https://localai.io/docs/features/distribute/index.print.html ; https://github.com/ShintoChakkiath/Silica-Cluster-Decentralized-Mobile-AI/ ; LinguaLinked https://arxiv.org/abs/2312.00388 ; Petals; https://lmstudio.ai/docs/lmlink (remote serving non dimostra model sharding).
+
+Ipotesi da criticare: layer sharding contiguo con pesi e KV cache residenti sul nodo aumenta capacità ma per una singola sequenza decode i tempi degli stadi si sommano. Pipeline batching può migliorare throughput multiutente senza migliorare latency single-user. Tensor parallel richiede collectives frequenti. Remote paging dei pesi via Wi-Fi rischia disastro. Draft piccolo su telefono + target grande su host con speculative decoding esatto potrebbe accelerare ma deve battere anche draft locale; richiede backend/API di verifica token, non basta API chat. Prefill/decode disaggregato paga trasferimento KV. Routing di richieste indipendenti può aiutare throughput ma non il modello singolo. Modelli MoE non equivalgono a tutti i pesi attivi ma restano pesi residenti/routing/KV da gestire.
+
+Esamina: (1) miglior architettura per vero speedup e condizione matematica di break-even; (2) precedenti e novità difendibile; (3) limiti reali Android/iOS foreground/background, memoria, Metal/Vulkan/CPU/NPU e portabilità; (4) compatibilità API vs plugin nativo Ollama/LM Studio, niente promesse non documentate; (5) benchmark riproducibili: stesso modello/hash/quant/context/backend, host ottimizzato, cold vs warm, TTFT, TPOT p50/p95, tokens/s singolo vs aggregato, energia, memoria, termica dopo 30 minuti, disconnessione; (6) go/no-go e rischi. Dai raccomandazione motivata, fonti primarie e indica ogni incertezza. Massimo 1500 parole. Nessun hardware benchmark è stato eseguito. Il consenso fra modelli non prova prestazioni.
+
+Ulteriore precedente appena verificato: https://github.com/alex8819/DistAi : README dichiara Android+PC con llama.cpp RPC, speed regression per singola chat e maggior throughput su più utenti; numeri degli autori non replicati. Valuta anche questo.
+
+Gemini ha detto
+Hai interrotto la risposta
+Hai detto La risposta precedente risulta interrotta senza contenuto. Esegui ora l’assessment richiesto nel mes…
+
+La risposta precedente risulta interrotta senza contenuto. Esegui ora l’assessment richiesto nel messaggio precedente con Gemini 4 e ragionamento Alta. Il computer osservato è Apple M3 Max con 64 GiB RAM, ma i telefoni non sono ancora identificati. Priorità: accelerare una singola chat rispetto al Mac ottimizzato, mantenendo lo stesso modello target e qualità. Includi anche BGContinuedProcessingTask di iOS 26 e successivi, senza assumere che renda possibile un daemon GPU permanente. Nessun benchmark locale eseguito: separa formule, ipotesi, risultati pubblicati e misure mancanti.
+
+Gemini ha detto
+
+L’obiettivo primario di ExpandMyHW — ottenere uno speedup netto sulla singola sessione di chat (TPOT single-stream, 
+𝐵
+=
+1
+B=1) rispetto a un Apple M3 Max (64 GiB RAM) ottimizzato, mantenendo invariati modello e qualità — porta a un verdetto architetturale immediato: NO-GO per il calcolo distribuito quando il modello risiede interamente nei 64 GiB del Mac; GO condizionato esclusivamente per l'espansione di capacità (Out-of-Core evitato) tramite Pipeline Parallelism cablato, oppure per Speculative Decoding disaggregato solo se l'host è talmente saturo di VRAM da non poter ospitare un modello draft locale.
+
+La memoria remota su nodi mobile non è mai equivalente alla RAM locale: una Unified Memory su M3 Max offre 300–400 GB/s di banda con latenze in nanosecondi; un link verso smartphone introduce un collo di bottiglia di 3 ordini di grandezza inferiore in banda (0.1–0.3 GB/s) e 4-5 ordini superiore in latenza (0.3–10 ms).
+
+1. Architettura, Fisica dell'Inferenza e Condizione di Break-Even
+
+La fase di decode autoregressivo (
+𝐵
+=
+1
+B=1) è strettamente memory-bandwidth bound. Per ogni token generato, un modello denso di dimensione 
+𝑆
+weights
+S
+weights
+	​
+
+ deve leggere tutti i pesi dalla memoria. Sul solo M3 Max, il tempo per token (TPOT) quando il modello entra in RAM è:
+
+𝑇
+Mac
+=
+𝑆
+weights
+𝐵
+𝑊
+Mac
++
+𝑇
+overhead_Mac
+T
+Mac
+	​
+
+=
+BW
+Mac
+	​
+
+S
+weights
+	​
+
+	​
+
++T
+overhead_Mac
+	​
+
+A. Modello interamente residente nei 64 GiB del Mac (es. 30B–70B Q4, 
+≤
+48
+ GiB
+≤48 GiB utili)
+
+Layer Sharding Contiguo (Pipeline Parallelism, PP): Per una singola sequenza (
+𝐵
+=
+1
+B=1), l'esecuzione tra gli stadi è strettamente sequenziale. I tempi di elaborazione si sommano, non si parallelizzano. Spostando una frazione 
+𝛼
+∈
+(
+0
+,
+1
+)
+α∈(0,1) dei layer su un telefono con banda 
+𝐵
+𝑊
+Phone
+<
+𝐵
+𝑊
+Mac
+BW
+Phone
+	​
+
+<BW
+Mac
+	​
+
+ (tipicamente 30–60 GB/s su flagship mobile contro i 300–400 GB/s dell'M3 Max), il nuovo tempo di step è:
+
+𝑇
+PP
+=
+(
+1
+−
+𝛼
+)
+𝑇
+Mac
++
+𝛼
+𝑆
+weights
+𝐵
+𝑊
+Phone
++
+2
+⋅
+RTT
+link
++
+2
+⋅
+𝑆
+act
+𝐵
+𝑊
+link
+T
+PP
+	​
+
+=(1−α)T
+Mac
+	​
+
++α
+BW
+Phone
+	​
+
+S
+weights
+	​
+
+	​
+
++2⋅RTT
+link
+	​
+
++
+BW
+link
+	​
+
+2⋅S
+act
+	​
+
+	​
+
+
+Condizione di speedup (
+𝑇
+PP
+<
+𝑇
+Mac
+T
+PP
+	​
+
+<T
+Mac
+	​
+
+):
+
+𝛼
+𝑆
+weights
+(
+1
+𝐵
+𝑊
+Mac
+−
+1
+𝐵
+𝑊
+Phone
+)
+>
+2
+⋅
+RTT
+link
++
+2
+⋅
+𝑆
+act
+𝐵
+𝑊
+link
+αS
+weights
+	​
+
+(
+BW
+Mac
+	​
+
+1
+	​
+
+−
+BW
+Phone
+	​
+
+1
+	​
+
+)>2⋅RTT
+link
+	​
+
++
+BW
+link
+	​
+
+2⋅S
+act
+	​
+
+	​
+
+
+Poiché 
+𝐵
+𝑊
+Phone
+<
+𝐵
+𝑊
+Mac
+BW
+Phone
+	​
+
+<BW
+Mac
+	​
+
+, il membro di sinistra è negativo, mentre il membro di destra (latenza di rete) è strettamente positivo. La disuguaglianza è matematicamente impossibile. Il PP su nodi più lenti degrada sempre la latenza single-user. Il pipeline batching (micro-batch) migliora il throughput aggregato multi-utente, ma non riduce il TPOT della singola chat.
+
+Tensor Parallelism (TP): Partiziona le matrici intra-layer, ma richiede due operazioni All-Reduce per ogni blocco Transformer (
+2
+𝐿
+2L sincronizzazioni per token,es. 160 per un 70B a 80 layer). Anche su cavo USB/Ethernet con 
+RTT
+=
+0.5
+ ms
+RTT=0.5 ms, il solo costo di sincronizzazione aggiunge 
+160
+×
+0.5
+ ms
+=
+80
+ ms/token
+160×0.5 ms=80 ms/token di puro stallo di rete, distruggendo il TPOT del Mac.
+
+Speculative Decoding Disaggregato (Draft su Phone, Target su Mac): Mantiene la distribuzione esatta del modello target. Sia 
+𝛾
+γ il numero di token proposti dal draft, 
+𝛽
+∈
+[
+0
+,
+1
+]
+β∈[0,1] il tasso medio di accettazione (che produce 
+𝜇
+=
+1
+−
+𝛽
+𝛾
++
+1
+1
+−
+𝛽
+μ=
+1−β
+1−β
+γ+1
+	​
+
+ token validi per ciclo), e 
+𝑇
+verify
+(
+𝛾
+)
+≈
+𝜂
+𝑇
+Mac
+T
+verify
+	​
+
+(γ)≈ηT
+Mac
+	​
+
+ (con 
+𝜂
+≈
+1.1
+–
+1.3
+η≈1.1–1.3 su GPU grazie al calcolo matriciale in batch sui 
+𝛾
+γ token).
+
+Confronto con Target Solo: Speedup se 
+𝛾
+𝑇
+Draft_Phone
++
+RTT
+link
++
+𝑇
+verify
+(
+𝛾
+)
+<
+𝜇
+𝑇
+Mac
+γT
+Draft_Phone
+	​
+
++RTT
+link
+	​
+
++T
+verify
+	​
+
+(γ)<μT
+Mac
+	​
+
+.
+
+Confronto con Draft Locale sul Mac: Poiché l'obiettivo è battere il Mac ottimizzato, lo schema remoto deve battere lo Speculative Decoding eseguito interamente sull'M3 Max:
+
+𝛾
+𝑇
+Draft_Phone
++
+RTT
+link
+<
+𝛾
+𝑇
+Draft_Mac
+γT
+Draft_Phone
+	​
+
++RTT
+link
+	​
+
+<γT
+Draft_Mac
+	​
+
+
+Poiché 
+𝑇
+Draft_Mac
+≪
+𝑇
+Draft_Phone
+T
+Draft_Mac
+	​
+
+≪T
+Draft_Phone
+	​
+
+ e 
+RTT
+link
+>
+0
+RTT
+link
+	​
+
+>0, il draft remoto perde sempre contro il draft locale, a meno che i 64 GiB del Mac siano saturi al 100% dal modello target + KV cache, impedendo fisicamente di allocare anche solo 0.5–1 GiB per il draft locale.
+
+Prefill/Decode Disaggregato: Trasferire la KV cache dal nodo di prefill a quello di decode (es. centinaia di MB per contesti medi) su link da 100–300 MB/s aggiunge secondi interi al TTFT, risultando controproducente per singola chat.
+
+Modelli MoE (es. Mixtral, DeepSeek, Qwen-MoE): Attivano solo una frazione dei parametri per token (es. 2–8 expert su 64), riducendo il carico di lettura a 
+𝑆
+active
+≪
+𝑆
+total
+S
+active
+	​
+
+≪S
+total
+	​
+
+. Tuttavia, tutti gli expert devono risiedere in RAM. Se gli expert freddi sono sui telefoni, il routing dinamico per-layer su rete ricade nella trappola di latenza del Tensor Parallelism (
+𝐿
+L round-trip per token).
+
+B. Modello che eccede la VRAM del Mac (
+>
+50
+–
+54
+ GiB
+>50–54 GiB, es. 70B Q6/Q8 o 100B+ Q4)
+
+Quando il modello sfora il limite di wired memory di macOS, il sistema ricorre allo swap su SSD (
+𝐵
+𝑊
+SSD
+≈
+5
+–
+7
+ GB/s
+BW
+SSD
+	​
+
+≈5–7 GB/s) o al paging remoto.
+
+Remote Paging dei pesi via Wi-Fi: Disastro garantito. Trasferire 10 GB di pesi mancanti per ogni singolo token generato su Wi-Fi (es. 100 MB/s reali) richiederebbe 100 secondi per token.
+
+Layer Sharding Contiguo con Pesi Residenti: Se i layer in eccesso (
+Δ
+𝑆
+ΔS) vengono fissati stabilmente nella RAM dei telefoni (evitando lo swap su SSD del Mac), la condizione di break-even rispetto al Mac in thrashing su SSD diventa:
+
+Δ
+𝑆
+𝐵
+𝑊
+Phone
++
+2
+⋅
+RTT
+link
++
+2
+⋅
+𝑆
+act
+𝐵
+𝑊
+link
+<
+Δ
+𝑆
+𝐵
+𝑊
+SSD_swap
++
+𝑇
+OS_pagefault
+BW
+Phone
+	​
+
+ΔS
+	​
+
++2⋅RTT
+link
+	​
+
++
+BW
+link
+	​
+
+2⋅S
+act
+	​
+
+	​
+
+<
+BW
+SSD_swap
+	​
+
+ΔS
+	​
+
++T
+OS_pagefault
+	​
+
+
+Poiché 
+𝐵
+𝑊
+Phone
+BW
+Phone
+	​
+
+ (30–60 GB/s in RAM mobile) supera nettamente 
+𝐵
+𝑊
+SSD_swap
+BW
+SSD_swap
+	​
+
+ (5–7 GB/s), qui risiede l'unico vero speedup single-chat dimostrabile: trasformare un workload out-of-core (SSD-bound sul Mac) in un workload in-memory distribuito (RAM-bound tra Mac e telefoni).
+
+2. Analisi dei Trasporti Fisici (Misure vs PHY Teorico)
+
+L'ipotesi che il Wi-Fi sia il mezzo più veloce confonde il data rate PHY teorico (es. 2.4–5.8 Gbps in Wi-Fi 6E/7) con il throughput applicativo TCP/UDP e ignora il tail latency (RTT p95/p99), che governa gli stalli sincroni nella generazione token.
+
+Mezzo di Trasporto	Throughput Utile (Goodput)	RTT p50	RTT p95 / Jitter	Limiti Fisici, Protocollo e Termica
+Wi-Fi 6 / 6E / 7	300 – 1400 Mbps (37 – 175 MB/s)	1.5 – 4.0 ms	8 – 25+ ms (Alto jitter)	Half-duplex, contesa CSMA/CA, airtime condiviso, scansioni background OS (es. AWDL/AirDrop su Apple causano spike >20 ms), alto consumo modem RF e throttling termico.
+USB Networking / ADB / usbmuxd (USB 3.x)	1500 – 3800 Mbps (185 – 475 MB/s)	0.25 – 0.6 ms	0.5 – 1.2 ms (Minimo)	Punto-punto dedicato, full-duplex, zero contesa RF. Attenzione: molti smartphone economici espongono solo USB 2.0 sul connettore Type-C (
+≈35 MB/s max). Alimentazione continua (carica batteria = calore aggiuntivo da gestire).
+Ethernet via Adattatore USB-C (1GbE / 2.5GbE)	900 – 2300 Mbps (110 – 285 MB/s)	0.35 – 0.8 ms	0.7 – 1.5 ms (Molto basso)	Determinismo elevato via switch locale, disaccoppia la ricarica se si usano splitter PD controllati, riduce il calore del modem RF.
+
+Verdetto Trasporto: Per inferenza sincrona, USB 3.x / Thunderbolt e Ethernet via adattatore battono nettamente il Wi-Fi non per il picco di banda, ma perché abbattono l'RTT p95 di un ordine di grandezza.
+
+3. Verifica delle Fonti Primarie e Stato dell'Arte (al 31 Ottobre 2026)
+
+L'analisi dei repository e della letteratura citata conferma i limiti strutturali:
+
+alex8819/DistAi: Usa llama.cpp RPC tra PC e Android. Il README degli autori ammette esplicitamente una regressione di velocità sulla singola chat rispetto al PC singolo, giustificando il sistema solo per modelli che non entrano nella VRAM del PC o per throughput aggregato su richieste concorrenti (numeri degli autori non replicati indipendentemente).
+
+ggml-org/llama.cpp/tree/master/tools/rpc: Il README ufficiale avverte che rpc-server è un proof-of-concept fragile, privo di sicurezza e autenticazione, progettato per test interni su reti fidate, con serializzazione diretta di tensori e senza gestione di fault tolerance.
+
+exo-explore/exo (PLATFORMS.md): Nonostante vecchi claim promozionali su cluster con iPhone/Android, la documentazione tecnica attuale supporta attivamente macOS (MLX/tinygrad) e Linux; il supporto iOS/Android non è mantenuto come target stabile di produzione.
+
+OpenCPIL/prima.cpp (arXiv:2504.08791v3): Introduce il pipelined-ring parallelism con prefetching per caricare modelli fino a 70B su cluster domestici eterogenei (CPU/GPU/Mobile) usando mmap e riducendo la pressione di memoria. Mitiga l'out-of-core, ma non batte un singolo nodo dotato di sufficiente VRAM ad alta banda.
+
+b4rtaz/distributed-llama: Implementa Tensor Parallelism puro con sincronizzazione socket custom. Richiede nodi omogenei e rete cablata; su Wi-Fi o nodi asimmetrici (M3 Max + telefono) l'M3 Max passa il 90% del tempo in busy-wait attendendo il nodo mobile.
+
+LinguaLinked (arXiv:2312.00388) e Silica-Cluster: Dimostrano esecuzione decentralizzata su dispositivi Android per modelli che non entrano in un singolo telefono, ma i throughput assoluti restano frazioni di ciò che un M3 Max genera da solo.
+
+Petals: Progettato per pipeline parallelism su WAN/Internet; l'alta latenza per singolo token è compensata solo dal batching massivo in scenari multi-utente.
+
+LocalAI (Distribute) e LM Studio (lmlink): LocalAI supporta worker P2P (llama.cpp RPC) o routing di richieste. LM Studio (lmlink) è unicamente un tunnel crittografato per remote serving API tra istanze; non esegue né supporta alcuno sharding o calcolo distribuito di un singolo modello.
+
+Novità difendibile per ExpandMyHW: Non risiede nel layer sharding generico (già coperto da prima.cpp e DistAi), ma in un Orchestratore Ibrido Consapevole della Topologia che: (1) usa Pinned Spillover Sharding via USB/Ethernet solo per la frazione 
+Δ
+𝑆
+ΔS che eccede la VRAM del Mac; (2) implementa Speculative Decoding Disaggregato con verifica a livello di logit via trasporto USB raw quando l'host è a zero margine di memoria.
+
+4. Limiti Reali Mobile (Android / iOS 26+), Backend e Termica
+
+I dispositivi mobili non sono server Linux:
+
+iOS e BGContinuedProcessingTask (iOS 26+): Introdotto per permettere il completamento in background di task avviati esplicitamente dall'utente (es. rendering o esportazione con progresso visibile su Live Activities), non trasforma un iPhone in un daemon di calcolo permanente. Il sistema operativo impone limiti temporali stringenti, revoca l'accesso alla GPU Metal se il sistema rileva contesa con la UI o pressione termica, e termina il processo se supera i tetti di memoria per singola app (os_proc_available_memory(), che anche su iPhone/iPad Pro con 8–16 GB di RAM blocca le allocazioni singole ben prima della capacità fisica, tipicamente attorno a 4–6 GB a seconda dell'entitlement increased-memory-limit).
+
+Android: Più permissivo tramite Foreground Services (specialUse
+
+Il limite verrà reimpostato alle ore 5:45 PM
+Il limite verrà reimpostato alle ore 5:45 PM
+Visualizza utilizzo
+Esegui l'upgrade
+
+
+
+
+Flash-Lite
+
+Gemini è un'AI e può fare errori, anche in merito a persone. La tua privacy e Gemini
+Si apre in una nuova finestra
