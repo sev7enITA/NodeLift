@@ -5,7 +5,7 @@ import time
 
 def chat(handler, engine, body):
     allowed={'model','messages','temperature','n','top_p','max_tokens','max_completion_tokens',
-             'stream','nodelift_mode','nodelift_node_id','nodelift_draft_k','nodelift_remote_timeout_ms',
+             'stream','nodelift_mode','nodelift_node_id','nodelift_draft_k','nodelift_remote_timeout_ms','nodelift_draft_policy',
              'presence_penalty','frequency_penalty'}
     unknown=set(body)-allowed
     if unknown:raise ValueError('parameters not qualified: '+', '.join(sorted(unknown)))
@@ -23,6 +23,7 @@ def chat(handler, engine, body):
     if not isinstance(messages,list):raise ValueError('messages required')
     run_id=engine.start({'messages':messages,'mode':body.get('nodelift_mode','host'),
                          'node_id':body.get('nodelift_node_id'),'draft_k':body.get('nodelift_draft_k',4),
+                         'draft_policy':body.get('nodelift_draft_policy','fixed'),
                          'remote_timeout_ms':body.get('nodelift_remote_timeout_ms',30000),
                          'max_tokens':body.get('max_completion_tokens',body.get('max_tokens',128))})['run_id']
     created=int(time.time());sent='';deadline=time.monotonic()+300;last_event=time.monotonic()

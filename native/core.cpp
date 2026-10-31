@@ -32,7 +32,9 @@ struct Engine {
     std::unique_ptr<llama_context, decltype(&llama_free)> ctx{nullptr, llama_free};
     const llama_vocab * vocab = nullptr;
     tokens cached;
-    std::vector<float> next;
+    // This engine is greedy-only. Retain the argmax, not a full vocabulary
+    // buffer that would be copied and scanned again before every token.
+    llama_token next = -1;
     std::string fingerprint;
     int nctx = 0;
 
@@ -72,7 +74,7 @@ struct Engine {
         for (auto b:bytes) {value+=hex[b>>4];value+=hex[b&15];} return value;
     }
     json load(const json & req) {
-        ctx.reset(); model.reset(); cached.clear();next.clear();vocab=nullptr;
+        ctx.reset(); model.reset(); cached.clear();next=-1;vocab=nullptr;
         nctx=req.value("n_ctx",2048); int threads=req.value("threads",4),gpu=req.value("gpu_layers",0);
         require(nctx>=256 && nctx<=8192 && threads>=1 && threads<=16 && gpu>=0 && gpu<=999,"invalid model limits");
         std::call_once(backend_once,[]{llama_backend_init();});
@@ -89,7 +91,7 @@ struct Engine {
         return {{"tokenizer_fingerprint",fingerprint},{"vocab_size",llama_vocab_n_tokens(vocab)},
                 {"n_ctx",llama_n_ctx(ctx.get())},{"gpu_layers_requested",gpu},{"runtime",llama_version()}};
     }
-    void reset() { llama_memory_clear(llama_get_memory(ctx.get()),true);cached.clear();next.clear(); }
+    void reset() { llama_memory_clear(llama_get_memory(ctx.get()),true);cached.clear();next=-1; }
     std::vector<llama_token> decode(const tokens & input, bool all) {
         check(); valid(input); require(!input.empty() && input.size()<=512,"invalid batch");
         require(cached.size()+input.size()<=size_t(nctx),"context limit reached");
@@ -103,17 +105,17 @@ struct Engine {
         cached.insert(cached.end(),input.begin(),input.end());
         std::vector<llama_token> choices;
         if(all) for(int i=0;i<int(input.size());++i) choices.push_back(best(llama_get_logits_ith(ctx.get(),i)));
-        auto last=llama_get_logits_ith(ctx.get(),-1);require(last,"missing next logits");
-        next.assign(last,last+llama_vocab_n_tokens(vocab));return choices;
+        next=all ? choices.back() : best(llama_get_logits_ith(ctx.get(),-1));
+        return choices;
     }
     void sync(const tokens & prefix) {
         check(); valid(prefix);require(!prefix.empty() && prefix.size()<size_t(nctx),"prefix must be nonempty and leave context room");
-        if(prefix==cached && !next.empty())return;
+        if(prefix==cached && next>=0)return;
         size_t keep=0;while(keep<prefix.size() && keep<cached.size() && prefix[keep]==cached[keep])++keep;
         // Re-evaluate the last retained token to recover the correct next-token logits.
-        if(keep>0 && (keep<cached.size() || keep==prefix.size() || next.empty()))--keep;
+        if(keep>0 && (keep<cached.size() || keep==prefix.size() || next<0))--keep;
         if(keep<cached.size() && !llama_memory_seq_rm(llama_get_memory(ctx.get()),0,int(keep),-1)) {reset();keep=0;}
-        cached.resize(keep);next.clear();
+        cached.resize(keep);next=-1;
         while(keep<prefix.size()) {
             size_t end=std::min(keep+size_t(512),prefix.size());
             decode(tokens(prefix.begin()+keep,prefix.begin()+end),false);keep=end;
@@ -122,7 +124,7 @@ struct Engine {
     tokens draft(const tokens & prefix,int count) {
         require(count>=1 && count<=512,"invalid draft budget");sync(prefix);tokens output;
         for(int i=0;i<count && cached.size()<size_t(nctx);++i) {
-            check();auto id=best(next.data());output.push_back(id);decode({id},false);
+            check();require(next>=0,"missing next token");auto id=next;output.push_back(id);decode({id},false);
             if(llama_vocab_is_eog(vocab,id))break;
         } return output;
     }
@@ -135,7 +137,7 @@ struct Engine {
         size_t keep=0;while(keep<before.size() && keep<cached.size() && before[keep]==cached[keep])++keep;
         if(keep<cached.size()) {
             if(!llama_memory_seq_rm(llama_get_memory(ctx.get()),0,int(keep),-1)){reset();keep=0;}
-            cached.resize(keep);next.clear();
+            cached.resize(keep);next=-1;
         }
         while(keep<before.size()) {size_t end=std::min(keep+size_t(512),before.size());decode(tokens(before.begin()+keep,before.begin()+end),false);keep=end;}
         tokens batch{prefix.back()};batch.insert(batch.end(),proposal.begin(),proposal.end());

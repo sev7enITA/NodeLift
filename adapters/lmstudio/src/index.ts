@@ -19,7 +19,8 @@ export async function generate(ctl:GeneratorController,chat:Chat) {
   const response=await fetch(`http://127.0.0.1:${global.get("port")}/v1/chat/completions`,{
     method:"POST",redirect:"error",signal,headers:{"Content-Type":"application/json","Authorization":`Bearer ${key}`},
     body:JSON.stringify({model:"nodelift",messages,temperature:0,stream:true,max_tokens:config.get("maxTokens"),
-      nodelift_mode:mode,nodelift_node_id:node || null,nodelift_draft_k:config.get("draftK")})});
+      nodelift_mode:mode,nodelift_node_id:node || null,nodelift_draft_k:config.get("draftK"),
+      nodelift_draft_policy:config.get("draftPolicy")})});
   await consumeStream(response,text=>ctl.fragmentGenerated(text),signal);
 }
 

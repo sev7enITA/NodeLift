@@ -24,7 +24,8 @@ let clientRevealTimer;
 let clientKeyVisible = false;
 const configFields = [['target-model','target_model'],['draft-model','draft_model'],['context-size','n_ctx'],['threads','threads'],['gpu-layers','gpu_layers']];
 const sessionMessage = 'Questa scheda non ha una sessione NodeLift valida. Sul Mac apri scripts/open-dashboard.command dalla cartella del progetto per riaprire la dashboard con accesso. Non serve reinstallare l’app sul telefono.';
-const modeNames = {host: 'Solo computer', local_draft: 'Proposte locali', remote_draft: 'Proposte dal telefono'};
+const modeNames = {host: 'Solo computer', local_draft: 'Proposte locali', remote_draft: 'Proposte dal telefono', lookup: 'Riuso del contesto'};
+const draftReasons = {no_measured_gain:'nessun vantaggio misurato',probe_cost_exceeded:'tentativo troppo costoso',remote_failure:'proposta remota non disponibile',local_draft_failure:'modello draft non disponibile'};
 const stateNames = {completed:'Completata', running:'In corso', queued:'In attesa', failed:'Non riuscita', cancelled:'Interrotta', timed_out:'Tempo scaduto', expired:'Scaduta', thermal_pause:'Pausa termica', loading:'Caricamento', stopped:'Interrotta'};
 function el(tag, text, cls) { const n = document.createElement(tag); if (text !== undefined) n.textContent = text; if (cls) n.className = cls; return n; }
 function showError(error, id='error') { $(id).textContent = error.message || String(error); $(id).hidden = false; }
@@ -171,6 +172,7 @@ function renderRuns(runs) {
     if(r.text)card.append(el('pre',r.text,'output-text'));else if(['queued','running','loading'].includes(r.status))card.append(el('p','Elaborazione in corso…','muted'));
     if(r.prompt){
       const details=el('details',undefined,'run-prompt');details.append(el('summary','Prompt e parametri'),el('p',r.prompt),el('p','Limite output: '+(r.max_tokens??'—')+' token · blocco draft: '+(r.draft_k??'—')));
+      details.append(el('p','Controllo delega: '+(r.draft_policy==='adaptive'?'adattivo':'fisso')+(m.draft_disabled_reason?' · ritorno al computer: '+(draftReasons[m.draft_disabled_reason]||m.draft_disabled_reason):'')));
       if(r.mode==='remote_draft')details.append(el('p','Timeout per proposta: '+number((r.remote_timeout_ms??30000)/1000,3)+' s. L’attesa remota totale include lavoro del nodo e trasferimento; non è una misura della velocità di rete.'));
       const widths=(Array.isArray(r.blocks)?r.blocks:[]).map(b=>b.verification_batch_width).filter(w=>Number.isInteger(w)&&w>0);
       if(widths.length){const minimum=Math.min(...widths),maximum=Math.max(...widths);details.append(el('p','Larghezza batch di verifica: '+(minimum===maximum?minimum:minimum+'–'+maximum)+' posizioni (proposte + una posizione di controllo).'));}
@@ -210,12 +212,13 @@ function updateEngineControls() {
   $('remote-node').disabled=!available||busy||mode!=='remote_draft';
   $('remote-timeout').disabled=!available||busy||mode!=='remote_draft';
   $('draft-k').disabled=!available||busy||mode==='host';
+  $('draft-policy').disabled=!available||busy||mode==='host';
   $('max-tokens').disabled=!available||busy;
   $('prompt').disabled=!available||busy;
-  const ready=mode==='host'||(mode==='local_draft'?!!engineSnapshot?.config?.draft_model:!!$('remote-node').value);
+  const ready=mode==='host'||mode==='lookup'||(mode==='local_draft'?!!engineSnapshot?.config?.draft_model:!!$('remote-node').value);
   $('start-run').disabled=!available||busy||!configured||!ready||configurationDirty||!$('prompt').value.trim();
   $('stop-run').disabled=!authenticated||!engineSnapshot?.busy||actionPending;
-  $('mode-help').textContent=mode==='host'?'Baseline sul computer. Nessun lavoro LLM inviato ai telefoni.':mode==='local_draft'?'Target e draft sul computer: confronto necessario prima di attribuire un vantaggio alla rete.':'Il nodo genera proposte a blocchi; il target sul computer le verifica. Richiede una companion con motore LLM pronto.';
+  $('mode-help').textContent=mode==='host'?'Baseline sul computer. Nessun lavoro LLM inviato ai telefoni.':mode==='lookup'?'Propone sequenze già presenti nel contesto e le verifica con il target. Non richiede un secondo modello; può aiutare su testo ripetitivo.':mode==='local_draft'?'Target e draft sul computer: confronto necessario prima di attribuire un vantaggio alla rete.':'Il nodo genera proposte a blocchi; il target sul computer le verifica. Richiede una companion con motore LLM pronto.';
 }
 function remoteTimeoutMs(){
   const value=$('remote-timeout').value.trim();
@@ -260,7 +263,7 @@ for(const [id] of configFields)$(id).addEventListener('input',updateEngineContro
 $('revert-config').onclick=()=>{writeAppliedConfiguration();updateEngineControls();};
 for(const id of ['run-mode','remote-node','prompt'])$(id).addEventListener('input',updateEngineControls);
 $('configuration-form').onsubmit=async event=>{event.preventDefault();if($('configure').disabled)return;clearError('engine-error');actionPending=true;updateEngineControls();try{await api('engine/configure',{target_model:$('target-model').value,draft_model:$('draft-model').value||null,n_ctx:Number($('context-size').value),threads:Number($('threads').value),gpu_layers:Number($('gpu-layers').value)});configurationDirty=false;await refreshEngine();}catch(e){showError(e,'engine-error');}finally{actionPending=false;updateEngineControls();}};
-$('run-form').onsubmit=async event=>{event.preventDefault();if($('start-run').disabled)return;clearError('engine-error');actionPending=true;updateEngineControls();try{await api('engine/run',{prompt:$('prompt').value.trim(),mode:$('run-mode').value,node_id:$('run-mode').value==='remote_draft'?$('remote-node').value:undefined,max_tokens:Number($('max-tokens').value),draft_k:Number($('draft-k').value),remote_timeout_ms:$('run-mode').value==='remote_draft'?remoteTimeoutMs():undefined});await refreshEngine();}catch(e){showError(e,'engine-error');}finally{actionPending=false;updateEngineControls();}};
+$('run-form').onsubmit=async event=>{event.preventDefault();if($('start-run').disabled)return;clearError('engine-error');actionPending=true;updateEngineControls();try{await api('engine/run',{prompt:$('prompt').value.trim(),mode:$('run-mode').value,draft_policy:$('draft-policy').value,node_id:$('run-mode').value==='remote_draft'?$('remote-node').value:undefined,max_tokens:Number($('max-tokens').value),draft_k:Number($('draft-k').value),remote_timeout_ms:$('run-mode').value==='remote_draft'?remoteTimeoutMs():undefined});await refreshEngine();}catch(e){showError(e,'engine-error');}finally{actionPending=false;updateEngineControls();}};
 $('stop-run').onclick=async()=>{clearError('engine-error');actionPending=true;updateEngineControls();try{await api('engine/stop',{});await refreshEngine();}catch(e){showError(e,'engine-error');}finally{actionPending=false;updateEngineControls();}};
 function hideClientAccess(){
   clientAccessEpoch++;clientAccess=null;clientKeyVisible=false;clearTimeout(clientAccessTimer);clearTimeout(clientRevealTimer);

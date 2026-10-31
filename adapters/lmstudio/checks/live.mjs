@@ -5,7 +5,7 @@ import {Chat} from '@lmstudio/sdk';
 import {generate} from '../dist/index.js';
 const apiKey=(await readFile(homedir()+'/.local/share/nodelift/client-api-key','utf8')).trim();
 const global=new Map([['apiKey',apiKey],['port',9868]]);
-const config=new Map([['mode','host'],['nodeId',''],['draftK',4],['maxTokens',32]]);
+const config=new Map([['mode',process.env.NODELIFT_MODE || 'host'],['draftPolicy',process.env.NODELIFT_DRAFT_POLICY || 'fixed'],['nodeId',''],['draftK',4],['maxTokens',32]]);
 let output='',fragments=0;
 const controller={getGlobalPluginConfig:()=>global,getPluginConfig:()=>config,
   abortSignal:new AbortController().signal,fragmentGenerated:text=>{output+=text;fragments++;}};

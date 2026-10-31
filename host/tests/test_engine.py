@@ -56,6 +56,89 @@ class MailboxTests(unittest.TestCase):
 
 
 class ControllerTests(unittest.TestCase):
+    def test_adaptive_cold_draft_cost_is_measured_and_short_run_never_loads_it(self):
+        now=[0.0];loads=[]
+        class ColdNative:
+            def call(self,op,**args):
+                if op=='tokenize':return {'tokens':[1]}
+                if op=='draft':
+                    now[0]+=.005
+                    return {'tokens':[2]*args['count'],'eos':False}
+                if op=='verify':
+                    now[0]+=.005
+                    return {'tokens':[2],'accepted':0,'proposed':len(args['proposal']),'eos':False}
+                if op=='text':return {'bytes_hex':'78'}
+                return {}
+        with tempfile.TemporaryDirectory() as folder:
+            engine=Controller(State(Path(folder)));engine.target=ColdNative()
+            engine.target_info={'tokenizer_fingerprint':'test'}
+            def load(config,use_draft):
+                loads.append(use_draft)
+                if use_draft:now[0]+=.250;engine.draft=ColdNative()
+            def run(count):
+                record={'id':str(count),'mode':'local_draft','draft_policy':'adaptive','prompt':'Hello','max_tokens':count,
+                        'draft_k':4,'text':'','metrics':{},'blocks':[]}
+                engine._execute(record,{'n_ctx':256,'target_model':'unused','draft_model':'unused'})
+                return record
+            with patch.object(engine,'_load',side_effect=load),patch.object(engine,'_sha',return_value='test'),patch('nodelift.engine.time.perf_counter',side_effect=lambda:now[0]):
+                short=run(3)
+                self.assertEqual(short['status'],'completed',short.get('error'));self.assertEqual(loads,[False]);self.assertIsNone(engine.draft)
+                long=run(12)
+            self.assertEqual(long['status'],'completed',long.get('error'))
+            self.assertEqual(loads,[False,False,True])
+            self.assertGreater(long['blocks'][4]['draft_ms'],250)
+            self.assertEqual(long['metrics']['draft_disabled_reason'],'probe_cost_exceeded')
+
+    def test_cancelled_proposal_is_never_verified_or_published(self):
+        class CancellingNative:
+            def __init__(self):self.calls=[]
+            def call(self,op,**args):
+                self.calls.append(op)
+                if op=='tokenize':return {'tokens':[1]}
+                if op=='draft':engine.cancelled.set();return {'tokens':[2],'eos':False}
+                return {}
+        with tempfile.TemporaryDirectory() as folder:
+            engine=Controller(State(Path(folder)));engine.target=CancellingNative();engine.draft=CancellingNative()
+            engine.target_info={'tokenizer_fingerprint':'test'}
+            run={'id':'stop','mode':'local_draft','draft_policy':'fixed','prompt':'Hello','max_tokens':32,
+                 'draft_k':4,'text':'','metrics':{},'blocks':[]}
+            with patch.object(engine,'_load'),patch.object(engine,'_sha',return_value='test'):
+                engine._execute(run,{'n_ctx':256,'target_model':'unused','draft_model':'unused'})
+            self.assertEqual(run['status'],'cancelled');self.assertEqual(run['tokens'],[])
+            self.assertNotIn('verify',engine.target.calls);self.assertFalse(run['blocks'])
+
+    def test_adaptive_controller_preserves_output_and_stops_slow_draft(self):
+        now=[0.0]
+        class ControlledNative:
+            def __init__(self,draft=False):self.drafter=draft;self.calls=[]
+            def call(self,op,**args):
+                self.calls.append(op)
+                if op=='tokenize':return {'tokens':[1]}
+                if op=='draft':
+                    now[0]+=.040 if self.drafter else .005
+                    return {'tokens':list(range(len(args['prefix'])+1,len(args['prefix'])+args['count']+1)),'eos':False}
+                if op=='verify':
+                    now[0]+=.005
+                    n=min(len(args['proposal'])+1,args['remaining'])
+                    return {'tokens':list(range(len(args['prefix'])+1,len(args['prefix'])+n+1)),
+                            'accepted':min(len(args['proposal']),n),'proposed':len(args['proposal']),'eos':False}
+                if op=='text':return {'bytes_hex':('x'*len(args['tokens'])).encode().hex()}
+                return {}
+        with tempfile.TemporaryDirectory() as folder:
+            engine=Controller(State(Path(folder)));engine.target=ControlledNative();engine.draft=ControlledNative(True)
+            engine.target_info={'tokenizer_fingerprint':'test'}
+            run={'id':'adaptive','mode':'local_draft','draft_policy':'adaptive','prompt':'Hello','max_tokens':32,
+                 'draft_k':4,'text':'','metrics':{},'blocks':[]}
+            with patch.object(engine,'_load'),patch.object(engine,'_sha',return_value='test'),patch('nodelift.engine.time.perf_counter',side_effect=lambda:now[0]):
+                engine._execute(run,{'n_ctx':256,'target_model':'unused','draft_model':'unused'})
+            self.assertEqual(run['status'],'completed',run.get('error'))
+            self.assertEqual(run['tokens'],list(range(2,34)))
+            self.assertEqual(engine.draft.calls.count('draft'),2)
+            self.assertNotIn('prefill',engine.draft.calls)
+            self.assertEqual(run['metrics']['draft_disabled_reason'],'no_measured_gain')
+            self.assertEqual(run['metrics']['fallbacks'],0)
+            self.assertTrue(all(b['effective_mode']=='host' for b in run['blocks'][-4:]))
+
     def test_stream_keeps_partial_utf8_until_complete_and_detokenizes_only_delta(self):
         class SplitNative:
             def __init__(self):self.index=0;self.text_requests=[]

@@ -78,6 +78,10 @@ class GatewayTests(unittest.TestCase):
         status,_=self.request('/v1/chat/completions',self.body(temperature=None,top_p=None,max_tokens=None,nodelift_remote_timeout_ms=1500))
         self.assertEqual(status,200);self.assertEqual(self.engine.requests[-1]['max_tokens'],128)
         self.assertEqual(self.engine.requests[-1]['remote_timeout_ms'],1500)
+        status,_=self.request('/v1/chat/completions',self.body(nodelift_mode='lookup',nodelift_draft_policy='adaptive'))
+        self.assertEqual(status,200)
+        self.assertEqual(self.engine.requests[-1]['mode'],'lookup')
+        self.assertEqual(self.engine.requests[-1]['draft_policy'],'adaptive')
 
     def test_sse_valid_unicode_order_and_termination(self):
         status,data=self.request('/v1/chat/completions',self.body(stream=True))

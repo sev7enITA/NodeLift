@@ -37,7 +37,7 @@ with tempfile.TemporaryDirectory(prefix='nodelift-protocol-') as temp, Native() 
     status,paired=request(conn,'/v1/pair',{'invite':invitation,'name':'Loopback test node','capabilities':caps})
     assert status==200
     token=paired['token'];node=paired['node_id']
-    behavior={'mode':'valid'};stop=threading.Event();errors=[]
+    behavior={'mode':'valid'};stop=threading.Event();errors=[];late_replies=[];late_received=threading.Event()
     def work_loop():
         c=connection()
         try:
@@ -47,21 +47,28 @@ with tempfile.TemporaryDirectory(prefix='nodelift-protocol-') as temp, Native() 
                 work=result.get('work')
                 if not work:continue
                 if behavior['mode']=='drop':continue
+                if behavior['mode']=='slow':time.sleep(.7)
                 assert prefix_digest(work['prefix'])==work['prefix_hash']
                 answer={k:work[k] for k in ('id','epoch','prefix_hash','tokenizer_fingerprint','model_sha256')}
                 if behavior['mode']=='error':answer['error']='injected thermal pause'
                 elif behavior['mode']=='wrong':answer['tokens']=[0]*work['count']
                 else:answer['tokens']=worker.call('draft',prefix=work['prefix'],count=work['count'])['tokens']
                 status,_=request(c,'/v1/engine/result',answer,token)
+                if behavior['mode']=='slow' and status==400:
+                    late_replies.append(work['id']);late_received.set();continue
                 assert status==200
         except Exception as error:
             if not stop.is_set():errors.append(str(error))
         finally:c.close()
     thread=threading.Thread(target=work_loop,daemon=True);thread.start()
-    def run(mode):
-        request(conn,'/v1/heartbeat',caps,token)
+    def run(mode,policy='fixed'):
+        # Model loading can outlast the server's idle keepalive. A heartbeat
+        # uses a fresh connection; the polling worker still reuses its TLS link.
+        heartbeat=connection()
+        try:assert request(heartbeat,'/v1/heartbeat',caps,token)[0]==200
+        finally:heartbeat.close()
         engine.start({'prompt':'Explain the difference between RAM capacity and bandwidth.','max_tokens':32,
-                      'mode':mode,'node_id':node,'draft_k':4})
+                      'mode':mode,'node_id':node,'draft_k':4,'draft_policy':policy,'remote_timeout_ms':500})
         deadline=time.monotonic()+60
         while engine.busy:
             if time.monotonic()>deadline:engine.stop();raise TimeoutError('loopback integration')
@@ -81,6 +88,16 @@ with tempfile.TemporaryDirectory(prefix='nodelift-protocol-') as temp, Native() 
             if mode=='wrong':assert value['metrics']['accepted_tokens']==0
             checks.append({'case':mode,'exact_tokens':True,'generated':len(value['tokens']),
                            'fallbacks':value['metrics']['fallbacks'],'blocks':len(value['blocks'])})
+        engine.mailbox.request=original
+        behavior['mode']='slow'
+        value=run('remote_draft','adaptive')
+        assert value['tokens']==baseline['tokens'] and value['metrics']['fallbacks']==1
+        assert value['metrics']['draft_disabled_reason']=='remote_failure'
+        assert late_received.wait(3),'late result was not observed/rejected'
+        deadlines=[b['effective_timeout_ms'] for b in value['blocks'] if b.get('effective_timeout_ms') is not None]
+        assert len(deadlines)==1 and 0<deadlines[0]<=500
+        checks.append({'case':'adaptive deadline and late reply','exact_tokens':True,'generated':len(value['tokens']),
+                       'fallbacks':1,'late_replies_rejected':len(late_replies),'effective_deadline_ms':deadlines[0]})
         assert not errors,errors
     finally:
         stop.set();engine.stop();thread.join(7);conn.close();server.shutdown();server.server_close()

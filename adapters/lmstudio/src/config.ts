@@ -8,7 +8,10 @@ export const globalConfigSchematics=createConfigSchematics()
 export const configSchematics=createConfigSchematics()
   .field("mode","select",{displayName:"Execution mode",options:[
     {value:"host",displayName:"Host only"},{value:"local_draft",displayName:"Local draft experiment"},
-    {value:"remote_draft",displayName:"Mobile draft experiment"}]},"host")
+    {value:"remote_draft",displayName:"Mobile draft experiment"},
+    {value:"lookup",displayName:"Context lookup (no draft model)"}]},"host")
+  .field("draftPolicy","select",{displayName:"Draft control",subtitle:"Adaptive measures costs and can fall back to host; experimental, no speedup guarantee.",options:[
+    {value:"fixed",displayName:"Fixed control"},{value:"adaptive",displayName:"Adaptive measured control"}]},"fixed")
   .field("nodeId","string",{displayName:"Mobile node ID",subtitle:"Required for mobile drafting; select an online native node in NodeLift."},"")
   .field("draftK","numeric",{displayName:"Draft block",int:true,min:1,max:16},4)
   .field("maxTokens","numeric",{displayName:"Maximum output tokens",int:true,min:1,max:512},128).build();
