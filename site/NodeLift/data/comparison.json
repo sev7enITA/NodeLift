@@ -1,0 +1,1925 @@
+{
+  "schema_version": 1,
+  "updated": "2026-10-31",
+  "scope": {
+    "it": "55 schede selezionate: sistemi distribuiti, app mobili, runtime, server, riferimenti e ricerca. Criteri uniformi e fonti primarie; censimento ampio ma non esaustivo, senza graduatoria universale.",
+    "en": "55 selected entries across distributed systems, mobile apps, runtimes, serving, baselines and research. Uniform criteria and primary sources; broad but non-exhaustive coverage, without a universal ranking."
+  },
+  "methodology_url": "data/methodology.md",
+  "projects": [
+    {
+      "id": "nodelift",
+      "name": "NodeLift",
+      "category": "distributed",
+      "ecosystem": "western",
+      "origin": "Fabrizio Degni, Italy; this project.",
+      "stage": "0.2.1 experimental prerelease.",
+      "license": "MIT; native dependencies retain their licenses.",
+      "architecture": "Phone drafts candidate tokens; the host verifies greedily with a pinned llama.cpp core and bounded fallback.",
+      "host": "macOS M3 Max measured; portable host paths require qualification.",
+      "android": "Native ARM64 CPU worker built; physical native drafting not yet qualified.",
+      "ios": "Metal/CPU companion built unsigned; physical installation pending.",
+      "mobile_compute": "Implemented draft worker; Xiaomi evidence currently covers network/protocol only.",
+      "capacity": "No target-weight sharding or shared RAM pool in 0.2.1.",
+      "single_chat": "60 frozen local runs: paired median speedup 0.425–0.719×; all 48 output pairs matched. No physical-phone speedup.",
+      "transport": "Pinned TLS; prefix/epoch leases; bounded deadlines.",
+      "api": "Restricted OpenAI-style gateway; LM Studio SDK handler tested, full plugin runtime pending.",
+      "security": "Separate admin/client keys; TLS pinning; local trust boundary. No independent security certification.",
+      "evidence": "Real-weight controls, public raw runs, 29 native checks; TLS node emulated locally.",
+      "limitations": "Greedy only; hybrid architectures rejected; thermal/battery/native phone trials pending.",
+      "lesson": "Keep host-only default until end-to-end benefit is measured against a strong local baseline.",
+      "revision": "c7a41e25aaa6a9bea52ab27a12a652c7a5e71054",
+      "checked": "2026-10-31",
+      "tags": [
+        "remote_draft",
+        "android_compute",
+        "ios_compute"
+      ],
+      "sources": [
+        {
+          "label": "Release 0.2.1",
+          "url": "https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.1"
+        },
+        {
+          "label": "Measurements and limitations",
+          "url": "https://github.com/sev7enITA/NodeLift/blob/c7a41e25aaa6a9bea52ab27a12a652c7a5e71054/research/measurements/ENGINE_RESULTS.md"
+        },
+        {
+          "label": "Engine contract",
+          "url": "https://github.com/sev7enITA/NodeLift/blob/c7a41e25aaa6a9bea52ab27a12a652c7a5e71054/docs/ENGINE_0_2.md"
+        }
+      ]
+    },
+    {
+      "id": "distai",
+      "name": "DistAI",
+      "category": "distributed",
+      "ecosystem": "unverified",
+      "origin": "Maintainer geography not established in the reviewed primary sources.",
+      "stage": "Source available; not independently qualified here.",
+      "license": "MIT",
+      "architecture": "llama.cpp RPC layer offload plus Android workers and request scheduling.",
+      "host": "Desktop coordinator and llama.cpp backends.",
+      "android": "Native CPU worker.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Yes: model layers and independent jobs.",
+      "capacity": "Yes: distributed layer placement.",
+      "single_chat": "Capacity and queued throughput benefits do not imply faster single-chat decoding.",
+      "transport": "LAN/Wi-Fi; wired/USB paths documented.",
+      "api": "Host orchestration over llama.cpp.",
+      "security": "Underlying RPC trust boundary needs isolation.",
+      "evidence": "NodeLift inspected 37 preserved source files and recalculated published benchmark data; no hardware replication.",
+      "limitations": "Recomputed queued throughput comparison is about 1.57× against the batched baseline, not the larger sequential comparison.",
+      "lesson": "Always include a batched local baseline and actual output lengths.",
+      "revision": "b1c17109498e87b3db99f8f23648d84483b68bb9",
+      "checked": "2026-10-31",
+      "tags": [
+        "android_compute",
+        "capacity_sharding",
+        "request_routing"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/README.md"
+        },
+        {
+          "label": "NodeLift source/data recalculation",
+          "url": "https://github.com/sev7enITA/NodeLift/blob/c7a41e25aaa6a9bea52ab27a12a652c7a5e71054/research/distai/LESSONS_LEARNED.md"
+        }
+      ]
+    },
+    {
+      "id": "phoneborg",
+      "name": "PhoneBorg",
+      "category": "distributed",
+      "ecosystem": "unverified",
+      "origin": "Maintainer geography not established in the reviewed primary sources.",
+      "stage": "Public proof of concept with physical-phone and emulation evidence.",
+      "license": "Apache-2.0",
+      "architecture": "USB Android fleet: whole-request pools plus BigBrain layer splitting through llama.cpp RPC.",
+      "host": "Linux/macOS host with ADB.",
+      "android": "ARM64 phones, native llama.cpp agents.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Yes: independent inference and BigBrain shards.",
+      "capacity": "Yes: BigBrain model partitioning.",
+      "single_chat": "Author tables show extra phones can reduce decode speed; capacity is the primary sharding benefit.",
+      "transport": "ADB over USB; host-managed endpoints.",
+      "api": "OpenAI/Ollama-compatible API; fleet UI and monitoring.",
+      "security": "No TLS documented; gateway API keys are optional, admin tokens supported, node protocol unauthenticated in v0.",
+      "evidence": "Author-reported five-phone tests; freeze/failover drills also use redroid emulation.",
+      "limitations": "Emulated reliability drills are not physical thermal endurance tests; no iOS worker documented.",
+      "lesson": "Separate routing throughput, model capacity and thermal-aware phone placement.",
+      "revision": "912b24009dd0f15a5512335ef18f639b29cbdc37",
+      "checked": "2026-10-31",
+      "tags": [
+        "android_compute",
+        "capacity_sharding",
+        "request_routing"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/dzaczek/phoneborg/blob/912b24009dd0f15a5512335ef18f639b29cbdc37/README.md"
+        },
+        {
+          "label": "Security surfaces at inspected revision",
+          "url": "https://github.com/dzaczek/phoneborg/blob/912b24009dd0f15a5512335ef18f639b29cbdc37/docs/ARCHITECTURE.md#security-model"
+        }
+      ]
+    },
+    {
+      "id": "infer-ring",
+      "name": "InferRing",
+      "category": "distributed",
+      "ecosystem": "unverified",
+      "origin": "Maintainer geography not established in the reviewed primary sources.",
+      "stage": "Source and App Store application.",
+      "license": "MIT",
+      "architecture": "MLX pipeline/tensor parallel inference across Apple devices.",
+      "host": "macOS.",
+      "android": "No Android implementation documented.",
+      "ios": "Native iPhone/iPad application.",
+      "mobile_compute": "Yes: Apple-device model execution.",
+      "capacity": "Yes: memory distributed across devices.",
+      "single_chat": "Author Mac+iPhone examples show improved prefill but slower generation than the Mac alone.",
+      "transport": "Automatic discovery; Wi-Fi and wired links, wired preferred.",
+      "api": "App-oriented workflow; external API contract not established here.",
+      "security": "Not independently audited; deployment-specific controls require review.",
+      "evidence": "Author-reported M1 Pro + iPhone 17 Pro comparisons.",
+      "limitations": "Apple ecosystem; hardware/kernel and OS requirements apply.",
+      "lesson": "Report prefill and decode separately; mixed Apple clusters already exist.",
+      "revision": "7c13825fa25de346208d039d4ca1e8fecbb9860b",
+      "checked": "2026-10-31",
+      "tags": [
+        "ios_compute",
+        "capacity_sharding"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/N1k1tung/infer-ring/blob/7c13825fa25de346208d039d4ca1e8fecbb9860b/README.md"
+        }
+      ]
+    },
+    {
+      "id": "pooled",
+      "name": "Pooled / formerly SwarmLLM",
+      "category": "distributed",
+      "ecosystem": "unverified",
+      "origin": "Maintainer geography not established in the reviewed primary sources.",
+      "stage": "Rapidly evolving browser research implementation.",
+      "license": "MIT",
+      "architecture": "WebGPU/WGSL distributed layers over WebRTC; MoE expert streaming and speculative experiments.",
+      "host": "Browser host; Chrome on macOS documented.",
+      "android": "Compute depends on WebGPU/browser capability; otherwise guest client.",
+      "ios": "Safari iPhone shard worker demonstrated upstream.",
+      "mobile_compute": "Yes on capable browsers; ask-only guests do not contribute compute.",
+      "capacity": "Yes: distributed layers and storage-backed expert loading.",
+      "single_chat": "Author device demos and synthetic link-delay trials; no shared benchmark with NodeLift.",
+      "transport": "WebRTC; optional local API bridge.",
+      "api": "Bridge supports OpenAI/Responses/Anthropic interfaces.",
+      "security": "Room peers can see conversation data; optional bridge token. Peer trust remains necessary.",
+      "evidence": "Physical Mac/iPhone demonstrations plus same-GPU loopback network simulations, explicitly distinct.",
+      "limitations": "Browser memory limits and Safari host instability; network simulations omit some loss/jitter conditions.",
+      "lesson": "Zero-install participation is valuable; distinguish browser compatibility from real worker capacity.",
+      "revision": "6b4a24f73cce7ef9a9e3ab35b9a0d4c09b51dfff",
+      "checked": "2026-10-31",
+      "tags": [
+        "ios_compute",
+        "browser_compute",
+        "capacity_sharding"
+      ],
+      "sources": [
+        {
+          "label": "Pinned upstream",
+          "url": "https://github.com/Nehanth/pooled/blob/6b4a24f73cce7ef9a9e3ab35b9a0d4c09b51dfff/README.md"
+        },
+        {
+          "label": "Older SwarmLLM fork, not an independent engine",
+          "url": "https://github.com/Pendia/SwarmLLM-P2P-AI/tree/a0a09aa46b8ad6100fade3b5a0ab4463097fb99e"
+        }
+      ]
+    },
+    {
+      "id": "silica-cluster-decentralized-mobile-ai",
+      "name": "Silica Cluster",
+      "category": "distributed",
+      "ecosystem": "unverified",
+      "origin": "Maintainer geography not established in the reviewed primary sources.",
+      "stage": "Experimental Android cluster.",
+      "license": "README declares AGPL-3.0; pinned LICENSE file is empty. Terms need clarification.",
+      "architecture": "Android main/worker apps distribute model layers.",
+      "host": "Android coordinator.",
+      "android": "Native main and worker roles.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Yes: pipeline shards.",
+      "capacity": "Yes: documented layer allocation.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Wi-Fi/LAN RPC.",
+      "api": "App-managed inference.",
+      "security": "README explicitly says RPC is unencrypted; trusted LAN only.",
+      "evidence": "Upstream documentation only; not reproduced by NodeLift.",
+      "limitations": "License inconsistency and no replicated hardware benchmark in this assessment.",
+      "lesson": "Pair fleet UX with authenticated transport and unambiguous licensing.",
+      "revision": "7f493b04e1701c4587b945888088d9f5c9b25553",
+      "checked": "2026-10-31",
+      "tags": [
+        "android_compute",
+        "capacity_sharding"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/ShintoChakkiath/Silica-Cluster-Decentralized-Mobile-AI/blob/7f493b04e1701c4587b945888088d9f5c9b25553/README.md"
+        },
+        {
+          "label": "License at inspected revision",
+          "url": "https://github.com/ShintoChakkiath/Silica-Cluster-Decentralized-Mobile-AI/blob/7f493b04e1701c4587b945888088d9f5c9b25553/LICENSE"
+        }
+      ]
+    },
+    {
+      "id": "prima-cpp",
+      "name": "prima.cpp",
+      "category": "distributed",
+      "ecosystem": "international",
+      "origin": "Paper collaboration includes China/Hong Kong, UAE and Australia.",
+      "stage": "Research implementation and paper.",
+      "license": "MIT",
+      "architecture": "Pipelined ring, prefetch and heterogeneous resource scheduling.",
+      "host": "Linux/macOS; CPU and CUDA documented.",
+      "android": "Termux-based worker path.",
+      "ios": "No iOS worker documented.",
+      "mobile_compute": "Android and compatible Termux environments.",
+      "capacity": "Yes: model placement across heterogeneous memory/storage.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Network ring; bandwidth-aware placement.",
+      "api": "Server/chat and cancellation interfaces.",
+      "security": "Not independently audited; deployment-specific controls require review.",
+      "evidence": "Paper reports a heterogeneous physical home-cluster testbed.",
+      "limitations": "HarmonyOS via Termux is not HarmonyOS NEXT support; current README lists Vulkan/Windows as future work.",
+      "lesson": "Skip unhelpful devices and account for disk prefetch, not RAM alone.",
+      "revision": "288df6a2cc2120387e12d6f40798f30cc525c9ea",
+      "checked": "2026-10-31",
+      "tags": [
+        "android_compute",
+        "capacity_sharding"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/OpenCPIL/prima.cpp/blob/288df6a2cc2120387e12d6f40798f30cc525c9ea/README.md"
+        },
+        {
+          "label": "Paper and affiliations",
+          "url": "https://arxiv.org/html/2504.08791v3"
+        }
+      ]
+    },
+    {
+      "id": "exo",
+      "name": "exo",
+      "category": "distributed",
+      "ecosystem": "international",
+      "origin": "Open distributed-inference community; no single-country classification.",
+      "stage": "Source available; not independently qualified here.",
+      "license": "Apache-2.0",
+      "architecture": "Topology-aware distributed MLX execution; pipeline/tensor parallel paths.",
+      "host": "Apple Silicon is the tested Tier 1 in the support document.",
+      "android": "Current qualified worker support not documented.",
+      "ios": "Current qualified worker support not documented.",
+      "mobile_compute": "Not established for the current codebase.",
+      "capacity": "Yes: supported cluster model sharding.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Network links; Thunderbolt 5 RDMA on qualifying Macs.",
+      "api": "Model serving and cluster application.",
+      "security": "Not independently audited; deployment-specific controls require review.",
+      "evidence": "Upstream multi-Mac examples; no phone replication here.",
+      "limitations": "README advertises Linux, while the pinned platform tier document lists Linux as planned; archived predecessor claims are separate.",
+      "lesson": "Use exact version/platform tiers; wired Mac RDMA results do not transfer to phone Wi-Fi.",
+      "revision": "871caad407a70647426dffaa455bd4d0ab1d48e6",
+      "checked": "2026-10-31",
+      "tags": [
+        "capacity_sharding"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/exo-explore/exo/blob/871caad407a70647426dffaa455bd4d0ab1d48e6/README.md"
+        },
+        {
+          "label": "Pinned support tiers (README discrepancy)",
+          "url": "https://github.com/exo-explore/exo/blob/871caad407a70647426dffaa455bd4d0ab1d48e6/PLATFORMS.md"
+        }
+      ]
+    },
+    {
+      "id": "distributed-llama",
+      "name": "distributed-llama",
+      "category": "distributed",
+      "ecosystem": "unverified",
+      "origin": "Maintainer geography not established in the reviewed primary sources.",
+      "stage": "Source available; not independently qualified here.",
+      "license": "MIT",
+      "architecture": "CPU-focused tensor parallelism across networked machines.",
+      "host": "ARM/x86 desktop and SBC environments.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Android/iOS companion qualification not established.",
+      "capacity": "Yes: model weights distributed across nodes.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "TCP/Ethernet-oriented cluster.",
+      "api": "CLI and server tools.",
+      "security": "Not independently audited; deployment-specific controls require review.",
+      "evidence": "Upstream configurations and benchmark examples.",
+      "limitations": "Documented node counts and KV-head constraints restrict topology; formats/backends vary.",
+      "lesson": "Topology and collective-communication constraints belong in the planner.",
+      "revision": "c618cd7e9ebdae235c55d13125ae774b3d1b7b83",
+      "checked": "2026-10-31",
+      "tags": [
+        "capacity_sharding"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/b4rtaz/distributed-llama/blob/c618cd7e9ebdae235c55d13125ae774b3d1b7b83/README.md"
+        }
+      ]
+    },
+    {
+      "id": "llama-cpp",
+      "name": "llama.cpp / RPC",
+      "category": "runtime",
+      "ecosystem": "international",
+      "origin": "International ggml/llama.cpp community.",
+      "stage": "Widely used local runtime; RPC explicitly experimental.",
+      "license": "MIT",
+      "architecture": "Quantized native inference with optional remote GGML devices and layer/tensor splitting.",
+      "host": "CPU, Metal, CUDA and other backend-dependent platforms.",
+      "android": "Local runtime supported; no complete fleet companion implied.",
+      "ios": "Local runtime integration supported; fleet lifecycle is external.",
+      "mobile_compute": "Possible through native integration; mobile fleet qualification is separate.",
+      "capacity": "Yes through RPC/offload on supported backends.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "TCP; current RPC also documents RDMA.",
+      "api": "Native C API, CLI and OpenAI-style server.",
+      "security": "RPC README explicitly calls it insecure/fragile and unsuitable for exposed or sensitive networks.",
+      "evidence": "NodeLift built a pinned upstream and measured local controls; no RPC phone comparison.",
+      "limitations": "A low-level remote backend does not provide safe mobile pairing or OS lifecycle management.",
+      "lesson": "Reuse kernels; add authenticated leases, provenance and mobile recovery above them.",
+      "revision": "ddf48f85c933c1f438212a02eb21e7b001d2d37d",
+      "checked": "2026-10-31",
+      "tags": [
+        "capacity_sharding",
+        "android_compute",
+        "ios_compute"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/ggml-org/llama.cpp/blob/ddf48f85c933c1f438212a02eb21e7b001d2d37d/README.md"
+        },
+        {
+          "label": "RPC security and transport",
+          "url": "https://github.com/ggml-org/llama.cpp/blob/ddf48f85c933c1f438212a02eb21e7b001d2d37d/tools/rpc/README.md"
+        }
+      ]
+    },
+    {
+      "id": "petals",
+      "name": "Petals",
+      "category": "distributed",
+      "ecosystem": "international",
+      "origin": "BigScience collaborative research.",
+      "stage": "Research software; inspected repository last pushed in 2024.",
+      "license": "MIT",
+      "architecture": "Transformer blocks hosted by a distributed swarm, with inference and fine-tuning.",
+      "host": "GPU servers and supported desktop clients.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Not established.",
+      "capacity": "Yes: model blocks distributed across peers.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Internet/private swarm networking.",
+      "api": "Transformers-style Python API.",
+      "security": "Public-swarm peers process user data; private trusted swarm recommended for sensitive workloads.",
+      "evidence": "Published research and upstream large-model experiments.",
+      "limitations": "Public swarm availability is not guaranteed; no native smartphone fleet documented.",
+      "lesson": "Resilient peer discovery helps capacity, but peer trust is not solved by distribution.",
+      "revision": "22afba627a7eb4fcfe9418c49472c6a51334b8ac",
+      "checked": "2026-10-31",
+      "tags": [
+        "capacity_sharding"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/bigscience-workshop/petals/blob/22afba627a7eb4fcfe9418c49472c6a51334b8ac/README.md"
+        }
+      ]
+    },
+    {
+      "id": "localai",
+      "name": "LocalAI",
+      "category": "serving",
+      "ecosystem": "international",
+      "origin": "Open-source LocalAI community.",
+      "stage": "Versioned multi-backend serving platform.",
+      "license": "MIT",
+      "architecture": "Request routing plus backend-specific distributed inference, including MLX/layer-split paths.",
+      "host": "Linux/macOS and supported container backends.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Not established.",
+      "capacity": "Backend-dependent sharding, distinct from replica routing.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "P2P/cluster transports; NATS TLS/mTLS paths documented.",
+      "api": "OpenAI-compatible multimodal serving.",
+      "security": "API keys, OIDC/roles/quotas and deny-by-default authentication documented.",
+      "evidence": "Current source/release documentation, not replicated here.",
+      "limitations": "Distributed modes differ by backend; mobile worker qualification not established.",
+      "lesson": "Expose model residency, replica routing and sharding as different capabilities.",
+      "revision": "832dff3c7448a4fdb0302a9af9feca1a844553c5",
+      "checked": "2026-10-31",
+      "tags": [
+        "capacity_sharding",
+        "request_routing"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/mudler/LocalAI/blob/832dff3c7448a4fdb0302a9af9feca1a844553c5/README.md"
+        }
+      ]
+    },
+    {
+      "id": "mycellm",
+      "name": "mycellm",
+      "category": "distributed",
+      "ecosystem": "unverified",
+      "origin": "Maintainer geography not established in the reviewed primary sources.",
+      "stage": "Source available; not independently qualified here.",
+      "license": "Apache-2.0",
+      "architecture": "P2P network routes requests to model-serving peers; native iOS peer exists.",
+      "host": "Metal/CUDA/ROCm/CPU with multiple local backends.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "Native MLX/Metal peer can serve local models.",
+      "mobile_compute": "Yes for the documented iOS peer.",
+      "capacity": "Whole-model peer serving documented; cross-phone layer pooling not established.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "QUIC, relay/NAT traversal and discovery.",
+      "api": "OpenAI-style serving and mesh tooling.",
+      "security": "Signed receipts and admin/auth controls; peer trust still requires review.",
+      "evidence": "Source and author device reports; not replicated here.",
+      "limitations": "Aggregating available providers is not proof of pooling model memory.",
+      "lesson": "Separate federated service capacity from one model spanning devices.",
+      "revision": "2465f52c86e91b9237ce9fb3a27b8691e82ceab6",
+      "checked": "2026-10-31",
+      "tags": [
+        "ios_compute",
+        "request_routing"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/mycellm/mycellm/blob/2465f52c86e91b9237ce9fb3a27b8691e82ceab6/README.md"
+        }
+      ]
+    },
+    {
+      "id": "mesh-llm",
+      "name": "Mesh LLM",
+      "category": "distributed",
+      "ecosystem": "unverified",
+      "origin": "Maintainer geography not established in the reviewed primary sources.",
+      "stage": "Source available; not independently qualified here.",
+      "license": "Apache-2.0",
+      "architecture": "Private meshes, request routing and package-backed contiguous layer stages.",
+      "host": "Linux, Windows, macOS with CPU/GPU-specific releases.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Not established.",
+      "capacity": "Yes: documented stage splits for supported dense models.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Peer mesh and invitation-based joining.",
+      "api": "OpenAI client integration; explicit model selection recommended.",
+      "security": "Invite tokens documented; external security audit not established.",
+      "evidence": "Current README and release caveats.",
+      "limitations": "Some native loading/distribution paths carry open release-specific blockers; no phone worker documented.",
+      "lesson": "Model packages and supported execution paths need explicit readiness metadata.",
+      "revision": "6820aa4d44aea55325067dbd414c60440959366d",
+      "checked": "2026-10-31",
+      "tags": [
+        "capacity_sharding",
+        "request_routing"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/Mesh-LLM/mesh-llm/blob/6820aa4d44aea55325067dbd414c60440959366d/README.md"
+        }
+      ]
+    },
+    {
+      "id": "cake",
+      "name": "Cake",
+      "category": "distributed",
+      "ecosystem": "unverified",
+      "origin": "Maintainer geography not established in the reviewed primary sources.",
+      "stage": "Source available; not independently qualified here.",
+      "license": "Custom FAIR 1.0.0; business/commercial conditions apply. See full LICENSE.",
+      "architecture": "Rust multimodal server shards transformer blocks across heterogeneous devices.",
+      "host": "Linux/macOS/Windows; CPU, CUDA, Metal and Vulkan paths.",
+      "android": "Documented native platform.",
+      "ios": "Documented native platform.",
+      "mobile_compute": "Yes, documented mobile worker integration.",
+      "capacity": "Yes: layer sharding with weight delivery/caching.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "mDNS discovery; cluster key; compressed weight transfer.",
+      "api": "Inference server and cluster tooling.",
+      "security": "Cluster key documented; checksum integrity is not itself transport confidentiality.",
+      "evidence": "Current source/platform documentation; no common-hardware replication.",
+      "limitations": "Nonstandard license and platform/model-specific qualification require review.",
+      "lesson": "Automatic shard delivery and cross-platform workers are existing prior art.",
+      "revision": "be522af17a4a4da3e1113682ba39689c634d513f",
+      "checked": "2026-10-31",
+      "tags": [
+        "android_compute",
+        "ios_compute",
+        "capacity_sharding"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/evilsocket/cake/blob/be522af17a4a4da3e1113682ba39689c634d513f/README.md"
+        },
+        {
+          "label": "License at inspected revision",
+          "url": "https://github.com/evilsocket/cake/blob/be522af17a4a4da3e1113682ba39689c634d513f/LICENSE"
+        }
+      ]
+    },
+    {
+      "id": "nakshatra",
+      "name": "Nakshatra",
+      "category": "distributed",
+      "ecosystem": "unverified",
+      "origin": "Maintainer geography not established in the reviewed primary sources.",
+      "stage": "Active experimental system; GitHub lineage is a Petals fork.",
+      "license": "MIT",
+      "architecture": "Current design uses patched llama.cpp layer slices and a gRPC chain.",
+      "host": "Heterogeneous desktop CPU, Metal, CUDA and ROCm.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Not established.",
+      "capacity": "Yes: contiguous layer ranges and sliced GGUF packages.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "gRPC chain; discovery, relay and federation mechanisms.",
+      "api": "Gateway and worker protocol.",
+      "security": "Signed discovery/receipts and encrypted relay paths documented.",
+      "evidence": "Author experience report and implementation documentation.",
+      "limitations": "GPU output may be reproducible in distribution, not byte-identical; mobile qualification absent.",
+      "lesson": "Track code lineage without mistaking a substantially changed architecture for an unchanged fork.",
+      "revision": "dcf7cdd688bc466f119fc70959eba4c5e0fdbccd",
+      "checked": "2026-10-31",
+      "tags": [
+        "capacity_sharding"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/fthrvi/nakshatra/blob/dcf7cdd688bc466f119fc70959eba4c5e0fdbccd/README.md"
+        }
+      ]
+    },
+    {
+      "id": "local-distributed-llm-lab",
+      "name": "LLMLAB",
+      "category": "distributed",
+      "ecosystem": "unverified",
+      "origin": "Maintainer geography not established in the reviewed primary sources.",
+      "stage": "Source available; not independently qualified here.",
+      "license": "README claims MIT; linked root LICENSE was not retrievable at the pinned revision.",
+      "architecture": "Ray/LangGraph task orchestration over Ollama/LM Studio and optional Android jobs.",
+      "host": "Mac/PC/Linux coordinator.",
+      "android": "Kotlin worker accepts WebSocket execute_task jobs.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Job execution documented; native LLM layer-worker qualification not established here.",
+      "capacity": "Request/task distribution; single-model RAM pooling not established.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "WebSocket Android worker and service APIs.",
+      "api": "Ollama/LM Studio backend integration.",
+      "security": "Not independently audited; deployment-specific controls require review.",
+      "evidence": "Source/status documentation; not replicated here.",
+      "limitations": "A connected task worker is not evidence of transformer-layer execution.",
+      "lesson": "Record the actual worker operation, not only its connected state.",
+      "revision": "70c1ea8f210151fb199c8291f8248fd5d16f261d",
+      "checked": "2026-10-31",
+      "tags": [
+        "request_routing"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/xdutsuay/local-distributed-llm-lab/blob/70c1ea8f210151fb199c8291f8248fd5d16f261d/README.md"
+        }
+      ]
+    },
+    {
+      "id": "ollama-cluster",
+      "name": "Ollama Cluster fork",
+      "category": "distributed",
+      "ecosystem": "unverified",
+      "origin": "Maintainer geography not established in the reviewed primary sources.",
+      "stage": "Unofficial Ollama fork, branch cluster.",
+      "license": "MIT",
+      "architecture": "Ollama policies drive llama.cpp RPC layer/tensor splitting.",
+      "host": "Two matching NVIDIA DGX Spark systems tested upstream.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Not established.",
+      "capacity": "Yes: layer splitting; tensor mode under explicit constraints.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "200 Gb/s direct RDMA tested; LAN requires an override.",
+      "api": "Ollama API plus cluster management commands.",
+      "security": "RPC/status lack authentication; direct link and firewall isolation documented.",
+      "evidence": "Author warm-run tables disclose different loads and benchmark versions.",
+      "limitations": "Not stock Ollama and not a mobile plugin; some comparisons have concurrent traffic.",
+      "lesson": "Never describe an unofficial fork as built-in upstream support.",
+      "revision": "26675f60867c62acb323953b9e5b59205315db61",
+      "checked": "2026-10-31",
+      "tags": [
+        "capacity_sharding"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/shadoq/ollama-cluster/blob/26675f60867c62acb323953b9e5b59205315db61/README.md"
+        }
+      ]
+    },
+    {
+      "id": "gpustack",
+      "name": "GPUStack",
+      "category": "serving",
+      "ecosystem": "international",
+      "origin": "GPUStack project community; a single national origin is not established here.",
+      "stage": "Versioned GPU serving/control platform.",
+      "license": "Apache-2.0",
+      "architecture": "Cluster scheduling, backend placement and load balancing.",
+      "host": "Current worker documentation: Linux; macOS is not a supported worker.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Not established.",
+      "capacity": "Backend-dependent multi-GPU/multi-node placement.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Datacenter/cluster networking.",
+      "api": "Standard model-service APIs and management UI.",
+      "security": "Authentication, access control and usage metering documented.",
+      "evidence": "Upstream performance lab and auto-tuning facilities; not reproduced here.",
+      "limitations": "Older desktop/Apple support descriptions must not be applied to current workers.",
+      "lesson": "Benchmark concurrency against service objectives; preserve version-specific platform support.",
+      "revision": "6e3a42a9d3d59eb6f11407ed5cb96d5840c3f48e",
+      "checked": "2026-10-31",
+      "tags": [
+        "request_routing",
+        "capacity_sharding"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/gpustack/gpustack/blob/6e3a42a9d3d59eb6f11407ed5cb96d5840c3f48e/README.md"
+        }
+      ]
+    },
+    {
+      "id": "mlc-llm",
+      "name": "MLC LLM",
+      "category": "runtime",
+      "ecosystem": "international",
+      "origin": "MLC/Apache TVM ecosystem.",
+      "stage": "Compiler/runtime with native mobile examples.",
+      "license": "Apache-2.0",
+      "architecture": "Compiles models into hardware-specific native execution libraries.",
+      "host": "Desktop CPU/GPU platforms depend on target build.",
+      "android": "Vulkan/mobile native integration.",
+      "ios": "Metal native integration.",
+      "mobile_compute": "Yes: on-device inference.",
+      "capacity": "Local model execution; a distributed phone RAM pool is not documented.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Local execution; service interfaces optional.",
+      "api": "OpenAI-style interfaces across native/server bindings.",
+      "security": "Application owns network/pairing policy.",
+      "evidence": "Upstream documentation only; not reproduced by NodeLift.",
+      "limitations": "Compiled artifacts and target support must match model/device.",
+      "lesson": "A mobile backend can improve draft speed without supplying a fleet scheduler.",
+      "revision": "44fd06d04f22c87820e205b0f2b2e5e6a1f6ca85",
+      "checked": "2026-10-31",
+      "tags": [
+        "android_compute",
+        "ios_compute"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/mlc-ai/mlc-llm/blob/44fd06d04f22c87820e205b0f2b2e5e6a1f6ca85/README.md"
+        }
+      ]
+    },
+    {
+      "id": "web-llm",
+      "name": "WebLLM",
+      "category": "runtime",
+      "ecosystem": "international",
+      "origin": "MLC ecosystem.",
+      "stage": "Source available; not independently qualified here.",
+      "license": "Apache-2.0",
+      "architecture": "Browser-local inference using WebGPU and WebAssembly.",
+      "host": "Compatible browser.",
+      "android": "Browser/device WebGPU support required.",
+      "ios": "Browser/device WebGPU support required; no universal device guarantee.",
+      "mobile_compute": "Conditional browser-local compute.",
+      "capacity": "No distributed model-memory pool documented.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Inference stays in browser after model loading.",
+      "api": "OpenAI-compatible JavaScript API; workers/extensions.",
+      "security": "Application permissions and model-download provenance remain relevant.",
+      "evidence": "Upstream documentation only; not reproduced by NodeLift.",
+      "limitations": "Browser memory and GPU limits; a Web Worker is not another physical device.",
+      "lesson": "Do not confuse browser worker threads with distributed hardware nodes.",
+      "revision": "6897fadc2bed9a5a7940265dd80220f83ca184e7",
+      "checked": "2026-10-31",
+      "tags": [
+        "browser_compute"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/mlc-ai/web-llm/blob/6897fadc2bed9a5a7940265dd80220f83ca184e7/README.md"
+        }
+      ]
+    },
+    {
+      "id": "mnn",
+      "name": "MNN / MNN-LLM",
+      "category": "runtime",
+      "ecosystem": "asia",
+      "origin": "Alibaba, China.",
+      "stage": "Mobile runtime with Android and iOS applications.",
+      "license": "Apache-2.0",
+      "architecture": "Optimized local neural-network/LLM execution and multimodal pipelines.",
+      "host": "Mobile, desktop and embedded targets.",
+      "android": "MNN Chat and native runtime.",
+      "ios": "MNN LLM iOS app and runtime.",
+      "mobile_compute": "Yes: on-device CPU/GPU/backend-dependent acceleration.",
+      "capacity": "Local optimization; no phone-fleet weight sharding documented.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Local inference; app integrations vary.",
+      "api": "Native runtime and LLM app APIs.",
+      "security": "Local inference does not automatically establish application-wide privacy.",
+      "evidence": "Official source and app releases; NodeLift has not benchmarked it.",
+      "limitations": "Model conversion, operators and backend support need per-device qualification.",
+      "lesson": "Evaluate as an Android draft backend with identical tokenizer/output contracts.",
+      "revision": "17236ad20b4798a1faccc761c80f283283bec30e",
+      "checked": "2026-10-31",
+      "tags": [
+        "android_compute",
+        "ios_compute"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/alibaba/MNN/blob/17236ad20b4798a1faccc761c80f283283bec30e/README.md"
+        }
+      ]
+    },
+    {
+      "id": "mllm",
+      "name": "mllm",
+      "category": "runtime",
+      "ecosystem": "unverified",
+      "origin": "Maintainer geography not established in the reviewed primary sources.",
+      "stage": "Active mobile/edge research runtime.",
+      "license": "MIT",
+      "architecture": "ARM CPU/OpenCL GPU/QNN and Ascend NPU paths, quantization and graph compilation.",
+      "host": "Android and documented desktop/edge builds.",
+      "android": "Native app with an on-device Go server.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Yes: CPU/GPU/NPU according to device/model support.",
+      "capacity": "On-device optimization; no multi-phone RAM pooling documented.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "App-local client/server architecture.",
+      "api": "C++/Python tooling and Android service.",
+      "security": "Not independently audited; deployment-specific controls require review.",
+      "evidence": "Upstream device support matrix and separate Jetson benchmarks.",
+      "limitations": "Jetson prefill multipliers are not phone decode results; iOS qualification not established.",
+      "lesson": "Measure NPU compilation and synchronization costs before choosing it for drafting.",
+      "revision": "1d3c3d8e506e3d12e902af82866972623b240ce0",
+      "checked": "2026-10-31",
+      "tags": [
+        "android_compute"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/UbiquitousLearning/mllm/blob/1d3c3d8e506e3d12e902af82866972623b240ce0/README.md"
+        }
+      ]
+    },
+    {
+      "id": "ktransformers",
+      "name": "KTransformers",
+      "category": "runtime",
+      "ecosystem": "asia",
+      "origin": "MADSys/Tsinghua University, China, with collaborators.",
+      "stage": "Source available; not independently qualified here.",
+      "license": "Apache-2.0",
+      "architecture": "Heterogeneous CPU/GPU or CPU/NPU execution, especially MoE expert offload.",
+      "host": "Consumer/server systems with substantial host RAM and supported accelerators.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Not established.",
+      "capacity": "Extends local accelerator capacity using CPU memory; not phone RAM aggregation.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Local CPU/accelerator data paths.",
+      "api": "Inference/server and optimization interfaces.",
+      "security": "Not independently audited; deployment-specific controls require review.",
+      "evidence": "Official model tutorials and author benchmarks.",
+      "limitations": "Model-specific kernels and CPU bandwidth determine feasibility; no Android/iOS fleet.",
+      "lesson": "Compare phone offload against optimized local expert offload.",
+      "revision": "c9873312643b615a717832946fba0346e69ab035",
+      "checked": "2026-10-31",
+      "tags": [],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/kvcache-ai/ktransformers/blob/c9873312643b615a717832946fba0346e69ab035/README.md"
+        }
+      ]
+    },
+    {
+      "id": "powerinfer",
+      "name": "PowerInfer",
+      "category": "runtime",
+      "ecosystem": "asia",
+      "origin": "Originated at SJTU IPADS, China; repository now Tiiny-AI.",
+      "stage": "Source available; not independently qualified here.",
+      "license": "MIT",
+      "architecture": "Activation-locality/sparse CPU-GPU execution; related SmallThinker models.",
+      "host": "Consumer GPU systems; backend-specific support.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Not established.",
+      "capacity": "CPU/GPU memory cooperation on one machine.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Local memory/accelerator transfers.",
+      "api": "Modified native runtime.",
+      "security": "Not independently audited; deployment-specific controls require review.",
+      "evidence": "Author experiments on specific sparse/ReLU models.",
+      "limitations": "Headline speedups depend on model sparsity and baseline; PowerInfer-2 smartphone paper is a separate row.",
+      "lesson": "Compare quality and architecture as well as speed when using specialized sparse models.",
+      "revision": "8bd56d69906c9d2dba4d3bf6899763401e01a9a4",
+      "checked": "2026-10-31",
+      "tags": [],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/Tiiny-AI/PowerInfer/blob/8bd56d69906c9d2dba4d3bf6899763401e01a9a4/README.md"
+        }
+      ]
+    },
+    {
+      "id": "airllm",
+      "name": "AirLLM",
+      "category": "runtime",
+      "ecosystem": "unverified",
+      "origin": "Maintainer geography not established in the reviewed primary sources.",
+      "stage": "Source available; not independently qualified here.",
+      "license": "Apache-2.0",
+      "architecture": "Layer/expert streaming from host/storage to reduce accelerator memory.",
+      "host": "Python desktop/server, CUDA and documented macOS/CPU paths.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Not established.",
+      "capacity": "Runs models larger than VRAM through local streaming; does not pool phones.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Local RAM/storage I/O.",
+      "api": "Python AutoModel-style API.",
+      "security": "Not independently audited; deployment-specific controls require review.",
+      "evidence": "Author VRAM measurements and examples.",
+      "limitations": "Low peak VRAM is not low total RAM/disk cost or interactive speed.",
+      "lesson": "Publish wall time, disk traffic and host memory alongside VRAM reductions.",
+      "revision": "75a6bb3c41c6b4b5869fc7fe20828aa6367f9c46",
+      "checked": "2026-10-31",
+      "tags": [],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/lyogavin/airllm/blob/75a6bb3c41c6b4b5869fc7fe20828aa6367f9c46/README.md"
+        }
+      ]
+    },
+    {
+      "id": "executorch",
+      "name": "ExecuTorch",
+      "category": "runtime",
+      "ecosystem": "international",
+      "origin": "PyTorch/Meta-led ecosystem with Arm, Qualcomm, Apple, MediaTek and other contributors.",
+      "stage": "Versioned edge runtime with mobile packages.",
+      "license": "BSD-style license; component notices apply.",
+      "architecture": "Exported graphs delegate supported regions to CPU/GPU/NPU/DSP.",
+      "host": "Phones, desktops and embedded targets.",
+      "android": "AAR; CPU/Vulkan and model-dependent mobile accelerator delegates.",
+      "ios": "CPU/Core ML; MLX on physical devices marked experimental.",
+      "mobile_compute": "Yes: on-device inference.",
+      "capacity": "Graph partitioning across local accelerators, not automatically across phones.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Local runtime; application transport separate.",
+      "api": "Native/mobile bindings; experimental local OpenAI-style server.",
+      "security": "Not independently audited; deployment-specific controls require review.",
+      "evidence": "Official examples and backend documentation.",
+      "limitations": "Export/delegate/operator coverage varies by model and device.",
+      "lesson": "Treat local hardware delegation and network partitioning as distinct layers.",
+      "revision": "05092c126d4ed5563527f0dab57f3c5da1a7f2a7",
+      "checked": "2026-10-31",
+      "tags": [
+        "android_compute",
+        "ios_compute"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/pytorch/executorch/blob/05092c126d4ed5563527f0dab57f3c5da1a7f2a7/README.md"
+        },
+        {
+          "label": "License at inspected revision",
+          "url": "https://github.com/pytorch/executorch/blob/05092c126d4ed5563527f0dab57f3c5da1a7f2a7/LICENSE"
+        }
+      ]
+    },
+    {
+      "id": "litert-lm",
+      "name": "LiteRT-LM",
+      "category": "runtime",
+      "ecosystem": "western",
+      "origin": "Google, United States; international contributors.",
+      "stage": "Versioned LLM orchestration/runtime SDK.",
+      "license": "Apache-2.0",
+      "architecture": "LiteRT-based local LLM execution, quantization and model-dependent MTP.",
+      "host": "Desktop/mobile targets with backend-specific support.",
+      "android": "Kotlin SDK marked stable in the inspected README.",
+      "ios": "Swift SDK for iOS/macOS marked early preview, not stable.",
+      "mobile_compute": "Yes: on-device inference.",
+      "capacity": "No distributed phone memory pool documented.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Local execution.",
+      "api": "C/native/mobile and web interfaces.",
+      "security": "Not independently audited; deployment-specific controls require review.",
+      "evidence": "Official SDK documentation and examples.",
+      "limitations": "LiteRT model conversion and hardware delegates determine availability.",
+      "lesson": "Benchmark supported native formats against GGUF before adopting a backend.",
+      "revision": "9d613ac5bb59a142c586f50821c43f1c2d001920",
+      "checked": "2026-10-31",
+      "tags": [
+        "android_compute",
+        "ios_compute"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/google-ai-edge/LiteRT-LM/blob/9d613ac5bb59a142c586f50821c43f1c2d001920/README.md"
+        }
+      ]
+    },
+    {
+      "id": "gallery",
+      "name": "Google AI Edge Gallery",
+      "category": "mobile",
+      "ecosystem": "western",
+      "origin": "Google, United States.",
+      "stage": "Experimental beta app; Android/iOS distribution documented.",
+      "license": "Apache-2.0",
+      "architecture": "Local multimodal app built on edge inference runtimes.",
+      "host": "Phone app; macOS download also documented.",
+      "android": "Android 12+ documented.",
+      "ios": "iOS 17+ documented.",
+      "mobile_compute": "Yes: local model execution.",
+      "capacity": "No model sharding across phones documented.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "On-device inference after downloads.",
+      "api": "App-oriented model management and benchmark UI.",
+      "security": "Offline inference advertised; this is not an independent privacy audit.",
+      "evidence": "Official app/source documentation.",
+      "limitations": "A local benchmark sandbox does not provide a reusable cluster worker.",
+      "lesson": "Make device-level model management and measurements understandable.",
+      "revision": "7f4d6bc7062bfc2b8db6940fd022884353c79354",
+      "checked": "2026-10-31",
+      "tags": [
+        "android_compute",
+        "ios_compute"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/google-ai-edge/gallery/blob/7f4d6bc7062bfc2b8db6940fd022884353c79354/README.md"
+        }
+      ]
+    },
+    {
+      "id": "cactus",
+      "name": "Cactus",
+      "category": "runtime",
+      "ecosystem": "unverified",
+      "origin": "Maintainer geography not established in the reviewed primary sources.",
+      "stage": "Source available; not independently qualified here.",
+      "license": "Custom Cactus license; eligibility/commercial conditions apply. Inspect LICENSE.",
+      "architecture": "Mobile/wearable inference engine with local and hybrid edge/cloud paths.",
+      "host": "Apple/Android and supported native targets.",
+      "android": "Native engine and connected-device benchmarks.",
+      "ios": "Native engine and connected-device benchmarks.",
+      "mobile_compute": "Yes: local inference.",
+      "capacity": "No phone-fleet weight pooling established.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Local and optional cloud integration.",
+      "api": "Native engine/application interfaces.",
+      "security": "Cloud telemetry is opt-in in documented tools; app policies remain relevant.",
+      "evidence": "Author benchmark suite; not reproduced by NodeLift.",
+      "limitations": "Custom license and engine-specific model formats; hybrid cloud is not local-only clustering.",
+      "lesson": "Include sustained mobile benchmarks and explicit telemetry controls.",
+      "revision": "2cfcdb8568eb9192323b27fd0012a834517b4419",
+      "checked": "2026-10-31",
+      "tags": [
+        "android_compute",
+        "ios_compute"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/cactus-compute/cactus/blob/2cfcdb8568eb9192323b27fd0012a834517b4419/README.md"
+        },
+        {
+          "label": "License at inspected revision",
+          "url": "https://github.com/cactus-compute/cactus/blob/2cfcdb8568eb9192323b27fd0012a834517b4419/LICENSE"
+        }
+      ]
+    },
+    {
+      "id": "geniex",
+      "name": "GenieX / formerly Nexa SDK repository",
+      "category": "runtime",
+      "ecosystem": "western",
+      "origin": "Qualcomm, United States.",
+      "stage": "Current canonical repository; old NexaAI/nexa-sdk URL redirects here.",
+      "license": "BSD-3-Clause",
+      "architecture": "Snapdragon local inference through llama.cpp or Qualcomm AI Engine Direct.",
+      "host": "Qualcomm Snapdragon Windows/Android/Linux only, per current README.",
+      "android": "Kotlin/Java SDK, supported Snapdragon devices.",
+      "ios": "Not a documented target.",
+      "mobile_compute": "Yes: supported CPU/Adreno GPU/Hexagon NPU.",
+      "capacity": "No distributed phone memory pool documented.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Local execution; optional local server.",
+      "api": "C SDK, CLI, Python, Kotlin/Java and OpenAI-compatible server.",
+      "security": "Not independently audited; deployment-specific controls require review.",
+      "evidence": "Official SDK examples and hardware matrix.",
+      "limitations": "Do not carry historical Nexa cross-platform claims onto the renamed current project.",
+      "lesson": "Detect exact chipset/runtime/model path; generic NPU availability is insufficient.",
+      "revision": "d66de04d57ee41db2b1df3b9b85b926e41d1c4e5",
+      "checked": "2026-10-31",
+      "tags": [
+        "android_compute"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/qualcomm/GenieX/blob/d66de04d57ee41db2b1df3b9b85b926e41d1c4e5/README.md"
+        }
+      ]
+    },
+    {
+      "id": "inferrlm",
+      "name": "InferrLM",
+      "category": "mobile",
+      "ecosystem": "unverified",
+      "origin": "Maintainer geography not established in the reviewed primary sources.",
+      "stage": "Source available; not independently qualified here.",
+      "license": "AGPL-3.0",
+      "architecture": "Local GGUF/MLX mobile app with optional cloud providers and local serving.",
+      "host": "Android/iOS app.",
+      "android": "llama.cpp local inference.",
+      "ios": "llama.cpp, MLX and supported Apple model paths.",
+      "mobile_compute": "Yes: complete local model execution.",
+      "capacity": "Whole-model local serving; no cross-device sharding documented.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Local server or optional remote APIs.",
+      "api": "App and local-server interfaces.",
+      "security": "Local and cloud modes have different data boundaries.",
+      "evidence": "Current app/source documentation.",
+      "limitations": "A phone serving an entire model does not add its RAM to a desktop model.",
+      "lesson": "Expose whether each request stays local, is served by a peer or goes to a cloud.",
+      "revision": "258261f7fd2e7f54e3772a6f577441de7dec26d9",
+      "checked": "2026-10-31",
+      "tags": [
+        "android_compute",
+        "ios_compute",
+        "request_routing"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/loomax-labs/InferrLM/blob/258261f7fd2e7f54e3772a6f577441de7dec26d9/README.md"
+        }
+      ]
+    },
+    {
+      "id": "pocketpal-ai",
+      "name": "PocketPal AI",
+      "category": "mobile",
+      "ecosystem": "unverified",
+      "origin": "Maintainer geography not established in the reviewed primary sources.",
+      "stage": "Source available; not independently qualified here.",
+      "license": "MIT",
+      "architecture": "Local assistant using native LLM, speech and tool bridges.",
+      "host": "Android/iOS/iPadOS.",
+      "android": "CPU, supported Adreno/OpenCL and Hexagon paths.",
+      "ios": "CPU/Metal paths.",
+      "mobile_compute": "Yes: on-device inference.",
+      "capacity": "No distributed model sharding documented.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Local app; model downloads.",
+      "api": "Application/native bridges.",
+      "security": "No-account local workflow documented; not independently audited.",
+      "evidence": "Store/source releases and hardware acceleration documentation.",
+      "limitations": "Supported backends vary; no cluster planner or remote draft contract established.",
+      "lesson": "A well-integrated standalone phone is a valuable baseline for reclaimed hardware.",
+      "revision": "f8f37d9a4676763eaaf509276b21631b9e95ba8f",
+      "checked": "2026-10-31",
+      "tags": [
+        "android_compute",
+        "ios_compute"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/a-ghorbani/pocketpal-ai/blob/f8f37d9a4676763eaaf509276b21631b9e95ba8f/README.md"
+        }
+      ]
+    },
+    {
+      "id": "local-llms-on-android",
+      "name": "Pocket LLM for Android",
+      "category": "mobile",
+      "ecosystem": "unverified",
+      "origin": "Maintainer geography not established in the reviewed primary sources.",
+      "stage": "Source available; not independently qualified here.",
+      "license": "MIT",
+      "architecture": "LiteRT-based Android app and LAN model server.",
+      "host": "Android phone.",
+      "android": "Local model import, chat and server.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Yes: whole-model execution.",
+      "capacity": "No cross-device layer pooling documented.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Home LAN/web UI.",
+      "api": "Local server and browser chat.",
+      "security": "Password-protected Web UI documented.",
+      "evidence": "Upstream APK/runtime documentation.",
+      "limitations": "Current runtime is LiteRT-LM, not an assumed generic GGUF server.",
+      "lesson": "Simple LAN serving and password UX are useful without implying RAM aggregation.",
+      "revision": "8e0edbc99eb3930ad37536ec137d8882e8beaceb",
+      "checked": "2026-10-31",
+      "tags": [
+        "android_compute",
+        "request_routing"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/dineshsoudagar/local-llms-on-android/blob/8e0edbc99eb3930ad37536ec137d8882e8beaceb/README.md"
+        }
+      ]
+    },
+    {
+      "id": "mobilecore",
+      "name": "MobileCore / TuiMa 推嘛",
+      "category": "mobile",
+      "ecosystem": "unverified",
+      "origin": "Maintainer geography not established in the reviewed primary sources.",
+      "stage": "Android prerelease and buildable iOS skeleton.",
+      "license": "not identified",
+      "architecture": "GGUF runtime, device-aware model catalog and benchmark records.",
+      "host": "Android app; iOS skeleton.",
+      "android": "Native llama.cpp foreground service.",
+      "ios": "Buildable skeleton/bridge; full qualification not established.",
+      "mobile_compute": "Android local inference; iOS readiness must be qualified separately.",
+      "capacity": "No distributed model-memory pool documented.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Foreground localhost API.",
+      "api": "OpenAI-compatible localhost routes.",
+      "security": "Model provenance/digests and curated catalog separation documented.",
+      "evidence": "Upstream source/build records; not reproduced here.",
+      "limitations": "Do not label a skeleton equivalent to a physically qualified app.",
+      "lesson": "Separate verified model provenance from unqualified community search results.",
+      "revision": "1f909373d17fc4a6413006fcd88f1c46120112cc",
+      "checked": "2026-10-31",
+      "tags": [
+        "android_compute"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/Harzva/mobilecore/blob/1f909373d17fc4a6413006fcd88f1c46120112cc/README.md"
+        }
+      ]
+    },
+    {
+      "id": "mlx",
+      "name": "MLX / distributed collectives",
+      "category": "runtime",
+      "ecosystem": "western",
+      "origin": "Apple ML research, United States.",
+      "stage": "Source available; not independently qualified here.",
+      "license": "MIT",
+      "architecture": "Array framework with distributed collectives for parallel training/inference.",
+      "host": "Apple Silicon; current distributed docs also describe CUDA/NCCL.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "Swift/mobile integrations exist separately; a phone fleet is not supplied by this API.",
+      "mobile_compute": "Requires an application integration.",
+      "capacity": "Possible through model-parallel applications, not an automatic shared RAM pool.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "MPI, TCP ring, JACCL Thunderbolt RDMA, NCCL.",
+      "api": "Python/C++ and related Swift libraries.",
+      "security": "Not independently audited; deployment-specific controls require review.",
+      "evidence": "Pinned distributed-communication documentation.",
+      "limitations": "Backend and OS/hardware prerequisites matter; RDMA does not apply to ordinary Wi-Fi.",
+      "lesson": "Use collectives only when measured interconnect cost fits the partition.",
+      "revision": "339279525ea3168b6fa55911529e3766a145d0b2",
+      "checked": "2026-10-31",
+      "tags": [
+        "capacity_sharding"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/ml-explore/mlx/blob/339279525ea3168b6fa55911529e3766a145d0b2/README.md"
+        },
+        {
+          "label": "Distributed backends",
+          "url": "https://github.com/ml-explore/mlx/blob/339279525ea3168b6fa55911529e3766a145d0b2/docs/src/usage/distributed.rst"
+        }
+      ]
+    },
+    {
+      "id": "ncnn",
+      "name": "ncnn",
+      "category": "runtime",
+      "ecosystem": "asia",
+      "origin": "Tencent, China.",
+      "stage": "Source available; not independently qualified here.",
+      "license": "BSD-3-Clause; third-party notices apply.",
+      "architecture": "Optimized local neural-network inference with CPU/Vulkan paths.",
+      "host": "Mobile, embedded and desktop.",
+      "android": "Native/Termux build documentation.",
+      "ios": "Native build documentation.",
+      "mobile_compute": "Yes: local inference library.",
+      "capacity": "No multi-phone model-memory pooling documented.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Application-owned; runtime is local.",
+      "api": "C++/Python and platform integrations.",
+      "security": "Not independently audited; deployment-specific controls require review.",
+      "evidence": "Official builds and supported-target documentation.",
+      "limitations": "General neural-network support is not proof every LLM architecture is supported.",
+      "lesson": "Qualify transformer operator coverage and quantization before fleet integration.",
+      "revision": "f18f3ffc94dbc76a277e94556c588ab2c2d0e1d9",
+      "checked": "2026-10-31",
+      "tags": [
+        "android_compute",
+        "ios_compute"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/Tencent/ncnn/blob/f18f3ffc94dbc76a277e94556c588ab2c2d0e1d9/README.md"
+        },
+        {
+          "label": "License at inspected revision",
+          "url": "https://github.com/Tencent/ncnn/blob/f18f3ffc94dbc76a277e94556c588ab2c2d0e1d9/LICENSE.txt"
+        }
+      ]
+    },
+    {
+      "id": "onnxruntime-genai",
+      "name": "ONNX Runtime GenAI",
+      "category": "runtime",
+      "ecosystem": "western",
+      "origin": "Microsoft, United States.",
+      "stage": "Source available; not independently qualified here.",
+      "license": "MIT",
+      "architecture": "ONNX generation loop, KV cache, sampling and accelerator execution providers.",
+      "host": "Linux/Windows/macOS/Android per current support table.",
+      "android": "Supported target in current matrix.",
+      "ios": "Listed on the roadmap, not current support.",
+      "mobile_compute": "Android local inference with supported providers/models.",
+      "capacity": "Local providers; no phone-cluster sharding documented.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Local runtime.",
+      "api": "Native and language bindings.",
+      "security": "Not independently audited; deployment-specific controls require review.",
+      "evidence": "Official current support matrix.",
+      "limitations": "ONNX export and execution-provider coverage differ; generic ONNX iOS support is not GenAI qualification.",
+      "lesson": "Use the exact product support table, not the broader parent framework's claims.",
+      "revision": "77a7b3b7b46ff97b2a66259f04d783beda12a274",
+      "checked": "2026-10-31",
+      "tags": [
+        "android_compute"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/microsoft/onnxruntime-genai/blob/77a7b3b7b46ff97b2a66259f04d783beda12a274/README.md"
+        }
+      ]
+    },
+    {
+      "id": "mindspore",
+      "name": "MindSpore / Lite ecosystem",
+      "category": "runtime",
+      "ecosystem": "asia",
+      "origin": "Huawei/MindSpore ecosystem, China.",
+      "stage": "Source available; not independently qualified here.",
+      "license": "Apache-2.0",
+      "architecture": "Training/inference framework with Ascend and edge/mobile ecosystem.",
+      "host": "Supported server/edge hardware; Lite deployment is a distinct component.",
+      "android": "MindSpore Lite documents Android; a specific LLM worker is not qualified here.",
+      "ios": "MindSpore Lite documents iOS; a specific LLM worker is not qualified here.",
+      "mobile_compute": "Local neural inference runtime; complete LLM fleet-worker qualification is separate.",
+      "capacity": "Distributed framework features do not establish phone RAM pooling.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Component-dependent.",
+      "api": "Framework/native APIs.",
+      "security": "Not independently audited; deployment-specific controls require review.",
+      "evidence": "Official Lite platform page also identifies a HarmonyOS NEXT Lite Kit; no Huawei phone run performed.",
+      "limitations": "Lite Kit availability does not establish arbitrary LLM operators, model compatibility or NodeLift support.",
+      "lesson": "Investigate the native NEXT Lite Kit route, then verify actual model execution on the target device.",
+      "revision": "16873579685a1662f10ebd1df068bf512f211869",
+      "checked": "2026-10-31",
+      "tags": [],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/mindspore-ai/mindspore/blob/16873579685a1662f10ebd1df068bf512f211869/README.md"
+        },
+        {
+          "label": "Official Lite platforms and HarmonyOS NEXT Kit",
+          "url": "https://www.mindspore.cn/lite/en"
+        }
+      ]
+    },
+    {
+      "id": "t-mac",
+      "name": "T-MAC",
+      "category": "runtime",
+      "ecosystem": "western",
+      "origin": "Microsoft project; multinational research contributors.",
+      "stage": "Research kernel library; inspected head last pushed in June 2025.",
+      "license": "MIT",
+      "architecture": "Lookup-table low-bit matrix multiplication, mainly for CPU inference.",
+      "host": "ARM/Intel Linux/macOS/Windows.",
+      "android": "Cross-compilation instructions.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Android/local CPU integration; related NPU work is separate.",
+      "capacity": "Quantization/kernel efficiency, not multi-phone pooling.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Local compute.",
+      "api": "Kernel library and llama.cpp integration.",
+      "security": "Not independently audited; deployment-specific controls require review.",
+      "evidence": "Author aligned model/device comparisons and Android guide.",
+      "limitations": "Kernel or prefill gains do not establish networked decoding gains.",
+      "lesson": "Improve local draft efficiency before adding network complexity.",
+      "revision": "7042f8f73330bd083bc1e4bc5ccb3f88a4904aee",
+      "checked": "2026-10-31",
+      "tags": [
+        "android_compute"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/microsoft/T-MAC/blob/7042f8f73330bd083bc1e4bc5ccb3f88a4904aee/README.md"
+        }
+      ]
+    },
+    {
+      "id": "fastdeploy",
+      "name": "FastDeploy",
+      "category": "serving",
+      "ecosystem": "asia",
+      "origin": "PaddlePaddle/Baidu ecosystem, China.",
+      "stage": "Current 2.x LLM/VLM serving project.",
+      "license": "Apache-2.0",
+      "architecture": "Prefill/decode disaggregation, KV transfer, quantization and MTP.",
+      "host": "Linux servers; NVIDIA and multiple Chinese accelerator backends.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Not established.",
+      "capacity": "Multi-accelerator/disaggregated serving, backend-dependent.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "NVLink/RDMA and cluster networking.",
+      "api": "OpenAI-style service; vLLM-compatible interfaces.",
+      "security": "Not independently audited; deployment-specific controls require review.",
+      "evidence": "Official current Chinese/English documentation.",
+      "limitations": "Current LLM server is not equivalent to older general mobile FastDeploy descriptions.",
+      "lesson": "Separate prefill, decode and cache-transfer placement; keep mobile claims version-specific.",
+      "revision": "d923caf15e1eb0da8e2efd75b0152e65cefeeddd",
+      "checked": "2026-10-31",
+      "tags": [
+        "capacity_sharding",
+        "request_routing"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/PaddlePaddle/FastDeploy/blob/d923caf15e1eb0da8e2efd75b0152e65cefeeddd/README.md"
+        }
+      ]
+    },
+    {
+      "id": "ollama",
+      "name": "Ollama (upstream)",
+      "category": "baseline",
+      "ecosystem": "western",
+      "origin": "Ollama company/project, United States; international contributors.",
+      "stage": "Versioned local model runner.",
+      "license": "MIT",
+      "architecture": "Local models and backend-dependent accelerator execution.",
+      "host": "macOS/Windows/Linux.",
+      "android": "Mobile clients do not establish an official native compute worker.",
+      "ios": "Mobile clients do not establish an official native compute worker.",
+      "mobile_compute": "Not established.",
+      "capacity": "Local multi-accelerator offload; a stock mobile RAM-pooling feature is not established.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Local HTTP service; remote clients optional.",
+      "api": "Ollama API and compatible integrations.",
+      "security": "Network exposure must be configured deliberately; client reachability is not peer authentication.",
+      "evidence": "Current upstream source; NodeLift is not an internal Ollama backend.",
+      "limitations": "Unofficial Ollama Cluster fork is a separate matrix entry.",
+      "lesson": "Keep upstream, adapter and fork compatibility claims separate.",
+      "revision": "f9323416f0c3f84d82f6c4a7bde75b717448bd44",
+      "checked": "2026-10-31",
+      "tags": [],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/ollama/ollama/blob/f9323416f0c3f84d82f6c4a7bde75b717448bd44/README.md"
+        }
+      ]
+    },
+    {
+      "id": "vllm",
+      "name": "vLLM",
+      "category": "serving",
+      "ecosystem": "international",
+      "origin": "Open-source serving community with international academic/industry contributors.",
+      "stage": "Source available; not independently qualified here.",
+      "license": "Apache-2.0",
+      "architecture": "Paged KV management, batching and tensor/pipeline/data/expert/context parallelism.",
+      "host": "Server/workstation accelerators; CPU and hardware plugins.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Not established.",
+      "capacity": "Yes: model parallelism on supported cluster backends.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "High-bandwidth cluster/collective transports.",
+      "api": "OpenAI, Anthropic Messages and gRPC interfaces documented.",
+      "security": "Deployment authentication/isolation remains operator responsibility.",
+      "evidence": "Official features and extensive upstream benchmark ecosystem; no phone comparison here.",
+      "limitations": "Hardware plugins are not proof of a supported Android/iOS worker.",
+      "lesson": "Compare multi-user throughput against efficient batching, not serial requests.",
+      "revision": "564ac0de1b228568cafcbfbe8ccaccc82d6023eb",
+      "checked": "2026-10-31",
+      "tags": [
+        "capacity_sharding",
+        "request_routing"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/vllm-project/vllm/blob/564ac0de1b228568cafcbfbe8ccaccc82d6023eb/README.md"
+        }
+      ]
+    },
+    {
+      "id": "sglang",
+      "name": "SGLang",
+      "category": "serving",
+      "ecosystem": "international",
+      "origin": "International open-source research and serving community.",
+      "stage": "Source available; not independently qualified here.",
+      "license": "Apache-2.0",
+      "architecture": "High-throughput serving, cache reuse, speculation and parallel execution.",
+      "host": "GPU/TPU/NPU/CPU platforms; current Apple Silicon path documented.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Not established.",
+      "capacity": "Yes on supported model-parallel deployments.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "Cluster networking and backend collectives.",
+      "api": "Serving APIs and runtime interfaces.",
+      "security": "Not independently audited; deployment-specific controls require review.",
+      "evidence": "Current hardware/runtime documentation.",
+      "limitations": "Mac support does not establish iPhone compute support; deployment results depend on backend.",
+      "lesson": "A strong local/cache-aware baseline can erase apparent offload gains.",
+      "revision": "181380682b50f4606d1a09df3cbbbfc21de931e3",
+      "checked": "2026-10-31",
+      "tags": [
+        "capacity_sharding",
+        "request_routing"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/sgl-project/sglang/blob/181380682b50f4606d1a09df3cbbbfc21de931e3/README.md"
+        }
+      ]
+    },
+    {
+      "id": "tensorrt-llm",
+      "name": "TensorRT-LLM",
+      "category": "serving",
+      "ecosystem": "western",
+      "origin": "NVIDIA, United States.",
+      "stage": "Source available; not independently qualified here.",
+      "license": "Apache-2.0 for project; incorporated components have additional notices.",
+      "architecture": "Specialized NVIDIA kernels, speculative decoding and distributed parallel serving.",
+      "host": "Supported NVIDIA accelerator systems.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Not established.",
+      "capacity": "Yes: multi-GPU/node parallelism.",
+      "single_chat": "No comparable NodeLift measurement.",
+      "transport": "NVIDIA accelerator/cluster interconnects.",
+      "api": "Runtime and serving integrations.",
+      "security": "Not independently audited; deployment-specific controls require review.",
+      "evidence": "Official kernels, deployment guidance and performance reports.",
+      "limitations": "Not a general Android/iOS heterogeneous fleet runtime.",
+      "lesson": "Use specialized server results as architectural references, not phone performance predictions.",
+      "revision": "2d1a7d170eb808bbe0e1203aa9d34dea702d52c5",
+      "checked": "2026-10-31",
+      "tags": [
+        "capacity_sharding"
+      ],
+      "sources": [
+        {
+          "label": "Pinned primary source",
+          "url": "https://github.com/NVIDIA/TensorRT-LLM/blob/2d1a7d170eb808bbe0e1203aa9d34dea702d52c5/README.md"
+        },
+        {
+          "label": "License at inspected revision",
+          "url": "https://github.com/NVIDIA/TensorRT-LLM/blob/2d1a7d170eb808bbe0e1203aa9d34dea702d52c5/LICENSE"
+        }
+      ]
+    },
+    {
+      "id": "lm-studio",
+      "name": "LM Studio / LM Link / Locally",
+      "category": "baseline",
+      "ecosystem": "western",
+      "origin": "LM Studio/Element Labs, United States.",
+      "stage": "Desktop application and linked-device service.",
+      "license": "Application/service terms; separate SDK repositories have their own licenses.",
+      "architecture": "A device accesses a model hosted on another linked device.",
+      "host": "Desktop LM Studio host.",
+      "android": "Android compute-worker support not established by LM Link documentation.",
+      "ios": "Locally is the linked iPhone/iPad client in the documented workflow.",
+      "mobile_compute": "LM Link example uses phone as client; local app features are a different execution path.",
+      "capacity": "Remote whole-model access; cross-phone weight pooling not documented.",
+      "single_chat": "Latency includes remote service/link; no common benchmark with NodeLift.",
+      "transport": "Tailscale-based end-to-end encrypted links.",
+      "api": "REST, lms CLI and application integration.",
+      "security": "End-to-end encryption documented; linked devices remain the trusted endpoints.",
+      "evidence": "Official LM Link documentation.",
+      "limitations": "Remote model access is not donated phone RAM or distributed decoding.",
+      "lesson": "Integration UX is valuable; describe precisely which machine performs inference.",
+      "revision": "Document version stated in sources",
+      "checked": "2026-10-31",
+      "tags": [],
+      "sources": [
+        {
+          "label": "Official LM Link",
+          "url": "https://lmstudio.ai/docs/lmlink"
+        }
+      ]
+    },
+    {
+      "id": "lingualinked",
+      "name": "LinguaLinked",
+      "category": "research",
+      "ecosystem": "western",
+      "origin": "UC Irvine and VMware Research, United States.",
+      "stage": "Published research/prototype; not a qualified NodeLift integration.",
+      "license": "Paper access terms do not establish a reusable software license.",
+      "architecture": "Model subgraphs assigned to trusted mobile devices with runtime load balancing.",
+      "host": "Coordinator plus Android device group.",
+      "android": "Physical Android prototype and app demonstrated.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Yes: model partitions.",
+      "capacity": "Yes: model partitioning across trusted devices.",
+      "single_chat": "Author results only; no same-hardware NodeLift comparison.",
+      "transport": "Local network; monitored bandwidth/latency.",
+      "api": "Research interface; drop-in Ollama/LM Studio plugin not established.",
+      "security": "Research assumptions; production pairing/authentication not qualified.",
+      "evidence": "ACL 2024 system demo; physical Android devices, including a two-Pixel demonstration.",
+      "limitations": "Model conversion/graph extraction and trusted-node assumptions; no iOS app established.",
+      "lesson": "Profile computation, memory and link cost together; monitor load during execution.",
+      "revision": "ACL 2024, 2024.acl-demos.16",
+      "checked": "2026-10-31",
+      "tags": [
+        "android_compute",
+        "capacity_sharding"
+      ],
+      "sources": [
+        {
+          "label": "Author paper and PDF",
+          "url": "https://aclanthology.org/2024.acl-demos.16/"
+        },
+        {
+          "label": "Author implementation",
+          "url": "https://github.com/zjc664656505/LinguaLinked-Inference"
+        }
+      ]
+    },
+    {
+      "id": "edgeshard",
+      "name": "EdgeShard",
+      "category": "research",
+      "ecosystem": "asia",
+      "origin": "Hong Kong Polytechnic University, Hong Kong, China.",
+      "stage": "Published research/prototype; not a qualified NodeLift integration.",
+      "license": "Paper access terms do not establish a reusable software license.",
+      "architecture": "Joint device selection/model partitioning using dynamic programming.",
+      "host": "Heterogeneous physical edge prototype.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Edge compute demonstrated; native phone application not established.",
+      "capacity": "Yes: distributed model shards.",
+      "single_chat": "Author results only; no same-hardware NodeLift comparison.",
+      "transport": "Network-aware partition placement.",
+      "api": "Research interface; drop-in Ollama/LM Studio plugin not established.",
+      "security": "Research assumptions; production pairing/authentication not qualified.",
+      "evidence": "Llama2 experiments on a physical heterogeneous prototype, author reported.",
+      "limitations": "Optimizing latency and throughput uses different objectives; no consumer mobile release established.",
+      "lesson": "A capacity-feasible partition may still be the wrong latency partition.",
+      "revision": "arXiv:2405.14371v1",
+      "checked": "2026-10-31",
+      "tags": [
+        "capacity_sharding"
+      ],
+      "sources": [
+        {
+          "label": "Primary paper v1",
+          "url": "https://arxiv.org/html/2405.14371v1"
+        }
+      ]
+    },
+    {
+      "id": "powerinfer-2",
+      "name": "PowerInfer-2",
+      "category": "research",
+      "ecosystem": "asia",
+      "origin": "SJTU IPADS, Shanghai, China.",
+      "stage": "Published research/prototype; not a qualified NodeLift integration.",
+      "license": "Paper access terms do not establish a reusable software license.",
+      "architecture": "Neuron-cluster CPU/NPU scheduling with storage offload and neuron caching.",
+      "host": "Smartphone-local execution.",
+      "android": "OnePlus 12/Ace 2 physical testbed in paper.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Yes: local heterogeneous CPU/NPU inference.",
+      "capacity": "Exceeds phone RAM using storage/sparsity; no multi-phone RAM pool.",
+      "single_chat": "Author results only; no same-hardware NodeLift comparison.",
+      "transport": "Local UFS/storage and accelerator transfers.",
+      "api": "Research interface; drop-in Ollama/LM Studio plugin not established.",
+      "security": "Research assumptions; production pairing/authentication not qualified.",
+      "evidence": "Physical phones; 47B TurboSparse-Mixtral result is author-reported and model-specific.",
+      "limitations": "Sparse/modified model and accuracy assumptions; not arbitrary GGUF equivalence or a downloadable general fleet app.",
+      "lesson": "Treat quality, storage traffic and NPU scheduling as part of the benchmark.",
+      "revision": "arXiv:2406.06282v3",
+      "checked": "2026-10-31",
+      "tags": [
+        "android_compute"
+      ],
+      "sources": [
+        {
+          "label": "Primary paper v3",
+          "url": "https://arxiv.org/html/2406.06282v3"
+        },
+        {
+          "label": "Related project",
+          "url": "https://github.com/Tiiny-AI/PowerInfer"
+        }
+      ]
+    },
+    {
+      "id": "wisp",
+      "name": "WISP",
+      "category": "research",
+      "ecosystem": "western",
+      "origin": "Virginia Tech, UCD, NTUA and Queen's Belfast; US/Ireland/Greece/UK.",
+      "stage": "Published research/prototype; not a qualified NodeLift integration.",
+      "license": "Paper access terms do not establish a reusable software license.",
+      "architecture": "Distributed drafting with wasted-work prediction and SLO-aware verification batching.",
+      "host": "Edge draft devices plus centralized verification.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Edge drafting studied; native Android/iOS product not established.",
+      "capacity": "Draft distribution, not target-weight pooling.",
+      "single_chat": "Author results only; no same-hardware NodeLift comparison.",
+      "transport": "Edge/server network with scheduling model.",
+      "api": "Research interface; drop-in Ollama/LM Studio plugin not established.",
+      "security": "Research assumptions; production pairing/authentication not qualified.",
+      "evidence": "Paper numerical evaluation and estimator profiling; no NodeLift device replication.",
+      "limitations": "System capacity/goodput gains are not automatically single-user latency gains.",
+      "lesson": "Measure rejected suffix work and verifier contention; adapt draft length and batching.",
+      "revision": "arXiv:2601.11652v2",
+      "checked": "2026-10-31",
+      "tags": [
+        "remote_draft"
+      ],
+      "sources": [
+        {
+          "label": "Primary paper v2",
+          "url": "https://arxiv.org/html/2601.11652v2"
+        }
+      ]
+    },
+    {
+      "id": "flexspec",
+      "name": "FlexSpec",
+      "category": "research",
+      "ecosystem": "international",
+      "origin": "Baidu/SJTU/Shenzhen collaborators, KTH Sweden and Canadian affiliation.",
+      "stage": "Published research/prototype; not a qualified NodeLift integration.",
+      "license": "Paper access terms do not establish a reusable software license.",
+      "architecture": "Shared-backbone frozen draft with evolving targets and channel-aware speculation.",
+      "host": "Edge/cloud experimental setup.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "iPhone 15 Pro Max case is a simulation in the study.",
+      "mobile_compute": "Edge-device evaluation; distinguish simulated hardware cases.",
+      "capacity": "No distributed target-weight RAM pool.",
+      "single_chat": "Author results only; no same-hardware NodeLift comparison.",
+      "transport": "Channel-adaptive draft/verify exchanges.",
+      "api": "Research interface; drop-in Ollama/LM Studio plugin not established.",
+      "security": "Research assumptions; production pairing/authentication not qualified.",
+      "evidence": "Author experiments under model alignment/training assumptions.",
+      "limitations": "Results do not transfer automatically to unrelated GGUF draft/target pairs or physical iPhones.",
+      "lesson": "Version/tokenizer compatibility and link-aware block selection need explicit qualification.",
+      "revision": "arXiv:2601.00644v1",
+      "checked": "2026-10-31",
+      "tags": [
+        "remote_draft"
+      ],
+      "sources": [
+        {
+          "label": "Primary paper v1",
+          "url": "https://arxiv.org/html/2601.00644v1"
+        }
+      ]
+    },
+    {
+      "id": "dip-sd",
+      "name": "DiP-SD",
+      "category": "research",
+      "ecosystem": "asia",
+      "origin": "Tsinghua University, Beijing, China.",
+      "stage": "Published research/prototype; not a qualified NodeLift integration.",
+      "license": "Paper access terms do not establish a reusable software license.",
+      "architecture": "Distributed multi-user drafts, pipelined phases and batch/draft-length optimization.",
+      "host": "Modeled edge server/devices; GPU profiling supplies cost parameters.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Modeled client drafting; physical phone cluster not demonstrated by these experiments.",
+      "capacity": "Distributed drafts; target remains at verifier.",
+      "single_chat": "Author results only; no same-hardware NodeLift comparison.",
+      "transport": "Modeled edge network and verification pipeline.",
+      "api": "Research interface; drop-in Ollama/LM Studio plugin not established.",
+      "security": "Research assumptions; production pairing/authentication not qualified.",
+      "evidence": "RTX 3090/A100 profiling followed by numerical simulation.",
+      "limitations": "Throughput optimization and simulated heterogeneous users are not physical single-chat speedup.",
+      "lesson": "Include a batched local verifier baseline and label simulation explicitly.",
+      "revision": "arXiv:2604.20919v1",
+      "checked": "2026-10-31",
+      "tags": [
+        "remote_draft"
+      ],
+      "sources": [
+        {
+          "label": "Primary paper v1",
+          "url": "https://arxiv.org/html/2604.20919v1"
+        }
+      ]
+    },
+    {
+      "id": "speculation-distance",
+      "name": "Speculation at a Distance",
+      "category": "research",
+      "ecosystem": "western",
+      "origin": "University of Victoria, Canada.",
+      "stage": "Published research/prototype; not a qualified NodeLift integration.",
+      "license": "Paper access terms do not establish a reusable software license.",
+      "architecture": "Analytical comparison of co-located and edge/cloud speculative decoding.",
+      "host": "Analytical deployment regimes.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Not an application.",
+      "capacity": "No implementation of a RAM pool.",
+      "single_chat": "Author results only; no same-hardware NodeLift comparison.",
+      "transport": "WAN communication bounds and pipeline conditions.",
+      "api": "Research interface; drop-in Ollama/LM Studio plugin not established.",
+      "security": "Research assumptions; production pairing/authentication not qualified.",
+      "evidence": "Conditional mathematical analysis; not a phone benchmark.",
+      "limitations": "Synchronous result fixes models, acceptance and contention-free service costs; it is not a universal LAN impossibility theorem.",
+      "lesson": "Compare remote speculation with best local speculation, not just target-only generation.",
+      "revision": "arXiv:2606.25091v2",
+      "checked": "2026-10-31",
+      "tags": [
+        "remote_draft"
+      ],
+      "sources": [
+        {
+          "label": "Primary paper v2",
+          "url": "https://arxiv.org/html/2606.25091v2"
+        }
+      ]
+    },
+    {
+      "id": "pipeinfer",
+      "name": "PipeInfer",
+      "category": "research",
+      "ecosystem": "unverified",
+      "origin": "Maintainer geography not established in the reviewed primary sources.",
+      "stage": "Published research/prototype; not a qualified NodeLift integration.",
+      "license": "Paper access terms do not establish a reusable software license.",
+      "architecture": "Continuous asynchronous speculation with early cancellation in heterogeneous pipelines.",
+      "host": "Experimental distributed computer cluster.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Native Android/iOS worker qualification not established.",
+      "capacity": "Pipeline partitions and speculation; deployment-specific memory placement.",
+      "single_chat": "Author results only; no same-hardware NodeLift comparison.",
+      "transport": "Cluster interconnects with bandwidth sensitivity.",
+      "api": "Research interface; drop-in Ollama/LM Studio plugin not established.",
+      "security": "Research assumptions; production pairing/authentication not qualified.",
+      "evidence": "Author experimental comparison; not replicated by NodeLift.",
+      "limitations": "No ready-made mobile lifecycle/pairing app established.",
+      "lesson": "Cancel invalid work promptly and measure wasted in-flight computation.",
+      "revision": "arXiv:2407.11798v2",
+      "checked": "2026-10-31",
+      "tags": [
+        "remote_draft",
+        "capacity_sharding"
+      ],
+      "sources": [
+        {
+          "label": "Primary paper v2",
+          "url": "https://arxiv.org/abs/2407.11798v2"
+        }
+      ]
+    },
+    {
+      "id": "pipespec",
+      "name": "PipeSpec",
+      "category": "research",
+      "ecosystem": "unverified",
+      "origin": "Maintainer geography not established in the reviewed primary sources.",
+      "stage": "Published research/prototype; not a qualified NodeLift integration.",
+      "license": "Paper access terms do not establish a reusable software license.",
+      "architecture": "Hierarchical models execute asynchronously with verification and rollback.",
+      "host": "Experimental multi-device model pipeline.",
+      "android": "Not documented in the reviewed sources.",
+      "ios": "Not documented in the reviewed sources.",
+      "mobile_compute": "Native phone deployment not established.",
+      "capacity": "Multiple drafting/verifying models; target-weight pooling is not implied.",
+      "single_chat": "Author results only; no same-hardware NodeLift comparison.",
+      "transport": "Pipeline coordination messages.",
+      "api": "Research interface; drop-in Ollama/LM Studio plugin not established.",
+      "security": "Research assumptions; production pairing/authentication not qualified.",
+      "evidence": "ACL 2025 experiments on summarization, math and code.",
+      "limitations": "Analytical throughput guarantees rely on the paper's assumptions; not a universal mobile latency guarantee.",
+      "lesson": "Rollback and stage independence already have prior art; qualify real mobile network behavior.",
+      "revision": "ACL Findings 2025, 2025.findings-acl.669",
+      "checked": "2026-10-31",
+      "tags": [
+        "remote_draft"
+      ],
+      "sources": [
+        {
+          "label": "Primary paper",
+          "url": "https://aclanthology.org/2025.findings-acl.669/"
+        },
+        {
+          "label": "Author implementation",
+          "url": "https://github.com/BradMcDanel/PipeSpec"
+        }
+      ]
+    }
+  ]
+}

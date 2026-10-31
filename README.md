@@ -6,6 +6,8 @@
 
 NodeLift is an experimental local inference workbench and mobile companion system. A small model on a phone proposes tokens; a larger model on the computer verifies them before anything reaches the user. The project measures when delegation helps and when the computer alone is faster.
 
+**[Project showcase source](site/NodeLift/index.html)** · [55-entry detailed matrix](site/NodeLift/data/comparison.md) · [Assessment and engineering lessons](research/comparison-2026-10-31/ASSESSMENT.md). The dated atlas distinguishes applications, runtimes, serving systems and research; it is not an exhaustive inventory or a universal performance ranking.
+
 **[0.2.1 experimental prerelease](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.1), 31 October 2026.** Native inference, authenticated mobile work leases, an OpenAI-style text gateway, Android/iOS companion sources and an LM Studio generator adapter are implemented. **Phone inference speedup, pooled RAM, large hybrid-model speculation and sustained mobile operation are not yet qualified.** The first real-weight control experiments found local drafting slower than target-only inference on the small test pair. Negative results are published.
 
 ## Implementation and evidence
