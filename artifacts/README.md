@@ -1,3 +1,28 @@
+# NodeLift 0.2.1: build and validation
+
+31 October 2026. Experimental native inference release. **No physical-phone LLM speedup, pooled RAM or production readiness is established.**
+
+| Component | Observed result | Boundary |
+|---|---|---|
+| Host / protocol / HTTP | 26 automated tests passed, including fresh startup, authorization separation, lease failures and split Unicode streaming | Contract tests use stub inference where explicitly labelled |
+| Native core | 29 real-weight correctness checks passed on M3 Max / Metal | Four prompts, bounded outputs; not universal numerical equivalence |
+| Remote work | Four real-weight TLS fault cases passed: valid/wrong/error/dropped proposals | Emulated local node, not a physical phone |
+| Client gateway | Live real-weight normal/stream equality, Unicode, disconnect cancellation passed | One configured small target, greedy only |
+| LM Studio adapter | TypeScript build, three stream tests, real SDK handler → live engine passed | CLI installation stalled and was stopped; GUI/plugin runtime remains unverified |
+| Android | 0.2.1 build 3 ARM64 APK built; APK signature verified; native library and license notices packaged | Debug-signed lab build; updated native APK not physically exercised yet |
+| iOS | Complete Release device build including native Metal/CPU framework and notices succeeded | Unsigned; physical installation/rendering/inference open |
+| HarmonyOS NEXT | Separate source candidate retained | No native engine, SDK build or HAP |
+| External reviews | Actual Gemini 4 High and GLM 5.3 Max design and source responses received and adjudicated | Static model advice, not device/runtime certification |
+| UI | Desktop functional checks and first Gemini visual review; iOS build/parse passed | Post-fix visual recheck limited, no physical iOS UI test |
+
+Local artifacts: `NodeLift-0.2.1-android-debug.apk`; release packaging adds a source ZIP, an explicitly unsigned iOS app ZIP and a SHA-256 build manifest. Artifacts/logs are ignored by Git; downloadable assets belong on the GitHub prerelease. Weights, private state, signing keys and user prompts are excluded.
+
+The observed Xiaomi test still refers to the 0.1 qualification companion. The new connected benchmark runner refuses offline/legacy nodes; its full physical sequence remains pending. See [engine guide](../docs/ENGINE_0_2.md), [measured results](../research/measurements/ENGINE_RESULTS.md) and [review adjudication](../research/reviews/ENGINE_REVIEW.md).
+
+## Historical 0.1 checkpoint
+
+The section below records earlier evidence only; current status is above.
+
 # NodeLift 0.1.0 — build e verifiche
 
 31 ottobre 2026. **Companion di qualificazione: motore LLM distribuito non implementato.**

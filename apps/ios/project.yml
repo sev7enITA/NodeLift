@@ -13,11 +13,15 @@ targets:
     type: application
     platform: iOS
     sources: [NodeLift]
+    dependencies:
+      - framework: ../../native/build/iphoneos/lib/nodelift.framework
+        embed: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.nodelift.companion
-        MARKETING_VERSION: 0.1.0
-        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: 0.2.1
+        CURRENT_PROJECT_VERSION: 3
+        SWIFT_OBJC_BRIDGING_HEADER: NodeLift/Bridge.h
         TARGETED_DEVICE_FAMILY: '1,2'
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: NodeLift

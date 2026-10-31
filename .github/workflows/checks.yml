@@ -1,0 +1,31 @@
+name: Source checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  protocol:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.12', '3.14']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '${{ matrix.python }}'
+      - run: PYTHONPATH=host python -m unittest discover -s host/tests -v
+      - run: python research/distai/verify_evidence.py
+  lmstudio:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: adapters/lmstudio
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: adapters/lmstudio/package-lock.json
+      - run: npm ci --ignore-scripts
+      - run: npm test

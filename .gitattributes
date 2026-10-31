@@ -1,0 +1,4 @@
+# Preserve upstream license text byte-for-byte, including trailing whitespace.
+native/licenses/*.txt -whitespace
+apps/android/app/src/main/assets/licenses/*.txt -whitespace
+apps/ios/NodeLift/Licenses/*.txt -whitespace

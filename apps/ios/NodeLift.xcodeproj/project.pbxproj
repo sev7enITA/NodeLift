@@ -8,26 +8,74 @@
 
 /* Begin PBXBuildFile section */
 		0B8B2768D6B83F520DB122DF /* NodeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537FA0BE82EB8E5EE89F9D50 /* NodeModel.swift */; };
+		3C767E561695C701CCFF3B4C /* NativeDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0BC8571261D6AF4ED2C28E /* NativeDraft.swift */; };
+		3E02319FCA780DC2E0B8E62E /* llama.cpp.txt in Resources */ = {isa = PBXBuildFile; fileRef = A5F69903C55976B5FC01ED0D /* llama.cpp.txt */; };
+		4636E0D6F1FB78941AF216C4 /* nodelift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 428374D614497A6AE8BE2CD0 /* nodelift.framework */; };
 		5D14067ADC425B96D44C8D74 /* NodeLiftApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FC11247814DDE5BDAD0EB5 /* NodeLiftApp.swift */; };
 		9702D57020605502B4E0A28D /* Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9FEB3C454F78556E89C7CFE /* Protocol.swift */; };
+		D2B4FED75F69A3BAC1C6FE0D /* sha256.txt in Resources */ = {isa = PBXBuildFile; fileRef = F0F5EC33074D4B578A1B2FCE /* sha256.txt */; };
+		E204553EF4EE4DDE0757C03C /* nlohmann-json.txt in Resources */ = {isa = PBXBuildFile; fileRef = 53BE2A22197983453C3CE87D /* nlohmann-json.txt */; };
+		FE23B653668497AB8E24218C /* nodelift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 428374D614497A6AE8BE2CD0 /* nodelift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		7C64DC3F3B3469FAF4B2E6B5 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				FE23B653668497AB8E24218C /* nodelift.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		428374D614497A6AE8BE2CD0 /* nodelift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = nodelift.framework; path = ../../native/build/iphoneos/lib/nodelift.framework; sourceTree = "<group>"; };
+		47B420CC1C8D5A5846BDDCCD /* Bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bridge.h; sourceTree = "<group>"; };
 		537FA0BE82EB8E5EE89F9D50 /* NodeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeModel.swift; sourceTree = "<group>"; };
+		53BE2A22197983453C3CE87D /* nlohmann-json.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "nlohmann-json.txt"; sourceTree = "<group>"; };
 		65FC11247814DDE5BDAD0EB5 /* NodeLiftApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeLiftApp.swift; sourceTree = "<group>"; };
 		6FFBC213D033634F9D7F5A37 /* NodeLift.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = NodeLift.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A5F69903C55976B5FC01ED0D /* llama.cpp.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = llama.cpp.txt; sourceTree = "<group>"; };
 		C9FEB3C454F78556E89C7CFE /* Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocol.swift; sourceTree = "<group>"; };
+		DD0BC8571261D6AF4ED2C28E /* NativeDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDraft.swift; sourceTree = "<group>"; };
+		F0F5EC33074D4B578A1B2FCE /* sha256.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = sha256.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DD7016B5347451153C41D020 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4636E0D6F1FB78941AF216C4 /* nodelift.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		32EDBD5A2B3BCADAFD9DF618 /* NodeLift */ = {
 			isa = PBXGroup;
 			children = (
+				47B420CC1C8D5A5846BDDCCD /* Bridge.h */,
+				DD0BC8571261D6AF4ED2C28E /* NativeDraft.swift */,
 				65FC11247814DDE5BDAD0EB5 /* NodeLiftApp.swift */,
 				537FA0BE82EB8E5EE89F9D50 /* NodeModel.swift */,
 				C9FEB3C454F78556E89C7CFE /* Protocol.swift */,
+				6C18E73C8B09FC638DAB32AC /* Licenses */,
 			);
 			path = NodeLift;
+			sourceTree = "<group>";
+		};
+		4EF8F53E3200365DBEB3F3A7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				428374D614497A6AE8BE2CD0 /* nodelift.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		5A8B5312CEAA6942602B8EE8 /* Products */ = {
@@ -38,10 +86,21 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		6C18E73C8B09FC638DAB32AC /* Licenses */ = {
+			isa = PBXGroup;
+			children = (
+				A5F69903C55976B5FC01ED0D /* llama.cpp.txt */,
+				53BE2A22197983453C3CE87D /* nlohmann-json.txt */,
+				F0F5EC33074D4B578A1B2FCE /* sha256.txt */,
+			);
+			path = Licenses;
+			sourceTree = "<group>";
+		};
 		7A380E5E59AB7666322C4564 = {
 			isa = PBXGroup;
 			children = (
 				32EDBD5A2B3BCADAFD9DF618 /* NodeLift */,
+				4EF8F53E3200365DBEB3F3A7 /* Frameworks */,
 				5A8B5312CEAA6942602B8EE8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,6 +113,9 @@
 			buildConfigurationList = F71B9A67A42F119A8025F6CE /* Build configuration list for PBXNativeTarget "NodeLift" */;
 			buildPhases = (
 				DA117F884A5FBFF955D64F51 /* Sources */,
+				C3A8BEE6EE76AC32E690B418 /* Resources */,
+				DD7016B5347451153C41D020 /* Frameworks */,
+				7C64DC3F3B3469FAF4B2E6B5 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -100,11 +162,25 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		C3A8BEE6EE76AC32E690B418 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3E02319FCA780DC2E0B8E62E /* llama.cpp.txt in Resources */,
+				E204553EF4EE4DDE0757C03C /* nlohmann-json.txt in Resources */,
+				D2B4FED75F69A3BAC1C6FE0D /* sha256.txt in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		DA117F884A5FBFF955D64F51 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3C767E561695C701CCFF3B4C /* NativeDraft.swift in Sources */,
 				5D14067ADC425B96D44C8D74 /* NodeLiftApp.swift in Sources */,
 				0B8B2768D6B83F520DB122DF /* NodeModel.swift in Sources */,
 				9702D57020605502B4E0A28D /* Protocol.swift in Sources */,
@@ -119,7 +195,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"../../native/build/iphoneos/lib\"",
+				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = NodeLift;
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "NodeLift si collega al tuo computer per misurare rete e capacità del dispositivo.";
@@ -129,9 +209,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.nodelift.companion;
 				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = NodeLift/Bridge.h;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -264,7 +345,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"../../native/build/iphoneos/lib\"",
+				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = NodeLift;
 				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "NodeLift si collega al tuo computer per misurare rete e capacità del dispositivo.";
@@ -274,9 +359,10 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.0;
+				MARKETING_VERSION = 0.2.1;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.nodelift.companion;
 				SDKROOT = iphoneos;
+				SWIFT_OBJC_BRIDGING_HEADER = NodeLift/Bridge.h;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;

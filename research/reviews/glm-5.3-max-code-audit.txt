@@ -1,0 +1,71 @@
+373 heading NodeLift source audit — static review, no execution, Value: 1
+											374 text NodeLift source audit — static review, no execution
+										375 container
+											376 text Method and scope.  I read the four files in the snapshot ( native/core.cpp ,  native/core.h ,  host/nodelift/engine.py ,  host/tests/test_engine.py ). No build, run, or benchmark was performed or is claimed — every "proven" below means proven by code-path reading, pending runtime confirmation. Not in the snapshot, therefore no claims either way: the  Native  Python wrapper ( native.py ), the HTTP surface (poll/submit routes, TLS/auth), discovery/state, and the phone app (you note the physical phone still runs the old qualification app).
+										377 heading Findings (6), Value: 2
+											378 text Findings (6)
+										379 container
+											380 text 1.
+											381 text Engine::sync
+											382 text  (core.cpp) — empty-range
+											383 text llama_memory_seq_rm
+											384 text  treated as failure → spurious full reset and full re-prefill.  HIGH, proven (performance; correctness preserved).
+ sync  calls  llama_memory_seq_rm(...,0,int(keep),-1)  unconditionally and treats a return of 0 as failure ( {reset();keep=0;} ). But 0 is also the legitimate "nothing to remove" return when  keep == cached.size() , i.e. when the cache is already a strict prefix of the requested prefix. Trigger:  every all-accepted block on a draft engine. draft  leaves  cached = prefix + proposal ; verify then commits  proposal + bonus ; the next  draft(prefix+proposal+bonus)  computes LCP  keep = |cached| , no decrement fires ( keep<cached.size()  false,  keep==prefix.size()  false,  next  non-empty), the removal range is empty, returns 0 →  reset()  → the entire prefix is re-decoded from position 0. Over a generation this is O(L²) extra draft-model compute; the best acceptance outcome becomes the slowest round, and  draft_ms / prefill ms  grow with prefix length, corrupting your latency attribution. Today this bites  local_draft  on the host; it will equally bite the phone once the JNI app ships this core (phone impact is extrapolated — native phone performance is unmeasured, per your note). The same misfire fires harmlessly on every engine's first prefill after load (empty cache → 0 removed → reset), which confirms the branch is live. Note  verify()  already has the correct guard ( if(keep<cached.size()) ) —  sync  is missing it.  Minimal fix:  mirror verify's structure — only invoke/treat-as-failure when  keep<cached.size() ; in the skip case the existing  next  stays valid (logits after  cached.back() ) and the delta decode refreshes it.
+										385 container
+											386 text 2.
+											387 text nl_destroy
+											388 text /
+											389 text nl_call
+											390 text  (core.cpp) — destroy never cancels;
+											391 text nl_call
+											392 text  unconditionally clears
+											393 text cancelled
+											394 text .  MEDIUM, proven code, latent in this embedder.
+ nl_destroy  erases the handle without setting  cancelled , so an in-flight call (which correctly retains the  shared_ptr ) keeps the full model computing with no abort path after the handle is gone. And  nl_call 's  cancelled.store(false)  (under the engine mutex) swallows any cancel that lands between two calls. Neither is triggerable into wrong output by  engine.py  as shipped — the worker is single-threaded and  stop()  also sets the Python  Event  the worker checks between calls — but the header comment explicitly advertises lifecycle-race safety, and the Android JNI surface is exactly the second-embedder scenario.  Minimal fix:  in  nl_destroy , erase-and-fetch the  shared_ptr  and  cancelled.store(true)  before dropping it; document that cancel is level-triggered per call and callers must gate dispatch on their own flag.
+										395 container
+											396 text 3. No runtime equivalence canary for the single-vs-batch logit path.  MEDIUM — absence proven; whether drift occurs on a given build/hardware is the open hypothesis your own header states (23 Metal checks + 60 real-weight runs ≠ universal proof).
+Host mode commits argmax from single-position logits ( draft / sync  path); spec modes commit from a (k+1)-wide batch in  verify  (flash attention on, F16 KV). The controller never records batch width per block, never replays committed output host-style, and counts no divergences — a drift would silently make modes disagree with zero metric.  Minimal fix:  log  proposal.size()+1  and the path (host/local/remote) in  run['blocks']  ( run['identity']  already pins  llama_commit  — good); add a sampled shadow replay (re-decode committed prefixes host-only, compare token IDs, count mismatches, auto-disable spec modes on first mismatch). This is your "measured, not promised" rule applied to the code itself.
+										397 container
+											398 text 4.
+											399 text Controller._execute
+											400 text  (engine.py) — per-block incremental decoder → transient U+FFFD in streamed text; O(L²) re-detokenization.  LOW–MEDIUM, proven.
+A fresh  codecs.getincrementaldecoder('utf-8')('replace')  is created every block, so any multibyte character straddling a block boundary is replaced with U+FFFD (typically twice) in the live  run['text']  exposed via  status() / runs ; the final full-buffer decode is correct, so the artifact is transient but user-visible. Secondary: re-detokenizing all tokens (hex-doubled JSON) each block adds O(L²) wall-clock that is  excluded  from  block_ms / tokens_per_second  ( now  is captured before the  text  call) but included in  request_total_ms  — so  tokens_per_second  overstates the achievable interactive rate.  Minimal fix:  hoist one decoder above the loop (optionally delta-detokenize via a byte offset).
+										401 container
+											402 text 5.
+											403 text Mailbox.request
+											404 text  (engine.py) — fixed 30 s timeout, no per-run override, sticky fallback.  LOW–MEDIUM, proven default.
+One silent phone costs a 30-second stall on a single block before permanent host fallback (fallback itself is correct;  draft_ms  does capture the stall, and  fallback_reason / fallbacks  are recorded — good). For a single-user, latency-primary system the detection latency is ~3 orders of magnitude above block time.  Minimal fix:  expose the timeout via  start() /config as an explicit tunable (no universal value implied — that's your call to measure) and account cumulative remote stall in metrics.
+										405 container
+											406 text 6.
+											407 text Controller.models
+											408 text  (engine.py) —
+											409 text stat()
+											410 text  TOCTOU takes down
+											411 text status()
+											412 text .  LOW, proven.
+ rglob  then  p.stat()  races file deletion; any exception propagates through  status()  and breaks the whole status endpoint. Also a full two-root directory walk on every status poll.  Minimal fix:  per-entry  try/except FileNotFoundError ; cache the listing or move the walk to  configure() .
+										413 heading Explicit no-findings (code reading, not execution), Value: 2
+											414 text Explicit no-findings (code reading, not execution)
+										415 content list
+											416 container
+												417 AXListMarker •
+												418 text verify
+												419 text  acceptance semantics : correction-on-mismatch, bonus-on-full-accept, EOG accepted/rejected/truncated,  remaining  caps, accepted-count clamp — every path commits exactly the batch's greedy continuation; no defect found (finding 3's numerics caveat excepted).
+											420 container
+												421 AXListMarker •
+												422 text Stale-suffix discipline : all decoding entry points ( prefill / draft / verify ) re-derive their prefix;  verify  never reads the stale  next ;  sync 's re-decode-last-retained-token logic is correct in every case except finding 1's performance path.
+											423 container
+												424 AXListMarker •
+												425 text Remote output integrity : every phone token passes target verification; the mailbox checks id/epoch/prefix_hash/fingerprint/model_sha256 echoes, count/vocab/type bounds ( type(i) is not int  correctly rejects bools), replay, expiry, single delivery, duplicate lease, and empty-success drafts. Echoed identity fields are advisory only — a wrong-tokenizer or lying phone causes rejections and waste, not corruption. The verification barrier is the integrity mechanism, and it is wired correctly.
+											426 container
+												427 AXListMarker •
+												428 text Handle lifetime memory safety :  shared_ptr  retention plus one-way lock ordering ( handles_mutex  → engine mutex, never reversed);  nl_cancel  takes no lock, so it stays prompt during long ops.
+											429 container
+												430 AXListMarker •
+												431 text Labels :  sampler: greedy ,  capacity_sharding: false ,  gpu_layers_requested , accepted/proposed/fallback accounting — honest.
+										432 heading Coverage note, Value: 2
+											433 text Coverage note
+										434 container
+											435 text test_engine.py  tests the Mailbox only. The riskiest logic in the snapshot — the  sync / verify  KV state machine — has zero tests. A native-level property test (randomized accept/reject/EOS/limit sequences against a fresh host-only engine; compare committed IDs and post-round argmax) would have caught finding 1's class and would double as the runtime canary recommended in finding 3.
+										436 container
+											437 text Suggested order:  fix 1 (one-guard diff, largest payoff), then 2 and 3 before any phone deployment or benchmark round, since 3 is the gate your own caveats demand.

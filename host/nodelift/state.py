@@ -17,7 +17,7 @@ def clean_caps(value):
     if not isinstance(value, dict):
         raise ValueError("capabilities must be an object")
     result = {}
-    for key in ("model", "os", "app_version", "thermal", "transport", "lifecycle"):
+    for key in ("model", "os", "app_version", "thermal", "transport", "lifecycle", "draft_sha256", "tokenizer_fingerprint"):
         if key in value:
             result[key] = str(value[key])[:160]
     for key in ("physical_memory_bytes", "available_memory_bytes", "process_memory_bytes", "battery_percent", "cpu_cores"):
@@ -27,6 +27,7 @@ def clean_caps(value):
                 raise ValueError("invalid capability metric")
             result[key] = n
     result["inference_available"] = False
+    result["engine_ready"] = value.get("engine_ready") is True and bool(result.get("draft_sha256")) and bool(result.get("tokenizer_fingerprint"))
     jobs = value.get("supported_jobs", ["network", "cpu"])
     if not isinstance(jobs, list) or any(j not in ("network", "network_paced", "cpu") for j in jobs):
         raise ValueError("invalid supported jobs")

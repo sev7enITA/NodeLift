@@ -1,0 +1,30 @@
+{
+  "model": "Qwen3.8-27B-Q6_K.gguf",
+  "bytes": 22430999936,
+  "sha256": "5ad4e45e05895e778aab67e19aeedc05022d641077a49b515ee7f8ac24acea79",
+  "llama_commit": "ddf48f85c933c1f438212a02eb21e7b001d2d37d",
+  "binary_sha256": "f209beee3d305ddf361b9fc2acfd3d83766816645db78a84e163d237a8f6c353",
+  "options": [
+    "-ngl",
+    "999",
+    "-t",
+    "8",
+    "-fa",
+    "on",
+    "-p",
+    "128",
+    "-n",
+    "64",
+    "-r",
+    "3",
+    "-o",
+    "json"
+  ],
+  "started": 1793479872.669614,
+  "memory_pressure_before": "The system has 68719476736 (4194304 pages with a page size of 16384).\nSystem-wide memory free percentage: 50%\n",
+  "swap_before": "vm.swapusage: total = 8192.00M  used = 7566.19M  free = 625.81M  (encrypted)\n",
+  "scope": "upstream llama-bench pp128/tg64 kernel microbenchmark; synthetic token stream, not chat latency, not NodeLift hybrid support, no phone involved",
+  "finished": 1793479915.278147,
+  "memory_pressure_after": "The system has 68719476736 (4194304 pages with a page size of 16384).\nSystem-wide memory free percentage: 28%\n",
+  "swap_after": "vm.swapusage: total = 13312.00M  used = 12107.06M  free = 1204.94M  (encrypted)\n"
+}

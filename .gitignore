@@ -4,6 +4,8 @@ __pycache__/
 .deps/
 .models/
 .runtime/
+node_modules/
+dist/
 *.gguf
 *.safetensors
 *.dylib
@@ -12,6 +14,7 @@ __pycache__/
 *.a
 *.o
 .gradle/
+.cxx/
 **/build/
 **/.idea/
 **/local.properties

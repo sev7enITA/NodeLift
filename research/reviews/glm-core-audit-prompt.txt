@@ -1,0 +1,579 @@
+NodeLift experimental engine source audit. Review the actual code below, not the prior proposal. Identify concrete correctness/lifecycle/transport defects, separate proven bugs from hypotheses and give minimal fixes. Priorities: stale KV, EOS/bonus/partial acceptance, native close/cancel races, remote failures and output integrity, resource bounds, GUI/API semantic honesty. Host M3 Max; Android draft CPU, same token-ID map; only greedy; recurrent/hybrid rejected. Current physical phone is still old qualification app, so native phone performance UNMEASURED. 23 small-model Metal checks and 60 exploratory real-weight runs had matching IDs; not universal proof. No benchmark or code execution available to you: say so. Do NOT invent measurements or arbitrary universal gates. Return at most 8 actionable findings with file/function, scenario, severity; explicit no-findings if so.
+
+FILE native/core.cpp SHA256 15f8ea94fffd5fa6f2f760776c85bc5f2b48e0612baa2a865fd379b3305b1e59
+```
+#include "core.h"
+#include "llama.h"
+#include "nlohmann/json.hpp"
+extern "C" {
+#include "sha256.h"
+}
+#include <algorithm>
+#include <atomic>
+#include <chrono>
+#include <cmath>
+#include <cstdlib>
+#include <cstring>
+#include <memory>
+#include <mutex>
+#include <stdexcept>
+#include <string>
+#include <vector>
+#include <unordered_map>
+
+using json = nlohmann::json;
+using tokens = std::vector<llama_token>;
+using clock_type = std::chrono::steady_clock;
+static void require(bool ok, const char * msg) { if (!ok) throw std::runtime_error(msg); }
+static double elapsed(clock_type::time_point t) { return std::chrono::duration<double,std::milli>(clock_type::now()-t).count(); }
+static std::once_flag backend_once;
+
+struct Engine {
+    std::mutex mutex;
+    std::atomic<bool> cancelled{false};
+    std::unique_ptr<llama_model, decltype(&llama_model_free)> model{nullptr, llama_model_free};
+    std::unique_ptr<llama_context, decltype(&llama_free)> ctx{nullptr, llama_free};
+    const llama_vocab * vocab = nullptr;
+    tokens cached;
+    std::vector<float> next;
+    std::string fingerprint;
+    int nctx = 0;
+
+    static bool abort(void * p) { return static_cast<Engine *>(p)->cancelled.load(); }
+    void check() { require(!cancelled.load(), "cancelled"); }
+    void valid(const tokens & ids) {
+        for (auto id : ids) require(id >= 0 && id < llama_vocab_n_tokens(vocab), "token outside vocabulary");
+    }
+    llama_token best(const float * logits) {
+        require(logits != nullptr, "missing target logits");
+        auto count = llama_vocab_n_tokens(vocab);
+        llama_token selected = 0;
+        for (int i=0;i<count;++i) {
+            require(std::isfinite(logits[i]), "non-finite logits");
+            if (logits[i] > logits[selected]) selected=i;
+        }
+        return selected;
+    }
+    std::string vocab_hash() {
+        // Canonical token-ID semantics. Host alone tokenizes/formats prompts.
+        sha256_t hash; sha256_init(&hash);
+        auto add = [&](const std::string & s) {
+            auto n=std::to_string(s.size())+":";
+            sha256_update(&hash,reinterpret_cast<const unsigned char *>(n.data()),n.size());
+            sha256_update(&hash,reinterpret_cast<const unsigned char *>(s.data()),s.size());
+        };
+        add(std::to_string(llama_vocab_type(vocab)));
+        add(std::to_string(llama_vocab_bos(vocab))); add(std::to_string(llama_vocab_eos(vocab)));
+        add(std::to_string(llama_vocab_get_add_bos(vocab))); add(std::to_string(llama_vocab_get_add_eos(vocab)));
+        for (int i=0;i<llama_vocab_n_tokens(vocab);++i) {
+            const char * text=llama_vocab_get_text(vocab,i);
+            add(text ? text : ""); add(std::to_string(llama_vocab_get_attr(vocab,i)));
+            add(std::to_string(llama_vocab_is_eog(vocab,i)));
+        }
+        unsigned char bytes[32]; sha256_final(&hash,bytes);
+        const char * hex="0123456789abcdef"; std::string value;
+        for (auto b:bytes) {value+=hex[b>>4];value+=hex[b&15];} return value;
+    }
+    json load(const json & req) {
+        ctx.reset(); model.reset(); cached.clear();next.clear();vocab=nullptr;
+        nctx=req.value("n_ctx",2048); int threads=req.value("threads",4),gpu=req.value("gpu_layers",0);
+        require(nctx>=256 && nctx<=8192 && threads>=1 && threads<=16 && gpu>=0 && gpu<=999,"invalid model limits");
+        std::call_once(backend_once,[]{llama_backend_init();});
+        auto mp=llama_model_default_params();mp.n_gpu_layers=gpu;
+        model.reset(llama_model_load_from_file(req.at("path").get<std::string>().c_str(),mp));
+        require(bool(model),"model could not be loaded");
+        require(!llama_model_is_recurrent(model.get()) && !llama_model_is_hybrid(model.get()),"recurrent/hybrid models require checkpoint rollback and are not qualified");
+        require(!llama_model_has_encoder(model.get()),"encoder-decoder models are not qualified");
+        auto cp=llama_context_default_params();cp.n_ctx=nctx;cp.n_batch=512;cp.n_ubatch=512;
+        cp.n_threads=threads;cp.n_threads_batch=threads;cp.flash_attn_type=LLAMA_FLASH_ATTN_TYPE_ENABLED;
+        cp.abort_callback=abort;cp.abort_callback_data=this;
+        ctx.reset(llama_init_from_model(model.get(),cp));require(bool(ctx),"context allocation failed");
+        vocab=llama_model_get_vocab(model.get());fingerprint=vocab_hash();
+        return {{"tokenizer_fingerprint",fingerprint},{"vocab_size",llama_vocab_n_tokens(vocab)},
+                {"n_ctx",llama_n_ctx(ctx.get())},{"gpu_layers_requested",gpu},{"runtime",llama_version()}};
+    }
+    void reset() { llama_memory_clear(llama_get_memory(ctx.get()),true);cached.clear();next.clear(); }
+    std::vector<llama_token> decode(const tokens & input, bool all) {
+        check(); valid(input); require(!input.empty() && input.size()<=512,"invalid batch");
+        require(cached.size()+input.size()<=size_t(nctx),"context limit reached");
+        auto batch=llama_batch_init(int(input.size()),0,1);batch.n_tokens=int(input.size());
+        for (int i=0;i<batch.n_tokens;++i) {
+            batch.token[i]=input[i];batch.pos[i]=int(cached.size())+i;
+            batch.n_seq_id[i]=1;batch.seq_id[i][0]=0;batch.logits[i]=all || i==batch.n_tokens-1;
+        }
+        int rc=llama_decode(ctx.get(),batch);llama_batch_free(batch);
+        if(rc!=0){reset();throw std::runtime_error(cancelled.load()?"cancelled":"llama_decode failed; cache reset");}
+        cached.insert(cached.end(),input.begin(),input.end());
+        std::vector<llama_token> choices;
+        if(all) for(int i=0;i<int(input.size());++i) choices.push_back(best(llama_get_logits_ith(ctx.get(),i)));
+        auto last=llama_get_logits_ith(ctx.get(),-1);require(last,"missing next logits");
+        next.assign(last,last+llama_vocab_n_tokens(vocab));return choices;
+    }
+    void sync(const tokens & prefix) {
+        check(); valid(prefix);require(!prefix.empty() && prefix.size()<size_t(nctx),"prefix must be nonempty and leave context room");
+        if(prefix==cached && !next.empty())return;
+        size_t keep=0;while(keep<prefix.size() && keep<cached.size() && prefix[keep]==cached[keep])++keep;
+        // Re-evaluate the last retained token to recover the correct next-token logits.
+        if(keep>0 && (keep<cached.size() || keep==prefix.size() || next.empty()))--keep;
+        if(!llama_memory_seq_rm(llama_get_memory(ctx.get()),0,int(keep),-1)) {reset();keep=0;}
+        cached.resize(keep);next.clear();
+        while(keep<prefix.size()) {
+            size_t end=std::min(keep+size_t(512),prefix.size());
+            decode(tokens(prefix.begin()+keep,prefix.begin()+end),false);keep=end;
+        }
+    }
+    tokens draft(const tokens & prefix,int count) {
+        require(count>=1 && count<=512,"invalid draft budget");sync(prefix);tokens output;
+        for(int i=0;i<count && cached.size()<size_t(nctx);++i) {
+            check();auto id=best(next.data());output.push_back(id);decode({id},false);
+            if(llama_vocab_is_eog(vocab,id))break;
+        } return output;
+    }
+    json verify(const tokens & prefix,tokens proposal,int remaining) {
+        require(proposal.size()<=16 && remaining>=1 && remaining<=512,"invalid verification budget");
+        valid(proposal);valid(prefix);require(!prefix.empty() && prefix.size()+proposal.size()<=size_t(nctx),"verification would exceed context");
+        // One verification pass: retain KV before the committed anchor and
+        // evaluate [anchor, proposal...] together. No per-block logit repair pass.
+        tokens before(prefix.begin(),prefix.end()-1);
+        size_t keep=0;while(keep<before.size() && keep<cached.size() && before[keep]==cached[keep])++keep;
+        if(keep<cached.size()) {
+            if(!llama_memory_seq_rm(llama_get_memory(ctx.get()),0,int(keep),-1)){reset();keep=0;}
+            cached.resize(keep);next.clear();
+        }
+        while(keep<before.size()) {size_t end=std::min(keep+size_t(512),before.size());decode(tokens(before.begin()+keep,before.begin()+end),false);keep=end;}
+        tokens batch{prefix.back()};batch.insert(batch.end(),proposal.begin(),proposal.end());
+        auto choices=decode(batch,true);tokens output;int accepted=0;
+        if(proposal.empty())output.push_back(choices[0]);
+        else {
+            for(size_t i=0;i<proposal.size();++i) {
+                auto expected=choices[i];
+                if(proposal[i]!=expected){output.push_back(expected);break;}
+                output.push_back(proposal[i]);++accepted;
+                if(llama_vocab_is_eog(vocab,proposal[i]) || int(output.size())>=remaining)break;
+                if(i+1==proposal.size())output.push_back(choices.back());
+            }
+        }
+        if(output.size()>size_t(remaining))output.resize(remaining);
+        for(size_t i=0;i<output.size();++i)if(llama_vocab_is_eog(vocab,output[i])){output.resize(i+1);break;}
+        accepted=std::min(accepted,int(output.size()));
+        // Defer sync of the committed tail until the next block. Stale speculative
+        // KV is never sampled: every entry point synchronizes its explicit prefix.
+        return {{"tokens",output},{"accepted",accepted},{"proposed",proposal.size()},
+                {"eos",!output.empty() && llama_vocab_is_eog(vocab,output.back())}};
+    }
+    json call(const json & req) {
+        const auto op=req.at("op").get<std::string>();if(op=="load")return load(req);
+        require(ctx && vocab,"no model loaded");
+        if(op=="reset"){reset();return {{"reset",true}};}
+        if(op=="tokenize") {
+            auto text=req.at("text").get<std::string>();require(text.size()<=131072,"prompt too long");
+            if(req.value("chat",false)) {
+                const char * tmpl=llama_model_chat_template(model.get(),nullptr);require(tmpl,"model has no chat template");
+                std::vector<std::string> roles,contents;
+                if(req.contains("messages") && req["messages"].is_array()) {
+                    require(!req["messages"].empty() && req["messages"].size()<=32,"invalid message count");
+                    for(const auto & m:req["messages"]){roles.push_back(m.at("role").get<std::string>());contents.push_back(m.at("content").get<std::string>());}
+                } else {roles.push_back("user");contents.push_back(text);}
+                std::vector<llama_chat_message> messages;
+                for(size_t i=0;i<roles.size();++i)messages.push_back({roles[i].c_str(),contents[i].c_str()});
+                int size=llama_chat_apply_template(tmpl,messages.data(),messages.size(),true,nullptr,0);require(size>0 && size<=262144,"unsupported or excessive chat template");
+                std::vector<char> out(size+1);int used=llama_chat_apply_template(tmpl,messages.data(),messages.size(),true,out.data(),int(out.size()));
+                require(used>=0 && used<int(out.size()),"chat template formatting failed");text.assign(out.data(),used);
+            }
+            int size=-llama_tokenize(vocab,text.data(),int(text.size()),nullptr,0,true,true);
+            require(size>0 && size<nctx,"prompt exceeds context");tokens ids(size);
+            int used=llama_tokenize(vocab,text.data(),int(text.size()),ids.data(),size,true,true);require(used>=0,"tokenization failed");ids.resize(used);
+            return {{"tokens",ids},{"tokenizer_fingerprint",fingerprint}};
+        }
+        if(op=="text") {
+            auto ids=req.at("tokens").get<tokens>();valid(ids);std::string text;
+            for(auto id:ids){char small[256];int n=llama_token_to_piece(vocab,id,small,sizeof(small),0,false);
+                if(n<0){std::vector<char> big(-n);n=llama_token_to_piece(vocab,id,big.data(),int(big.size()),0,false);require(n>=0,"detokenization failed");text.append(big.data(),n);}else text.append(small,n);}
+            std::string hex;const char * digits="0123456789abcdef";
+            for(unsigned char c:text){hex+=digits[c>>4];hex+=digits[c&15];}
+            return {{"text",text},{"bytes_hex",hex}};
+        }
+        auto prefix=req.at("prefix").get<tokens>();auto start=clock_type::now();
+        if(op=="prefill"){sync(prefix);return {{"ms",elapsed(start)}};}
+        if(op=="draft"){auto ids=draft(prefix,req.value("count",4));return {{"tokens",ids},{"ms",elapsed(start)},{"eos",!ids.empty()&&llama_vocab_is_eog(vocab,ids.back())},{"tokenizer_fingerprint",fingerprint}};}
+        if(op=="verify"){auto value=verify(prefix,req.at("proposal").get<tokens>(),req.value("remaining",512));value["ms"]=elapsed(start);return value;}
+        throw std::runtime_error("unknown native operation");
+    }
+};
+
+// Opaque IDs keep close/cancel safe even when the mobile lifecycle races an
+// in-flight native call. A call retains the engine until it has returned.
+static std::mutex handles_mutex;
+static std::unordered_map<uintptr_t,std::shared_ptr<Engine>> handles;
+static uintptr_t next_handle=1;
+static std::shared_ptr<Engine> lookup(void * p) {
+    std::lock_guard<std::mutex> lock(handles_mutex);auto it=handles.find(reinterpret_cast<uintptr_t>(p));
+    return it==handles.end()?nullptr:it->second;
+}
+extern "C" void * nl_create() {
+    try{auto engine=std::make_shared<Engine>();std::lock_guard<std::mutex> lock(handles_mutex);
+        auto id=next_handle++;handles.emplace(id,std::move(engine));return reinterpret_cast<void *>(id);
+    }catch(...){return nullptr;}
+}
+extern "C" void nl_cancel(void * p) {auto e=lookup(p);if(e)e->cancelled.store(true);}
+extern "C" char * nl_call(void * p,const char * input) {
+    json result;
+    try {
+        auto retained=lookup(p);require(retained && input,"invalid native handle");auto & e=*retained;std::lock_guard<std::mutex> lock(e.mutex);
+        e.cancelled.store(false);result=e.call(json::parse(input));
+    }catch(const std::exception & ex){result={{"error",ex.what()}};}catch(...){result={{"error","unknown native error"}};}
+    return strdup(result.dump(-1,' ',true,json::error_handler_t::replace).c_str());
+}
+extern "C" void nl_free_string(char * p) {free(p);}
+extern "C" void nl_destroy(void * p) {std::lock_guard<std::mutex> lock(handles_mutex);handles.erase(reinterpret_cast<uintptr_t>(p));}
+
+```
+
+FILE native/core.h SHA256 3e15dc6cfc879ef685c7316b86d9e539a0aa1d19600e53fe9a96b24b37e2ae28
+```
+#pragma once
+#ifdef __cplusplus
+extern "C" {
+#endif
+void * nl_create(void);
+char * nl_call(void * handle, const char * request_json);
+void nl_cancel(void * handle);
+void nl_free_string(char * value);
+void nl_destroy(void * handle);
+#ifdef __cplusplus
+}
+#endif
+
+```
+
+FILE host/nodelift/engine.py SHA256 db3e1630c16ae5207471848e7b9291511876d2822cd3db19f61d7d66a9a1879e
+```
+"""Experimental greedy inference controller and leased outbound mobile drafting."""
+import copy
+import codecs
+import hashlib
+import json
+import secrets
+import threading
+import time
+from pathlib import Path
+
+from .native import Native, ROOT, library_path
+
+
+def prefix_digest(tokens):
+    return hashlib.sha256(json.dumps(tokens, separators=(',', ':')).encode()).hexdigest()
+
+
+def integer(value, low, high):
+    if type(value) is not int or not low <= value <= high:
+        raise ValueError('integer outside supported limits')
+    return value
+
+
+class Mailbox:
+    def __init__(self):
+        self.condition = threading.Condition()
+        self.pending = {}
+
+    def request(self, node, payload, cancel, timeout=30):
+        message = {**payload, 'id': secrets.token_hex(16)}
+        entry = {'message': message, 'expires': time.monotonic()+timeout, 'delivered': False, 'result': None}
+        with self.condition:
+            if node in self.pending: raise RuntimeError('node already has an inference lease')
+            self.pending[node] = entry
+            self.condition.notify_all()
+            try:
+                while entry['result'] is None:
+                    if cancel.is_set(): raise RuntimeError('cancelled')
+                    remaining = entry['expires']-time.monotonic()
+                    if remaining <= 0: raise TimeoutError('remote draft deadline exceeded')
+                    self.condition.wait(min(remaining, .2))
+                return entry['result']
+            finally:
+                if self.pending.get(node) is entry: del self.pending[node]
+                self.condition.notify_all()
+
+    def poll(self, node, timeout=5):
+        deadline = time.monotonic()+timeout
+        with self.condition:
+            while True:
+                entry = self.pending.get(node)
+                if entry and not entry['delivered'] and entry['expires'] > time.monotonic():
+                    entry['delivered'] = True
+                    return {'work': entry['message']}
+                remaining = deadline-time.monotonic()
+                if remaining <= 0: return {'work': None}
+                self.condition.wait(remaining)
+
+    def submit(self, node, result):
+        with self.condition:
+            entry = self.pending.get(node)
+            if not entry or not entry['delivered'] or entry['expires'] <= time.monotonic() or entry['result'] is not None:
+                raise ValueError('unknown, expired or replayed inference lease')
+            expected = entry['message']
+            for field in ('id', 'epoch', 'prefix_hash', 'tokenizer_fingerprint', 'model_sha256'):
+                if result.get(field) != expected[field]: raise ValueError('stale or mismatched draft identity')
+            ids = result.get('tokens', [])
+            if not isinstance(ids, list) or len(ids) > expected['count'] or any(type(i) is not int or i<0 or i>=expected['vocab_size'] for i in ids):
+                raise ValueError('invalid draft token IDs')
+            if not ids and not result.get('error'): raise ValueError('empty successful draft')
+            entry['result'] = {'tokens':ids, 'error':str(result.get('error',''))[:300]}
+            self.condition.notify_all()
+            return {'accepted':True}
+
+
+class Controller:
+    def __init__(self, state):
+        self.state = state
+        self.lock = threading.RLock()
+        self.mailbox = Mailbox()
+        self.cancelled = threading.Event()
+        self.busy = False
+        self.runs = []
+        self.config = {'target_model':'', 'draft_model':'', 'n_ctx':2048, 'threads':8, 'gpu_layers':999}
+        self.target = None
+        self.draft = None
+        self.loaded = None
+        self.target_info = None
+        self.draft_info = None
+        self.hashes = {}
+        saved=self.state.folder/'engine-config.json'
+        if saved.exists():
+            try:self.configure(json.loads(saved.read_text()))
+            except (ValueError,OSError,json.JSONDecodeError):pass
+
+    def models(self):
+        roots = [ROOT/'.models', Path.home()/'.lmstudio/models']
+        return [{'id':hashlib.sha256(str(p).encode()).hexdigest()[:16], 'path':str(p), 'name':p.stem, 'bytes':p.stat().st_size}
+                for root in roots if root.exists() for p in sorted(root.rglob('*.gguf'))][:100]
+
+    def status(self):
+        with self.lock:
+            return {'available':library_path().exists(), 'busy':self.busy, 'models':self.models(),
+                    'config':dict(self.config), 'runs':copy.deepcopy(self.runs[-30:][::-1]),
+                    'backend':'llama.cpp locked native core · greedy experiment',
+                    'sampler':'greedy', 'capacity_sharding':False}
+
+    def configure(self, values):
+        with self.lock:
+            if self.busy: raise ValueError('stop the current run before changing models')
+            candidates={m['path'] for m in self.models()}
+            config={**self.config,**{k:v for k,v in values.items() if k in self.config}}
+            for key in ('target_model','draft_model'):
+                if config[key] and config[key] not in candidates: raise ValueError('choose a GGUF from the local catalog')
+            integer(config['n_ctx'],256,8192);integer(config['threads'],1,16);integer(config['gpu_layers'],0,999)
+            if not config['target_model']: raise ValueError('select a target model')
+            self.config=config
+            path=self.state.folder/'engine-config.json'
+            temporary=path.with_suffix('.tmp')
+            temporary.write_text(json.dumps(config));temporary.chmod(0o600);temporary.replace(path)
+            return {'configured':True, 'config':config}
+
+    def _sha(self, path):
+        stat=Path(path).stat();key=(path,stat.st_size,stat.st_mtime_ns)
+        if key not in self.hashes:
+            with open(path,'rb') as stream:self.hashes[key]=hashlib.file_digest(stream,'sha256').hexdigest()
+        return self.hashes[key]
+
+    def model_offer(self):
+        with self.lock:
+            path=self.config['draft_model']
+            if not path: raise ValueError('no draft selected on the host')
+            return {'name':Path(path).name,'bytes':Path(path).stat().st_size,'sha256':self._sha(path),
+                    'url_path':'/v1/engine/model','max_context':min(self.config['n_ctx'],4096)}
+
+    def model_path(self):
+        with self.lock:
+            path=self.config['draft_model']
+            if not path:raise ValueError('no draft selected')
+            return Path(path)
+
+    def start(self, values):
+        prompt=values.get('prompt','')
+        messages=values.get('messages')
+        if messages is not None:
+            if not isinstance(messages,list) or not 1<=len(messages)<=32:raise ValueError('messages must have 1..32 entries')
+            for m in messages:
+                if not isinstance(m,dict) or m.get('role') not in ('system','user','assistant') or not isinstance(m.get('content'),str):raise ValueError('only text system/user/assistant messages are supported')
+            prompt='\n'.join(m['role']+': '+m['content'] for m in messages)
+        if not isinstance(prompt,str) or not prompt.strip() or len(prompt.encode())>32768:raise ValueError('prompt required, maximum 32 KiB')
+        mode=values.get('mode','host')
+        if mode not in ('host','local_draft','remote_draft'):raise ValueError('unsupported inference mode')
+        budget=integer(values.get('max_tokens',64),1,512);k=integer(values.get('draft_k',4),1,16)
+        with self.lock:
+            if self.busy:raise ValueError('engine is busy')
+            if not self.config['target_model']:raise ValueError('configure a target model first')
+            if mode!='host' and not self.config['draft_model']:raise ValueError('configure a draft model first')
+            node_id=values.get('node_id')
+            if mode=='remote_draft':
+                peer=next((n for n in self.state.snapshot()['nodes'] if n['id']==node_id),None)
+                if not peer or not peer['online'] or not peer['capabilities'].get('engine_ready'):raise ValueError('select an online native draft node')
+            run={'id':secrets.token_hex(12),'epoch':secrets.token_hex(16),'created':time.time(),'status':'loading',
+                 'mode':mode,'prompt':prompt,'max_tokens':budget,'draft_k':k,'node_id':node_id,'text':'','metrics':{},'blocks':[]}
+            if messages is not None:run['messages']=messages
+            self.busy=True;self.cancelled.clear();self.runs.append(copy.deepcopy(run))
+            if len(self.runs)>30:self.runs.pop(0)
+            threading.Thread(target=self._execute,args=(run,dict(self.config)),daemon=True).start()
+            return {'run_id':run['id']}
+
+    def stop(self, run_id=None):
+        with self.lock:
+            if run_id is not None and (not self.runs or self.runs[-1]['id']!=run_id):return {'stopping':False}
+            if not self.busy:return {'stopping':False}
+            self.cancelled.set()
+            for engine in (self.target,self.draft):
+                if engine:engine.cancel()
+        with self.mailbox.condition:self.mailbox.condition.notify_all()
+        return {'stopping':self.busy}
+
+    def _load(self, config, use_draft):
+        identity={**config,'target_sha256':self._sha(config['target_model']),
+                  'draft_sha256':self._sha(config['draft_model']) if config['draft_model'] else None}
+        if self.loaded!=identity:
+            for engine in (self.target,self.draft):
+                if engine:engine.close()
+            self.target=Native();self.draft=None;self.loaded=None
+            self.target_info=self.target.call('load',path=config['target_model'],n_ctx=config['n_ctx'],threads=config['threads'],gpu_layers=config['gpu_layers'])
+            self.loaded=identity
+        if use_draft and self.draft is None:
+            self.draft=Native()
+            try:self.draft_info=self.draft.call('load',path=config['draft_model'],n_ctx=config['n_ctx'],threads=config['threads'],gpu_layers=config['gpu_layers'])
+            except Exception:self.draft.close();self.draft=None;raise
+        if use_draft and self.draft_info['tokenizer_fingerprint']!=self.target_info['tokenizer_fingerprint']:
+            raise ValueError('target/draft token-ID semantics do not match')
+
+    def _publish(self, run):
+        # The worker owns its mutable record; readers see atomic snapshots.
+        with self.lock:
+            for i, current in enumerate(self.runs):
+                if current['id']==run['id']:
+                    self.runs[i]=copy.deepcopy(run)
+                    return
+
+    def _execute(self, run, config):
+        submitted=time.perf_counter();generated=[];accepted=proposed=0;fallbacks=0
+        try:
+            self._load(config,run['mode']=='local_draft')
+            if self.cancelled.is_set():raise RuntimeError('cancelled')
+            ready=time.perf_counter();run['metrics']['load_ms']=(ready-submitted)*1000
+            self.target.call('reset')
+            prefix=self.target.call('tokenize',text=run['prompt'],chat=True,messages=run.get('messages'))['tokens']
+            run['prompt_tokens']=len(prefix)
+            if len(prefix)+run['max_tokens']+run['draft_k']+1>=config['n_ctx']:raise ValueError('prompt and output exceed context budget')
+            fingerprint=self.target_info['tokenizer_fingerprint']
+            draft_sha=self._sha(config['draft_model']) if run['mode']!='host' else None
+            run['identity']={'target_sha256':self._sha(config['target_model']),'draft_sha256':draft_sha,
+                             'tokenizer_fingerprint':fingerprint,'config':config,'llama_commit':(ROOT/'native/llama.lock').read_text().strip()}
+            started=time.perf_counter();run['status']='running';self._publish(run)
+            self.target.call('prefill',prefix=prefix)
+            if run['mode']=='local_draft':self.draft.call('reset');self.draft.call('prefill',prefix=prefix)
+            decoding=time.perf_counter();mode=run['mode']
+            while len(generated)<run['max_tokens']:
+                if self.cancelled.is_set():raise RuntimeError('cancelled')
+                block_start=time.perf_counter();count=min(run['draft_k'],run['max_tokens']-len(generated));draft_ms=0
+                if mode=='host':
+                    result=self.target.call('draft',prefix=prefix,count=1);result.update(accepted=0,proposed=0)
+                else:
+                    dstart=time.perf_counter()
+                    if mode=='local_draft':proposal=self.draft.call('draft',prefix=prefix,count=count)['tokens']
+                    else:
+                        try:
+                            payload={'op':'draft','epoch':run['epoch'],'prefix':prefix,'prefix_hash':prefix_digest(prefix),
+                                     'count':count,'tokenizer_fingerprint':fingerprint,'model_sha256':draft_sha,
+                                     'vocab_size':self.target_info['vocab_size']}
+                            response=self.mailbox.request(run['node_id'],payload,self.cancelled)
+                            if response.get('error'):raise RuntimeError(response['error'])
+                            proposal=response['tokens']
+                        except Exception as error:
+                            if self.cancelled.is_set():raise
+                            fallbacks+=1;mode='host';proposal=[];run['fallback_reason']=str(error)[:300]
+                    draft_ms=(time.perf_counter()-dstart)*1000
+                    result=self.target.call('verify',prefix=prefix,proposal=proposal,remaining=run['max_tokens']-len(generated))
+                ids=result['tokens'];require_ids=bool(ids)
+                if not require_ids:raise RuntimeError('engine produced no progress')
+                generated.extend(ids);prefix.extend(ids);accepted+=result.get('accepted',0);proposed+=result.get('proposed',0)
+                now=time.perf_counter()
+                if 'ttft_ms' not in run['metrics']:run['metrics']['ttft_ms']=(now-started)*1000
+                decoded=self.target.call('text',tokens=generated)
+                decoder=codecs.getincrementaldecoder('utf-8')('replace')
+                run['text']=decoder.decode(bytes.fromhex(decoded['bytes_hex']),final=False)
+                run['blocks'].append({'generated':len(ids),'accepted':result.get('accepted',0),'proposed':result.get('proposed',0),
+                                      'draft_ms':draft_ms,'block_ms':(now-block_start)*1000,'effective_mode':mode})
+                run['metrics'].update(generated_tokens=len(generated),accepted_tokens=accepted,proposed_tokens=proposed,
+                                      elapsed_seconds=now-started,tokens_per_second=len(generated)/max(now-decoding,1e-9),fallbacks=fallbacks)
+                self._publish(run)
+                if result.get('eos'):break
+            run['text']=bytes.fromhex(self.target.call('text',tokens=generated)['bytes_hex']).decode('utf-8','replace')
+            run['finish_reason']='stop' if result.get('eos') else 'length'
+            run['tokens']=generated;run['status']='completed';run['metrics']['request_total_ms']=(time.perf_counter()-submitted)*1000
+        except Exception as error:
+            run['status']='cancelled' if self.cancelled.is_set() else 'failed';run['error']=str(error)[:500];run['tokens']=generated
+        finally:
+            run['finished']=time.time()
+            run['metrics']['request_total_ms']=(time.perf_counter()-submitted)*1000
+            self._publish(run)
+            # Prompt-bearing experiment results stay in the private host state.
+            try:
+                folder=self.state.folder/'inference';folder.mkdir(mode=0o700,exist_ok=True)
+                path=folder/(run['id']+'.json');path.write_text(json.dumps(run,indent=2));path.chmod(0o600)
+            finally:
+                with self.lock:self.busy=False
+
+```
+
+FILE host/tests/test_engine.py SHA256 e495f7ea5916aaa76664dfa83cde988fe58fe19a08ea7cfb136891afeb3afda6
+```
+import threading
+import time
+import unittest
+from nodelift.engine import Mailbox, prefix_digest
+
+
+class MailboxTests(unittest.TestCase):
+    def payload(self):
+        return {'epoch':'epoch','prefix_hash':prefix_digest([1,2]),'tokenizer_fingerprint':'vocab',
+                'model_sha256':'model','count':4,'vocab_size':10}
+
+    def launch(self,box,stop,timeout=1):
+        outcome={}
+        def run():
+            try:outcome['value']=box.request('phone',self.payload(),stop,timeout)
+            except Exception as e:outcome['error']=e
+        thread=threading.Thread(target=run);thread.start()
+        return thread,outcome
+
+    def test_identity_and_replay(self):
+        box=Mailbox();thread,out=self.launch(box,threading.Event())
+        job=box.poll('phone',.5)['work'];self.assertIsNotNone(job)
+        with self.assertRaises(ValueError):box.submit('other',{**job,'tokens':[3]})
+        with self.assertRaises(ValueError):box.submit('phone',{**job,'epoch':'stale','tokens':[3]})
+        with self.assertRaises(ValueError):box.submit('phone',{**job,'tokens':[True]})
+        with self.assertRaises(ValueError):box.submit('phone',{**job,'tokens':[10]})
+        box.submit('phone',{**job,'tokens':[3,4]});thread.join(1)
+        self.assertEqual(out['value']['tokens'],[3,4])
+        with self.assertRaises(ValueError):box.submit('phone',{**job,'tokens':[3]})
+
+    def test_timeout_rejects_late_response(self):
+        box=Mailbox();thread,out=self.launch(box,threading.Event(),.05)
+        job=box.poll('phone',.01)['work'];thread.join(1)
+        self.assertIsInstance(out['error'],TimeoutError)
+        with self.assertRaises(ValueError):box.submit('phone',{**job,'tokens':[3]})
+
+    def test_cancel_and_single_delivery(self):
+        box=Mailbox();stop=threading.Event();thread,out=self.launch(box,stop)
+        self.assertIsNotNone(box.poll('phone',.5)['work'])
+        self.assertIsNone(box.poll('phone',.01)['work'])
+        stop.set();thread.join(1)
+        self.assertIn('cancelled',str(out['error']))
+        self.assertFalse(box.pending)
+
+    def test_duplicate_lease_and_empty_draft(self):
+        box=Mailbox();stop=threading.Event();thread,out=self.launch(box,stop)
+        job=box.poll('phone',.5)['work']
+        with self.assertRaises(RuntimeError):box.request('phone',self.payload(),stop,.01)
+        with self.assertRaises(ValueError):box.submit('phone',{**job,'tokens':[]})
+        box.submit('phone',{**job,'error':'thermal pause'});thread.join(1)
+        self.assertEqual(out['value']['error'],'thermal pause')
+
+```

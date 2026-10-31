@@ -1,0 +1,1247 @@
+Model selector verified: 4 Argon / Alta. Design review only; assertions require adjudication.
+
+heading Gemini ha detto, Value: 6
+								165 text Gemini ha detto
+							166 container model-response-message-contentr_b8d5a6f3e8bf521e
+								167 heading 1. Grounded Prior-Art Baseline & Theoretical Bounds, Value: 3
+									168 text 1. Grounded Prior-Art Baseline & Theoretical Bounds
+								169 container
+									170 text Distributed speculative decoding (DSD) over wireless links is governed by strict closed-form latency inequalities established in recent systems literature.  Any design claim for NodeLift must be evaluated against five primary sources:
+								171 content list
+									172 container
+										173 text Canonical Speculative Decoding — Leviathan et al. ( arXiv:2211.17192 ) and Chen et al. ( arXiv:2302.01318 ): A draft model
+										174 container
+											175 text 𝑀 𝑞
+										176 text  generates
+										177 container
+											178 text 𝛾 ∈
+											179 text 𝑍
+											180 text +
+										181 text  candidate tokens sequentially, and a target model
+										182 container
+											183 text 𝑀 𝑝
+										184 text  evaluates all
+										185 text 𝛾
+										186 text  proposals in a single parallel forward pass, guaranteeing at least
+										187 text 1
+										188 text  and at most
+										189 container
+											190 text 𝛾 + 1
+										191 text  committed tokens per verification round without altering the target output distribution.
+									192 container
+										193 text Co-Located Dominance vs. WAN/Wireless DSD — Lyu, Irukulapati, & Champati,  Speculation at a Distance: Where Edge-Cloud Speculative Decoding Actually Pays Off  (
+										194 text arXiv:2606.25091v2
+										195 text , Sept 2026):
+										196 content list
+											197 container
+												198 text Proposition 1 (Co-Located SD Dominance): Whenever the host has sufficient memory to hold both the target model
+												199 container
+													200 text 𝑀 𝑡
+												201 text  and the small draft model
+												202 container
+													203 text 𝑀 𝑠
+												204 text  (
+												205 container
+													206 text ∣
+													207 text 𝑀
+													208 text 𝑠
+													209 text ∣ ≪ ∣
+													210 text 𝑀
+													211 text 𝑡
+													212 text ∣
+												213 text ), co-located speculative decoding ( B1 / B2 ) matches or strictly outperforms distributed speculative decoding ( D1 / D2 ) across every single-request dimension: end-to-end latency, per-token FLOPs, total system weight memory, and inter-device communication.
+											214 container
+												215 text Proposition 2 (Synchronous DSD Latency Break-Even against Target-Only
+												216 text B0
+												217 text ):  Under greedy verification (where payload transmission
+												218 container
+													219 text 𝑇
+													220 text tx
+													221 text ( 𝛾 ) ≪ RTT
+												222 text  because only bare token IDs are exchanged),  synchronous DSD (
+												223 text D1
+												224 text ) achieves lower single-request latency than target-only autoregressive decoding (
+												225 text B0
+												226 text ) if and only if the per-round network and draft overhead is strictly smaller than the saved target steps:
+												227 container
+													228 text RTT + 𝛾
+													229 text 𝑡
+													230 text 𝑑
+													231 text +
+													232 text 𝑡
+													233 text 𝑣
+													234 text ( 𝛾 ) < 𝐸 [ 𝐴 ( 𝛾 ) ] ⋅
+													235 text 𝑡
+													236 text ar
+													237 text ⟺ RTT < ( 𝐸 [ 𝐴 ( 𝛾 ) ] − 1 )
+													238 text 𝑡
+													239 text ar
+													240 text − 𝛾
+													241 text 𝑡
+													242 text 𝑑
+													243 text − (
+													244 text 𝑡
+													245 text 𝑣
+													246 text ( 𝛾 ) −
+													247 text 𝑡
+													248 text ar
+													249 text )
+												250 text where
+												251 container
+													252 text 𝑡 ar
+												253 text  is the target single-token decode latency,
+												254 container
+													255 text 𝑡 𝑑
+												256 text  is the edge per-token draft latency,
+												257 container
+													258 text 𝑡
+													259 text 𝑣
+													260 text ( 𝛾 )
+												261 text  is the target batch verification latency for
+												262 text 𝛾
+												263 text  proposals,  and
+												264 container
+													265 text 𝐸 [ 𝐴 ( 𝛾 ) ] =
+													266 container
+														267 text 1 −
+														268 text 𝛼
+														269 container
+															270 text 𝛾 + 1
+													271 container
+														272 text 1 − 𝛼
+												273 text  under position-independent acceptance rate
+												274 text 𝛼
+												275 text .
+											276 container
+												277 text Asynchronous Pipelining Limit (§IV):  Asynchronous DSD ( D2 ) can mask network RTT only while the edge drafting phase is at least as long as the network round-trip plus target verification (
+												278 container
+													279 text 𝛾
+													280 text 𝑡
+													281 text 𝑑
+													282 text ≥ RTT +
+													283 text 𝑡
+													284 text 𝑣
+													285 text ( 𝛾 )
+												286 text ),  and still cannot beat co-located  B1 / B2  for a single request when the host can co-locate
+												287 container
+													288 text 𝑀 𝑠
+												289 text . DSD's primary advantage lies in  multi-tenant server capacity  (§III-C), where offloading draft work frees host cycles across concurrent clients.
+									290 container
+										291 text Multi-Request Edge Pipelining — Xu, Zhou, & Niu,  DiP-SD: Distributed Pipelined Speculative Decoding for Efficient LLM Inference at the Edge  ( arXiv:2604.20919 , Apr 2026): Achieves throughput gains (up to
+										292 container
+											293 text 1.93 ×
+										294 text  over greedy-batched autoregressive decoding on  Qwen3-1.7B / Qwen3-32B ) specifically by pipelining multiple concurrent edge requests to hide wireless transmission and edge drafting latency—confirming that multi-user throughput gains do not translate into single-stream latency reductions.
+									295 container
+										296 text Wasted Drafting & Verification Interference — Li et al.,  WISP: Waste- and Interference-Suppressed Distributed Speculative LLM Serving at the Edge  ( arXiv:2601.11652v2 , Apr 2026):  Identifies two structural bottlenecks in distributed speculative execution:  (1)  Wasted Drafting Time ,  where an edge node continues drafting up to a fixed block length
+										297 text 𝛾
+										298 text  after an early token has already diverged from the target,  burning mobile compute and delaying verification;  and (2)  Verification Interference , where overly long or concurrent draft batches push target verification
+										299 container
+											300 text 𝑡
+											301 text 𝑣
+											302 text ( 𝛾 )
+										303 text  out of the flat memory-bandwidth regime into compute-bound slowdowns.
+									304 container
+										305 text Channel-Adaptive Stride Selection — Li et al.,  FlexSpec: Frozen Drafts Meet Evolving Targets in Edge-Cloud Collaborative LLM Speculative Decoding  ( arXiv:2601.00644 , Jan 2026):  Models step latency over stochastic wireless channels as
+										306 container
+											307 container
+												308 text 𝑇 ^
+											309 text step
+											310 text ( 𝐾 ,
+											311 text 𝑅
+											312 text 𝑛
+											313 text ) =
+											314 text 𝑇
+											315 text fixed
+											316 text + 𝐾 ⋅ (
+											317 text 𝛼
+											318 text edge
+											319 text + 𝑏 /
+											320 text 𝑅
+											321 text 𝑛
+											322 text +
+											323 text 𝛿
+											324 text cloud
+											325 text )
+										326 text  and solves for the optimal speculative stride
+										327 container
+											328 text 𝐾
+											329 text 𝑛
+											330 text ∗
+											331 text = arg ⁡
+											332 container
+												333 text max ⁡
+											334 container
+												335 text 𝐾 ∈ [ 1 ,
+												336 text 𝐾
+												337 text max
+												338 text ⁡
+												339 text ]
+											340 container
+												341 text 𝐸 [ 𝜏 ∣ 𝐾 ]
+											342 container
+												343 container
+													344 text 𝑇 ^
+												345 text step
+												346 text ( 𝐾 ,
+												347 text 𝑅
+												348 text 𝑛
+												349 text )
+										350 text . High fixed propagation/wake delay (
+										351 container
+											352 text 𝑇 fixed
+										353 text ) demands a larger draft stride
+										354 container
+											355 text 𝐾 ∗
+										356 text  to amortize the round-trip, whereas slow edge drafting (
+										357 container
+											358 text 𝛼 edge
+										359 text ) or low acceptance forces a smaller
+										360 container
+											361 text 𝐾 ∗
+										362 text .
+									363 container
+										364 text Batch-Shape Numerical Drift on Consumer Hardware — Li,  Reference-Preserving Speculative Decoding on Consumer Systems: Diagnosis, Repair Scope, and Measured Cost  ( arXiv:2610.03228v2 , Oct 2026): Demonstrates on  llama.cpp  consumer backends (including Apple Silicon Metal and Vulkan/CUDA) that greedy verification under batch size
+										365 container
+											366 text 𝐵 > 1
+										367 text  changes underlying query-batch kernel dispatch and floating-point accumulation relative to ordinary
+										368 container
+											369 text 𝐵 = 1
+										370 text  autoregressive greedy decoding, causing legitimate deterministic argmax trajectory divergences without any bug in the speculative verification logic.
+									371 container
+										372 text Current  llama.cpp  Native Speculative Baseline ( docs/speculative.md , 2026): llama-server  natively implements co-located  draft-simple ,  draft-eagle3  (target hidden-state feature drafting),  draft-dflash  (block-diffusion draft),  draft-dspark  (DFlash backbone + semi-autoregressive Markov head),  draft-mtp  (internal/external Multi-Token Prediction heads), zero-weight  ngram-cache / ngram-mod  ( --spec-default ), and deterministic synthetic acceptance profiling via  --spec-synth-rates  and  --spec-synth-len .
+								373 heading 2. Concrete Defects in the Candidate Design, Value: 3
+									374 text 2. Concrete Defects in the Candidate Design
+								375 heading Defect 1: Redundant Last-Retained-Token Logit Recomputation Destroys Verification Amortization, Value: 4
+									376 text Defect 1: Redundant Last-Retained-Token Logit Recomputation Destroys Verification Amortization
+								377 content list
+									378 container
+										379 text Candidate Design Statement: "Synchronize prefix via longest-common-prefix, remove stale suffix, recompute last retained token logits."
+									380 container
+										381 text Failure Mechanism:  In speculative decoding,  when the target evaluates a causal batch of length
+										382 container
+											383 text 𝛾 + 1
+										384 text  consisting of the previously committed bonus/correction token
+										385 container
+											386 text 𝑡 𝑛
+										387 text  and the
+										388 text 𝛾
+										389 text  draft proposals
+										390 container
+											391 text [
+											392 container
+												393 text 𝑡 ^
+											394 container
+												395 text 𝑛 + 1
+											396 text , … ,
+											397 container
+												398 text 𝑡 ^
+											399 container
+												400 text 𝑛 + 𝛾
+											401 text ]
+										402 text ,  the single target forward pass computes logits at all
+										403 container
+											404 text 𝛾 + 1
+										405 text  positions simultaneously.  If
+										406 container
+											407 text 𝑘 < 𝛾
+										408 text  draft proposals are accepted,  the target's correction token
+										409 container
+											410 text 𝑡
+											411 text 𝑛
+											412 text +
+											413 text 𝑘
+											414 text +
+											415 text 1
+											416 text ∗
+										417 text  is  already present  as the argmax of the logit vector at batch index
+										418 text 𝑘
+										419 text . Pruning the KV cache for rejected positions
+										420 container
+											421 text [ 𝑛 + 𝑘 + 1 , 𝑛 + 𝛾 ]
+										422 text  via  llama_memory_seq_rm(mem, seq_id, n + k + 1, -1)  (or  llama_kv_cache_seq_rm ) is an
+										423 container
+											424 text 𝑂 ( 1 )
+										425 text  metadata operation that leaves KV entries
+										426 container
+											427 text [ 0 , 𝑛 + 𝑘 ]
+										428 text  intact.  If NodeLift executes an extra 1-token forward pass to "recompute last retained token logits" after rollback on either the target or the drafter,  it adds a serial forward pass (
+										429 container
+											430 text +
+											431 text 𝑡
+											432 text ar
+										433 text  on target or
+										434 container
+											435 text +
+											436 text 𝑡
+											437 text 𝑑
+										438 text  on drafter) to every partial-acceptance round,  nullifying the
+										439 container
+											440 text 𝑡
+											441 text 𝑣
+											442 text ( 𝛾 ) ≈
+											443 text 𝑡
+											444 text ar
+										445 text  amortization.
+									446 container
+										447 text Required Fix:  Never recompute logits of an already-evaluated retained token.  On the target,  sample the correction token
+										448 container
+											449 text 𝑡
+											450 text 𝑛
+											451 text +
+											452 text 𝑘
+											453 text +
+											454 text 1
+											455 text ∗
+										456 text  directly from batch logit slot
+										457 text 𝑘
+										458 text  before truncating KV slots
+										459 container
+											460 text [ 𝑛 + 𝑘 + 1 , 𝑛 + 𝛾 ]
+										461 text ,  leave
+										462 container
+											463 text 𝑡
+											464 text 𝑛
+											465 text +
+											466 text 𝑘
+											467 text +
+											468 text 1
+											469 text ∗
+										470 text  as the uncommitted lead token to be prepended at index
+										471 text 0
+										472 text  of the  next  verification batch
+										473 container
+											474 text [
+											475 text 𝑡
+											476 container
+												477 text 𝑛 + 𝑘 + 1
+											478 text ∗
+											479 text ,
+											480 container
+												481 text 𝑡 ^
+											482 container
+												483 text 𝑛 + 𝑘 + 2
+											484 text , … ]
+										485 text ,  and on the drafter,  truncate KV to
+										486 container
+											487 text 𝑛 + 𝑘
+										488 text  and ingest
+										489 container
+											490 text [
+											491 text 𝑡
+											492 container
+												493 text 𝑛 + 𝑘 + 1
+											494 text ∗
+											495 text ]
+										496 text  (or
+										497 container
+											498 text [
+											499 text 𝑡
+											500 container
+												501 text 𝑛 + 𝛾
+											502 text ,
+											503 text 𝑡
+											504 container
+												505 text 𝑛 + 𝛾 + 1
+											506 text ∗
+											507 text ]
+										508 text  when
+										509 container
+											510 text 𝑘 = 𝛾
+										511 text ) in the first step of the next draft round.
+								512 heading Defect 2: Causal Batch Alignment Off-By-One on Uncommitted Correction/Bonus Tokens, Value: 4
+									513 text Defect 2: Causal Batch Alignment Off-By-One on Uncommitted Correction/Bonus Tokens
+								514 content list
+									515 container
+										516 text Candidate Design Statement: "Target verifies all proposals in one causal batch, compares each proposal with preceding target argmax, commits only accepted prefix plus first correction or bonus token."
+									517 container
+										518 text Failure Mechanism:  At the end of round
+										519 container
+											520 text 𝑟 − 1
+										521 text ,  the target emits a correction or bonus token
+										522 container
+											523 text 𝑡 𝑛 ∗
+										524 text  from the output logits of position
+										525 container
+											526 text 𝑛 − 1
+										527 text .  Crucially,
+										528 container
+											529 text 𝑡 𝑛 ∗
+										530 text has not yet passed through the target's transformer layers ,  so its Key/Value projections are not in the target's KV cache,  nor does the target have logits for position
+										531 container
+											532 text 𝑛 + 1
+										533 text .
+										534 content list
+											535 container
+												536 text If the drafter proposes
+												537 text 𝛾
+												538 text  tokens
+												539 container
+													540 text [
+													541 container
+														542 text 𝑡 ^
+													543 container
+														544 text 𝑛 + 1
+													545 text , … ,
+													546 container
+														547 text 𝑡 ^
+													548 container
+														549 text 𝑛 + 𝛾
+													550 text ]
+												551 text  conditioned on prefix
+												552 container
+													553 text 𝑥
+													554 text ≤
+													555 text 𝑛
+												556 text  (which includes
+												557 container
+													558 text 𝑡 𝑛 ∗
+												559 text ),  the target's single verification batch  must have length
+												560 container
+													561 text 𝛾 + 1
+												562 text :
+												563 container
+													564 text Batch
+													565 text target
+													566 text = [
+													567 text 𝑡
+													568 text 𝑛
+													569 text ∗
+													570 text ,
+													571 container
+														572 text 𝑡 ^
+													573 container
+														574 text 𝑛 + 1
+													575 text , … ,
+													576 container
+														577 text 𝑡 ^
+													578 container
+														579 text 𝑛 + 𝛾
+													580 text ] at positions [ 𝑛 , 𝑛 + 1 , … , 𝑛 + 𝛾 ]
+											581 container
+												582 text In this batch,  output logits at batch index
+												583 text 0
+												584 text  (input
+												585 container
+													586 text 𝑡 𝑛 ∗
+												587 text ) verify
+												588 container
+													589 text 𝑡
+													590 text ^
+													591 text 𝑛
+													592 text +
+													593 text 1
+												594 text ; output logits at batch index
+												595 container
+													596 text 𝑖 − 1
+												597 text  verify
+												598 container
+													599 text 𝑡
+													600 text ^
+													601 text 𝑛
+													602 text +
+													603 text 𝑖
+												604 text ; and output logits at batch index
+												605 text 𝛾
+												606 text  (input
+												607 container
+													608 text 𝑡
+													609 text ^
+													610 text 𝑛
+													611 text +
+													612 text 𝛾
+												613 text ) provide the bonus token
+												614 container
+													615 text 𝑡
+													616 text 𝑛
+													617 text +
+													618 text 𝛾
+													619 text +
+													620 text 1
+													621 text ∗
+												622 text  if all
+												623 text 𝛾
+												624 text  proposals are accepted.
+											625 container
+												626 text If NodeLift instead passes only the
+												627 text 𝛾
+												628 text  proposals
+												629 container
+													630 text [
+													631 container
+														632 text 𝑡 ^
+													633 container
+														634 text 𝑛 + 1
+													635 text , … ,
+													636 container
+														637 text 𝑡 ^
+													638 container
+														639 text 𝑛 + 𝛾
+													640 text ]
+												641 text  into the target verification batch without
+												642 container
+													643 text 𝑡 𝑛 ∗
+												644 text ,  the target KV cache is missing position
+												645 text 𝑛
+												646 text ,  corrupting every subsequent attention score and RoPE offset.
+								647 heading Defect 3: Recurrent/Hybrid KV Detection via Runtime seq_rm Probe Fails or Asserts, Value: 4
+									648 text Defect 3: Recurrent/Hybrid KV Detection via Runtime
+									649 text seq_rm
+									650 text  Probe Fails or Asserts
+								651 content list
+									652 container
+										653 text Candidate Design Statement: "Reject recurrent/hybrid KV layouts unless safe checkpoint rollback implemented."
+									654 container
+										655 text Failure Mechanism: In  llama.cpp  (documented in PR #20075, March 2026), probing  llama_memory_seq_rm(mem, 0, 1, -1)  on an unpopulated context fails to validate hybrid SSM/MoE or recurrent models (such as Qwen3.5-MoE or Mamba/RWKV hybrids) because recurrent state checkpoints are allocated lazily inside  find_slot()  during active decoding. Worse, when  n_seq_max == 1 ,  recurrent_rs_size  defaults to  max(1, n_seq_max) = 1 , causing  copy_cell()  to trigger an out-of-bounds  GGML_ASSERT  crash during speculative checkpointing, while soft rollback skips attention cache cleanup and corrupts M-RoPE position state.
+									656 container
+										657 text Required Fix:  Gate model admission statically via GGUF architecture and hyperparameter inspection before context allocation (rejecting any model with recurrent/SSM state tensors or hybrid linear-attention layers),  rather than relying on a runtime  seq_rm  probe.
+								658 heading Defect 4: Duty-Cycle Resonance Between Target Verification ( ) and the 60 ms Wi-Fi Tail Spike, Value: 4
+									659 text Defect 4: Duty-Cycle Resonance Between Target Verification (
+									660 container
+										661 text 𝑡 𝑣
+									662 text ) and the 60 ms Wi-Fi Tail Spike
+								663 content list
+									664 container
+										665 text Empirical Observation in Prompt:  HTTPS RTT median is 6–9 ms, but p95 at a 60 ms inter-request gap jumps to 68–80 ms ,  with Xiaomi 17 Ultra acting as the hotspot.
+									666 container
+										667 text Failure Mechanism:  In synchronous remote drafting (
+										668 text D1
+										669 text ),  the network link is completely idle while the M3 Max executes target verification
+										670 container
+											671 text 𝑡
+											672 text 𝑣
+											673 text ( 𝛾 )
+										674 text  and while the phone executes
+										675 text 𝛾
+										676 text  local draft steps.  For a realistic large target model on M3 Max (e. g.,  32B–70B Q4_K_M),
+										677 container
+											678 text 𝑡
+											679 text 𝑣
+											680 text ( 𝛾 )
+										681 text  for
+										682 container
+											683 text 𝛾 ∈ [ 4..16 ]
+										684 text  is  25–75 ms —falling squarely inside the 60 ms inter-request gap where p95 RTT spikes to 68–80 ms.
+										685 content list
+											686 container
+												687 text When Xiaomi 17 Ultra acts simultaneously as the  802.11 SoftAP hotspot  and the  JNI compute drafter ,  the Android Wi-Fi subsystem and SoC scheduler arbitrate between SoftAP beacon/buffer management,  802. 11 WMM Power Save polling,  and bursty NPU/CPU inference threads.
+											688 container
+												689 text Plugging
+												690 container
+													691 text RTT
+													692 container
+														693 text 𝑝 95
+													694 text = 70  ms
+												695 text  into Proposition 2 of Lyu et al.  ( arXiv:2606.25091v2 ):  even if the phone drafted instantaneously (
+												696 container
+													697 text 𝑡
+													698 text 𝑑
+													699 text = 0
+												700 text ) and target verification had zero batch penalty (
+												701 container
+													702 text 𝑡
+													703 text 𝑣
+													704 text =
+													705 text 𝑡
+													706 text ar
+												707 text ),  recovering a 70 ms network stall on a target running at 25 tok/s (
+												708 container
+													709 text 𝑡
+													710 text ar
+													711 text = 40  ms
+												712 text ) requires
+												713 container
+													714 text 𝐸 [ 𝐴 ] − 1 >
+													715 text 70
+													716 text 40
+													717 text = 1.75
+												718 text  net bonus tokens per round just to break even on tail latency,  before accounting for phone draft time
+												719 container
+													720 text 𝛾
+													721 text 𝑡
+													722 text 𝑑
+												723 text .
+								724 heading Defect 5: Long-Poll Mailbox Turnaround Incurs Full-RTT Idle Gaps Between Rounds, Value: 4
+									725 text Defect 5: Long-Poll Mailbox Turnaround Incurs Full-RTT Idle Gaps Between Rounds
+								726 content list
+									727 container
+										728 text Candidate Design Statement: "Phone outbound authenticated TLS pinned persistent long-poll mailbox, not 3s heartbeat polling; bounded one work item per node..."
+									729 container
+										730 text Failure Mechanism:  In HTTP/1. 1 or standard request-response long-polling over TLS:
+										731 content list
+											732 container
+												733 text Phone holds an open request waiting for work.
+											734 container
+												735 text Host finishes target verification at
+												736 container
+													737 text 𝑡 =
+													738 text 𝑇
+													739 text 0
+												740 text  and sends the new committed prefix delta as the HTTP response (
+												741 container
+													742 text 0.5  RTT
+												743 text  host
+												744 text →
+												745 text  phone).
+											746 container
+												747 text Phone runs
+												748 text 𝛾
+												749 text  draft steps (
+												750 container
+													751 text 𝛾
+													752 text 𝑡
+													753 text 𝑑
+												754 text ).
+											755 container
+												756 text Phone sends a  new  HTTP POST/long-poll request carrying the
+												757 text 𝛾
+												758 text  draft token IDs (
+												759 container
+													760 text 0.5  RTT
+												761 text  phone
+												762 text →
+												763 text  host).
+										764 content list
+											765 container
+												766 text If those two transfers use a single half-duplex request-response cycle without persistent bidirectional framing (HTTP/2 streaming,  WebSocket over TLS,  or raw length-prefixed TLS records with  TCP_NODELAY ),  HTTP response completion and next-request header parsing interact poorly with TCP delayed ACKs (typically 40 ms on Linux/Android stacks) whenever Nagle/delayed-ACK coalescing triggers on small (<100 byte) token-ID payloads.
+								767 heading Value: 4, Defect 6: Qwen2.5-0.5B / 1.5B Q4_K_M Qualification Pair is Mathematically Guaranteed to Regress in D1
+									768 text Defect 6:
+									769 text Qwen2.5-0.5B
+									770 text  /
+									771 text 1.5B
+									772 text  Q4_K_M Qualification Pair is Mathematically Guaranteed to Regress in
+									773 text D1
+								774 content list
+									775 container
+										776 text Failure Mechanism:  On M3 Max (400 GB/s unified memory bandwidth),
+										777 text Qwen2.5-1.5B Q4_K_M
+										778 text  (~1. 0 GiB) executes single-token autoregressive decoding (
+										779 text B0
+										780 text ) in
+										781 container
+											782 text 𝑡
+											783 text ar
+											784 text ≈ 3.0 – 4.5  ms
+										785 text  (>220 tok/s).
+										786 content list
+											787 container
+												788 text Even at median
+												789 container
+													790 text RTT = 7.5  ms
+												791 text  and zero phone compute time (
+												792 container
+													793 text 𝑡
+													794 text 𝑑
+													795 text = 0
+												796 text ),  a single network round-trip equals
+												797 container
+													798 text ∼ 2
+												799 text  full target tokens on the M3 Max.  Once Xiaomi 17 Ultra JNI drafting time (
+												800 container
+													801 text 𝛾
+													802 text 𝑡
+													803 text 𝑑
+													804 text ≈ 4 𝛾 – 8 𝛾  ms
+												805 text ) is added, D1  will run 2–4$\times$  slower  than  B0  on this pair.
+											806 container
+												807 text This is not a defect in using the pair for  functional correctness ,  provided the team enforces a strict rule: never tune transport timeouts, block sizes
+												808 text 𝛾
+												809 text , or fallback thresholds on the 0.5B/1.5B pair.
+								810 heading 3. Where NodeLift Can Add Defensible Practical Value, Value: 3
+									811 text 3. Where NodeLift Can Add Defensible Practical Value
+								812 container
+									813 text Given Proposition 1 of  arXiv:2606.25091v2  (co-located SD always beats remote SD when the host has spare memory and compute for the draft model), NodeLift cannot claim general single-user acceleration on a lightly loaded 64 GiB M3 Max.  However,  there are  four concrete regimes  where NodeLift adds defensible engineering value:
+								814 container
+									815 table
+										816 row
+											817 cell
+												818 text Regime
+											819 cell
+												820 text Physical Bottleneck on M3 Max 64 GiB
+											821 cell
+												822 text Why Co-Located
+												823 text B1
+												824 text  Degrades or Fails
+											825 cell
+												826 text How NodeLift (
+												827 text B1
+												828 text /
+												829 text B2
+												830 text /
+												831 text D1
+												832 text /
+												833 text D2
+												834 text ) Adds Defensible Value
+										835 row
+											836 cell
+												837 text 1. Unified Memory Residency Cliff (Single-User Latency)
+											838 cell
+												839 text Target model + active KV cache consumes 95–100% of macOS Metal wired memory ceiling (~48–54 GiB default, e.g., 70B Q4_K_M at 42.5 GiB + 32k context KV cache).
+											840 cell
+												841 text Allocating an additional 1–2 GiB co-located draft model + draft KV cache crosses the Metal wired limit, triggering macOS VM paging or forcing partial CPU layer offload (  spikes 3–10$\times$).
+											842 cell
+												843 text Offloading the draft model and its KV cache to a 16 GB phone (
+												844 text D1
+												845 text /
+												846 text D2
+												847 text ) preserves 100% Metal GPU residency for the target model without quality-altering quantization or layer pruning.
+										848 row
+											849 cell
+												850 text 2. Speculative Branch Pre-Drafting During Target Verification (
+												851 text D2
+												852 text )
+											853 cell
+												854 text During target verification   (30–80 ms on 70B target), a synchronous system leaves the drafter idle; co-located
+												855 text B2
+												856 text  contends with the target for M3 Max GPU command queues and memory bandwidth.
+											857 cell
+												858 text Running local async drafting (
+												859 text B2
+												860 text ) on M3 Max concurrently with a memory-bound 70B verification pass steals unified memory bandwidth from the target pass, lengthening   (Verification Interference).
+											861 cell
+												862 text An external phone node (
+												863 text D2
+												864 text ) has physically separate LPDDR5X bandwidth and NPU/CPU compute; while M3 Max verifies round  , the phone can pre-draft the continuation assuming all   tokens are accepted (and optionally the branch assuming the lowest-margin draft token fails) at zero cost to M3 Max memory bandwidth.
+										865 row
+											866 cell
+												867 text 3. Multi-Agent / Multi-Request Local Gateway Capacity
+											868 cell
+												869 text Local developer workflows often dispatch 2–4 parallel agent requests (planner, coder, critic) against the local OpenAI gateway.
+											870 cell
+												871 text Co-located drafting multiplies KV memory pressure and interleaves small-batch draft steps with target batches on the single M3 Max GPU.
+											872 cell
+												873 text Matches the exact regime proven in
+												874 text arXiv:2606.25091v2
+												875 text  (§III-C),
+												876 text DiP-SD
+												877 text  (
+												878 text arXiv:2604.20919
+												879 text ), and
+												880 text WISP
+												881 text  (
+												882 text arXiv:2601.11652v2
+												883 text ): phones absorb sequential drafting across parallel requests while M3 Max executes only high-efficiency verification passes.
+										884 row
+											885 cell
+												886 text 4. Reference-Qualified Local Speculative Gateway (
+												887 text B0
+												888 text /
+												889 text B1
+												890 text )
+											891 cell
+												892 text Existing local wrappers (Ollama, unpatched UI servers) hide batch-shape drift, lack strict fallback telemetry, or do not expose
+												893 text llama.cpp
+												894 text 's 2026 speculative modes (
+												895 text ngram-mod
+												896 text ,
+												897 text draft-eagle3
+												898 text ,
+												899 text draft-mtp
+												900 text ) cleanly behind an OpenAI endpoint with deterministic verification auditing.
+											901 cell
+												902 text Users cannot tell whether speculative decoding silently altered greedy outputs (
+												903 text arXiv:2610.03228v2
+												904 text ) or degraded p95 latency.
+											905 cell
+												906 text A disciplined gateway that benchmarks and auto-selects among
+												907 text B0
+												908 text ,
+												909 text B1-ngram
+												910 text ,
+												911 text B1-draft
+												912 text , and
+												913 text D1
+												914 text /
+												915 text D2
+												916 text  with explicit drift diagnostics and automatic host fallback.
+									917 button Altre opzioni
+								918 heading 4. What Could Invalidate Proposed Greedy Verification, KV Rollback, or Benchmarking, Value: 3
+									919 text 4. What Could Invalidate Proposed Greedy Verification, KV Rollback, or Benchmarking
+								920 content list
+									921 container
+										922 text Batch-Shape Floating-Point Drift Masquerading as Verification Bugs (or Vice Versa):
+										923 content list
+											924 container
+												925 text As shown in
+												926 text arXiv:2610.03228v2
+												927 text  (Oct 2026), evaluating a target model on
+												928 text llama.cpp
+												929 text  Metal with batch size
+												930 container
+													931 text 𝐵 = 𝛾 + 1
+												932 text  alters SIMD/SIMT reduction ordering compared to
+												933 container
+													934 text 𝐵 = 1
+												935 text  (
+												936 text B0
+												937 text ).  Whenever the top-2 target logits at position
+												938 text 𝑖
+												939 text  are separated by less than the kernel rounding delta (
+												940 container
+													941 text ∣
+													942 text logit
+													943 container
+														944 text ( 1 )
+													945 text −
+													946 text logit
+													947 container
+														948 text ( 2 )
+													949 text ∣ ≲
+													950 text 10
+													951 container
+														952 text − 3
+													953 text –
+													954 text 10
+													955 container
+														956 text − 2
+												957 text  in FP16/Q4_K_M),
+												958 container
+													959 text 𝐵 = 𝛾 + 1
+												960 text  argmax can legitimately pick token
+												961 text 𝐴
+												962 text  while
+												963 container
+													964 text 𝐵 = 1
+												965 text  argmax picks token
+												966 text 𝐵
+												967 text .
+											968 container
+												969 text Invalidation Risk:  If your correctness gate simply asserts
+												970 text output_tokens(D1, gamma) == output_tokens(B0, batch=1)
+												971 text ,  valid verification implementations will fail intermittently on long generations.  Conversely,  if you relax the exact-match check without a batch-matched oracle,  a genuine KV-rollback or off-by-one position bug will slip through disguised as "floating-point drift. "
+											972 container
+												973 text Defense:  Separate the oracle into two distinct checks:
+												974 content list
+													975 container
+														976 text Step-Wise Batch-Matched Self-Consistency (Must be 100.0% exact, 0 tolerances):  At every verification step
+														977 text 𝑟
+														978 text ,  record the target's own batch argmax array for the input batch
+														979 container
+															980 text [
+															981 text 𝑡
+															982 text 𝑛
+															983 text ∗
+															984 text ,
+															985 container
+																986 text 𝑡 ^
+															987 container
+																988 text 𝑛 + 1
+															989 text , … ,
+															990 container
+																991 text 𝑡 ^
+															992 container
+																993 text 𝑛 + 𝛾
+															994 text ]
+														995 text .  Verify that the committed tokens match the target's own batch argmax up to the first mismatch,  and that re-running the final committed sequence in a single clean check pass reproduces identical KV norms.
+													996 container
+														997 text Trajectory Drift Audit vs.
+														998 text B0
+														999 text  (
+														1000 container
+															1001 text 𝐵 = 1
+														1002 text ):  Compare the full generated sequence against
+														1003 text B0
+														1004 text  (
+														1005 container
+															1006 text 𝐵 = 1
+														1007 text ).  Whenever token
+														1008 text 𝑖
+														1009 text  diverges from
+														1010 text B0
+														1011 text ,  log the
+														1012 text B0
+														1013 text  top-2 logit margin
+														1014 container
+															1015 text Δ
+															1016 text logit
+															1017 text =
+															1018 text logit
+															1019 container
+																1020 text ( 1 )
+															1021 text ( 𝐵 = 1 ) −
+															1022 text logit
+															1023 container
+																1024 text ( 2 )
+															1025 text ( 𝐵 = 1 )
+														1026 text  at position
+														1027 text 𝑖
+														1028 text .  A true numerical drift only occurs when
+														1029 container
+															1030 text Δ logit
+														1031 text  is near zero; a divergence when
+														1032 container
+															1033 text Δ
+															1034 text logit
+															1035 text > 0.1
+														1036 text  indicates a hard implementation bug in KV pruning,  RoPE position indexing,  or EOS handling.
+									1037 container
+										1038 text Tokenizer & Special-Token Canonicalization Mismatch Across GGUF Exports:
+										1039 content list
+											1040 container
+												1041 text Checking only
+												1042 text model SHA
+												1043 text  or vocabulary size is insufficient.  Different quantizations or GGUF conversions of the same model family (
+												1044 text Qwen2.5
+												1045 text  vs
+												1046 text Qwen3
+												1047 text ) can differ in
+												1048 text add_bos_token
+												1049 text ,  chat-template special token tokenization (
+												1050 text <|im_start|>
+												1051 text ,
+												1052 text <|im_end|>
+												1053 text ,
+												1054 text <|endoftext|>
+												1055 text ),  or byte-fallback merges.
+											1056 container
+												1057 text Defense:  Draft nodes must never tokenize raw strings during speculative rounds.  Only the host gateway tokenizes prompts into integer token IDs; the remote mailbox protocol must exchange  exclusively integer token ID arrays  plus a cryptographic hash of the serialized vocabulary table (
+												1058 text vocab_sha256
+												1059 text ) verified once at session handshake.
+									1060 container
+										1061 text Benchmarking Invalidation via Unfair Baselines or Synthetic Pacing:
+										1062 content list
+											1063 container
+												1064 text Missing Zero-Weight Local Baseline:
+												1065 text llama.cpp
+												1066 text  includes
+												1067 text ngram-mod
+												1068 text  (
+												1069 text --spec-default
+												1070 text ,  ~16 MB RAM,  zero extra model weights).  If
+												1071 text D1
+												1072 text  over Wi-Fi is compared only against
+												1073 text B0
+												1074 text  without checking whether zero-memory local
+												1075 text ngram-mod
+												1076 text  (
+												1077 text B1-ngram
+												1078 text ) already captures the easy repetitive tokens on the host with 0 ms RTT,  remote speedup claims on code/structured text are invalid.
+											1079 container
+												1080 text Ignoring Failed/Timed-Out Remote Work in Goodput Metrics:  If a remote draft times out at 80 ms and the host falls back to local generation,  counting only "successful speculative rounds" inflates speculative efficiency.  Goodput must be computed strictly as:
+												1081 container
+													1082 text Effective Goodput =
+													1083 text Total Verified User Tokens Emitted (Fixed 64)
+													1084 text Total Wall-Clock Time (including all wait, timeout, rollback, and fallback intervals)
+								1085 heading 5. Implementation Gates vs. Future Research, Value: 3
+									1086 text 5. Implementation Gates vs. Future Research
+								1087 container
+									1088 text Do not mix engineering verification gates with open research problems.  Enforce the following strict boundary:
+								1089 heading Phase 1: Mandatory Implementation Gates (Current Scope — Must Pass in Order), Value: 4
+									1090 text Phase 1: Mandatory Implementation Gates (Current Scope — Must Pass in Order)
+								1091 content list
+									1092 container
+										1093 text Gate G1 — Local Native Engine & Exact Verification Invariant (
+										1094 text B0
+										1095 text  vs.
+										1096 text B1
+										1097 text  on M3 Max):
+										1098 content list
+											1099 container
+												1100 text Pin exact  llama.cpp  commit hash on host and Android JNI.
+											1101 container
+												1102 text Implement the
+												1103 container
+													1104 text ( 𝛾 + 1 )
+												1105 text -token target verification batch
+												1106 container
+													1107 text [
+													1108 text 𝑡
+													1109 text 𝑛
+													1110 text ∗
+													1111 text ,
+													1112 container
+														1113 text 𝑡 ^
+													1114 container
+														1115 text 𝑛 + 1
+													1116 text , … ,
+													1117 container
+														1118 text 𝑡 ^
+													1119 container
+														1120 text 𝑛 + 𝛾
+													1121 text ]
+												1122 text  with zero redundant logit recomputation.
+											1123 container
+												1124 text Pass 100% of adversarial correctness vectors on
+												1125 text Qwen2.5-0.5B
+												1126 text →
+												1127 text Qwen2.5-1.5B
+												1128 text  Q4_K_M:
+												1129 content list
+													1130 container
+														1131 text Forced
+														1132 container
+															1133 text 𝛼 = 0
+														1134 text  (drafter proposes guaranteed wrong token IDs every step):  commits exactly 1 target correction token per round,  matches
+														1135 text B0
+														1136 text  length and tokens within batch-drift margin.
+													1137 container
+														1138 text Forced
+														1139 container
+															1140 text 𝛼 = 1
+														1141 text  (drafter uses identical
+														1142 text 1.5B
+														1143 text  model as target):  accepts all
+														1144 text 𝛾
+														1145 text  proposals + 1 bonus token (
+														1146 container
+															1147 text 𝛾 + 1
+														1148 text  tokens/round).
+													1149 container
+														1150 text Mid-block EOS injection:  drafter proposes
+														1151 text [valid, EOS, valid, valid]
+														1152 text  and target predicts EOS at index
+														1153 container
+															1154 text 𝑘 ≤ 𝛾
+														1155 text ; engine halts immediately at first validated EOS,  does not emit trailing tokens,  and leaves KV cache clean at the exact EOS boundary.
+													1156 container
+														1157 text Context limit (
+														1158 text n_ctx
+														1159 text ) saturation and multi-turn prefix rollback (
+														1160 text longest-common-prefix
+														1161 text  truncation across turns).
+									1162 container
+										1163 text Gate G2 — Host-Only Upper-Bound Qualification (
+										1164 text --spec-synth-len
+										1165 text  /
+										1166 text --spec-synth-rates
+										1167 text ):
+										1168 content list
+											1169 container
+												1170 text Using  llama.cpp 's native synthetic speculation ( --spec-synth-rates ) or an in-memory mock drafter with configurable delay
+												1171 container
+													1172 text 𝑇 mock
+												1173 text ,  empirically map the target verification overhead
+												1174 container
+													1175 text 𝑡
+													1176 text 𝑣
+													1177 text ( 𝛾 )
+												1178 text  for
+												1179 container
+													1180 text 𝛾 ∈ { 1 , 2 , 4 , 8 , 16 }
+												1181 text  on M3 Max before touching the network.
+									1182 container
+										1183 text Gate G3 — Transport Tail-Latency Stabilization (Xiaomi 17 Ultra
+										1184 text ↔
+										1185 text  M3 Max):
+										1186 content list
+											1187 text Diagnose and mitigate the 68–80 ms p95 RTT spike at 60 ms inter-request gaps before running LLM workloads over the mailbox.
+											1188 container
+												1189 text Enforce binary/compact framing over a single persistent TLS stream with  TCP_NODELAY ,  Android  WifiManager.WIFI_MODE_FULL_LOW_LATENCY  lock,  DSCP  EF / CS6  ( IP_TOS = 0xB8  / macOS  NET_SERVICE_TYPE_VO ),  and bounded timeout cancellation using  (request_id, run_epoch, prefix_hash) .
+									1190 container
+										1191 text Gate G4 — Auditable 64-Token Fixed-Output Benchmark Across
+										1192 text B0
+										1193 text ,
+										1194 text B1-ngram
+										1195 text ,
+										1196 text B1-draft
+										1197 text , and
+										1198 text D1
+										1199 text :
+										1200 content list
+											1201 container
+												1202 text Run on a target model large enough to be genuinely memory-bandwidth bound on M3 Max (e. g.,  32B or 70B Q4_K_M,  where
+												1203 container
+													1204 text 𝑡
+													1205 text ar
+													1206 text ≥ 25 – 60  ms
+												1207 text ),  plus a memory-pressured regime testing the unified memory cliff.
+								1208 heading Phase 2: Future Research (Explicitly Out of Scope Until Gates G1–G4 Pass), Value: 4
+									1209 text Phase 2: Future Research (Explicitly Out of Scope Until Gates G1–G4 Pass)
+								1210 content list
+									1211 container
+										1212 text Research R1 — Asynchronous Two-Branch Ahead-of-Time Drafting ( D2 ):  While the host verifies round
+										1213 text 𝑟
+										1214 text  (
+										1215 container
+											1216 text RTT +
+											1217 text 𝑡
+											1218 text 𝑣
+											1219 text ( 𝛾 )
+										1220 text ),  the phone speculatively drafts round
+										1221 container
+											1222 text 𝑟 + 1
+										1223 text  along the all-accepted path (and optionally a fallback branch at the lowest-confidence draft token).
+									1224 container
+										1225 text Research R2 — Confidence-Gated Early Stopping & Channel-Adaptive Stride ( WISP  +  FlexSpec ): Stopping phone drafting dynamically at token
+										1226 container
+											1227 text 𝑘 < 𝛾
+										1228 text  when top-1 draft probability drops below threshold
+										1229 container
+											1230 text 𝑝 min ⁡
+										1231 text  (supported in  llama.cpp  via  draft_p_min ) to eliminate Wasted Drafting Time ( arXiv:2601.11652v2 ), combined with dynamic
+										1232 container
+											1233 text 𝛾 𝑛 ∗
+										1234 text  scaling based on smoothed RTT ( arXiv:2601.00644 ).
+									1235 container
+										1236 text Research R3 — Multi-Node Heterogeneous Speculative Pool: Coordinating Xiaomi 17 Ultra, Oppo Find N5, iPhone 15 Pro Max, and Huawei HarmonyOS NEXT 7 either across parallel requests ( DiP-SD ,  arXiv:2604.20919 ) or heterogeneous draft lengths, while bounding Verification Interference ( arXiv:2601.11652v2 ).
+									1237 container
+										1238 text Research R4 — Stochastic (
+										1239 container
+											1240 text 𝑇 > 0
+										1241 text ) Lossless Verification Over Bandwidth-Constrained Links:  Compact residual distribution synchronization ( arXiv:2606.25091v2  §II-B).
+								1242 heading 6. Minimal Meaningful Experiments on Your Hardware, Value: 3
+									1243 text 6. Minimal Meaningful Experiments on Your Hardware
+								1244 container
+									1245 text Execute these four minimal,  high-signal experiments in sequence.  Each takes hours,  not weeks,  and produces a falsifiable go/no-go decision.
+								1246 container
+									1247 table
+										1248 row
+											1249 cell
+												1250 text Exp ID
+											1251 cell
+												1252 text Objective
+											1253 cell
+												1254 text Exact Hardware & Configuration
+											1255 cell
+												1256 text Measured Metrics
+											1257 cell
+												1258 text Falsifiable Pass/Fail Criterion
+										1259 row
+											1260 cell
+												1261 text E1: Batch-Drift & Rollback Oracle
+											1262 cell
+												1263 text Isolate algorithmic verification bugs from Metal batch-shape numerical drift (
+												1264 text arXiv:2610.03228v2
+												1265 text ).
+											1266 cell
+												1267 text M3 Max 64 GiB only.  Qualification pair
+												1268 text Qwen2.5-0.5B
+												1269 text Qwen2.5-1.5B
+												1270 text  Q4_K_M.  . 24 fixed deterministic prompts (6 code, 6 math, 6 JSON, 6 adversarial low-acceptance)   64 exact output tokens.
+											1271 cell
+												1272 container
+													1273 text 1. Step-wise match vs. target's own   batch argmax.
+												1274 container
+													1275 text 2. Full-sequence token match vs.   ( B0 ).
+												1276 container
+													1277 text 3. Minimum top-2 logit margin   at first  B0  divergence.
+											1278 cell
+												1279 text Pass:  100.0% step-wise match with   batch argmax across all adversarial cases ( ,  , EOS, rollback), and every divergence vs.   has  .
+										1280 row
+											1281 cell
+												1282 text E2: Target Verification Scaling & RTT Budget Envelope
+											1283 cell
+												1284 text Measure actual M3 Max   and   to compute the hard physical RTT ceiling   via
+												1285 text arXiv:2606.25091v2
+												1286 text  Prop. 2.
+											1287 cell
+												1288 text M3 Max 64 GiB + Xiaomi 17 Ultra (standalone timing).  Measure M3 Max   for   on (a)
+												1289 text Qwen2.5-1.5B
+												1290 text  and (b) your target large model (32B/70B Q4_K_M). Measure Xiaomi 17 Ultra JNI   on
+												1291 text 0.5B
+												1292 text /
+												1293 text 1.5B
+												1294 text  Q4_K_M.
+											1295 cell
+												1296 text  (ms),   (ms), phone   (ms/tok), and computed   for  .
+											1297 cell
+												1298 text Gate:  Any   tuple where   at   is mathematically disqualified from synchronous
+												1299 text D1
+												1300 text  over Wi-Fi before writing network glue.
+										1301 row
+											1302 cell
+												1303 text E3: 60 ms Duty-Cycle Tail-Latency Isolation (2$\times$2 Factorial)
+											1304 cell
+												1305 text Determine whether the 68–80 ms p95 spike at 60 ms gap is caused by SoftAP+Compute co-location on Xiaomi 17 Ultra or 802.11 power-save transitions.
+											1306 cell
+												1307 container
+													1308 text Factor A (Topology):  (A1) Xiaomi 17 Ultra is Hotspot + Endpoint vs. (A2) Oppo Find N5 / iPhone 15 Pro Max is Hotspot while Xiaomi 17 Ultra is client Endpoint.
+												1309 container
+													1310 text Factor B (Link Control):  (B1) Default TLS socket with 60 ms silent gap vs. (B2)  TCP_NODELAY  + DSCP  EF  + Android  WIFI_MODE_FULL_LOW_LATENCY  + 15 ms 1-byte heartbeat during host compute window. (500 rounds/cell, randomized order).
+											1311 cell
+												1312 text p50, p95, p99 RTT (ms) for 64-byte token-ID request/response payloads across inter-request gaps of  .
+											1313 cell
+												1314 text Pass:  Identifies whether decoupling the hotspot role or applying low-latency Wi-Fi lock + sub-20 ms pacing brings p95 RTT at the 60 ms gap below 15 ms.
+										1315 row
+											1316 cell
+												1317 text E4: 64-Token End-to-End Baseline Matrix
+											1318 cell
+												1319 text Compare actual wall-clock time to 64 verified output tokens across all baselines without 300-token extrapolation.
+											1320 cell
+												1321 text M3 Max + Xiaomi 17 Ultra.  Compare
+												1322 text B0
+												1323 text  (target-only),
+												1324 text B1-ngram
+												1325 text  (
+												1326 text llama.cpp
+												1327 text ngram-mod
+												1328 text ),
+												1329 text B1-draft
+												1330 text  (co-located draft on M3 Max),
+												1331 text D1
+												1332 text  (remote phone draft), and
+												1333 text D1-chaos
+												1334 text  (inject 10% synthetic packet delay > timeout to test host fallback). Test under (1) standard RAM headroom and (2) Metal wired-memory cliff pressure.
+											1335 cell
+												1336 text Exact 64-token wall-clock latency (p50, p95), TTFT, TPOT,  , wasted draft tokens (
+												1337 text WISP
+												1338 text  metric), fallback count, and phone SoC temp/battery delta over 50 runs.
+											1339 cell
+												1340 text Pass:  Honest characterization of where
+												1341 text B1
+												1342 text  dominates (headroom regime) vs. whether
+												1343 text D1
+												1344 text  beats
+												1345 text B0
+												1346 text /
+												1347 text B1
+												1348 text  at the memory cliff, with zero unrecovered stalls under
+												1349 text D1-chaos
+												1350 text .
+									1351 button Altre opzioni
+								1352 heading Interactive Break-Even Explorer: B0 vs. Co-Located B1 vs. Wireless D1 / D2, Value: 3
+									1353 text Interactive Break-Even Explorer:
+									1354 text B0
+									1355 text  vs. Co-Located
+									1356 text B1
+									1357 text  vs. Wireless
+									1358 text D1
+									1359 text /
+									1360 text D2
+								1361 container
+									1362 text Use the interactive model below—parameterized with the closed-form equations from Lyu et al. ( arXiv:2606.25091v2 ) and your measured M3 Max
+									1363 text ↔
+									1364 text  Xiaomi 17 Ultra wireless latency metrics (7.5 ms median vs. 74 ms p95 tail at 60 ms inter-request gap)—to inspect how target decode time (
+									1365 container
+										1366 text 𝑡 ar
+									1367 text ), phone draft speed (
+									1368 container
+										1369 text 𝑡 𝑑
+									1370 text ), acceptance rate (
+									1371 text 𝛼
+									1372 text ), and wireless RTT control the exact speculative stride
+									1373 container
+										1374 text 𝛾 ∈ [ 1..16 ]
+									1375 text  break-even boundary:
+								1376 button Impossibile caricare l'elemento visivo interattivo Tocca per riprovare
+									1377 text Impossibile caricare l'elemento visivo interattivo
+									1378 text Tocca per riprovare
+								1379 container
+									1380 text Key Takeaway from the Model:  Toggle between the  Qwen2.5-1.5B Qualification (
+									1381 container
+										1382 text 𝑡
+										1383 text ar
+										1384 text = 4  ms
+									1385 text )  preset and a  Large Memory-Bound Target (
+									1386 container
+										1387 text 𝑡
+										1388 text ar
+										1389 text ≥ 40  ms
+									1390 text )  preset. At
+									1391 container
+										1392 text 𝑡
+										1393 text ar
+										1394 text = 4  ms
+									1395 text , the maximum allowable network RTT for  D1  is  negative  across all
+									1396 container
+										1397 text 𝛾 ∈ [ 1..16 ]
+									1398 text , proving that  Qwen2.5-1.5B  must be used strictly as a correctness oracle (Experiment E1). Even at
+									1399 container
+										1400 text 𝑡
+										1401 text ar
+										1402 text = 42  ms
+									1403 text  and
+									1404 container
+										1405 text 𝛼 = 0.75
+									1406 text , shifting from the  7.5 ms median RTT  to the  74 ms p95 tail spike  pushes  D1  above the  B0  baseline across every block size—confirming that  Experiment E3 (eliminating the 60 ms duty-cycle Wi-Fi spike)  is the primary transport gate.
+					115 container
+						116

@@ -1,3 +1,6 @@
+> Archived 0.1 review history. Both requested models later completed engine design and source reviews; the current adjudicated results are in [ENGINE_REVIEW.md](ENGINE_REVIEW.md). Claims of unavailability below describe earlier attempts only.
+
+
 # Revisioni esterne: stato ed esame critico
 
 **Aggiornamento successivo del 31 ottobre:** Gemini 4 High ha completato un nuovo riesame del disegno NodeLift; GLM 5.3 Max ha nuovamente risposto che il servizio è a capacità. La tabella sotto conserva lo stato della prima sessione; gli esiti aggiornati sono descritti in fondo. Nessuna revisione esterna del codice o convalida hardware è stata ottenuta.

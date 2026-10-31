@@ -1,0 +1,157 @@
+heading NodeLift adversarial design review — 31 Oct 2026, Value: 1
+											211 text NodeLift adversarial design review — 31 Oct 2026
+										212 container
+											213 text Source verification first (what I could and could not confirm):  arXiv:2606.25091v2 (Lyu, Irukulapati, Champati, "Speculation at a Distance…", cs.DC, v2 Sep 2026), arXiv:2604.20919 (Xu, Zhou, Niu, "DiP-SD", VTC2026-Spring), arXiv:2601.00644 (Li, "FlexSpec") and the current llama.cpp  docs/speculative.md  (methods:  draft ,  draft-eagle3 ,  draft-dflash ,  draft-dspark ,  draft-mtp , several n-gram variants) are verified. WISP (2026, SLO-aware / interference-suppressed distributed speculative inference) is verified to exist via secondary snippets only; I could not open its full text, so treat any WISP-derived numbers as unverified. Classic prior art cited below is from my training corpus; the 2026 items are from today's retrieval.
+										214 heading 1. The uncomfortable headline result from prior art, Value: 2
+											215 text 1. The uncomfortable headline result from prior art
+										216 container
+											217 text 2606.25091v2 proves with closed-form inequalities exactly the thing your design must survive:  if the server can host both models, co-located speculative decoding (your B1) has lower latency and communication than synchronous distributed SD (your D1), at the same per-output FLOPs and memory.  Their stated exception regime — pipelined DSD competitive only when RTT is small relative to the edge drafting window — is where you live at the  median  (6–9 ms) but not at your  p95  (68–80 ms), which already exceeds the ~50 ms RTT bound below which the DSD literature finds distributed execution ever winning. So your design review must be organized around three honest propositions:
+										218 content list
+											219 container
+												220 AXListMarker 1.
+												221 text D1-for-latency is defensible only when the host cannot or should not host the draft  (target saturating host compute/RAM, energy, or the capacity goal you've deliberately separated). Otherwise B1 is the null hypothesis that kills it.
+											222 container
+												223 AXListMarker 2.
+												224 text Your genuinely under-explored niche is the  low-RTT LAN regime  (single-user, personal device fleet), which the WAN edge-cloud literature does not cover — but you must quantify it with the break-even model in §3, not assert it.
+											225 container
+												226 AXListMarker 3.
+												227 text Any claim must be conditional on a  measured exactness gate , because upstream llama.cpp currently does  not  guarantee it (§2, defects 1–3).
+										228 heading 2. Concrete defects, Value: 2
+											229 text 2. Concrete defects
+										230 text Verification / KV core
+										231 content list
+											232 container
+												233 AXListMarker 1.
+												234 text "Exact greedy" is not bitwise-exact in current llama.cpp, and upstream says so. docs/speculative.md  states that stochastic CPU and backend sampling can select different tokens because floating-point ops differ between implementations/devices, and instructs using greedy when exact matching is required. Worse, this is not hypothetical: issue #25618 (draft-mtp / draft-dspark, temperature 0, top_k 1, repeat_penalty 1.0) documents vanilla-vs-speculative divergence that  flipped with V-cache quantization  (Q8_0 KV diverged, one F16 control was byte-exact) and flash-attention on/off, with endpoint/sampler interaction not fully excluded; issue #27975 (Aug 2026) reports an external DFlash drafter changing temp-0 outputs. Your "batch/single drift must be measured" is therefore not a nice-to-have:  the drift sweep must include batch width {1..17}, thread count, flash-attn on/off, KV cache type {F16, Q8_0}, CPU governor state, and the exact server endpoint/sampler path , with the llama.cpp commit hash recorded (defaults have drifted upstream mid-2026 — #25908 shows  --spec-draft-p-min  default changed via #23269). Add a runtime canary: periodically shadow-replay committed tokens through the host-only path; on mismatch, feature-flag the spec path off and log it.
+											235 container
+												236 AXListMarker 2.
+												237 text Sampler/verifier state must be locked, not just "greedy".  Pure argmax means temp=0  and  repeat/frequency/presence penalties off  and  no logit bias  and  top_k=1  and  min_p=0  and  no grammar constraints. Penalties break losslessness by construction (the target's penalized argmax depends on the speculative tokens themselves). Your OpenAI-style gateway must reject or translate these parameters on spec-enabled routes — silent acceptance is a correctness bug your compatibility layer can introduce even if the core is right.
+											238 container
+												239 AXListMarker 3.
+												240 text Argmax tie-breaking  in the verifier must be identical to the sampler's (same code path, asserted in tests). Ties are rare but nonzero at Q4_K_M.
+											241 container
+												242 AXListMarker 4.
+												243 text Rollback scope.  KV truncation ( llama_memory_seq_rm -style) is sound for pure self-attention targets regardless of KV quantization; your instinct to reject recurrent/hybrid layouts is right, but note upstream has merged speculative  checkpointing  — your gate should be "use the upstream checkpoint path if it covers the architecture, after measuring per-checkpoint cost against the round budget; otherwise reject the layout." Sliding-window attention needs a window-boundary test case before approval.
+											244 container
+												245 AXListMarker 5.
+												246 text Draft-ledger desync is your silent killer.  The phone draft must resynchronize to the  target's  committed sequence — including corrections and bonus tokens it never proposed (truncate to LCP, re-decode the delta). If it resyncs only on its own accepted prefixes, it drifts with no error signal. The prefix hash must cover the full committed sequence, not last-round IDs.
+											247 container
+												248 AXListMarker 6.
+												249 text Context/EOS edges.  Effective context = min(draft, target) GGUF contexts; shrink the block as you approach the limit; define behavior on target context-shift (full resync + run-epoch bump); EOS is committed and generation stops even if later positions would "accept"; and don't forget the free k+1-th "bonus" token on full acceptance — it comes from the batch's final logits and is easy to drop.
+											250 container
+												251 AXListMarker 7.
+												252 text Streaming rule:  only committed tokens may cross the gateway. Optimistic streaming of draft tokens would make corrections visible retractions. Make this an assertion, not a convention.
+										253 text Transport / topology
+										254 content list
+											255 container
+												256 AXListMarker 8.
+												257 text Your network evidence is idle-phone bulk throughput; the workload is ~100-byte messages on a phone under CPU load with screen off. RTT under draft load is unmeasured and is the number that matters; radio/SoC co-activity and doze tails (your own 60 ms-gap p95) can erase the low-RTT regime. Measure in-situ over the actual long-poll link, not iperf.
+											258 container
+												259 AXListMarker 9.
+												260 text Topology ambiguity:  if the host is a client of the Xiaomi hotspot, other phones reach it through the same AP (double airtime per exchange). Per-node path must be recorded or your per-node RTTs are incommensurable.
+											261 container
+												262 AXListMarker 10.
+												263 text Multi-node racing needs an explicit winner policy (first-complete-wins, others counted as measured waste — precisely WISP's concern) and end-to-end cancellation observability (epoch + request ID + prefix hash checked on receipt).
+											264 container
+												265 AXListMarker 11.
+												266 text Android lifecycle (doze, app standby, thermal, battery saver) needs a foreground-service/wakelock policy; battery/thermal bounds must be  enforced  (route-away), not advisory. The iPhone and HarmonyOS NEXT nodes are unvalidated runtimes — per-node bring-up before they enter any benchmark arm; the JNI path you described is Android-only.
+										267 text Benchmarking
+										268 content list
+											269 container
+												270 AXListMarker 12.
+												271 text B1 is the null that can invalidate everything, and it must include the nearly-free options:  llama.cpp's built-in n-gram/prompt-lookup speculation (Saxena 2023, GitHub) and MTP/EAGLE where the target supports it, not merely a co-resident 0.5B draft. On 64 GiB with a small target, B1 plausibly dominates D1; report that as a result, not a failure.
+											272 container
+												273 AXListMarker 13.
+												274 text Two fixed-order runs cannot support causal claims (you said so yourself — keep saying it). Randomized interleaved arms, ≥30 rounds/arm, medians + p95 + max, host-side timestamps only for latency decomposition (cross-device clock skew), per-position acceptance histograms, per-round committed tokens, failed/wait accounting, phone battery drain and thermal-versus-session-time (draft latency often grows with thermal soak).
+											275 container
+												276 AXListMarker 14.
+												277 text Report actual 64-token and actual 300-token measurements separately, never projections (your DistAI lesson, preserved).
+										278 heading 3. The break-even you must publish before any speedup claim, Value: 2
+											279 text 3. The break-even you must publish before any speedup claim
+										280 container
+											281 text Win condition for D1 over B0, per round:  a / r_h > k / r_d + T_net + T_v + T_sync , where  a  = expected committed tokens per round (≤ k+1),  r_h  = host-only target rate,  r_d  = phone draft rate,  k  = block size. Rearranged:  r_h < (a/k)·r_d / (1 + (T_net + T_v)·r_d / k) . With your measured T_net (8 ms median, 75 ms p95) network is  not  the binding term;  k/r_d  — 16 sequential phone forwards — is. So for k=16, a≈4, break-even needs the host-only target to be roughly 4× slower per token than the 0.5B phone draft. Corollaries: (i) the Qwen2.5-0.5B/1.5B pair can only ever be a correctness qualification — agree with your framing, and say so in every report; (ii) the latency case lives or dies on the large-target arm and on measured  a ; (iii) D2 (pipelined/async) is the only latency hope per 2606.25091's analysis, and it carries a correctness coupling you didn't state:  greedy verification forbids drafting round n+1 before round n's commits are known, so remote async requires assumed-acceptance chains whose rejections are pure waste.  Label D2 accordingly.
+										282 heading 4. Implementation gates (pass/fail, in order), Value: 2
+											283 text 4. Implementation gates (pass/fail, in order)
+										284 content list
+											285 container
+												286 AXListMarker •
+												287 text G1 Pair qualification:  byte-exact tokenizer ID map incl. special tokens and BOS/EOS handling; model + draft SHA recorded; reject otherwise. (FlexSpec is the prior art if you later want frozen-draft/evolving-target tolerance — don't claim that now.)
+											288 container
+												289 AXListMarker •
+												290 text G2 Determinism audit:  zero argmax mismatches across the full sweep matrix (defect 1) over ≥10⁵ committed tokens vs a host-only reference; else the spec path stays feature-flagged off. Re-run on every llama.cpp bump.
+											291 container
+												292 AXListMarker •
+												293 text G3 Rollback property test:  randomized accept/reject sequences including all-accept, acceptance=0, EOS at position j, context-limit-adjacent; assert context state equals host-only reference (IDs + next-token argmax) after every round.
+											294 container
+												295 AXListMarker •
+												296 text G4 Failure drills:  app kill mid-round, radio drop, stale-epoch delivery (×100 each); assert output integrity and bound fallback latency.
+											297 container
+												298 AXListMarker •
+												299 text G5 Streaming monotonicity  asserted by a test client.
+											300 container
+												301 AXListMarker •
+												302 text G6 Energy/thermal enforcement  with route-away proven working.
+											303 container
+												304 AXListMarker •
+												305 text G7 Per-node bring-up suite  before any node enters a benchmark arm.
+											306 container
+												307 AXListMarker •
+												308 text G8 Metrics contract:  per-round logging of acceptance histogram, tokens/round, wait/failure, energy, thermal, per-node path — never aggregated away.
+										309 heading 5. Future research (explicitly not gates, and not claimable as novel), Value: 2
+											310 text 5. Future research (explicitly not gates, and not claimable as novel)
+										311 container
+											312 text Adaptive block sizing (formulated in DiP-SD for the multi-user case; adaptive-window DSD and PipeSD exist per 2606.25091's related-work survey); multi-node racing with waste/interference accounting (SpecInfer's multi-draft trees + WISP); assumed-acceptance pipelining (D2); temperature>0 with proper rejection sampling (Leviathan 2022 / Chen 2023); EAGLE-3/DFlash-style target-state-fed remote drafters — these attack the  actual  bottleneck (serial phone drafting: a block-diffusion drafter emits a block in ~one forward) but require shipping target hidden states per round and currently sit next to open temp-0 divergence bugs (#27975) and a Qwen3-only restriction for DSpark.
+										313 heading 6. Minimal meaningful experiments on this hardware, Value: 2
+											314 text 6. Minimal meaningful experiments on this hardware
+										315 content list
+											316 container
+												317 AXListMarker •
+												318 text E1 (drift audit, host-only, offline):  run G2's sweep. Deliverable: pass/fail + mismatch-rate table by axis. ~1 day.  This is the cheapest possible falsifier of the entire "exact" premise.
+											319 container
+												320 AXListMarker •
+												321 text E2 (acceptance + break-even, offline):  collect host-only greedy streams on a fixed categorized corpus (code / repetition / math / multilingual / long-context); replay prefixes against the phone draft to measure per-position acceptance and  a  for k ∈ {2,4,8,16}; measure  r_d  and  T_v  separately. Output: the break-even curve from §3 with measured inputs. Predicts D1's fate before any transport engineering matters.
+											322 container
+												323 AXListMarker •
+												324 text E3 (RPC microbench):  real message sizes over the pinned TLS long-poll link; phone states {idle, drafting} × screen {on, off}; ≥10⁴ samples; reproduce/not the 60 ms-gap doze tail; quantify any keepalive mitigation's battery cost. Optionally a USB-tether arm if the devices support it — measured, not assumed.
+											325 container
+												326 AXListMarker •
+												327 text E4 (E2E A/B/C):  B0 vs B1 (incl. n-gram) vs D1, randomized interleaved, fixed seeds, actual 64- and 300-token arms, TTFT + per-token + total + battery + thermal. Continue criterion for D1: beat B1 somewhere, else reclassify D1 as energy/capacity work.
+											328 container
+												329 AXListMarker •
+												330 text E5 (failure drills):  G4 quantified.
+											331 container
+												332 AXListMarker •
+												333 text E6 (large-target arm, when it lands):  repeat E2/E4 — the only configuration where the physics plausibly favors D1 on single-user latency.
+										334 heading 7. Where defensible value actually lies, Value: 2
+											335 text 7. Where defensible value actually lies
+										336 container
+											337 text Not in remote drafting, adaptive blocks, or speedup universality — all occupied (below). Defensible: (a) a  single-user, low-RTT-LAN  orchestration harness with an adversarial trust model in which untrusted, laggy, thermally-throttled draft nodes can only  waste time, never corrupt output  — conditional on the G2 drift gate, and stated as such; (b) a  rigorous exactness-audit methodology for CPU llama.cpp , timely given #25618/#27975 are open; (c)  measured break-even boundaries including energy and thermal  on real phone-class hardware, with negative results published; (d) the corrected benchmark discipline you already learned from DistAI (batched comparators, actual output lengths, no quality-changing claims). That's a systems-and-evidence contribution, not an algorithm one — which is exactly what this design can honestly deliver.
+										338 container
+											339 text Primary sources:  Stern/Shazeer/Uszkoreit, arXiv:1811.03115 (NeurIPS 2018); Leviathan/Kalman/Matias, arXiv:2211.17192 (ICML 2023); Chen et al., arXiv:2302.01318; Miao et al., SpecInfer, arXiv:2305.09781 (ASPLOS 2024); Li et al., EAGLE/−2/−3, arXiv:2401.15077 / 2406.16858 / 2503.01840; Cai et al., Medusa, arXiv:2401.10774; Kim et al., Big Little Decoder, arXiv:2302.07863; Zhang et al., Self-Speculative, arXiv:2309.08168; Fu et al., Lookahead, arXiv:2402.02057; Saxena, Prompt Lookup Decoding (GitHub, 2023); DeepSeek-V3 MTP, arXiv:2412.19437; Borzunov et al., Petals, arXiv:2209.01188; Lyu et al., arXiv:2606.25091v2; Xu et al., arXiv:2604.20919; Li, arXiv:2601.00644; WISP (2026, unverified full text); llama.cpp  docs/speculative.md  + issues #25618, #25908, #27975.
+										340 text Suggested next step: run E1 first — it's a day of work and it alone determines whether the "exact greedy" pillar of the whole design stands on your pinned build.
+									345 button
+										346 image
+									347 text 2/2
+									348 button
+										349 image
+									350 container Description: Copy, ID: bits-c837
+										351 button
+											352 image
+									353 container Description: Regenerate, ID: bits-c838
+										354 button
+											355 image
+							180 container
+								181 container
+									182 text entry area (settable) chat-input
+									183 button Description: More, ID: upload-file-button
+										184 image
+									185 pop up button (collapsed) Description: Connect & Notifications, ID: bits-c804, Secondary Actions: Expand
+										186 image
+										187 text Connect IM
+									188 pop up button (collapsed) Description: Select a model, ID: model-selector-input-glm-5_3-button, Secondary Actions: Expand
+										189 text GLM-5.3
+										190 image
+									356 container Description: Send Message, ID: bits-c831
+			192 container Notifications alt+T
+
+The focused UI element is 0 AXWebArea Z.ai - Advanced AI Chatbot & Agent powered by GLM-5.3-Flash, URL: chat.z.ai/c/05de8e0d-d4dd-43b4-8335-9fd1d9126c2f

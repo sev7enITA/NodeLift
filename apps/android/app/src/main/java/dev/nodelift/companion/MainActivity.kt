@@ -23,10 +23,12 @@ class MainActivity : Activity() {
     private lateinit var result: TextView
     private lateinit var connect: Button
     private lateinit var resume: Button
+    private lateinit var engineInfo: TextView
     private val render = object: Runnable {
         override fun run() {
             state.text = NodeService.status; info.text = NodeService.telemetry.ifEmpty { "${Build.MANUFACTURER} ${Build.MODEL}\nAndroid ${Build.VERSION.RELEASE}" }; result.text = NodeService.lastResult
             connect.isEnabled = !NodeService.running; resume.isEnabled = !NodeService.running && Vault.load(this@MainActivity) != null
+            engineInfo.text=NodeService.engineStatus
             handler.postDelayed(this, 1000)
         }
     }
@@ -41,7 +43,7 @@ class MainActivity : Activity() {
         root.setOnApplyWindowInsetsListener { v,insets -> v.setPadding(dp(24),dp(24)+insets.systemWindowInsetTop,dp(24),dp(32)+insets.systemWindowInsetBottom); insets }
         root.addView(text("◈ NodeLift",30f).apply { setTypeface(null,Typeface.BOLD) })
         root.addView(text("IL TUO DISPOSITIVO. UN NUOVO NODO.",11f,mint))
-        root.addView(text("Collega. Misura.\nScegli quando partecipare.",27f).apply { setPadding(0,dp(24),0,dp(20)) })
+        root.addView(text("Più vita al tuo hardware.\nUn nodo, nuove possibilità.",27f).apply { setPadding(0,dp(24),0,dp(20)) })
         val statusCard=card(); statusCard.addView(text("SESSIONE",11f,mint)); state=text(NodeService.status,19f); statusCard.addView(state); info=text("",14f,muted); statusCard.addView(info); root.addView(statusCard)
         val pairing=card(); pairing.addView(text("Associa il computer",20f)); pairing.addView(text("Nella dashboard NodeLift scegli “Aggiungi dispositivo”, poi incolla l’invito qui. È personale, temporaneo e monouso.",14f,muted))
         ticket=EditText(this).apply { hint="Incolla l’invito NodeLift"; setTextColor(ink); setHintTextColor(muted); minLines=2; maxLines=4; textSize=13f; importantForAutofill=View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS }
@@ -52,9 +54,33 @@ class MainActivity : Activity() {
             catch(e:Exception) { NodeService.status=e.message ?: "Invito non valido" }
         }
         pairing.addView(connect); resume=button("Riprendi sessione") { start(null) }; pairing.addView(resume); root.addView(pairing)
-        val control=card(); control.addView(text("Il controllo resta tuo",20f)); control.addView(text("Quando il nodo è attivo il computer può avviare brevi test di rete e CPU. Il calcolo LLM distribuito non è ancora abilitato.",14f,muted));control.addView(button("Metti in pausa") { stopService(Intent(this,NodeService::class.java)); NodeService.status="In pausa · nessun lavoro delegato" });control.addView(button("Dimentica computer") { stopService(Intent(this,NodeService::class.java)); Vault.clear(this); NodeService.status="Computer dimenticato" });root.addView(control)
+        val prefs=getSharedPreferences("engine",0)
+        val engine=card();engine.addView(text("MOTORE SPERIMENTALE",11f,mint));engine.addView(text("Il telefono propone.\nIl Mac verifica.",23f));engineInfo=text(NodeService.engineStatus,14f,mint);engine.addView(engineInfo)
+        engine.addView(text("Un piccolo modello GGUF sul telefono propone blocchi di token. Il modello principale resta sul computer e verifica ogni proposta. Backend CPU ARM64; GPU/NPU non abilitate in questa build.",14f,muted))
+        engine.addView(Switch(this).apply { text="Consenti proposte LLM";setTextColor(ink);isChecked=prefs.getBoolean("enabled",false);setOnCheckedChangeListener { _,value -> prefs.edit().putBoolean("enabled",value).apply() } })
+        fun slider(label:String,key:String,min:Int,max:Int,initial:Int) {
+            val caption=text("$label: ${prefs.getInt(key,initial)}",14f);engine.addView(caption)
+            engine.addView(SeekBar(this).apply { this.max=max-min;progress=prefs.getInt(key,initial)-min;setOnSeekBarChangeListener(object:SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(bar:SeekBar?,value:Int,fromUser:Boolean){caption.text="$label: ${value+min}";if(fromUser)prefs.edit().putInt(key,value+min).apply()}
+                override fun onStartTrackingTouch(bar:SeekBar?){};override fun onStopTrackingTouch(bar:SeekBar?){}
+            }) })
+        }
+        slider("Thread CPU al prossimo caricamento","threads",1,8,4)
+        slider("Batteria minima (%)","min_battery",20,70,20)
+        engine.addView(text("Contesto al prossimo caricamento",14f))
+        val contexts=listOf(512,1024,2048,4096)
+        engine.addView(Spinner(this).apply {adapter=ArrayAdapter(this@MainActivity,android.R.layout.simple_spinner_dropdown_item,contexts.map{"$it token"});setSelection(contexts.indexOf(prefs.getInt("n_ctx",2048)).coerceAtLeast(0));onItemSelectedListener=object:AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(parent:AdapterView<*>?,view:View?,position:Int,id:Long){prefs.edit().putInt("n_ctx",contexts[position]).apply()}
+            override fun onNothingSelected(parent:AdapterView<*>?){}
+        }})
+        engine.addView(button("Scarica draft dal Mac e attiva") {
+            if(Vault.load(this)==null)NodeService.status="Associa prima il computer"
+            else {NodeService.downloadRequested.set(true);if(!NodeService.running)start(null)}
+        })
+        engine.addView(text("Scegli prima il draft nella dashboard del Mac. Download locale fino a 1 GiB con controllo SHA-256. Il nodo sospende le proposte con batteria bassa o stato termico moderato. Le opzioni CPU e contesto si applicano al prossimo caricamento.",13f,muted));root.addView(engine)
+        val control=card(); control.addView(text("Il controllo resta tuo",20f)); control.addView(text("Il computer associato può avviare misure; le proposte LLM richiedono l’attivazione del motore qui sopra. Nessuna RAM è condivisa automaticamente.",14f,muted));control.addView(button("Metti in pausa") { stopService(Intent(this,NodeService::class.java)); NodeService.status="In pausa · nessun lavoro delegato" });control.addView(button("Dimentica computer") { stopService(Intent(this,NodeService::class.java)); Vault.clear(this); NodeService.status="Computer dimenticato" });root.addView(control)
         val measurement=card();measurement.addView(text("Ultima misura",20f));result=text(NodeService.lastResult,15f,mint);measurement.addView(result);measurement.addView(text("La RAM disponibile è un indicatore del sistema, non memoria già condivisa. I test sintetici non indicano token/s.",13f,muted));root.addView(measurement)
-        root.addView(text("0.1 · Qualification build\nNessun account cloud richiesto",12f,muted));scroll.addView(root);setContentView(scroll)
+        root.addView(text("0.2 · Motore sperimentale\nTutto nella tua rete locale",12f,muted));scroll.addView(root);setContentView(scroll)
     }
     private fun start(value: String?) {
         if(Build.VERSION.SDK_INT>=33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED) requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS),42)

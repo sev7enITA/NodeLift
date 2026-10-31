@@ -2,6 +2,7 @@ import Foundation
 import UIKit
 import Network
 import os
+import CryptoKit
 
 @MainActor final class NodeModel: ObservableObject {
     @Published var status = "Pronto per l’associazione"
@@ -10,10 +11,21 @@ import os
     @Published var telemetry = ""
     @Published var hasSavedSession = Vault.load() != nil
     @Published var ticketText = ""
+    @Published var engineEnabled = false
+    @Published var engineStatus = "Importa il draft GGUF scelto sul Mac"
+    @Published var engineThreads = 4
+    @Published var engineContext = 2048
+    @Published var engineMetal = true
+    @Published var minimumBattery = 25.0
+    @Published var importingModel = false
+    private var draft: NativeDraft?
+    private var draftSHA = ""
+    private var draftFingerprint = ""
     private var task: Task<Void, Never>?
     private var client: NodeClient?
     private var generation = UUID()
     private var transport = "non rilevato"
+    private var thermalObserver: NSObjectProtocol?
     private let monitor = NWPathMonitor()
 
     init() {
@@ -23,8 +35,15 @@ import os
             Task { @MainActor in self?.transport = name }
         }
         monitor.start(queue: DispatchQueue(label:"dev.nodelift.network"))
+        thermalObserver=NotificationCenter.default.addObserver(forName:ProcessInfo.thermalStateDidChangeNotification,object:nil,queue:.main) { [weak self] _ in
+            Task { @MainActor in
+                guard let self, !self.permitsDraft else {return}
+                self.draft?.cancel();self.engineStatus="Pausa termica · attendi il raffreddamento"
+            }
+        }
         _ = capabilities()
     }
+    deinit {if let thermalObserver {NotificationCenter.default.removeObserver(thermalObserver)}}
     func capabilities() -> [String: Any] {
         let info = ProcessInfo.processInfo
         let thermal: String
@@ -38,7 +57,60 @@ import os
         let osName = "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)"
         #endif
         telemetry = String(format:"%@\nRAM fisica: %.1f GiB · margine processo: %.1f GiB\n%@ · termica: %@", machine, Double(info.physicalMemory)/1073741824, Double(available)/1073741824, transport, thermal)
-        return ["model":machine,"os":osName,"app_version":"0.1.0","physical_memory_bytes":info.physicalMemory,"available_memory_bytes":available,"cpu_cores":info.activeProcessorCount,"battery_percent":max(0,Int(UIDevice.current.batteryLevel*100)),"thermal":thermal,"transport":transport,"lifecycle":"foreground-only","supported_jobs":["network","network_paced","cpu"]]
+        var value:[String:Any] = ["model":machine,"os":osName,"app_version":"0.2.1","physical_memory_bytes":info.physicalMemory,"available_memory_bytes":available,"cpu_cores":info.activeProcessorCount,"battery_percent":max(0,Int(UIDevice.current.batteryLevel*100)),"thermal":thermal,"transport":transport,"lifecycle":"foreground-only","supported_jobs":["network","network_paced","cpu"]]
+        if draft != nil {
+            value["draft_sha256"]=draftSHA;value["tokenizer_fingerprint"]=draftFingerprint
+            value["engine_ready"]=engineEnabled && permitsDraft
+        }
+        return value
+    }
+    private var permitsDraft:Bool {
+        let battery=UIDevice.current.batteryLevel
+        let thermal=ProcessInfo.processInfo.thermalState
+        return battery>=0 && Double(battery*100)>=minimumBattery && thermal == .nominal && os_proc_available_memory()>268435456
+    }
+    func importDraft(_ url:URL) {
+        guard !running && !importingModel else {return}
+        importingModel=true;engineStatus="Importazione e verifica SHA-256…"
+        Task {
+            do { _ = try await NativeDraft.importFile(url);engineStatus="Draft importato · attiva il motore e riprendi la sessione" }
+            catch { engineStatus=error.localizedDescription }
+            importingModel=false
+        }
+    }
+    private func prepareDraft() async throws {
+        if !engineEnabled {draft?.cancel();draft=nil;return}
+        guard draft == nil && permitsDraft else {return}
+        engineStatus="Caricamento del draft…"
+        let (sha,_) = try await NativeDraft.checkedModel()
+        try Task.checkCancellation()
+        let worker=try NativeDraft();draft=worker
+        let info=try await worker.call(["op":"load","path":NativeDraft.modelURL.path,
+                                        "n_ctx":engineContext,"threads":engineThreads,"gpu_layers":engineMetal ? 999:0])
+        try Task.checkCancellation()
+        guard let fingerprint=info["tokenizer_fingerprint"] as? String else {throw NodeError.message("Tokenizer mancante")}
+        draftSHA=sha;draftFingerprint=fingerprint
+        engineStatus="Draft pronto · \(engineMetal ? "Metal":"CPU") · solo in primo piano"
+    }
+    private func draftResult(_ work:[String:Any]) async -> [String:Any] {
+        var result:[String:Any]=[:]
+        for key in ["id","epoch","prefix_hash","tokenizer_fingerprint","model_sha256"] {result[key]=work[key]}
+        do {
+            guard engineEnabled && permitsDraft, let worker=draft else {throw NodeError.message("Draft in pausa: batteria, termica o consenso")}
+            guard work["op"] as? String == "draft", work["model_sha256"] as? String == draftSHA,
+                  work["tokenizer_fingerprint"] as? String == draftFingerprint,
+                  let prefix=work["prefix"] as? [Int], !prefix.isEmpty, prefix.count<engineContext,
+                  let count=work["count"] as? Int, (1...16).contains(count) else {throw NodeError.message("Modello o richiesta incompatibile")}
+            let data=try JSONSerialization.data(withJSONObject:prefix)
+            let digest=SHA256.hash(data:data).map{String(format:"%02x",$0)}.joined()
+            guard digest==work["prefix_hash"] as? String else {throw NodeError.message("Contesto non valido")}
+            let value=try await worker.call(["op":"draft","prefix":prefix,"count":count])
+            try Task.checkCancellation()
+            guard permitsDraft else {throw NodeError.message("Pausa termica o batteria")}
+            result["tokens"]=value["tokens"]
+            lastResult=String(format:"Draft nativo: %.1f ms · proposte da verificare sul Mac",value["ms"] as? Double ?? 0)
+        } catch {result["error"]=error.localizedDescription}
+        return result
     }
     func connect(newTicket: Bool) {
         guard !running else { return }
@@ -67,10 +139,17 @@ import os
                 try Task.checkCancellation()
                 let c = try NodeClient(ticket:credentials.pairing,token:credentials.token); client=c
                 var errors=0
+                var lastHeartbeat=0.0
                 while !Task.isCancelled {
                     do {
-                        let value = try await c.json("/v1/heartbeat",body:capabilities())
-                        errors=0;status="Connesso · in attesa di una misura"
+                        do {try await prepareDraft()}
+                        catch {try Task.checkCancellation();draft?.cancel();draft=nil;engineEnabled=false;engineStatus=error.localizedDescription}
+                        var value:[String:Any]=[:]
+                        if ProcessInfo.processInfo.systemUptime-lastHeartbeat>=3 {
+                            value = try await c.json("/v1/heartbeat",body:capabilities())
+                            lastHeartbeat=ProcessInfo.processInfo.systemUptime
+                            status="Connesso · in attesa di lavoro"
+                        }
                         if let job=value["job"] as? [String:Any], let id=job["id"] as? String, let kind=job["kind"] as? String {
                             status = kind.hasPrefix("network") ? "Misura rete in corso…" : "Calibrazione CPU sintetica…"
                             let result = await Benchmarks.run(client:c,id:id,kind:kind)
@@ -78,6 +157,17 @@ import os
                             _ = try await c.json("/v1/result",body:result)
                             lastResult = result["note"] as? String ?? "Misura completata"
                         }
+                        if engineEnabled && draft != nil && permitsDraft {
+                            let data=try await c.bytes("/v1/engine/poll")
+                            let polled=try JSONSerialization.jsonObject(with:data) as? [String:Any]
+                            if let work=polled?["work"] as? [String:Any] {
+                                let result=await draftResult(work)
+                                try Task.checkCancellation()
+                                _ = try await c.json("/v1/engine/result",body:result)
+                            }
+                            errors=0;continue
+                        }
+                        errors=0
                     } catch {
                         try Task.checkCancellation()
                         errors += 1; status="Connessione interrotta · tentativo \(errors)/3"
@@ -91,7 +181,8 @@ import os
     }
     func pause() {
         generation = UUID()
-        task?.cancel();client?.cancel();client=nil;running=false
+        task?.cancel();draft?.cancel();draft=nil;client?.cancel();client=nil;running=false
+        engineStatus="Motore in pausa · riprendi con l’app aperta"
         status="In pausa · nessun lavoro delegato"
     }
     func forget() { pause();Vault.clear();hasSavedSession=false;status="Computer dimenticato" }

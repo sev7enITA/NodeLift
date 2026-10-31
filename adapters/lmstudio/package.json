@@ -1,0 +1,10 @@
+{
+  "name": "nodelift-lmstudio",
+  "version": "0.2.1",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "scripts": {"check": "tsc --noEmit", "build": "tsc", "test": "npm run build && node --test test/*.mjs", "dev": "lms dev"},
+  "dependencies": {"@lmstudio/sdk": "1.5.0"},
+  "devDependencies": {"typescript": "5.9.3", "@types/node": "22.18.0"}
+}

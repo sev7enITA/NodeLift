@@ -49,11 +49,13 @@ class Server(http.server.ThreadingHTTPServer):
     daemon_threads = True
     allow_reuse_address = True
 
-    def __init__(self, address, state, context=None, admin_token=None, ticket_factory=None):
+    def __init__(self, address, state, context=None, admin_token=None, ticket_factory=None, engine=None, client_token=None):
         self.state = state
         self.context = context
         self.admin_token = admin_token
         self.ticket_factory = ticket_factory
+        self.engine = engine
+        self.client_token = client_token
         self.slots = threading.BoundedSemaphore(32)
         super().__init__(address, Handler)
 
@@ -86,7 +88,7 @@ class Server(http.server.ThreadingHTTPServer):
 
 class Handler(http.server.BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
-    server_version = "NodeLift/0.1"
+    server_version = "NodeLift/0.2.1"
 
     def setup(self):
         super().setup()
@@ -151,6 +153,23 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 v = self.body()
                 return self.send(200, self.server.state.pair(v.get("invite"), v.get("name"), v.get("capabilities", {})))
             node = self.server.state.authenticate(self.bearer())
+            if self.server.engine:
+                if method == "GET" and path == "/v1/engine/poll":
+                    return self.send(200, self.server.engine.mailbox.poll(node))
+                if method == "POST" and path == "/v1/engine/result":
+                    return self.send(200, self.server.engine.mailbox.submit(node, self.body()))
+                if method == "GET" and path == "/v1/engine/model-info":
+                    return self.send(200, self.server.engine.model_offer())
+                if method == "GET" and path == "/v1/engine/model":
+                    model = self.server.engine.model_path()
+                    with model.open('rb') as stream:
+                        self.send_response(200)
+                        self.send_header('Content-Type','application/octet-stream')
+                        self.send_header('Content-Length',str(model.stat().st_size))
+                        self.send_header('Cache-Control','no-store')
+                        self.end_headers()
+                        while block := stream.read(262144):self.wfile.write(block)
+                    return
             if method == "GET" and path == "/v1/probe":
                 size = int(parse_qs(route.query).get("size", ["64"])[0])
                 if not 1 <= size <= MAX_BODY:
@@ -167,7 +186,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         except PermissionError as error:
             self.close_connection = True
             self.send(401, {"error": str(error)})
-        except (ValueError, KeyError, TypeError, OverflowError) as error:
+        except (ValueError, KeyError, TypeError, OverflowError, RuntimeError) as error:
             self.close_connection = True
             self.send(400, {"error": str(error)[:200]})
         except (OSError, TimeoutError):
@@ -182,8 +201,27 @@ class Handler(http.server.BaseHTTPRequestHandler):
         if method == "GET" and path in assets:
             name, kind = assets[path]
             return self.send(200, Path(__file__).with_name(name).read_bytes(), kind)
+        if method == "GET" and path.startswith('/brand/'):
+            name = path.removeprefix('/brand/')
+            folder = Path(__file__).resolve().parents[2]/'assets/brand'
+            if name in ('nodelift-emblem.png','nodelift-mark.svg','nodelift-lockup.png') and (folder/name).is_file():
+                return self.send(200,(folder/name).read_bytes(),'image/svg+xml' if name.endswith('.svg') else 'image/png')
+            return self.send(404,{'error':'brand asset unavailable'})
+        if path in ('/v1/models','/v1/chat/completions') and self.server.engine:
+            if not self.server.client_token or not secrets.compare_digest(self.bearer(),self.server.client_token):raise PermissionError('client API key required')
+            if method=='GET' and path=='/v1/models':return self.send(200,{'object':'list','data':[{'id':'nodelift','object':'model','owned_by':'local'}]})
+            if method=='POST' and path=='/v1/chat/completions':
+                from .gateway import chat
+                return chat(self,self.server.engine,self.body())
+            return self.send(405,{'error':'method not allowed'})
         if not secrets.compare_digest(self.bearer(), self.server.admin_token):
             raise PermissionError("open the dashboard link printed by NodeLift")
+        if self.server.engine:
+            if method == 'GET' and path == '/admin/client-access':return self.send(200,{'base_url':'http://127.0.0.1:'+str(self.server.server_port)+'/v1','api_key':self.server.client_token,'model':'nodelift'})
+            if method == 'GET' and path == '/admin/engine/status':return self.send(200,self.server.engine.status())
+            if method == 'POST' and path == '/admin/engine/configure':return self.send(200,self.server.engine.configure(self.body()))
+            if method == 'POST' and path == '/admin/engine/run':return self.send(200,self.server.engine.start(self.body()))
+            if method == 'POST' and path == '/admin/engine/stop':return self.send(200,self.server.engine.stop(self.body().get('run_id')))
         if method == "GET" and path == "/admin/status":
             return self.send(200, self.server.state.snapshot())
         if method == "POST" and path == "/admin/invite":
@@ -199,7 +237,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="NodeLift qualification host. No LLM inference yet.")
+    parser = argparse.ArgumentParser(description="NodeLift local host and experimental greedy inference engine.")
     parser.add_argument("--address", default="127.0.0.1", help="Host LAN IPv4 address to put in the certificate and pairing ticket")
     parser.add_argument("--port", type=int, default=9867)
     parser.add_argument("--dashboard-port", type=int, default=9868)
@@ -217,11 +255,18 @@ def main():
     ctx.load_cert_chain(cert, key)
     def ticket():
         invite, expires = state.invite()
-        return {"protocol": 1, "url": f"https://{args.address}:{args.port}", "certificate": pem,
+        return {"protocol": 1, "url": f"https://{args.address}:{api.server_port}", "certificate": pem,
                 "sha256": fingerprint, "public_key_pin": pin, "invite": invite, "expires_at": expires}
-    api = Server((args.address, args.port), state, context=ctx)
+    from .engine import Controller
+    engine = Controller(state)
+    api = Server((args.address, args.port), state, context=ctx, engine=engine)
     admin_token = secrets.token_urlsafe(32)
-    admin = Server(("127.0.0.1", args.dashboard_port), state, admin_token=admin_token, ticket_factory=ticket)
+    client_file = state.folder/'client-api-key'
+    if client_file.exists():client_token=client_file.read_text().strip()
+    else:
+        client_token=secrets.token_urlsafe(32)
+        with open(client_file,'w',opener=lambda p,f:os.open(p,f,0o600)) as stream:stream.write(client_token)
+    admin = Server(("127.0.0.1", args.dashboard_port), state, admin_token=admin_token, ticket_factory=ticket, engine=engine,client_token=client_token)
     threads = [threading.Thread(target=s.serve_forever, daemon=True) for s in (api, admin)]
     for t in threads:
         t.start()
@@ -231,11 +276,12 @@ def main():
             discovery = subprocess.Popen(["dns-sd", "-R", "NodeLift", "_nodelift._tcp", "local", str(args.port), "protocol=1"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except FileNotFoundError:
             print("Bonjour unavailable; pairing ticket still works.")
-    print(f"NodeLift 0.1 — companion qualification; LLM engine not enabled.\nDashboard (local, private link): http://127.0.0.1:{args.dashboard_port}/#{admin_token}", flush=True)
+    print(f"NodeLift 0.2.1 — experimental native inference; mobile speedup unqualified.\nDashboard (local, private link): http://127.0.0.1:{admin.server_port}/#{admin_token}", flush=True)
     stop = threading.Event()
     signal.signal(signal.SIGINT, lambda *_: stop.set())
     signal.signal(signal.SIGTERM, lambda *_: stop.set())
     stop.wait()
+    engine.stop()
     for s in (api, admin):
         s.shutdown()
         s.server_close()

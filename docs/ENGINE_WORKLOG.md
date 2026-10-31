@@ -1,24 +1,23 @@
-# NodeLift engine development
+# NodeLift engine checkpoint: 0.2.1
 
-Authorized 31 October 2026: engine implementation and necessary benchmarks,
-actual Gemini 4 High and GLM 5.3 support, original futuristic logo, richer
-desktop/mobile GUI, Git/GitHub versioning at sev7enITA/NodeLift.
+31 October 2026. Authorized scope: engine, device benchmarks, actual Gemini 4 High / GLM 5.3 support, original identity, desktop/mobile interface and GitHub versioning.
 
-## Work in progress
+- [x] Qualification companion and physical Xiaomi hotspot pilot.
+- [x] Locked llama.cpp core, greedy block verification, correction/bonus, EOS and KV resynchronization.
+- [x] Host/local real-weight control comparisons and upstream draft/ngram comparators. Local drafting was slower for the tested small pair.
+- [x] Pinned-TLS remote leases, epochs/identity checks, bounded deadlines, cancellation and host fallback. Four loopback fault cases passed.
+- [x] Android ARM64 native CPU draft worker, bounded model download, memory/thermal/battery gates and user controls. APK built.
+- [x] iOS native Metal/CPU framework, file import and foreground lifecycle. Complete unsigned device build succeeded.
+- [x] Authenticated restricted chat/SSE gateway and desktop experiment controls.
+- [x] LM Studio generator source and live handler test. Full installed runtime remains open.
+- [x] Updated primary-source research, DistAI source evidence and actual design/source responses from both requested reviewers.
+- [x] Original emblem and desktop/mobile UI; visual-review limitations documented.
+- [x] Reproducible source, tests and measured evidence prepared for public GitHub versioning.
+- [ ] Physical native Android/iOS inference, thermal endurance and paired distributed speedup.
+- [ ] Wired/access-point comparison and device-specific power measurements.
+- [ ] Recurrent/hybrid speculative checkpoint rollback and qualified large target/draft pair.
+- [ ] Capacity sharding/offload that actually hosts a target larger than host RAM.
+- [ ] Runtime shadow equivalence canary, adaptive dispatch, asynchronous overlap and automatic route qualification.
+- [ ] HarmonyOS NEXT native worker, signed iOS distribution and installed LM Studio GUI validation.
 
-- [x] Qualification companion 0.1 and first physical Xiaomi hotspot pilot.
-- [ ] Pin portable llama.cpp core and implement exact greedy block verification.
-- [ ] Compare host-only, local draft and remote draft with identical outputs.
-- [ ] Authenticated remote work channel, leases, context epochs and cancellation.
-- [ ] Android native draft worker, bounded model loading and user controls.
-- [ ] Host API gateway and desktop experiment controls.
-- [ ] Mobile UX, iOS integration path and explicit Harmony qualification status.
-- [ ] Updated primary-source research and actual external model reviews.
-- [ ] Distinctive original identity and truthful dashboard.
-- [ ] Publish reproducible source, tests, evidence and limitations on GitHub.
-
-Design target is lower single-chat latency against an optimized local baseline;
-capacity expansion and multi-user throughput are separate claims. No universal
-speedup, novelty over every system, or GitHub popularity is established.
-Experimental work can legitimately retain the host-only path when remote work
-does not pay off. Stage and empirical results must remain explicit.
+The primary objective remains lower single-chat latency against the best applicable local baseline. Capacity and multi-user throughput are separate claims. This checkpoint is implemented experimental infrastructure; the phone acceleration objective is still open. Neither unique superiority over every system nor GitHub popularity is established.

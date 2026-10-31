@@ -1,26 +1,67 @@
+<img src="assets/brand/nodelift-mark.svg" width="88" alt="NodeLift symbol">
+
 # NodeLift
 
-Progetto per usare smartphone e tablet come nodi locali di inferenza LLM, con future integrazioni per LM Studio e client compatibili con Ollama/OpenAI. Nome scelto dall'utente: **NodeLift**; la directory di lavoro conserva il nome storico ExpandMyHW.
+**Give the hardware you already own another useful role in local AI.**
 
-**Stato al 31 ottobre 2026: prima companion di qualificazione 0.1.** Host locale e companion Android/iOS implementati e compilati; client HarmonyOS nativo in forma di sorgente candidato non compilato. **Il motore LLM distribuito e gli adapter Ollama/LM Studio non sono implementati.** Nessuno speedup su telefoni fisici ancora misurato.
+NodeLift is an experimental local inference workbench and mobile companion system. A small model on a phone proposes tokens; a larger model on the computer verifies them before anything reaches the user. The project measures when delegation helps and when the computer alone is faster.
 
-- [Avvio, installazione e limiti della companion 0.1](docs/COMPANION_0_1.md)
-- [Stato delle build e delle verifiche](artifacts/README.md)
-- [Dispositivi dichiarati e rete hotspot](profiles/devices.json)
-- [Prima prova fisica: Xiaomi 17 Ultra come hotspot, quattro job completati](research/measurements/2026-10-31-xiaomi-hotspot/REPORT.md). Misure applicative di rete e CPU sintetica; nessun benchmark LLM.
+**0.2.1 experimental, 31 October 2026.** Native inference, authenticated mobile work leases, an OpenAI-style text gateway, Android/iOS companion sources and an LM Studio generator adapter are implemented. **Phone inference speedup, pooled RAM, large hybrid-model speculation and sustained mobile operation are not yet qualified.** The first real-weight control experiments found local drafting slower than target-only inference on the small test pair. Negative results are published.
 
-- [Assessment e compatibilità](ASSESSMENT.md)
-- [DistAI: analisi del codice, risultati e lessons learned](research/distai/LESSONS_LEARNED.md)
-- [Protocollo benchmark e criteri go/no-go proposti](BENCHMARK_PROTOCOL.md)
-- [Revisioni GLM/Gemini: stato e correzioni](research/reviews/REVIEW_STATUS.md)
-- [Ricalcoli dei dati DistAI](research/distai/evidence-checks.json)
+## Implementation and evidence
 
-La directory `research/distai/source` conserva 37 file testuali dello snapshot upstream fissato, per rendere verificabile l'analisi. Non include un'installazione né binari eseguiti. La licenza e le attribuzioni upstream sono conservate nei file `LICENSE` e `THIRD_PARTY_NOTICES.md` all'interno della directory source.
+| Component | Implemented | Observed evidence / limit |
+|---|---|---|
+| Native core | Locked llama.cpp, greedy block verification, correction/bonus, EOS, KV resynchronization | Real-weight M3 Max/Metal tests; no universal bitwise-equivalence claim |
+| Remote work | Pinned TLS, lease, epoch, prefix/vocabulary/model identities | Real-weight loopback tests including wrong proposals and lost replies; emulated node |
+| Android | ARM64 CPU draft worker, checked LAN model transfer, battery/thermal controls | APK built; physical Xiaomi measurements used the earlier 0.1 qualification app |
+| iOS | Native Metal/CPU worker, GGUF import, foreground lifecycle, user limits | Unsigned device build compiled; physical iPhone inference remains open |
+| HarmonyOS NEXT | Separate ArkTS qualification candidate | No HAP or native inference worker |
+| Desktop | Control room, pairing, telemetry, diagnostics, model settings, run history | Browser functional checks and Gemini design review; post-fix visual recheck limited |
+| Integration | Authenticated text chat gateway and LM Studio generator | Real-weight HTTP/adapter-handler tests; LM Studio GUI qualification open |
 
-Ricalcolo locale dei soli dati pubblicati:
+This is **not an Ollama backend patch**. Clients with a custom OpenAI-style endpoint can call NodeLift within its text/greedy subset. The LM Studio adapter selects NodeLift as a generator; it does not split LM Studio's own loaded model across phones.
+
+## Start on the host
+
+Requirements: Python 3.12+, C++17 compiler, CMake 3.22+, Git and locally licensed GGUF weights. The verified native host build is Apple Silicon macOS/Metal. Other host platforms/backends are not qualified.
 
 ```sh
-python3 research/distai/verify_evidence.py
+git clone https://github.com/sev7enITA/NodeLift.git
+cd NodeLift
+./scripts/build-native.sh
+python3 scripts/fetch-control-models.py
+PYTHONPATH=host python3 -m nodelift.host --address YOUR_PRIVATE_LAN_IPV4
 ```
 
-Dispositivi dichiarati: Xiaomi 17 Ultra, Oppo indicato come Find X6 Ultra, Oppo Find N5, iPhone 15 Pro Max, Huawei Pura 70 Ultra con HarmonyOS NEXT 7. Rete attuale hotspot. Identità hardware, memoria utilizzabile e prestazioni vanno rilevate sui dispositivi. Gemini 4 High ha completato il riesame del disegno; GLM 5.3 Max resta indisponibile per capacità. Nessuna scelta finale del motore di inferenza prima delle prove discriminanti.
+The optional control-model download is approximately 1.61 GB, with fixed [revisions and hashes](profiles/control-models.json). Open the **private dashboard link printed by the host**, select target/draft, apply the configuration and begin with Host only. Keep invitations and client keys private.
+
+- [Engine and companion guide](docs/ENGINE_0_2.md)
+- [API and LM Studio integration](docs/INTEGRATIONS.md)
+- [Build and verification status](artifacts/README.md)
+- [Measured results](research/measurements/ENGINE_RESULTS.md)
+- [Architecture and remaining work](docs/ARCHITECTURE.md)
+
+## Evidence before acceleration claims
+
+The primary objective is lower single-chat latency than the best applicable local baseline at the same target, sampling rules and actual output length. Capacity expansion and multi-user throughput are separate experiments. Reported physical RAM is not memory already shared with the host.
+
+- [DistAI source study and lessons](research/distai/LESSONS_LEARNED.md)
+- [October 2026 research update](research/RESEARCH_2026_10_31.md)
+- [Gemini 4 High / GLM 5.3 Max reviews, adjudicated](research/reviews/ENGINE_REVIEW.md)
+- [Physical Xiaomi hotspot measurements](research/measurements/2026-10-31-xiaomi-hotspot/REPORT.md)
+- [Benchmark protocol](BENCHMARK_PROTOCOL.md), [initial assessment](ASSESSMENT.md), [device inventory](profiles/devices.json)
+
+## Reproduce checks
+
+```sh
+PYTHONPATH=host python3 -m unittest discover -s host/tests -v
+python3 scripts/check-native.py
+python3 scripts/check-remote-loopback.py
+python3 scripts/benchmark-engine.py
+cd adapters/lmstudio && npm ci --ignore-scripts && npm test
+```
+
+Native tests require the built library and weights. Network/CPU qualification tests are not LLM benchmarks. The upstream comparison script additionally requires llama-server built from the pinned checkout. Weights, pairing databases, private prompts and signing secrets do not belong in Git.
+
+Contributions are welcome: reproducible device measurements, backend bring-up, failure tests and improvements against an appropriate local comparator. See [CONTRIBUTING](CONTRIBUTING.md), [license](LICENSE), [third-party notices](THIRD_PARTY_NOTICES.md) and [brand provenance](docs/BRAND.md).

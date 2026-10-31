@@ -17,6 +17,10 @@ import javax.crypto.spec.GCMParameterSpec
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManagerFactory
+import java.io.File
+import java.io.ByteArrayOutputStream
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 
 data class Pairing(val url: String, val certificate: String, val sha256: String, val invite: String = "") {
     fun json(): JSONObject = JSONObject().put("url", url).put("certificate", certificate).put("sha256", sha256)
@@ -68,7 +72,11 @@ class Client(val pairing: Pairing, var token: String = "") {
             val status = connection.responseCode
             lastConnectionId = connection.getHeaderField("X-NodeLift-Connection-ID") ?: ""
             val stream = if (status in 200..299) connection.inputStream else connection.errorStream
-            val data = stream?.use { it.readBytes() } ?: byteArrayOf()
+            val data = stream?.use { input ->
+                val output=ByteArrayOutputStream();val buffer=ByteArray(16384)
+                while(true){val count=input.read(buffer);if(count<0)break;require(output.size()+count<=1048576){"Risposta troppo grande."};output.write(buffer,0,count)}
+                output.toByteArray()
+            } ?: byteArrayOf()
             require(status in 200..299) { if (status == 401) "Associazione scaduta o revocata. Crea un nuovo invito." else "Il computer ha rifiutato la richiesta ($status)." }
             require(data.size <= 1048576) { "Risposta troppo grande." }
             completed = true
@@ -76,6 +84,25 @@ class Client(val pairing: Pairing, var token: String = "") {
         } finally { active = null; if (!completed) connection.disconnect() }
     }
     fun json(path: String, body: JSONObject): JSONObject = JSONObject(String(bytes(path, body.toString().toByteArray()), Charsets.UTF_8))
+    fun downloadModel(destination: File, expected: Long, sha256: String, progress: (Long,Long)->Unit) {
+        val connection=URL(pairing.url+"/v1/engine/model").openConnection() as HttpsURLConnection
+        active=connection
+        val temporary=File(destination.parentFile,"draft.partial")
+        try {
+            connection.sslSocketFactory=factory;connection.instanceFollowRedirects=false
+            connection.connectTimeout=6000;connection.readTimeout=15000
+            connection.setRequestProperty("Authorization","Bearer $token")
+            connection.setRequestProperty("Accept-Encoding","identity")
+            check(connection.responseCode==200 && connection.contentLengthLong==expected) { "Download modello non disponibile" }
+            var total=0L;val digest=MessageDigest.getInstance("SHA-256")
+            connection.inputStream.use { input -> temporary.outputStream().use { output ->
+                val buffer=ByteArray(262144)
+                while(true){if(Thread.currentThread().isInterrupted)error("Download interrotto");val n=input.read(buffer);if(n<0)break;total+=n;check(total<=expected);digest.update(buffer,0,n);output.write(buffer,0,n);progress(total,expected)}
+            } }
+            check(total==expected && digest.digest().joinToString(""){"%02x".format(it)}==sha256) { "Integrità del modello non verificata" }
+            Files.move(temporary.toPath(),destination.toPath(),StandardCopyOption.REPLACE_EXISTING,StandardCopyOption.ATOMIC_MOVE)
+        } finally { active=null;connection.disconnect();temporary.delete() }
+    }
 }
 
 object Vault {

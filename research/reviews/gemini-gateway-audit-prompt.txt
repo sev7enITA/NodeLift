@@ -1,0 +1,656 @@
+NodeLift experimental engine source audit. Review the actual code below, not the prior proposal. Identify concrete correctness/lifecycle/transport defects, separate proven bugs from hypotheses and give minimal fixes. Priorities: stale KV, EOS/bonus/partial acceptance, native close/cancel races, remote failures and output integrity, resource bounds, GUI/API semantic honesty. Host M3 Max; Android draft CPU, same token-ID map; only greedy; recurrent/hybrid rejected. Current physical phone is still old qualification app, so native phone performance UNMEASURED. 23 small-model Metal checks and 60 exploratory real-weight runs had matching IDs; not universal proof. No benchmark or code execution available to you: say so. Do NOT invent measurements or arbitrary universal gates. Return at most 8 actionable findings with file/function, scenario, severity; explicit no-findings if so.
+
+FILE host/nodelift/gateway.py SHA256 332f6bf52810a0ec1d90f7103a93de7c513b7434087ebb7b20f1fc430a6cd08e
+```
+"""Restricted OpenAI-compatible local text gateway; unsupported features fail explicitly."""
+import json
+import time
+
+
+def chat(handler, engine, body):
+    allowed={'model','messages','temperature','n','top_p','max_tokens','max_completion_tokens',
+             'stream','nodelift_mode','nodelift_node_id','nodelift_draft_k',
+             'presence_penalty','frequency_penalty'}
+    unknown=set(body)-allowed
+    if unknown:raise ValueError('parameters not qualified: '+', '.join(sorted(unknown)))
+    for key,default in (('temperature',0),('n',1),('top_p',1),('presence_penalty',0),('frequency_penalty',0)):
+        value=body.get(key,default)
+        if type(value) not in (int,float) or value!=default:
+            raise ValueError('greedy only: temperature=0, n=1, top_p=1, penalties=0')
+    streaming=body.get('stream',False)
+    if type(streaming) is not bool:raise ValueError('stream must be boolean')
+    if 'max_tokens' in body and 'max_completion_tokens' in body:
+        raise ValueError('use one output token limit')
+    if body.get('model','nodelift')!='nodelift':raise ValueError('model must be nodelift (select target in dashboard)')
+    messages=body.get('messages')
+    if not isinstance(messages,list):raise ValueError('messages required')
+    run_id=engine.start({'messages':messages,'mode':body.get('nodelift_mode','host'),
+                         'node_id':body.get('nodelift_node_id'),'draft_k':body.get('nodelift_draft_k',4),
+                         'max_tokens':body.get('max_completion_tokens',body.get('max_tokens',128))})['run_id']
+    created=int(time.time());sent='';deadline=time.monotonic()+300;last_event=time.monotonic()
+    def event(value):
+        handler.wfile.write(('data: '+json.dumps(value,ensure_ascii=True)+'\n\n').encode());handler.wfile.flush()
+    def chunk(delta,reason=None):
+        return {'id':'chatcmpl-'+run_id,'object':'chat.completion.chunk','created':created,'model':'nodelift',
+                'choices':[{'index':0,'delta':delta,'finish_reason':reason}]}
+    try:
+        if streaming:
+            handler.send_response(200);handler.send_header('Content-Type','text/event-stream')
+            handler.send_header('Cache-Control','no-store');handler.send_header('Connection','close')
+            handler.end_headers();handler.close_connection=True;event(chunk({'role':'assistant','content':''}))
+        while True:
+            with engine.lock:
+                run=next(r for r in engine.runs if r['id']==run_id)
+                status,text=run['status'],run['text']
+            if streaming and text!=sent:
+                if not text.startswith(sent):raise RuntimeError('non-monotonic output; refusing corrupted stream')
+                event(chunk({'content':text[len(sent):]}));sent=text;last_event=time.monotonic()
+            if status in ('completed','failed','cancelled'):break
+            if time.monotonic()>deadline:engine.stop(run_id);raise TimeoutError('gateway deadline exceeded')
+            if streaming and time.monotonic()-last_event>5:
+                handler.wfile.write(b': working\n\n');handler.wfile.flush();last_event=time.monotonic()
+            time.sleep(.02)
+        if status!='completed':raise RuntimeError(run.get('error','inference cancelled'))
+        if streaming:
+            event(chunk({},run['finish_reason']));handler.wfile.write(b'data: [DONE]\n\n');handler.wfile.flush()
+        else:
+            return handler.send(200,{'id':'chatcmpl-'+run_id,'object':'chat.completion','created':created,'model':'nodelift',
+                                    'choices':[{'index':0,'message':{'role':'assistant','content':text},'finish_reason':run['finish_reason']}],
+                                    'usage':{'prompt_tokens':run['prompt_tokens'],'completion_tokens':len(run['tokens']),
+                                             'total_tokens':run['prompt_tokens']+len(run['tokens'])}})
+    except (BrokenPipeError,ConnectionResetError):
+        engine.stop(run_id);handler.close_connection=True
+    except Exception as error:
+        engine.stop(run_id)
+        if streaming:
+            try:event({'error':{'message':str(error),'type':'nodelift_error'}});handler.wfile.write(b'data: [DONE]\n\n')
+            except OSError:pass
+        else:raise
+
+```
+
+FILE host/nodelift/host.py SHA256 29fdd7ba2cca75265843cd7ae02385d023ba9ef39aff33631b6e75347b4b952e
+```
+"""NodeLift host: standard-library HTTPS companion protocol and loopback dashboard."""
+import argparse
+import base64
+import hashlib
+import http.server
+import ipaddress
+import json
+import os
+from pathlib import Path
+import secrets
+import signal
+import socket
+import ssl
+import subprocess
+import threading
+from urllib.parse import parse_qs, urlsplit
+
+from .state import State
+
+MAX_BODY = 1024 * 1024
+PAYLOAD = os.urandom(MAX_BODY)
+
+
+def make_identity(folder, address):
+    # Only IP addresses are accepted: no interpolation into openssl configuration.
+    ipaddress.ip_address(address)
+    cert, key, meta = folder / "host.pem", folder / "host.key", folder / "identity.json"
+    if meta.exists() and json.loads(meta.read_text())["address"] != address:
+        raise ValueError("host IP changed; use a new --state directory and re-pair devices")
+    if not cert.exists() or not key.exists():
+        config = folder / "openssl.cnf"
+        config.write_text("[req]\ndistinguished_name=dn\nx509_extensions=ext\nprompt=no\n[dn]\nCN=NodeLift\n[ext]\nsubjectAltName=IP:" + address + ",IP:127.0.0.1\nbasicConstraints=critical,CA:TRUE\nkeyUsage=critical,digitalSignature,keyEncipherment,keyCertSign\nextendedKeyUsage=serverAuth\n")
+        subprocess.run(["openssl", "req", "-x509", "-newkey", "rsa:2048", "-nodes", "-days", "30", "-config", str(config), "-keyout", str(key), "-out", str(cert)], check=True, capture_output=True)
+        key.chmod(0o600)
+        cert.chmod(0o600)
+        meta.write_text(json.dumps({"address": address}))
+    pem = cert.read_text()
+    der = ssl.PEM_cert_to_DER_cert(pem)
+    return cert, key, pem, hashlib.sha256(der).hexdigest()
+
+
+def public_key_pin(cert):
+    public = subprocess.run(["openssl", "x509", "-in", str(cert), "-pubkey", "-noout"], check=True, capture_output=True).stdout
+    der = subprocess.run(["openssl", "pkey", "-pubin", "-outform", "DER"], input=public, check=True, capture_output=True).stdout
+    return base64.b64encode(hashlib.sha256(der).digest()).decode()
+
+
+class Server(http.server.ThreadingHTTPServer):
+    daemon_threads = True
+    allow_reuse_address = True
+
+    def __init__(self, address, state, context=None, admin_token=None, ticket_factory=None, engine=None, client_token=None):
+        self.state = state
+        self.context = context
+        self.admin_token = admin_token
+        self.ticket_factory = ticket_factory
+        self.engine = engine
+        self.client_token = client_token
+        self.slots = threading.BoundedSemaphore(32)
+        super().__init__(address, Handler)
+
+    def process_request(self, request, address):
+        if not self.slots.acquire(blocking=False):
+            request.close()
+            return
+        try:
+            super().process_request(request, address)
+        except Exception:
+            self.slots.release()
+            raise
+
+    def process_request_thread(self, request, address):
+        try:
+            request.settimeout(10)
+            request.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+            if self.context:
+                request = self.context.wrap_socket(request, server_side=True)
+            super().process_request_thread(request, address)
+        except (OSError, ssl.SSLError):
+            request.close()
+        finally:
+            self.slots.release()
+
+    def handle_error(self, request, address):
+        # Broken connections are expected when a companion is paused.
+        pass
+
+
+class Handler(http.server.BaseHTTPRequestHandler):
+    protocol_version = "HTTP/1.1"
+    server_version = "NodeLift/0.1"
+
+    def setup(self):
+        super().setup()
+        self.connection_id = secrets.token_hex(8)
+
+    def log_message(self, *_):
+        pass  # Never put invitations, bearer tokens or query strings in logs.
+
+    def send(self, status, payload, content_type="application/json"):
+        if not isinstance(payload, bytes):
+            payload = json.dumps(payload, allow_nan=False).encode()
+        self.send_response(status)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(payload)))
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("Referrer-Policy", "no-referrer")
+        self.send_header("X-NodeLift-Connection-ID", self.connection_id)
+        if content_type.startswith("text/html"):
+            self.send_header("Content-Security-Policy", "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; frame-ancestors 'none'")
+        self.end_headers()
+        self.wfile.write(payload)
+
+    def body(self, raw=False):
+        if self.headers.get("Transfer-Encoding"):
+            raise ValueError("chunked requests unsupported")
+        lengths = self.headers.get_all("Content-Length", [])
+        if len(lengths) != 1 or not lengths[0].isdigit():
+            raise ValueError("one Content-Length required")
+        length = int(lengths[0])
+        if length > MAX_BODY:
+            raise ValueError("body too large")
+        data = self.rfile.read(length)
+        if len(data) != length:
+            raise ValueError("incomplete body")
+        if raw:
+            return data
+        value = json.loads(data)
+        if not isinstance(value, dict):
+            raise ValueError("JSON object required")
+        return value
+
+    def bearer(self):
+        auth = self.headers.get("Authorization", "")
+        return auth[7:] if auth.startswith("Bearer ") else ""
+
+    def do_GET(self):
+        self.dispatch("GET")
+
+    def do_POST(self):
+        self.dispatch("POST")
+
+    def dispatch(self, method):
+        try:
+            route = urlsplit(self.path)
+            path = route.path
+            if self.server.admin_token is not None:
+                return self.admin(method, path)
+            if method == "GET" and path == "/health":
+                return self.send(200, {"service": "NodeLift", "protocol": 1})
+            if method == "POST" and path == "/v1/pair":
+                v = self.body()
+                return self.send(200, self.server.state.pair(v.get("invite"), v.get("name"), v.get("capabilities", {})))
+            node = self.server.state.authenticate(self.bearer())
+            if self.server.engine:
+                if method == "GET" and path == "/v1/engine/poll":
+                    return self.send(200, self.server.engine.mailbox.poll(node))
+                if method == "POST" and path == "/v1/engine/result":
+                    return self.send(200, self.server.engine.mailbox.submit(node, self.body()))
+                if method == "GET" and path == "/v1/engine/model-info":
+                    return self.send(200, self.server.engine.model_offer())
+                if method == "GET" and path == "/v1/engine/model":
+                    model = self.server.engine.model_path()
+                    with model.open('rb') as stream:
+                        self.send_response(200)
+                        self.send_header('Content-Type','application/octet-stream')
+                        self.send_header('Content-Length',str(model.stat().st_size))
+                        self.send_header('Cache-Control','no-store')
+                        self.end_headers()
+                        while block := stream.read(262144):self.wfile.write(block)
+                    return
+            if method == "GET" and path == "/v1/probe":
+                size = int(parse_qs(route.query).get("size", ["64"])[0])
+                if not 1 <= size <= MAX_BODY:
+                    raise ValueError("probe size outside limits")
+                return self.send(200, PAYLOAD[:size], "application/octet-stream")
+            if method == "POST" and path == "/v1/upload":
+                data = self.body(raw=True)
+                return self.send(200, {"bytes": len(data)})
+            if method == "POST" and path == "/v1/heartbeat":
+                return self.send(200, self.server.state.heartbeat(node, self.body()))
+            if method == "POST" and path == "/v1/result":
+                return self.send(200, self.server.state.finish(node, self.body()))
+            self.send(404, {"error": "unknown endpoint"})
+        except PermissionError as error:
+            self.close_connection = True
+            self.send(401, {"error": str(error)})
+        except (ValueError, KeyError, TypeError, OverflowError, RuntimeError) as error:
+            self.close_connection = True
+            self.send(400, {"error": str(error)[:200]})
+        except (OSError, TimeoutError):
+            self.close_connection = True
+
+    def admin(self, method, path):
+        host = self.headers.get("Host", "")
+        expected = "127.0.0.1:" + str(self.server.server_port)
+        if host != expected or self.headers.get("Origin", "http://" + expected) != "http://" + expected:
+            raise PermissionError("loopback origin required")
+        assets = {"/": ("dashboard.html", "text/html; charset=utf-8"), "/app.js": ("dashboard.js", "text/javascript"), "/style.css": ("dashboard.css", "text/css")}
+        if method == "GET" and path in assets:
+            name, kind = assets[path]
+            return self.send(200, Path(__file__).with_name(name).read_bytes(), kind)
+        if method == "GET" and path.startswith('/brand/'):
+            name = path.removeprefix('/brand/')
+            folder = Path(__file__).resolve().parents[2]/'assets/brand'
+            if name in ('nodelift-emblem.png','nodelift-mark.svg','nodelift-lockup.png') and (folder/name).is_file():
+                return self.send(200,(folder/name).read_bytes(),'image/svg+xml' if name.endswith('.svg') else 'image/png')
+            return self.send(404,{'error':'brand asset unavailable'})
+        if path in ('/v1/models','/v1/chat/completions') and self.server.engine:
+            if not self.server.client_token or not secrets.compare_digest(self.bearer(),self.server.client_token):raise PermissionError('client API key required')
+            if method=='GET' and path=='/v1/models':return self.send(200,{'object':'list','data':[{'id':'nodelift','object':'model','owned_by':'local'}]})
+            if method=='POST' and path=='/v1/chat/completions':
+                from .gateway import chat
+                return chat(self,self.server.engine,self.body())
+            return self.send(405,{'error':'method not allowed'})
+        if not secrets.compare_digest(self.bearer(), self.server.admin_token):
+            raise PermissionError("open the dashboard link printed by NodeLift")
+        if self.server.engine:
+            if method == 'GET' and path == '/admin/client-access':return self.send(200,{'base_url':'http://127.0.0.1:'+str(self.server.server_port)+'/v1','api_key':self.server.client_token,'model':'nodelift'})
+            if method == 'GET' and path == '/admin/engine/status':return self.send(200,self.server.engine.status())
+            if method == 'POST' and path == '/admin/engine/configure':return self.send(200,self.server.engine.configure(self.body()))
+            if method == 'POST' and path == '/admin/engine/run':return self.send(200,self.server.engine.start(self.body()))
+            if method == 'POST' and path == '/admin/engine/stop':self.body();return self.send(200,self.server.engine.stop())
+        if method == "GET" and path == "/admin/status":
+            return self.send(200, self.server.state.snapshot())
+        if method == "POST" and path == "/admin/invite":
+            self.body()
+            return self.send(200, self.server.ticket_factory())
+        if method == "POST" and path == "/admin/job":
+            v = self.body()
+            return self.send(200, self.server.state.queue(v.get("node_id"), v.get("kind")))
+        if method == "POST" and path == "/admin/revoke":
+            self.server.state.revoke(self.body().get("node_id"))
+            return self.send(200, {"revoked": True})
+        return self.send(404, {"error": "unknown endpoint"})
+
+
+def main():
+    parser = argparse.ArgumentParser(description="NodeLift qualification host. No LLM inference yet.")
+    parser.add_argument("--address", default="127.0.0.1", help="Host LAN IPv4 address to put in the certificate and pairing ticket")
+    parser.add_argument("--port", type=int, default=9867)
+    parser.add_argument("--dashboard-port", type=int, default=9868)
+    parser.add_argument("--state", type=Path, default=Path.home()/".local/share/nodelift")
+    parser.add_argument("--bonjour", action="store_true", help="Advertise the host on the local network via dns-sd")
+    args = parser.parse_args()
+    address = ipaddress.IPv4Address(args.address)
+    if not (address.is_private or address.is_loopback) or address.is_unspecified:
+        parser.error("use the private LAN IPv4 address of this computer")
+    state = State(args.state)
+    cert, key, pem, fingerprint = make_identity(state.folder, args.address)
+    pin = public_key_pin(cert)
+    ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    ctx.minimum_version = ssl.TLSVersion.TLSv1_2
+    ctx.load_cert_chain(cert, key)
+    def ticket():
+        invite, expires = state.invite()
+        return {"protocol": 1, "url": f"https://{args.address}:{args.port}", "certificate": pem,
+                "sha256": fingerprint, "public_key_pin": pin, "invite": invite, "expires_at": expires}
+    from .engine import Controller
+    engine = Controller(state)
+    api = Server((args.address, args.port), state, context=ctx, engine=engine)
+    admin_token = secrets.token_urlsafe(32)
+    client_file = state.folder/'client-api-key'
+    if client_file.exists():client_token=client_file.read_text().strip()
+    else:
+        client_token=secrets.token_urlsafe(32)
+        with client_file.open('w',opener=lambda p,f:os.open(p,f,0o600)) as stream:stream.write(client_token)
+    admin = Server(("127.0.0.1", args.dashboard_port), state, admin_token=admin_token, ticket_factory=ticket, engine=engine,client_token=client_token)
+    threads = [threading.Thread(target=s.serve_forever, daemon=True) for s in (api, admin)]
+    for t in threads:
+        t.start()
+    discovery = None
+    if args.bonjour:
+        try:
+            discovery = subprocess.Popen(["dns-sd", "-R", "NodeLift", "_nodelift._tcp", "local", str(args.port), "protocol=1"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        except FileNotFoundError:
+            print("Bonjour unavailable; pairing ticket still works.")
+    print(f"NodeLift 0.1 — companion qualification; LLM engine not enabled.\nDashboard (local, private link): http://127.0.0.1:{args.dashboard_port}/#{admin_token}", flush=True)
+    stop = threading.Event()
+    signal.signal(signal.SIGINT, lambda *_: stop.set())
+    signal.signal(signal.SIGTERM, lambda *_: stop.set())
+    stop.wait()
+    for s in (api, admin):
+        s.shutdown()
+        s.server_close()
+    if discovery:
+        discovery.terminate()
+
+
+if __name__ == "__main__":
+    main()
+
+```
+
+FILE apps/android/app/src/main/java/dev/nodelift/companion/NativeEngine.kt SHA256 f7093e579100d535927e5b506a3de34717cedcc832434d23f2c53b91e63621c3
+```
+package dev.nodelift.companion
+
+import android.app.ActivityManager
+import android.content.Context
+import org.json.JSONObject
+import java.io.File
+import java.security.MessageDigest
+
+class NativeEngine : AutoCloseable {
+    companion object { init { System.loadLibrary("nodelift") } }
+    private external fun create(): Long
+    private external fun request(handle: Long, value: String): String
+    private external fun interrupt(handle: Long)
+    private external fun dispose(handle: Long)
+    @Volatile private var handle = create()
+    @Synchronized fun call(op: String, args: JSONObject = JSONObject()): JSONObject {
+        check(handle != 0L) { "Motore non disponibile" }
+        val response = JSONObject(request(handle, args.put("op",op).toString()))
+        if(response.has("error")) error(response.getString("error"))
+        return response
+    }
+    fun cancel() { if(handle != 0L) interrupt(handle) }
+    @Synchronized override fun close() { if(handle != 0L) { dispose(handle); handle=0L } }
+}
+
+class MobileDraft(private val context: Context) : AutoCloseable {
+    private var native: NativeEngine? = null
+    var sha256 = ""; private set
+    var fingerprint = ""; private set
+    val ready get() = native != null
+    private val prefs get() = context.getSharedPreferences("engine",0)
+    private val model get() = File(context.filesDir,"draft.gguf")
+
+    fun loadSaved() {
+        check(model.exists()) { "Scarica prima il draft dal computer" }
+        val size=model.length()
+        check(size in 1..(1024L*1024*1024)) { "Modello oltre il limite mobile di 1 GiB" }
+        val mem=ActivityManager.MemoryInfo().also { context.getSystemService(ActivityManager::class.java).getMemoryInfo(it) }
+        check(mem.availMem > size*2+268435456L && !mem.lowMemory) { "Memoria insufficiente: libera RAM prima di caricare il modello" }
+        val digest=MessageDigest.getInstance("SHA-256")
+        model.inputStream().use { input -> val b=ByteArray(262144);while(true){val n=input.read(b);if(n<0)break;digest.update(b,0,n)} }
+        sha256=digest.digest().joinToString(""){"%02x".format(it)}
+        check(sha256 == prefs.getString("sha256",null)) { "Hash del modello non valido: riscarica il draft" }
+        native?.close();native=null
+        val created=NativeEngine()
+        try {
+            val result=created.call("load",JSONObject().put("path",model.absolutePath)
+                .put("threads",prefs.getInt("threads",4).coerceIn(1,8))
+                .put("n_ctx",prefs.getInt("n_ctx",2048).coerceIn(512,4096)).put("gpu_layers",0))
+            fingerprint=result.getString("tokenizer_fingerprint");native=created
+        } catch(e:Exception){created.close();throw e}
+    }
+    fun download(client: Client, progress: (Long,Long)->Unit) {
+        val offer=JSONObject(String(client.bytes("/v1/engine/model-info"),Charsets.UTF_8))
+        val bytes=offer.getLong("bytes")
+        check(bytes in 1..(1024L*1024*1024)) { "Per questa build scegli un draft entro 1 GiB" }
+        check(context.filesDir.usableSpace > bytes+536870912L) { "Spazio libero insufficiente" }
+        val sha=offer.getString("sha256");check(sha.matches(Regex("[0-9a-f]{64}")))
+        client.downloadModel(model,bytes,sha,progress)
+        prefs.edit().putString("sha256",sha).putString("name",offer.getString("name")).apply()
+        loadSaved()
+    }
+    fun draft(work: JSONObject): JSONObject {
+        val answer=JSONObject()
+        for(key in listOf("id","epoch","prefix_hash","tokenizer_fingerprint","model_sha256")) answer.put(key,work.getString(key))
+        try {
+            check(work.getString("op")=="draft")
+            check(work.getString("model_sha256")==sha256 && work.getString("tokenizer_fingerprint")==fingerprint) { "Modello o tokenizer non corrispondente" }
+            val prefix=work.getJSONArray("prefix");check(prefix.length() in 1..4095)
+            val digest=MessageDigest.getInstance("SHA-256").digest(prefix.toString().toByteArray()).joinToString(""){"%02x".format(it)}
+            check(digest==work.getString("prefix_hash")) { "Contesto non valido" }
+            val count=work.getInt("count");check(count in 1..16)
+            val result=native?.call("draft",JSONObject().put("prefix",prefix).put("count",count)) ?: error("Draft non caricato")
+            answer.put("tokens",result.getJSONArray("tokens"))
+            NodeService.lastResult="Draft: ${result.getJSONArray("tokens").length()} token proposti · %.1f ms".format(result.getDouble("ms"))
+        } catch(e:Exception) { answer.put("error",e.message ?: "Draft fallito") }
+        return answer
+    }
+    fun cancel(){native?.cancel()}
+    override fun close(){native?.close();native=null}
+}
+
+```
+
+FILE apps/android/app/src/main/java/dev/nodelift/companion/NodeService.kt SHA256 9a310ac96330037a417335dabfb7f5533da8e4efad709523c80f5b065e8d099d
+```
+package dev.nodelift.companion
+
+import android.app.*
+import android.content.*
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.*
+import org.json.JSONArray
+import org.json.JSONObject
+import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.AtomicLong
+import kotlin.math.abs
+
+class NodeService : Service() {
+    companion object {
+        @Volatile var running = false
+        @Volatile var status = "Pronto per l’associazione"
+        @Volatile var lastResult = "Nessuna misura eseguita"
+        @Volatile var telemetry = ""
+        val generation = AtomicLong(0)
+        val downloadRequested = AtomicBoolean(false)
+        @Volatile var engineStatus = "Draft non caricato · CPU ARM64"
+    }
+    private val stop = AtomicBoolean(false)
+    private var worker: Thread? = null
+    private var client: Client? = null
+    private var runId = 0L
+    private var mobileDraft: MobileDraft? = null
+    private val enginePrefs get() = getSharedPreferences("engine",0)
+    private fun energyAllowed(): Boolean {
+        val battery=registerReceiver(null,IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        val percent=battery?.getIntExtra(BatteryManager.EXTRA_LEVEL,-1) ?: -1
+        return percent >= enginePrefs.getInt("min_battery",20) &&
+            (Build.VERSION.SDK_INT<29 || getSystemService(PowerManager::class.java).currentThermalStatus<PowerManager.THERMAL_STATUS_MODERATE)
+    }
+    override fun onBind(intent: Intent?) = null
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (running) return START_NOT_STICKY
+        val manager = getSystemService(NotificationManager::class.java)
+        manager.createNotificationChannel(NotificationChannel("session", "Sessione NodeLift", NotificationManager.IMPORTANCE_LOW))
+        val open = PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE)
+        startForeground(1, Notification.Builder(this, "session").setSmallIcon(dev.nodelift.companion.R.drawable.ic_node).setContentTitle("NodeLift · nodo attivo").setContentText("Misure autorizzate dal tuo computer. Apri per mettere in pausa.").setContentIntent(open).setOngoing(true).build())
+        stop.set(false); running = true; runId = generation.incrementAndGet()
+        val ticketText = intent?.getStringExtra("ticket")
+        worker = Thread {
+            try {
+                status = "Connessione al computer…"
+                val saved = if (ticketText == null) Vault.load(this) else null
+                val ticket = Pairing.parse(if (ticketText != null) JSONObject(ticketText) else saved?.getJSONObject("pairing") ?: error("Incolla un invito dal computer."))
+                val c = Client(ticket, saved?.optString("token") ?: ""); client = c
+                if (ticketText != null) {
+                    val response = c.json("/v1/pair", JSONObject().put("invite", ticket.invite).put("name", "${Build.MANUFACTURER} ${Build.MODEL}").put("capabilities", capabilities()))
+                    c.token = response.getString("token")
+                    Vault.save(this, JSONObject().put("pairing", ticket.json()).put("token", c.token).put("node_id", response.getString("node_id")))
+                }
+                var errors = 0
+                while (!stop.get()) {
+                    try {
+                        if(!enginePrefs.getBoolean("enabled",false) && mobileDraft!=null){mobileDraft?.close();mobileDraft=null;engineStatus="Motore in pausa"}
+                        if(downloadRequested.getAndSet(false)) {
+                            try {
+                                check(energyAllowed()){ "Batteria o stato termico non consentono il caricamento" }
+                                mobileDraft?.close();mobileDraft=MobileDraft(this)
+                                engineStatus="Scaricamento draft dal computer…"
+                                mobileDraft!!.download(c){done,total -> engineStatus="Scaricamento draft: ${done*100/total}%"}
+                                enginePrefs.edit().putBoolean("enabled",true).apply()
+                                engineStatus="Draft pronto · CPU ARM64 · SHA-256 verificato"
+                            } catch(e:Exception){mobileDraft?.close();mobileDraft=null;engineStatus=e.message ?: "Caricamento fallito";lastResult=engineStatus;enginePrefs.edit().putBoolean("enabled",false).apply()}
+                        } else if(enginePrefs.getBoolean("enabled",false) && mobileDraft==null && energyAllowed()) {
+                            try {engineStatus="Caricamento draft…";mobileDraft=MobileDraft(this).also { it.loadSaved() };engineStatus="Draft pronto · CPU ARM64"}
+                            catch(e:Exception){mobileDraft?.close();mobileDraft=null;enginePrefs.edit().putBoolean("enabled",false).apply();engineStatus=e.message ?: "Caricamento fallito"}
+                        }
+                        val response = c.json("/v1/heartbeat", capabilities())
+                        errors = 0
+                        status = "Connesso · nodo disponibile"
+                        val job = response.optJSONObject("job")
+                        if (job != null) runJob(c, job)
+                        else if(mobileDraft?.ready==true && enginePrefs.getBoolean("enabled",false) && energyAllowed()) {
+                            val work=JSONObject(String(c.bytes("/v1/engine/poll"),Charsets.UTF_8)).optJSONObject("work")
+                            if(work!=null) {
+                                val answer=if(energyAllowed() && enginePrefs.getBoolean("enabled",false)) mobileDraft!!.draft(work)
+                                else JSONObject().apply {for(key in listOf("id","epoch","prefix_hash","tokenizer_fingerprint","model_sha256"))put(key,work.getString(key));put("error","Nodo in pausa energetica")}
+                                c.json("/v1/engine/result",answer)
+                            }
+                        } else Thread.sleep(3000)
+                    } catch (e: Exception) {
+                        if (stop.get()) break
+                        errors++
+                        status = "Connessione interrotta · tentativo $errors/3"
+                        if (errors >= 3) throw e
+                    }
+                }
+            } catch (e: Exception) {
+                if (!stop.get()) status = e.message ?: "Connessione non riuscita"
+            } finally {
+                mobileDraft?.close();mobileDraft=null;engineStatus="Draft scaricato dalla memoria"
+                if (generation.get() == runId) running = false
+                stopSelfResult(startId)
+            }
+        }.also { it.start() }
+        return START_NOT_STICKY
+    }
+    fun capabilities(): JSONObject {
+        val mem = ActivityManager.MemoryInfo().also { getSystemService(ActivityManager::class.java).getMemoryInfo(it) }
+        val battery = registerReceiver(null, IntentFilter(Intent.ACTION_BATTERY_CHANGED))
+        val pct = battery?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
+        val cm = getSystemService(ConnectivityManager::class.java)
+        val network = cm.getNetworkCapabilities(cm.activeNetwork)
+        val transport = when { network?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true -> "Wi-Fi / hotspot"; network?.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) == true -> "Ethernet"; network?.hasTransport(NetworkCapabilities.TRANSPORT_USB) == true -> "USB"; else -> "altro / non rilevato" }
+        val thermal = if (Build.VERSION.SDK_INT >= 29) getSystemService(PowerManager::class.java).currentThermalStatus else -1
+        val thermalName = when(thermal) { 0 -> "nominal"; 1 -> "light"; 2 -> "moderate"; 3 -> "severe"; 4 -> "critical"; 5 -> "emergency"; 6 -> "shutdown"; else -> "unknown" }
+        telemetry = "${Build.MODEL}\nRAM fisica: %.1f GiB · disponibile al sistema: %.1f GiB\n%s · termica: %s".format(mem.totalMem/1073741824.0, mem.availMem/1073741824.0, transport, thermalName)
+        return JSONObject().put("model", "${Build.MANUFACTURER} ${Build.MODEL}").put("os", "Android ${Build.VERSION.RELEASE} / API ${Build.VERSION.SDK_INT}").put("app_version", "0.2.0").put("physical_memory_bytes", mem.totalMem).put("available_memory_bytes", mem.availMem).put("process_memory_bytes", Debug.getPss()*1024L).put("cpu_cores", Runtime.getRuntime().availableProcessors()).put("battery_percent", pct.coerceAtLeast(0)).put("thermal", thermalName).put("transport", transport).put("lifecycle", "foreground-service").put("supported_jobs", JSONArray(listOf("network", "network_paced", "cpu")))
+            .put("engine_ready",mobileDraft?.ready==true && energyAllowed() && enginePrefs.getBoolean("enabled",false))
+            .put("draft_sha256",mobileDraft?.sha256 ?: "").put("tokenizer_fingerprint",mobileDraft?.fingerprint ?: "")
+    }
+    private fun checkReady(started: Long) {
+        check(!stop.get()) { "cancelled" }
+        check(SystemClock.elapsedRealtime()-started < 90000) { "Tempo massimo della misura superato" }
+        if (Build.VERSION.SDK_INT >= 29) check(getSystemService(PowerManager::class.java).currentThermalStatus < PowerManager.THERMAL_STATUS_SEVERE) { "thermal_pause" }
+    }
+    private fun runJob(c: Client, job: JSONObject) {
+        val samples = JSONArray()
+        val started = SystemClock.elapsedRealtime()
+        var outcome = "completed"
+        var note = ""
+        try {
+            checkReady(started)
+            if (job.getString("kind") in listOf("network", "network_paced")) {
+                status = "Misura rete in corso…"
+                c.bytes("/v1/probe?size=64") // Warmup excluded.
+                val paced = job.getString("kind") == "network_paced"
+                for (pace in if (paced) listOf(0,30,60) else listOf(0)) {
+                for (i in 0 until if (paced) 200 else 32) {
+                    checkReady(started)
+                    if (pace > 0) Thread.sleep(pace.toLong())
+                    val t = SystemClock.elapsedRealtimeNanos()
+                    val data = c.bytes("/v1/probe?size=64")
+                    val ms = (SystemClock.elapsedRealtimeNanos()-t)/1e6
+                    check(data.size == 64)
+                    samples.put(JSONObject().put("kind", "rtt").put("bytes", 64).put("ms", ms).put("pace_ms",pace).put("connection_id",c.lastConnectionId))
+                }
+                }
+                for (size in listOf(16384, 1048576)) {
+                    val payload = ByteArray(size) { ((it*31+17) and 255).toByte() }
+                    for (i in 0 until 4) {
+                        checkReady(started)
+                        var t = SystemClock.elapsedRealtimeNanos()
+                        val data = c.bytes("/v1/probe?size=$size")
+                        var ms = (SystemClock.elapsedRealtimeNanos()-t)/1e6
+                        check(data.size == size)
+                        samples.put(JSONObject().put("kind", "download").put("bytes", size).put("ms", ms))
+                        checkReady(started)
+                        t = SystemClock.elapsedRealtimeNanos()
+                        val result = c.bytes("/v1/upload", payload, true)
+                        ms = (SystemClock.elapsedRealtimeNanos()-t)/1e6
+                        check(JSONObject(String(result)).getInt("bytes") == size)
+                        samples.put(JSONObject().put("kind", "upload").put("bytes", size).put("ms", ms))
+                    }
+                }
+                note = if (paced) "600 RTT in gruppi con pause 0/30/60ms; confrontare ogni gruppo separatamente. Test HTTPS applicativo, non LLM." else "Diagnostica breve: 32 RTT, p95 esplorativo. Warmup escluso; non è un benchmark LLM."
+                lastResult=(if(paced) listOf(0,30,60) else listOf(0)).joinToString("\n") { pace ->
+                    val rtts=(0 until samples.length()).map { samples.getJSONObject(it) }.filter {it.getString("kind")=="rtt" && it.optInt("pace_ms")==pace}.map{it.getDouble("ms")}.sorted()
+                    "Pausa ${pace}ms · p50 %.2f · p95 %.2f ms".format(rtts[kotlin.math.ceil(rtts.size*.5).toInt()-1],rtts[kotlin.math.ceil(rtts.size*.95).toInt()-1])
+                }
+            } else if (job.getString("kind") == "cpu") {
+                status = "Calibrazione CPU sintetica…"
+                val matrix = FloatArray(256*256) { ((it%97)-48)/97f }
+                val vector = FloatArray(256) { (it%13)/13f }
+                val out = FloatArray(256)
+                val t = SystemClock.elapsedRealtimeNanos()
+                var iterations = 0
+                do {
+                    checkReady(started)
+                    vector[iterations%256] = (iterations%17)/17f
+                    for (row in 0 until 256) { var sum = 0f; for (col in 0 until 256) sum += matrix[row*256+col]*vector[col]; out[row] = sum }
+                    iterations++
+                } while (SystemClock.elapsedRealtimeNanos()-t < 1_500_000_000L)
+                val ms = (SystemClock.elapsedRealtimeNanos()-t)/1e6
+                samples.put(JSONObject().put("kind", "cpu").put("iterations", iterations).put("ms", ms).put("checksum", abs(out.sum().toDouble())))
+                note = "FP32 matvec 256×256, Kotlin/JVM, singolo thread. Nessuna previsione token/s."
+                lastResult = "CPU · $iterations iterazioni in %.0f ms".format(ms)
+            } else error("Job non supportato")
+        } catch(e: Exception) {
+            outcome = if (stop.get()) "cancelled" else if(e.message == "thermal_pause") "thermal_pause" else "failed"
+            note = e.message ?: "Misura interrotta"
+            lastResult = "Misura interrotta: $note"
+        }
+        if (!stop.get()) c.json("/v1/result", JSONObject().put("job_id", job.getString("id")).put("status", outcome).put("samples", samples).put("note", note))
+    }
+    override fun onDestroy() {
+        mobileDraft?.cancel()
+        stop.set(true); client?.cancel(); worker?.interrupt()
+        if (generation.get() == runId) running = false
+        if (status.startsWith("Connesso") || status.contains("corso") || status.startsWith("Calibrazione")) status = "In pausa · nessun lavoro delegato"
+        super.onDestroy()
+    }
+}
+
+```

@@ -1,0 +1,534 @@
+heading Gemini ha detto, Value: 6
+									4806 text Gemini ha detto
+								4807 container model-response-message-contentr_15b8978a57aabdfd
+									4808 heading Audit Scope & Verification Limits, Value: 3
+										4809 text Audit Scope & Verification Limits
+									4810 content list
+										4811 container
+											4812 text No Execution or Benchmark Access:  I have no code execution or hardware access.  Native phone draft performance is unmeasured,  and your 23 small-model Metal checks plus 60 exploratory real-weight runs do not constitute universal proof across prompt lengths,  UTF-8 boundaries,  or cancellation races.
+										4813 container
+											4814 text Source Coverage Boundary:  Only four files were provided ( gateway.py , host.py , NativeEngine.kt , NodeService.kt ).  The host orchestration/verification implementation ( host/nodelift/engine.py , host/nodelift/state.py ),  the Android HTTP client ( Client.kt ),  and the JNI C++ implementation ( libnodelift.so ) are absent.  Below, Findings 1–8  are proven directly from the four provided files; C++/host-engine KV and verification risks across the unprovided files are isolated afterward as  Boundary Hypotheses .
+									4815 heading Proven Defects in Provided Source (8 Actionable Findings), Value: 3
+										4816 text Proven Defects in Provided Source (8 Actionable Findings)
+									4817 heading 1. Native Handle Use-After-Free Race Between cancel() and close(), Value: 4
+										4818 text 1. Native Handle Use-After-Free Race Between
+										4819 text cancel()
+										4820 text  and
+										4821 text close()
+									4822 content list
+										4823 container
+											4824 text File / Function: NativeEngine.kt  ( NativeEngine.cancel , NativeEngine.close ) &  NodeService.kt  ( onDestroy , onStartCommand finally )
+										4825 container
+											4826 text Status:  Proven Bug ·  Severity:  High (Native crash / memory corruption)
+										4827 container
+											4828 text Scenario: NativeEngine.call()  and  close()  are  @Synchronized  on the  NativeEngine  monitor,  whereas  cancel()  ( if (handle != 0L) interrupt(handle) ) is intentionally unsynchronized so  NodeService.onDestroy()  on the Android main thread can interrupt a blocking JNI  request(handle, ...)  on the worker thread.  However,  if the worker thread finishes  call()  just as  onDestroy()  runs—or enters  finally { mobileDraft?.close() } — cancel()  on the main thread reads  handle != 0L  and invokes JNI  interrupt(handle)  concurrently with  close()  invoking  dispose(handle)  on the worker thread.  Furthermore,  neither  NodeService.mobileDraft  ( NodeService.kt:27 ) nor  MobileDraft.native  ( NativeEngine.kt:23 ) is marked  @Volatile ,  creating a Java Memory Model visibility race across threads.
+										4829 container
+											4830 text Minimal Fix:  Mark
+											4831 text NodeService.mobileDraft
+											4832 text  and
+											4833 text MobileDraft.native
+											4834 text  as
+											4835 text @Volatile
+											4836 text .  In
+											4837 text NativeEngine
+											4838 text ,  protect
+											4839 text handle
+											4840 text  lifecycle transitions with an independent lock or atomic in-flight counter so
+											4841 text dispose(handle)
+											4842 text  cannot run concurrently with
+											4843 text interrupt(handle)
+											4844 text :
+											4845 container
+												4846 text Kotlin
+												4847 button Scarica codice
+												4848 button Copia codice
+											4849 container
+												4850 text private val  stateLock = Any()
+ @Volatile private var  closing =  false fun cancel ()  { synchronized(stateLock) {  if  (handle !=  0L  && !closing) interrupt(handle) } }
+ @Synchronized override fun close ()  {
+     val  h = synchronized(stateLock) { closing =  true ;  val  cur = handle; handle =  0L ; cur }
+     if  (h !=  0L ) dispose(h)
+}
+
+									4851 heading Value: 4, 2. Per-Round Debug.getPss() Kernel Scan, Mandatory /v1/heartbeat Before Every Draft Poll, and Unthrottled Idle Spin
+										4852 text 2. Per-Round
+										4853 text Debug.getPss()
+										4854 text  Kernel Scan, Mandatory
+										4855 text /v1/heartbeat
+										4856 text  Before Every Draft Poll, and Unthrottled Idle Spin
+									4857 content list
+										4858 container
+											4859 text File / Function: NodeService.kt  ( onStartCommand  worker loop,  lines 68–80;  capabilities ,  line 104)
+										4860 container
+											4861 text Status:  Proven Bug ·  Severity:  High (Transport latency inflation & resource/thermal drain)
+										4862 container
+											4863 text Scenario:  Inside
+											4864 text while (!stop.get())
+											4865 text ,
+											4866 text c.json("/v1/heartbeat", capabilities())
+											4867 text  executes unconditionally  before
+											4868 text else if (mobileDraft?.ready == true ...) { c.bytes("/v1/engine/poll") }
+											4869 text .  This creates three defects during active or idle drafting:
+											4870 content list
+												4871 container
+													4872 text Extra RTT + Kernel Walk Every Draft Step:  Between every single speculative draft block,  the phone executes
+													4873 text capabilities()
+													4874 text ,  which calls
+													4875 text Debug.getPss()
+													4876 text  (walking
+													4877 text /proc/self/smaps
+													4878 text  in the kernel across the mapped GGUF file,  costing tens of milliseconds of CPU time) plus multiple synchronous binder IPC calls (
+													4879 text registerReceiver
+													4880 text  for battery,
+													4881 text PowerManager
+													4882 text ,
+													4883 text ActivityManager
+													4884 text ,
+													4885 text ConnectivityManager
+													4886 text ),  followed by a full synchronous
+													4887 text POST /v1/heartbeat
+													4888 text  round-trip before polling
+													4889 text /v1/engine/poll
+													4890 text .
+												4891 container
+													4892 text Redundant IPC in
+													4893 text energyAllowed()
+													4894 text :
+													4895 text energyAllowed()
+													4896 text  is called up to 3 times per loop iteration (plus once inside
+													4897 text capabilities()
+													4898 text ),  issuing 4 synchronous battery/thermal binder calls per draft round.
+												4899 container
+													4900 text Tight Spin When
+													4901 text work == null
+													4902 text :  When
+													4903 text mobileDraft?.ready == true
+													4904 text  and
+													4905 text /v1/engine/poll
+													4906 text  returns
+													4907 text {"work": null}
+													4908 text  (e. g.,  no active run or poll timeout),  the outer
+													4909 text else if
+													4910 text  branch has already been taken,  so
+													4911 text else Thread.sleep(3000)
+													4912 text  is bypassed and the phone immediately loops back into
+													4913 text capabilities()
+													4914 text  +
+													4915 text /v1/heartbeat
+													4916 text  without delay.
+										4917 container
+											4918 text Minimal Fix:  Decouple  /v1/heartbeat  and  Debug.getPss()  onto a time gate (e. g.,  every 3, 000 ms when no active draft work was just processed),  cache  energyAllowed()  for 1, 000 ms,  and sleep briefly when  poll  returns  work == null  unless  /v1/engine/poll  blocks on the server.
+									4919 heading 3. Mobile Context Overflow: prefix.length() + count Can Exceed Configured n_ctx, Value: 4
+										4920 text 3. Mobile Context Overflow:
+										4921 text prefix.length() + count
+										4922 text  Can Exceed Configured
+										4923 text n_ctx
+									4924 content list
+										4925 container
+											4926 text File / Function: NativeEngine.kt  ( MobileDraft.loadSaved ,  line 42;  MobileDraft.draft ,  lines 60–64)
+										4927 container
+											4928 text Status:  Proven Bug ·  Severity:  High (Native KV overflow / out-of-bounds draft failure)
+										4929 container
+											4930 text Scenario: loadSaved()  initializes the native draft context with  n_ctx = prefs.getInt("n_ctx", 2048).coerceIn(512, 4096) .  However, draft()  validates only  check(prefix.length() in 1..4095)  and  check(count in 1..16) .  At the default  n_ctx = 2048  (or any  n_ctx  down to  512 ),  a prefix of length  2033..4095  passes the Kotlin check and calls JNI  draft  with  prefix.length() + count > n_ctx .  Even at maximum  n_ctx = 4096 , prefix.length() == 4095  with  count == 16  requires  4111 > 4096  KV positions.
+										4931 container
+											4932 text Minimal Fix:  Store the loaded context limit
+											4933 text private var nCtx = 2048
+											4934 text  in
+											4935 text MobileDraft.loadSaved()
+											4936 text  and replace the static bound in
+											4937 text draft()
+											4938 text  with:
+											4939 container
+												4940 text Kotlin
+												4941 button Scarica codice
+												4942 button Copia codice
+											4943 container
+												4944 text val  count = work.getInt( "count" ); check(count  in 1. .16 )
+ val  prefix = work.getJSONArray( "prefix" ); check(prefix.length()  in 1. .(nCtx - count)) {  "Contesto oltre n_ctx"  }
+
+									4945 heading 4. Uncaught Metadata Extraction, epoch Type Coercion, and Non-Canonical prefix_hash, Value: 4
+										4946 text 4. Uncaught Metadata Extraction,
+										4947 text epoch
+										4948 text  Type Coercion, and Non-Canonical
+										4949 text prefix_hash
+									4950 content list
+										4951 container
+											4952 text File / Function: NativeEngine.kt  ( MobileDraft.draft ,  lines 55–62) &  NodeService.kt  (line 77)
+										4953 container
+											4954 text Status:  Proven Bug ·  Severity:  Medium-High (Silent remote work rejection / worker loop abort)
+										4955 container
+											4956 text Scenario:
+											4957 content list
+												4958 container
+													4959 text In
+													4960 text MobileDraft.draft()
+													4961 text ,
+													4962 text for (key in listOf("id","epoch","prefix_hash","tokenizer_fingerprint","model_sha256")) answer.put(key, work.getString(key))
+													4963 text  runs  outside  the
+													4964 text try
+													4965 text  block.  If any field is missing or null,
+													4966 text JSONException
+													4967 text  escapes
+													4968 text draft()
+													4969 text ,  increments connection
+													4970 text errors++
+													4971 text  in
+													4972 text NodeService
+													4973 text ,  and skips
+													4974 text /v1/engine/result
+													4975 text .
+												4976 container
+													4977 text Calling
+													4978 text work.getString("epoch")
+													4979 text  coerces an integer
+													4980 text epoch
+													4981 text  from Python into a JSON
+													4982 text String
+													4983 text  (
+													4984 text "1"
+													4985 text  instead of
+													4986 text 1
+													4987 text ) in
+													4988 text answer
+													4989 text .  If
+													4990 text engine.mailbox.submit
+													4991 text  on the host checks
+													4992 text result["epoch"] == expected_epoch
+													4993 text  using Python's type-strict equality,  every draft result is discarded.
+												4994 container
+													4995 text Line 61 hashes
+													4996 text prefix.toString().toByteArray()
+													4997 text ,  which relies on Android
+													4998 text org.json.JSONArray.toString()
+													4999 text  emitting compact JSON (
+													5000 text [1,2,3]
+													5001 text ).  If the Python host ever computes
+													5002 text prefix_hash
+													5003 text  with default
+													5004 text json.dumps(prefix)
+													5005 text  (
+													5006 text "[1, 2, 3]"
+													5007 text  with spaces) or if integer formatting differs,  every draft fails with
+													5008 text "Contesto non valido"
+													5009 text .
+										5010 container
+											5011 text Minimal Fix:  Move metadata copying inside  try ,  preserve raw primitive types via  answer.put(key, work.get(key)) ,  and compute  prefix_hash  over an explicit canonical format ( (0 until prefix.length()).joinToString(",") { prefix.getInt(it).toString() } ).
+									5012 heading 5. Streaming Multi-Byte UTF-8 Token Splits Trigger False 'non-monotonic output' Abort, Value: 4
+										5013 text 5. Streaming Multi-Byte UTF-8 Token Splits Trigger False
+										5014 text 'non-monotonic output'
+										5015 text  Abort
+									5016 content list
+										5017 container
+											5018 text File / Function: host/nodelift/gateway.py  ( chat ,  lines 38–40)
+										5019 container
+											5020 text Status:  Proven Bug (if  run['text']  is decoded naively per step) ·  Severity:  High (Aborts valid greedy completions)
+										5021 container
+											5022 text Scenario:  Byte-level BPE tokenizers (
+											5023 text Qwen2.5
+											5024 text /
+											5025 text Qwen3
+											5026 text ) routinely split multi-byte UTF-8 characters (e. g.,  Italian accented characters
+											5027 text è
+											5028 text ,
+											5029 text à
+											5030 text ,  middle dot
+											5031 text ·
+											5032 text ,  em-dash,  emojis) across two consecutive token IDs.  In
+											5033 text gateway.py
+											5034 text :
+											5035 container
+												5036 text Python
+												5037 button Scarica codice
+												5038 button Copia codice
+											5039 container
+												5040 text if  streaming  and  text!=sent:
+     if not  text.startswith(sent): raise  RuntimeError( 'non-monotonic output; refusing corrupted stream' )
+
+											5041 text If
+											5042 text engine.py
+											5043 text  updates
+											5044 text run['text']
+											5045 text  after each committed token or draft block using
+											5046 text .decode('utf-8', errors='replace')
+											5047 text ,  the first half of a split UTF-8 character produces a trailing
+											5048 text '\ufffd'
+											5049 text  in
+											5050 text sent
+											5051 text .  When the next token arrives with the continuation byte,  re-decoding the token list replaces
+											5052 text '\ufffd'
+											5053 text  with the valid character,  causing
+											5054 text text.startswith(sent)
+											5055 text  to evaluate to
+											5056 text False
+											5057 text ,  throwing
+											5058 text RuntimeError('non-monotonic output; refusing corrupted stream')
+											5059 text ,  and calling
+											5060 text engine.stop(run_id)
+											5061 text .
+										5062 container
+											5063 text Minimal Fix:  Ensure  engine.py  updates  run['text']  using an incremental UTF-8 decoder ( codecs.getincrementaldecoder("utf-8")("replace") ) or Withholds incomplete trailing UTF-8 byte sequences until completion so  run['text']  is strictly prefix-monotonic.
+									5064 heading Value: 4, 6. Non-Streaming Gateway TimeoutError and Evicted-Run StopIteration Drop HTTP Connections Without a Response
+										5065 text 6. Non-Streaming Gateway
+										5066 text TimeoutError
+										5067 text  and Evicted-Run
+										5068 text StopIteration
+										5069 text  Drop HTTP Connections Without a Response
+									5070 content list
+										5071 container
+											5072 text File / Function: host/nodelift/gateway.py  ( chat ,  lines 37,  42,  54–59) &  host/nodelift/host.py  ( Handler.dispatch ,  lines 164–169)
+										5073 container
+											5074 text Status:  Proven Bug ·  Severity:  Medium (Malformed HTTP behavior on timeout/eviction)
+										5075 container
+											5076 text Scenario:
+											5077 content list
+												5078 container
+													5079 text When a non-streaming
+													5080 text /v1/chat/completions
+													5081 text  request exceeds
+													5082 text deadline
+													5083 text  (
+													5084 text gateway.py:42
+													5085 text ),
+													5086 text chat()
+													5087 text  raises
+													5088 text TimeoutError('gateway deadline exceeded')
+													5089 text ,  which is re-raised at line 59 into
+													5090 text Handler.dispatch()
+													5091 text .  Because
+													5092 text TimeoutError
+													5093 text  is caught by
+													5094 text except (OSError, TimeoutError): self.close_connection = True
+													5095 text  in
+													5096 text host.py:167
+													5097 text ,  the server closes the TCP socket without writing any HTTP status code or JSON error payload.
+												5098 container
+													5099 text In
+													5100 text gateway.py:37
+													5101 text ,
+													5102 text run = next(r for r in engine.runs if r['id'] == run_id)
+													5103 text  raises
+													5104 text StopIteration
+													5105 text  if
+													5106 text run_id
+													5107 text  is ever evicted from
+													5108 text engine.runs
+													5109 text .
+													5110 text StopIteration
+													5111 text  is not caught by
+													5112 text host.py:164
+													5113 text  (
+													5114 text (ValueError, KeyError, TypeError, OverflowError, RuntimeError)
+													5115 text ),  escaping
+													5116 text dispatch()
+													5117 text  and dropping the connection without an HTTP response.
+										5118 container
+											5119 text Minimal Fix:  In  gateway.py ,  replace  next(...)  with  next((r for r in engine.runs if r['id'] == run_id), None)  (raising  RuntimeError('run state lost')  if  None ),  and raise  RuntimeError('gateway deadline exceeded')  on deadline expiration (or send HTTP  504  before catching socket  OSError  in  host.py ).
+									5120 heading 7. HTTP/1.1 Keep-Alive Semaphore Hold, 10s Socket Timeout vs. Long-Poll, and Service Restart Race, Value: 4
+										5121 text 7. HTTP/1.1 Keep-Alive Semaphore Hold, 10s Socket Timeout vs. Long-Poll, and Service Restart Race
+									5122 content list
+										5123 container
+											5124 text File / Function: host/nodelift/host.py  ( Server ,  lines 54–75;  Handler ,  lines 81,  90–103) &  NodeService.kt  ( onStartCommand ,  line 35;  onDestroy ,  line 153)
+										5125 container
+											5126 text Status:  Proven Bug ·  Severity:  Medium (Connection slot exhaustion & restart race)
+										5127 container
+											5128 text Scenario:
+											5129 content list
+												5130 container
+													5131 text Host Keep-Alive vs. 32-Slot Semaphore (
+													5132 text host.py
+													5133 text ):
+													5134 text Handler.protocol_version = "HTTP/1.1"
+													5135 text  enables persistent connections by default,  and
+													5136 text Handler.send()
+													5137 text  includes
+													5138 text Content-Length
+													5139 text  without setting
+													5140 text self.close_connection = True
+													5141 text .  Because
+													5142 text Server.process_request
+													5143 text  acquires
+													5144 text self.slots = threading.BoundedSemaphore(32)
+													5145 text  per  TCP connection  (not per HTTP request) and
+													5146 text process_request_thread
+													5147 text  sets
+													5148 text request.settimeout(10)
+													5149 text ,  every idle keep-alive socket from a browser or client holds one of the 32 slots and a daemon thread for 10 full seconds after completing a request.  Conversely,  if
+													5150 text /v1/engine/poll
+													5151 text  blocks on the server for >10 seconds waiting for work,
+													5152 text request.settimeout(10)
+													5153 text  aborts the socket.
+												5154 container
+													5155 text Android Service Restart Race (
+													5156 text NodeService.kt
+													5157 text ):
+													5158 text onDestroy()
+													5159 text  sets
+													5160 text running = false
+													5161 text  on the main thread (line 153) while the old
+													5162 text worker
+													5163 text  thread is still unwinding in
+													5164 text finally { mobileDraft?.close() }
+													5165 text .  If
+													5166 text onStartCommand()
+													5167 text  is invoked immediately thereafter,
+													5168 text if (running) return START_NOT_STICKY
+													5169 text  passes and spawns a second
+													5170 text worker
+													5171 text  thread that races with the dying thread on
+													5172 text draft.gguf
+													5173 text ,
+													5174 text mobileDraft
+													5175 text ,  and companion status fields.
+										5176 container
+											5177 text Minimal Fix:  In  NodeService.kt ,  keep  running = true  until the  worker finally  block completes (or  worker?.join(2000)  before starting a new worker).  In  host.py ,  ensure  /v1/engine/poll  wait time is strictly  < 8s  (below the 10s socket timeout) and set  self.close_connection = True  on non-polling admin/gateway responses if 32 slots are shared.
+									5178 heading 8. CLI/Startup Banner Dishonesty and Unhandled null Optional OpenAI Parameters, Value: 4
+										5179 text 8. CLI/Startup Banner Dishonesty and Unhandled
+										5180 text null
+										5181 text  Optional OpenAI Parameters
+									5182 content list
+										5183 container
+											5184 text File / Function: host/nodelift/host.py  ( main ,  lines 211,  226–242) &  host/nodelift/gateway.py  ( chat ,  lines 11–27)
+										5185 container
+											5186 text Status:  Proven Bug ·  Severity:  Low-Medium (Semantic honesty & client compatibility)
+										5187 container
+											5188 text Scenario:
+											5189 content list
+												5190 container
+													5191 text Banner vs. Active Engine (
+													5192 text host.py
+													5193 text ):
+													5194 text argparse
+													5195 text  (
+													5196 text "NodeLift qualification host. No LLM inference yet."
+													5197 text ) and the startup banner (
+													5198 text "NodeLift 0.1 — companion qualification; LLM engine not enabled."
+													5199 text ) explicitly state that no LLM engine is enabled,  even though
+													5200 text main()
+													5201 text  unconditionally initializes
+													5202 text engine = Controller(state)
+													5203 text  and serves live
+													5204 text /v1/chat/completions
+													5205 text ,
+													5206 text /v1/engine/*
+													5207 text ,  and
+													5208 text /admin/engine/*
+													5209 text  routes.
+												5210 container
+													5211 text Explicit
+													5212 text null
+													5213 text  Fields in OpenAI Requests (
+													5214 text gateway.py
+													5215 text ):  Standard OpenAI SDKs and LM Studio adapters frequently serialize unset optional fields as JSON
+													5216 text null
+													5217 text  (e. g.,
+													5218 text "max_tokens": null
+													5219 text ,
+													5220 text "max_completion_tokens": null
+													5221 text ,
+													5222 text "temperature": null
+													5223 text ,
+													5224 text "nodelift_draft_k": null
+													5225 text ).  In
+													5226 text gateway.py:25-27
+													5227 text ,
+													5228 text body.get('max_completion_tokens', body.get('max_tokens', 128))
+													5229 text  returns
+													5230 text None
+													5231 text  when
+													5232 text "max_completion_tokens": null
+													5233 text  is present,  passing
+													5234 text 'max_tokens': None
+													5235 text  and
+													5236 text 'draft_k': None
+													5237 text  to
+													5238 text engine.start()
+													5239 text ,  while
+													5240 text "temperature": null
+													5241 text  fails
+													5242 text type(value) not in (int, float)
+													5243 text  with a misleading
+													5244 text 'greedy only'
+													5245 text  error.
+										5246 container
+											5247 text Minimal Fix:  Update the CLI description and startup banner in  host.py  to state accurately that the local greedy engine and gateway are mounted; in  gateway.py ,  strip keys whose value is  None  ( body = {k: v for k, v in body.items() if v is not None} ) after checking  allowed  keys,  or explicitly validate  int  bounds on  max_tokens  and  nodelift_draft_k .
+									5248 heading Unverified Boundary Hypotheses (Require engine.py and JNI C++ Source to Audit), Value: 3
+										5249 text Unverified Boundary Hypotheses (Require
+										5250 text engine.py
+										5251 text  and JNI C++ Source to Audit)
+									5252 container
+										5253 text Because  host/nodelift/engine.py  and the Android JNI C++ source ( libnodelift ) were not included in the pasted code,  the following high-priority items cannot be verified from the four files above and must be checked directly in those two modules:
+									5254 content list
+										5255 container
+											5256 text Full-Prefix Retransmission & JNI Stale-KV Rollback (
+											5257 text NativeEngine.kt:64
+											5258 text →
+											5259 text libnodelift
+											5260 text ):
+											5261 text MobileDraft.draft()
+											5262 text  passes the entire
+											5263 text prefix
+											5264 text  token array on every round (
+											5265 text JSONObject().put("prefix", prefix).put("count", count)
+											5266 text ).  In
+											5267 text libnodelift
+											5268 text ,  verify that when longest-common-prefix (LCP) matches the entire
+											5269 text prefix
+											5270 text  against the phone's existing KV cache (e. g.,  when a prompt is repeated or after a rollback),  the C++ code never leaves
+											5271 text n_past == prefix.length()
+											5272 text  with zero new tokens to evaluate without retaining the last token's logits,  and calls
+											5273 text llama_memory_seq_rm(mem, 0, lcp, -1)
+											5274 text  before evaluating the non-empty suffix
+											5275 text prefix[lcp..]
+											5276 text .
+										5277 container
+											5278 text EOS / Bonus Token / Output Budget Cap in
+											5279 text engine.py
+											5280 text :  When the target model verifies
+											5281 text 𝛾
+											5282 text  draft proposals in a batch of size
+											5283 container
+												5284 text 𝛾 + 1
+											5285 text ,  verify in
+											5286 text engine.py
+											5287 text  that:  (a) if an EOS token is accepted at draft index
+											5288 container
+												5289 text 𝑘 < 𝛾
+											5290 text ,  the bonus/correction token at index
+											5291 container
+												5292 text 𝑘 + 1
+											5293 text  is  not  appended after EOS; (b) if
+											5294 text remaining_budget < accepted_count
+											5295 text ,  the committed slice is truncated to
+											5296 text remaining_budget
+											5297 text  and
+											5298 text finish_reason
+											5299 text  is set to
+											5300 text 'length'
+											5301 text  (not
+											5302 text 'stop'
+											5303 text ); and (c) KV positions beyond the committed token count are stripped before the next turn.
+								5304 checkbox Description: La risposta va bene, Value: 0
+								5305 checkbox Description: La risposta non va bene, Value: 0
+								5306 button Ripeti
+								5307 button Copia
+								5308 button Mostra altre opzioni
+					1495 container
+						3391 button Scorri fino in fondo
+						1496 container
+							1497 pop up button (collapsed) Description: Caricamento e strumenti, Secondary Actions: Expand
+							1498 container
+								1499 text entry area (settable) Description: Inserisci un prompt per Gemini, Value: Please audit the attached NodeLift source snapshot as instructed in its opening paragraph. Actual source review, maximum 8 concrete findings; do not invent execution results.
+									5309 text Please audit the attached NodeLift source snapshot as instructed in its opening paragraph. Actual source review, maximum 8 concrete findings; do not invent execution results.
+							5310 button Espandi input a schermo intero
+							1959 container
+								1960 pop up button (collapsed) Description: Apri selettore modalità, attualmente Argon Alta, Secondary Actions: Expand
+								5311 container
+									5312 button Detta (⌘⇧D)
+								1963 button Invia messaggio
+						1964 text Gemini è un'AI e può fare errori, anche in merito a persone.
+						1965 link Description: La tua privacy e Gemini Si apre in una nuova finestra, Value: support.google.com/gemini?p=privacy_notice
+			1966 button Apri il menu delle azioni relative alle conversazioni.
+		5313 text Fixing keep-alive and race conditions
+		1968 container Notifications
+
+The focused UI element is 1499 text entry area (settable) Description: Inserisci un prompt per Gemini, Value: Please audit the attached NodeLift source snapshot as instructed in its opening paragraph. Actual source review, maximum 8 concrete findings; do not invent execution results.

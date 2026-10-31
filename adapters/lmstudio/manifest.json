@@ -1,0 +1,20 @@
+{
+  "type": "plugin",
+  "runner": "deno",
+  "owner": "sev7enita",
+  "name": "nodelift",
+  "revision": 1,
+  "sandbox": {
+    "enabled": true,
+    "fileSystem": {
+      "type": "none",
+      "reason": "NodeLift uses its local API."
+    },
+    "network": {
+      "hosts": [
+        "127.0.0.1"
+      ],
+      "reason": "Connect only to your local NodeLift gateway."
+    }
+  }
+}
