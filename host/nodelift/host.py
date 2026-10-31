@@ -197,7 +197,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         expected = "127.0.0.1:" + str(self.server.server_port)
         if host != expected or self.headers.get("Origin", "http://" + expected) != "http://" + expected:
             raise PermissionError("loopback origin required")
-        assets = {"/": ("dashboard.html", "text/html; charset=utf-8"), "/app.js": ("dashboard.js", "text/javascript"), "/style.css": ("dashboard.css", "text/css")}
+        assets = {"/": ("dashboard.html", "text/html; charset=utf-8"), "/app.js": ("dashboard.js", "text/javascript"), "/i18n.js": ("i18n.js", "text/javascript"), "/style.css": ("dashboard.css", "text/css")}
         if method == "GET" and path in assets:
             name, kind = assets[path]
             return self.send(200, Path(__file__).with_name(name).read_bytes(), kind)

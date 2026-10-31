@@ -1,0 +1,8 @@
+{
+  "altro / non rilevato": "other / not detected",
+  "600 RTT in gruppi con pause 0/30/60ms; confrontare ogni gruppo separatamente. Test HTTPS applicativo, non LLM.": "600 RTT samples grouped by 0/30/60 ms pauses; compare groups separately. Application-level HTTPS test, not LLM inference.",
+  "Diagnostica breve: 32 RTT, p95 esplorativo. Warmup escluso; non è un benchmark LLM.": "Quick diagnostics: 32 RTT samples, exploratory p95. Warmup excluded; not an LLM benchmark.",
+  "FP32 matvec 256×256, Kotlin/JVM, singolo thread. Nessuna previsione token/s.": "FP32 matvec 256×256, Kotlin/JVM, single thread. No tokens/s prediction.",
+  "600 RTT: gruppi 0/30/60ms da confrontare separatamente. Test HTTPS applicativo, non LLM.": "600 RTT samples: compare 0/30/60 ms groups separately. Application-level HTTPS test, not LLM inference.",
+  "FP32 matvec 256×256, Swift, single thread: {0} iterations. Does not predict tokens/s.": "FP32 matvec 256×256, Swift, single thread: {0} iterations. Does not predict tokens/s."
+}

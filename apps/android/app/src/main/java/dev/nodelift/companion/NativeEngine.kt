@@ -14,7 +14,7 @@ class NativeEngine : AutoCloseable {
     private external fun dispose(handle: Long)
     @Volatile private var handle = create()
     @Synchronized fun call(op: String, args: JSONObject = JSONObject()): JSONObject {
-        check(handle != 0L) { "Motore non disponibile" }
+        check(handle != 0L) { "Engine unavailable" }
         val response = JSONObject(request(handle, args.put("op",op).toString()))
         if(response.has("error")) error(response.getString("error"))
         return response
@@ -33,15 +33,15 @@ class MobileDraft(private val context: Context) : AutoCloseable {
     private val model get() = File(context.filesDir,"draft.gguf")
 
     fun loadSaved() {
-        check(model.exists()) { "Scarica prima il draft dal computer" }
+        check(model.exists()) { "Download the draft from your computer first" }
         val size=model.length()
-        check(size in 1..(1024L*1024*1024)) { "Modello oltre il limite mobile di 1 GiB" }
+        check(size in 1..(1024L*1024*1024)) { "Model exceeds the mobile limit of 1 GiB" }
         val mem=ActivityManager.MemoryInfo().also { context.getSystemService(ActivityManager::class.java).getMemoryInfo(it) }
-        check(mem.availMem > size*2+268435456L && !mem.lowMemory) { "Memoria insufficiente: libera RAM prima di caricare il modello" }
+        check(mem.availMem > size*2+268435456L && !mem.lowMemory) { "Not enough memory: free RAM before loading the model" }
         val digest=MessageDigest.getInstance("SHA-256")
         model.inputStream().use { input -> val b=ByteArray(262144);while(true){val n=input.read(b);if(n<0)break;digest.update(b,0,n)} }
         sha256=digest.digest().joinToString(""){"%02x".format(it)}
-        check(sha256 == prefs.getString("sha256",null)) { "Hash del modello non valido: riscarica il draft" }
+        check(sha256 == prefs.getString("sha256",null)) { "Model hash mismatch: download the draft again" }
         native?.close();native=null
         val created=NativeEngine()
         try {
@@ -54,8 +54,8 @@ class MobileDraft(private val context: Context) : AutoCloseable {
     fun download(client: Client, progress: (Long,Long)->Unit) {
         val offer=JSONObject(String(client.bytes("/v1/engine/model-info"),Charsets.UTF_8))
         val bytes=offer.getLong("bytes")
-        check(bytes in 1..(1024L*1024*1024)) { "Per questa build scegli un draft entro 1 GiB" }
-        check(context.filesDir.usableSpace > bytes+536870912L) { "Spazio libero insufficiente" }
+        check(bytes in 1..(1024L*1024*1024)) { "Choose a draft no larger than 1 GiB for this build" }
+        check(context.filesDir.usableSpace > bytes+536870912L) { "Not enough free storage" }
         val sha=offer.getString("sha256");check(sha.matches(Regex("[0-9a-f]{64}")))
         client.downloadModel(model,bytes,sha,progress)
         prefs.edit().putString("sha256",sha).putString("name",offer.getString("name")).apply()
@@ -66,15 +66,15 @@ class MobileDraft(private val context: Context) : AutoCloseable {
         try {
             for(key in listOf("id","epoch","prefix_hash","tokenizer_fingerprint","model_sha256")) answer.put(key,work.get(key))
             check(work.getString("op")=="draft")
-            check(work.getString("model_sha256")==sha256 && work.getString("tokenizer_fingerprint")==fingerprint) { "Modello o tokenizer non corrispondente" }
+            check(work.getString("model_sha256")==sha256 && work.getString("tokenizer_fingerprint")==fingerprint) { "Model or tokenizer mismatch" }
             val prefix=work.getJSONArray("prefix");check(prefix.length() in 1 until loadedContext)
             val digest=MessageDigest.getInstance("SHA-256").digest(prefix.toString().toByteArray()).joinToString(""){"%02x".format(it)}
-            check(digest==work.getString("prefix_hash")) { "Contesto non valido" }
-            val count=work.getInt("count");check(count in 1..16 && prefix.length()+count<=loadedContext) { "Contesto mobile insufficiente" }
-            val result=native?.call("draft",JSONObject().put("prefix",prefix).put("count",count)) ?: error("Draft non caricato")
+            check(digest==work.getString("prefix_hash")) { "Invalid context" }
+            val count=work.getInt("count");check(count in 1..16 && prefix.length()+count<=loadedContext) { "Mobile context capacity exceeded" }
+            val result=native?.call("draft",JSONObject().put("prefix",prefix).put("count",count)) ?: error("Draft not loaded")
             answer.put("tokens",result.getJSONArray("tokens"))
-            NodeService.lastResult="Draft: ${result.getJSONArray("tokens").length()} token proposti · %.1f ms".format(result.getDouble("ms"))
-        } catch(e:Exception) { answer.put("error",e.message ?: "Draft fallito") }
+            NodeService.lastResult=ui("Draft: {0} proposed tokens · {1} ms",result.getJSONArray("tokens").length(),"%.1f".format(result.getDouble("ms")))
+        } catch(e:Exception) { answer.put("error",e.message ?: "Draft generation failed") }
         return answer
     }
     fun cancel(){native?.cancel()}

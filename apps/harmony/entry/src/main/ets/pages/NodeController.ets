@@ -20,8 +20,8 @@ interface Uploaded { bytes: number; }
 
 // Credentials remain in memory in this first candidate. No plaintext persistence.
 export class NodeController {
-  status: string = 'Pronto per l’associazione';
-  result: string = 'Nessuna misura eseguita';
+  status: string = 'Ready to pair';
+  result: string = 'No measurements yet';
   running: boolean = false;
   changed: () => void = () => {};
   private ticket: Ticket | null = null;
@@ -37,12 +37,12 @@ export class NodeController {
   }
   private ready(generation: number, start: number): void {
     if (!this.running || generation !== this.generation) throw new Error('cancelled');
-    if (this.now() - start > 90000) throw new Error('Tempo massimo superato');
+    if (this.now() - start > 90000) throw new Error('Time limit exceeded');
     if (thermal.getLevel() >= 3) throw new Error('thermal_pause');
   }
   private async bytes(path: string, body?: string | ArrayBuffer, raw: boolean = false): Promise<ArrayBuffer> {
     const ticket = this.ticket;
-    if (ticket === null) throw new Error('Associa il computer');
+    if (ticket === null) throw new Error('Pair your computer');
     const request = http.createHttp(); this.request = request;
     const headers: Record<string, string> = { 'Accept-Encoding': 'identity', 'Content-Type': raw ? 'application/octet-stream' : 'application/json' };
     if (this.token.length > 0) headers['Authorization'] = 'Bearer ' + this.token;
@@ -56,7 +56,7 @@ export class NodeController {
     };
     try {
       const response = await request.request(ticket.url + path, options);
-      if (response.responseCode !== 200) throw new Error('Richiesta rifiutata: ' + response.responseCode);
+      if (response.responseCode !== 200) throw new Error('Request rejected: ' + response.responseCode);
       return response.result as ArrayBuffer;
     } finally { request.destroy(); if (this.request === request) this.request = null; }
   }
@@ -67,11 +67,11 @@ export class NodeController {
     try {
       const ticket = JSON.parse(text) as Ticket;
       const match = /^https:\/\/(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3}):(\d{1,5})$/.exec(ticket.url);
-      if (match === null || ticket.protocol !== 1 || ticket.expires_at < Date.now() / 1000) throw new Error('Invito non valido o scaduto');
+      if (match === null || ticket.protocol !== 1 || ticket.expires_at < Date.now() / 1000) throw new Error('Invalid or expired invitation');
       const octets = [Number(match[1]), Number(match[2]), Number(match[3]), Number(match[4])];
-      if (octets.some((value: number) => value > 255) || !(octets[0] === 10 || octets[0] === 127 || octets[0] === 192 && octets[1] === 168 || octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31)) throw new Error('Usa la rete locale');
-      if (!/^[A-Za-z0-9+/]{43}=$/.test(ticket.public_key_pin) || ticket.certificate.length > 16384 || !ticket.certificate.startsWith('-----BEGIN CERTIFICATE-----')) throw new Error('Identità del computer non valida');
-      this.ticket = ticket; this.token = ''; this.running = true; this.status = 'Associazione in corso…'; this.changed();
+      if (octets.some((value: number) => value > 255) || !(octets[0] === 10 || octets[0] === 127 || octets[0] === 192 && octets[1] === 168 || octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31)) throw new Error('Use your local network');
+      if (!/^[A-Za-z0-9+/]{43}=$/.test(ticket.public_key_pin) || ticket.certificate.length > 16384 || !ticket.certificate.startsWith('-----BEGIN CERTIFICATE-----')) throw new Error('Invalid computer identity');
+      this.ticket = ticket; this.token = ''; this.running = true; this.status = 'Pairing…'; this.changed();
       const body: PairRequest = { invite: ticket.invite, name: deviceInfo.productModel, capabilities: this.caps() };
       const reply = JSON.parse(this.decode(await this.bytes('/v1/pair', JSON.stringify(body)))) as PairResponse;
       if (generation !== this.generation) return;
@@ -87,7 +87,7 @@ export class NodeController {
     try {
       const reply = JSON.parse(this.decode(await this.bytes('/v1/heartbeat', JSON.stringify(this.caps())))) as Heartbeat;
       if (generation !== this.generation) return;
-      this.status = 'Connesso · in attesa di una misura'; this.changed();
+      this.status = 'Connected · waiting for a measurement'; this.changed();
       if (reply.job !== null) await this.network(reply.job, generation);
       if (this.running && generation === this.generation) this.timer = setTimeout(() => { this.poll(generation); }, 3000);
     } catch (error) { if (generation === this.generation) { this.running = false; this.status = (error as Error).message; this.changed(); } }
@@ -96,13 +96,13 @@ export class NodeController {
     const result: Result = { job_id: job.id, status: 'completed', samples: [], note: '' };
     const start = this.now();
     try {
-      if (job.kind !== 'network') throw new Error('Questa build HarmonyOS supporta soltanto il test rete');
-      this.status = 'Misura rete in corso…'; this.changed();
+      if (job.kind !== 'network') throw new Error('This HarmonyOS build supports only network testing');
+      this.status = 'Measuring network…'; this.changed();
       await this.bytes('/v1/probe?size=64');
       for (let i = 0; i < 32; i++) {
         this.ready(generation, start);
         const t = this.now(); const data = await this.bytes('/v1/probe?size=64'); const elapsed = this.now() - t;
-        if (data.byteLength !== 64) throw new Error('Payload incompleto');
+        if (data.byteLength !== 64) throw new Error('Incomplete payload');
         result.samples.push({ kind: 'rtt', bytes: 64, ms: elapsed });
       }
       for (const size of [16384, 1048576]) {
@@ -111,15 +111,15 @@ export class NodeController {
         for (let i = 0; i < 4; i++) {
           this.ready(generation, start);
           let t = this.now(); const data = await this.bytes('/v1/probe?size=' + size); let elapsed = this.now() - t;
-          if (data.byteLength !== size) throw new Error('Payload incompleto');
+          if (data.byteLength !== size) throw new Error('Incomplete payload');
           result.samples.push({ kind: 'download', bytes: size, ms: elapsed });
           this.ready(generation, start);
           t = this.now(); const reply = await this.bytes('/v1/upload', upload.buffer as ArrayBuffer, true); elapsed = this.now() - t;
-          if ((JSON.parse(this.decode(reply)) as Uploaded).bytes !== size) throw new Error('Upload incompleto');
+          if ((JSON.parse(this.decode(reply)) as Uploaded).bytes !== size) throw new Error('Incomplete upload');
           result.samples.push({ kind: 'upload', bytes: size, ms: elapsed });
         }
       }
-      result.note = 'Misura HTTPS applicativa. Non è un benchmark LLM.';
+      result.note = 'Application-level HTTPS measurement. Not an LLM benchmark.';
     } catch (error) {
       const message = (error as Error).message;
       result.status = message === 'thermal_pause' ? 'thermal_pause' : message === 'cancelled' ? 'cancelled' : 'failed';
@@ -133,8 +133,8 @@ export class NodeController {
     this.generation++; this.running = false;
     if (this.timer !== -1) clearTimeout(this.timer);
     this.request?.destroy(); this.request = null;
-    this.status = 'In pausa · nessun lavoro delegato'; this.changed();
+    this.status = 'Paused · no delegated work'; this.changed();
   }
-  forget(): void { this.pause(); this.token = ''; this.ticket = null; this.status = 'Computer dimenticato'; this.changed(); }
+  forget(): void { this.pause(); this.token = ''; this.ticket = null; this.status = 'Computer forgotten'; this.changed(); }
 }
 export const node: NodeController = new NodeController();

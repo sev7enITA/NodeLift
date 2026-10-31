@@ -27,15 +27,15 @@ data class Pairing(val url: String, val certificate: String, val sha256: String,
     companion object {
         fun parse(o: JSONObject): Pairing {
             val url = URL(o.getString("url"))
-            require(url.protocol == "https" && url.userInfo == null && url.query == null && url.ref == null && (url.path.isEmpty() || url.path == "/")) { "Invito non valido: è richiesto HTTPS." }
+            require(url.protocol == "https" && url.userInfo == null && url.query == null && url.ref == null && (url.path.isEmpty() || url.path == "/")) { "Invalid invitation: HTTPS is required." }
             val parts = url.host.split('.').map { it.toIntOrNull() ?: -1 }
-            require(parts.size == 4 && parts.all { it in 0..255 } && (parts[0] == 10 || parts[0] == 127 || parts[0] == 192 && parts[1] == 168 || parts[0] == 172 && parts[1] in 16..31)) { "Usa un computer nella rete locale." }
+            require(parts.size == 4 && parts.all { it in 0..255 } && (parts[0] == 10 || parts[0] == 127 || parts[0] == 192 && parts[1] == 168 || parts[0] == 172 && parts[1] in 16..31)) { "Use a computer on your local network." }
             val certificate = o.getString("certificate")
             require(certificate.length <= 16384)
             val cert = CertificateFactory.getInstance("X.509").generateCertificate(certificate.byteInputStream()) as X509Certificate
             cert.checkValidity()
             val hash = MessageDigest.getInstance("SHA-256").digest(cert.encoded).joinToString("") { "%02x".format(it) }
-            require(hash == o.getString("sha256").lowercase()) { "Identità del computer non valida." }
+            require(hash == o.getString("sha256").lowercase()) { "Invalid computer identity." }
             return Pairing(url.toString().trimEnd('/'), certificate, hash, o.optString("invite"))
         }
     }
@@ -74,11 +74,11 @@ class Client(val pairing: Pairing, var token: String = "") {
             val stream = if (status in 200..299) connection.inputStream else connection.errorStream
             val data = stream?.use { input ->
                 val output=ByteArrayOutputStream();val buffer=ByteArray(16384)
-                while(true){val count=input.read(buffer);if(count<0)break;require(output.size()+count<=1048576){"Risposta troppo grande."};output.write(buffer,0,count)}
+                while(true){val count=input.read(buffer);if(count<0)break;require(output.size()+count<=1048576){"Response too large."};output.write(buffer,0,count)}
                 output.toByteArray()
             } ?: byteArrayOf()
-            require(status in 200..299) { if (status == 401) "Associazione scaduta o revocata. Crea un nuovo invito." else "Il computer ha rifiutato la richiesta ($status)." }
-            require(data.size <= 1048576) { "Risposta troppo grande." }
+            require(status in 200..299) { if (status == 401) "Pairing expired or revoked. Create a new invitation." else "The computer rejected the request ($status)." }
+            require(data.size <= 1048576) { "Response too large." }
             completed = true
             return data
         } finally { active = null; if (!completed) connection.disconnect() }
@@ -93,13 +93,13 @@ class Client(val pairing: Pairing, var token: String = "") {
             connection.connectTimeout=6000;connection.readTimeout=15000
             connection.setRequestProperty("Authorization","Bearer $token")
             connection.setRequestProperty("Accept-Encoding","identity")
-            check(connection.responseCode==200 && connection.contentLengthLong==expected) { "Download modello non disponibile" }
+            check(connection.responseCode==200 && connection.contentLengthLong==expected) { "Model download unavailable" }
             var total=0L;val digest=MessageDigest.getInstance("SHA-256")
             connection.inputStream.use { input -> temporary.outputStream().use { output ->
                 val buffer=ByteArray(262144)
-                while(true){if(Thread.currentThread().isInterrupted)error("Download interrotto");val n=input.read(buffer);if(n<0)break;total+=n;check(total<=expected);digest.update(buffer,0,n);output.write(buffer,0,n);progress(total,expected)}
+                while(true){if(Thread.currentThread().isInterrupted)error("Download interrupted");val n=input.read(buffer);if(n<0)break;total+=n;check(total<=expected);digest.update(buffer,0,n);output.write(buffer,0,n);progress(total,expected)}
             } }
-            check(total==expected && digest.digest().joinToString(""){"%02x".format(it)}==sha256) { "Integrità del modello non verificata" }
+            check(total==expected && digest.digest().joinToString(""){"%02x".format(it)}==sha256) { "Model integrity check failed" }
             Files.move(temporary.toPath(),destination.toPath(),StandardCopyOption.REPLACE_EXISTING,StandardCopyOption.ATOMIC_MOVE)
         } finally { active=null;connection.disconnect();temporary.delete() }
     }

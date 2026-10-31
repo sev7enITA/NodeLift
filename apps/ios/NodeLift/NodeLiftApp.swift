@@ -15,6 +15,7 @@ private let amberColor = Color(red: 1.0, green: 0.824, blue: 0.54)
         WindowGroup {
             ContentView(model: model)
                 .preferredColorScheme(.dark)
+                .environment(\.locale, Locale(identifier: model.language))
                 .onChange(of: phase) { _, value in
                     if value == .background { model.pause() }
                 }
@@ -40,6 +41,8 @@ struct ContentView: View {
     @State private var importError: String?
     @State private var pairingExpanded = true
 
+    private func T(_ key: String) -> String { Message(key).resolve(model.language) }
+
     private var settingsLocked: Bool { model.running || model.importingModel }
 
     private func card<Content: View>(@ViewBuilder content: () -> Content) -> some View {
@@ -51,12 +54,12 @@ struct ContentView: View {
     }
 
     private func eyebrow(_ text: String) -> some View {
-        Text(text).font(.system(size: 10, weight: .medium, design: .monospaced))
+        Text(T(text)).font(.system(size: 10, weight: .medium, design: .monospaced))
             .tracking(1.2).foregroundStyle(aquaColor)
     }
 
     private func note(_ text: String) -> some View {
-        Text(text).font(.footnote).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+        Text(T(text)).font(.footnote).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
     }
 
     private var header: some View {
@@ -67,64 +70,68 @@ struct ContentView: View {
                 Text("NodeLift").font(.system(size: 27, weight: .semibold)).tracking(-1)
                 Text("/").font(.system(size: 27, weight: .light)).foregroundStyle(aquaColor).padding(.leading, -8)
                 Spacer()
-                Text("0.2.1").font(.system(size: 11, design: .monospaced)).foregroundStyle(.secondary)
+                Text("0.2.2").font(.system(size: 11, design: .monospaced)).foregroundStyle(.secondary)
             }
-            eyebrow("LOCAL INTELLIGENCE NETWORK")
-            Text("Il tuo dispositivo.\nUn nuovo ruolo.")
+            Picker(T("Language"), selection: $model.language) {
+                Text("English").tag("en")
+                Text("简体中文").tag("zh-Hans")
+            }.tint(aquaColor).accessibilityIdentifier("language-picker")
+            eyebrow(T("LOCAL INTELLIGENCE NETWORK"))
+            Text(T("Your device.\nA new role."))
                 .font(.system(size: 32, weight: .medium)).tracking(-1.3).lineSpacing(-2)
                 .padding(.top, 9)
-            note("Collega il computer. Misura le risorse. Scegli quando contribuire al calcolo.")
+            note(T("Connect your computer. Measure resources. Choose when to contribute computing power."))
         }.padding(.bottom, 4)
     }
 
     private var sessionCard: some View {
         card {
             HStack {
-                Label(model.running ? "SESSIONE ATTIVA" : "SESSIONE IN PAUSA", systemImage: model.running ? "circle.fill" : "circle")
+                Label(model.running ? T("SESSION ACTIVE") : T("SESSION PAUSED"), systemImage: model.running ? "circle.fill" : "circle")
                     .font(.system(size: 10, weight: .medium, design: .monospaced)).foregroundStyle(aquaColor)
                 Spacer()
-                Text("LOCALE").font(.system(size: 9, design: .monospaced))
+                Text(T("LOCAL")).font(.system(size: 9, design: .monospaced))
                     .padding(.horizontal, 7).padding(.vertical, 4)
                     .overlay(RoundedRectangle(cornerRadius: 4).stroke(lineColor))
             }
-            Text(model.status).font(.title3.weight(.medium)).accessibilityIdentifier("session-status")
-            if !model.telemetry.isEmpty {
-                Text(model.telemetry).font(.system(size: 12, design: .monospaced))
+            Text(model.status.resolve(model.language)).font(.title3.weight(.medium)).accessibilityIdentifier("session-status")
+            if !model.telemetry.key.isEmpty {
+                Text(model.telemetry.resolve(model.language)).font(.system(size: 12, design: .monospaced))
                     .foregroundStyle(.secondary).lineSpacing(4)
             }
             HStack(spacing: 10) {
                 if model.hasSavedSession {
                     Button { model.connect(newTicket: false) } label: {
-                        Label("Riprendi", systemImage: "play.fill").frame(maxWidth: .infinity)
+                        Label(T("Resume"), systemImage: "play.fill").frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent).tint(aquaColor).foregroundStyle(canvasColor)
                     .disabled(settingsLocked)
                 }
                 Button { model.pause() } label: {
-                    Label("Pausa", systemImage: "pause.fill").frame(maxWidth: .infinity)
+                    Label(T("Pause"), systemImage: "pause.fill").frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered).tint(aquaColor).disabled(!model.running)
             }
-            Label("Solo in primo piano", systemImage: "iphone")
+            Label(T("Foreground only"), systemImage: "iphone")
                 .font(.footnote.weight(.medium)).foregroundStyle(aquaColor)
-            note("Tieni aperta NodeLift durante il lavoro. Il blocco schermo o il passaggio in background mette in pausa la sessione.")
+            note(T("Keep NodeLift open while working. Locking the screen or moving to the background pauses the session."))
         }
     }
 
     private var engineCard: some View {
         card {
-            eyebrow("01 / MOTORE DI PROPOSTA")
+            eyebrow(T("01 / DRAFT ENGINE"))
             HStack(alignment: .firstTextBaseline) {
-                Text("Draft nativo").font(.title3.weight(.semibold))
+                Text(T("Native draft")).font(.title3.weight(.semibold))
                 Spacer()
-                Text("SPERIMENTALE").font(.system(size: 9, design: .monospaced)).foregroundStyle(amberColor)
+                Text(T("EXPERIMENTAL")).font(.system(size: 9, design: .monospaced)).foregroundStyle(amberColor)
             }
-            Text(model.engineStatus).font(.subheadline).foregroundStyle(aquaColor)
+            Text(model.engineStatus.resolve(model.language)).font(.subheadline).foregroundStyle(aquaColor)
                 .accessibilityIdentifier("engine-status").fixedSize(horizontal: false, vertical: true)
             Toggle(isOn: $model.engineEnabled) {
                 VStack(alignment: .leading, spacing: 5) {
-                    Text("Consenti proposte LLM").font(.subheadline.weight(.semibold))
-                    Text("Il Mac associato può inviare il contesto al draft. Il modello principale sul Mac verifica le proposte.")
+                    Text(T("Allow LLM proposals")).font(.subheadline.weight(.semibold))
+                    Text(T("Your paired Mac can send context to the draft. The main model on your Mac verifies the proposals."))
                         .font(.footnote).foregroundStyle(.secondary)
                 }
             }.tint(aquaColor).disabled(model.importingModel)
@@ -132,68 +139,68 @@ struct ContentView: View {
                     // A changed consent stops existing work; resumption is deliberate.
                     if model.running { model.pause() }
                 }
-            note("Cambiare il consenso mette in pausa una sessione attiva. Riprendi quando vuoi partecipare.")
+            note(T("Changing permission pauses an active session. Resume when you want to participate."))
             Divider().overlay(lineColor)
             Button { importError = nil; showModelImporter = true } label: {
-                Label(model.importingModel ? "Importazione in corso…" : "Importa draft GGUF", systemImage: "square.and.arrow.down")
+                Label(model.importingModel ? T("Importing…") : T("Import GGUF draft"), systemImage: "square.and.arrow.down")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.bordered).tint(aquaColor).disabled(settingsLocked)
             if model.importingModel {
                 ProgressView().tint(aquaColor).frame(maxWidth: .infinity)
-                    .accessibilityLabel("Importazione del modello in corso")
+                    .accessibilityLabel(T("Importing model"))
             }
             if let importError {
-                Text(importError).font(.footnote).foregroundStyle(amberColor)
+                Text(T(importError)).font(.footnote).foregroundStyle(amberColor)
                     .accessibilityIdentifier("model-import-error")
             }
-            note("Scegli da File lo stesso draft GGUF configurato sul Mac, fino a 1 GiB. Il file viene importato e verificato sul dispositivo.")
+            note(T("In Files, choose the same GGUF draft configured on your Mac, up to 1 GiB. The file is imported and verified on this device."))
             if settingsLocked {
-                Label("Metti in pausa per importare o cambiare risorse.", systemImage: "lock")
+                Label(T("Pause to import or change resources."), systemImage: "lock")
                     .font(.footnote).foregroundStyle(.secondary)
             }
             VStack(alignment: .leading, spacing: 17) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("Backend di calcolo").font(.subheadline.weight(.medium))
-                    Picker("Backend di calcolo", selection: $model.engineMetal) {
-                        Text("Metal · GPU").tag(true)
+                    Text(T("Compute backend")).font(.subheadline.weight(.medium))
+                    Picker(T("Compute backend"), selection: $model.engineMetal) {
+                        Text(T("Metal · GPU")).tag(true)
                         Text("CPU").tag(false)
                     }.pickerStyle(.segmented).disabled(settingsLocked)
                 }
                 Stepper(value: $model.engineThreads, in: 1...8) {
                     HStack {
-                        Text("Thread CPU").font(.subheadline)
+                        Text(T("CPU threads")).font(.subheadline)
                         Spacer()
                         Text("\(model.engineThreads)").font(.system(.body, design: .monospaced)).foregroundStyle(aquaColor)
                     }
                 }.disabled(settingsLocked)
-                Picker("Token di contesto", selection: $model.engineContext) {
+                Picker(T("Context tokens"), selection: $model.engineContext) {
                     ForEach([512, 1024, 2048, 4096], id: \.self) { value in
                         Text("\(value)").tag(value)
                     }
                 }.tint(aquaColor).disabled(settingsLocked)
             }
-            note("Un contesto più ampio richiede più memoria. Metal e CPU vanno confrontati sul dispositivo; nessun vantaggio è presunto.")
+            note(T("A larger context needs more memory. Compare Metal and CPU on this device; neither is assumed faster."))
         }
     }
 
     private var limitsCard: some View {
         card {
-            eyebrow("02 / LIMITI DEL NODO")
-            Text("Il controllo resta tuo").font(.title3.weight(.semibold))
+            eyebrow(T("02 / NODE LIMITS"))
+            Text(T("You stay in control")).font(.title3.weight(.semibold))
             HStack {
-                Text("Batteria minima per il draft").font(.subheadline)
+                Text(T("Minimum battery for drafting")).font(.subheadline)
                 Spacer()
                 Text("\(Int(model.minimumBattery))%")
                     .font(.system(.title3, design: .monospaced)).foregroundStyle(aquaColor)
             }
             Slider(value: $model.minimumBattery, in: 20...70, step: 1)
-                .tint(aquaColor).accessibilityLabel("Batteria minima per il draft")
-                .accessibilityValue("\(Int(model.minimumBattery)) per cento")
-            note("Sotto questa soglia il nodo non accetta nuove proposte LLM. Il motore controlla anche stato termico e margine di memoria.")
+                .tint(aquaColor).accessibilityLabel(T("Minimum battery for drafting"))
+                .accessibilityValue(Message("{0} percent",Int(model.minimumBattery)).resolve(model.language))
+            note(T("Below this threshold the node accepts no new LLM work. The engine also checks thermal status and available memory."))
             HStack(alignment: .top, spacing: 11) {
                 Image(systemName: "thermometer.medium").foregroundStyle(aquaColor)
-                note("Il draft richiede uno stato termico nominale. Le risorse rilevate non sono RAM già condivisa con il computer.")
+                note(T("Drafting requires nominal thermal status. Reported resources are not RAM already shared with your computer."))
             }
         }
     }
@@ -202,27 +209,27 @@ struct ContentView: View {
         card {
             DisclosureGroup(isExpanded: $pairingExpanded) {
                 VStack(alignment: .leading, spacing: 15) {
-                    note("Nella dashboard del Mac scegli “Aggiungi dispositivo” e incolla qui l’invito completo. È monouso e valido per 5 minuti.")
+                    note(T("Choose “Add device” in the Mac dashboard and paste the complete invitation here. It is single-use and valid for 5 minutes."))
                     TextEditor(text: $model.ticketText).font(.system(size: 12, design: .monospaced))
                         .frame(height: 90).scrollContentBackground(.hidden).padding(8)
                         .background(canvasColor, in: RoundedRectangle(cornerRadius: 7))
-                        .accessibilityLabel("Invito NodeLift").autocorrectionDisabled()
+                        .accessibilityLabel(T("NodeLift invitation")).autocorrectionDisabled()
                         .textInputAutocapitalization(.never).disabled(settingsLocked)
                     Button { model.connect(newTicket: true) } label: {
-                        Text("Associa e attiva nodo").frame(maxWidth: .infinity)
+                        Text(T("Pair and activate node")).frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent).tint(aquaColor).foregroundStyle(canvasColor)
                     .disabled(settingsLocked || model.ticketText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     if model.hasSavedSession {
                         Divider().overlay(lineColor)
-                        Button("Dimentica computer", role: .destructive) { model.forget() }
+                        Button(T("Forget computer"), role: .destructive) { model.forget() }
                             .buttonStyle(.bordered).disabled(model.importingModel)
                     }
                 }.padding(.top, 15)
             } label: {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Associazione al computer").font(.subheadline.weight(.semibold))
-                    Text(model.hasSavedSession ? "Sessione salvata sul dispositivo" : "Collega il tuo primo computer")
+                    Text(T("Computer pairing")).font(.subheadline.weight(.semibold))
+                    Text(model.hasSavedSession ? T("Session saved on this device") : T("Connect your first computer"))
                         .font(.footnote).foregroundStyle(.secondary)
                 }
             }.tint(aquaColor)
@@ -238,20 +245,20 @@ struct ContentView: View {
                 limitsCard
                 pairingCard
                 card {
-                    eyebrow("03 / ULTIMO RISULTATO")
-                    Text(model.lastResult).foregroundStyle(aquaColor).font(.subheadline)
+                    eyebrow(T("03 / LAST RESULT"))
+                    Text(model.lastResult.resolve(model.language)).foregroundStyle(aquaColor).font(.subheadline)
                         .accessibilityIdentifier("last-result")
-                    note("I test CPU sintetici non indicano token/s. Il tempo di una proposta draft non è la velocità dell’intera risposta LLM.")
+                    note(T("Synthetic CPU tests do not indicate tokens/s. Draft proposal time is not the speed of a complete LLM response."))
                 }
                 HStack(alignment: .top, spacing: 11) {
                     Image(systemName: "testtube.2").foregroundStyle(amberColor)
                     VStack(alignment: .leading, spacing: 6) {
-                        Text("Build sperimentale · 0.2.1").font(.footnote.weight(.semibold)).foregroundStyle(amberColor)
-                        Text("Questa build iOS non è ancora verificata su un iPhone fisico. Non è dimostrata un’accelerazione LLM con il telefono.")
+                        Text(T("Experimental build · 0.2.2")).font(.footnote.weight(.semibold)).foregroundStyle(amberColor)
+                        Text(T("This iOS build has not been verified on a physical iPhone. Phone-assisted LLM acceleration has not been demonstrated."))
                             .font(.footnote).foregroundStyle(.secondary)
                     }
                 }.padding(.vertical, 8)
-                Text("NodeLift / Il prossimo upgrade è già nelle tue mani.\nNessun account cloud richiesto.")
+                Text(T("NodeLift / Your next upgrade is already in your hands.\nNo cloud account required."))
                     .font(.caption).foregroundStyle(.secondary).lineSpacing(4).padding(.top, 5)
             }.padding(22).frame(maxWidth: 700)
         }
@@ -262,11 +269,11 @@ struct ContentView: View {
             case .success(let urls):
                 guard let url = urls.first else { return }
                 guard !settingsLocked else {
-                    importError = "Metti in pausa la sessione prima di importare un modello."
+                    importError = "Pause the session before importing a model."
                     return
                 }
                 guard url.pathExtension.lowercased() == "gguf" else {
-                    importError = "Scegli un file con estensione .gguf, fino a 1 GiB."
+                    importError = "Choose a .gguf file no larger than 1 GiB."
                     return
                 }
                 importError = nil

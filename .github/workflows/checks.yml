@@ -15,6 +15,7 @@ jobs:
           python-version: '${{ matrix.python }}'
       - run: PYTHONPATH=host python -m unittest discover -s host/tests -v
       - run: python research/distai/verify_evidence.py
+      - run: python scripts/generate-localization.py --check
   lmstudio:
     runs-on: ubuntu-latest
     defaults:
@@ -29,3 +30,5 @@ jobs:
           cache-dependency-path: adapters/lmstudio/package-lock.json
       - run: npm ci --ignore-scripts
       - run: npm test
+      - run: node scripts/check-localization.cjs
+        working-directory: .

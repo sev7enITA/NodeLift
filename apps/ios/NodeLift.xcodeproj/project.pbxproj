@@ -13,8 +13,11 @@
 		4636E0D6F1FB78941AF216C4 /* nodelift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 428374D614497A6AE8BE2CD0 /* nodelift.framework */; };
 		5D14067ADC425B96D44C8D74 /* NodeLiftApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65FC11247814DDE5BDAD0EB5 /* NodeLiftApp.swift */; };
 		9702D57020605502B4E0A28D /* Protocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9FEB3C454F78556E89C7CFE /* Protocol.swift */; };
+		B3C4432748E459A48ABC5FA0 /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB03A955D674B9CA78EEC031 /* Localization.swift */; };
+		BE5439AA9625AA4360ECF881 /* ChineseMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = C957B5AD93898AF0E5030039 /* ChineseMessages.swift */; };
 		D2B4FED75F69A3BAC1C6FE0D /* sha256.txt in Resources */ = {isa = PBXBuildFile; fileRef = F0F5EC33074D4B578A1B2FCE /* sha256.txt */; };
 		E204553EF4EE4DDE0757C03C /* nlohmann-json.txt in Resources */ = {isa = PBXBuildFile; fileRef = 53BE2A22197983453C3CE87D /* nlohmann-json.txt */; };
+		F1CF67916F6F12F63DF3FBFD /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3AA973102F04A2FC01D1A578 /* InfoPlist.strings */; };
 		FE23B653668497AB8E24218C /* nodelift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 428374D614497A6AE8BE2CD0 /* nodelift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -33,6 +36,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1E4F405926F32D9CDD19A0D1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		428374D614497A6AE8BE2CD0 /* nodelift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = nodelift.framework; path = ../../native/build/iphoneos/lib/nodelift.framework; sourceTree = "<group>"; };
 		47B420CC1C8D5A5846BDDCCD /* Bridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Bridge.h; sourceTree = "<group>"; };
 		537FA0BE82EB8E5EE89F9D50 /* NodeModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeModel.swift; sourceTree = "<group>"; };
@@ -40,7 +44,10 @@
 		65FC11247814DDE5BDAD0EB5 /* NodeLiftApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeLiftApp.swift; sourceTree = "<group>"; };
 		6FFBC213D033634F9D7F5A37 /* NodeLift.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = NodeLift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A5F69903C55976B5FC01ED0D /* llama.cpp.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = llama.cpp.txt; sourceTree = "<group>"; };
+		C957B5AD93898AF0E5030039 /* ChineseMessages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChineseMessages.swift; sourceTree = "<group>"; };
 		C9FEB3C454F78556E89C7CFE /* Protocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocol.swift; sourceTree = "<group>"; };
+		DB03A955D674B9CA78EEC031 /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
+		DC898468EBD92F30765669F1 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		DD0BC8571261D6AF4ED2C28E /* NativeDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDraft.swift; sourceTree = "<group>"; };
 		F0F5EC33074D4B578A1B2FCE /* sha256.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = sha256.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -61,10 +68,13 @@
 			isa = PBXGroup;
 			children = (
 				47B420CC1C8D5A5846BDDCCD /* Bridge.h */,
+				C957B5AD93898AF0E5030039 /* ChineseMessages.swift */,
+				DB03A955D674B9CA78EEC031 /* Localization.swift */,
 				DD0BC8571261D6AF4ED2C28E /* NativeDraft.swift */,
 				65FC11247814DDE5BDAD0EB5 /* NodeLiftApp.swift */,
 				537FA0BE82EB8E5EE89F9D50 /* NodeModel.swift */,
 				C9FEB3C454F78556E89C7CFE /* Protocol.swift */,
+				3AA973102F04A2FC01D1A578 /* InfoPlist.strings */,
 				6C18E73C8B09FC638DAB32AC /* Licenses */,
 			);
 			path = NodeLift;
@@ -149,6 +159,7 @@
 			knownRegions = (
 				Base,
 				en,
+				"zh-Hans",
 			);
 			mainGroup = 7A380E5E59AB7666322C4564;
 			minimizedProjectReferenceProxies = 1;
@@ -167,6 +178,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F1CF67916F6F12F63DF3FBFD /* InfoPlist.strings in Resources */,
 				3E02319FCA780DC2E0B8E62E /* llama.cpp.txt in Resources */,
 				E204553EF4EE4DDE0757C03C /* nlohmann-json.txt in Resources */,
 				D2B4FED75F69A3BAC1C6FE0D /* sha256.txt in Resources */,
@@ -180,6 +192,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE5439AA9625AA4360ECF881 /* ChineseMessages.swift in Sources */,
+				B3C4432748E459A48ABC5FA0 /* Localization.swift in Sources */,
 				3C767E561695C701CCFF3B4C /* NativeDraft.swift in Sources */,
 				5D14067ADC425B96D44C8D74 /* NodeLiftApp.swift in Sources */,
 				0B8B2768D6B83F520DB122DF /* NodeModel.swift in Sources */,
@@ -189,27 +203,39 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXVariantGroup section */
+		3AA973102F04A2FC01D1A578 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1E4F405926F32D9CDD19A0D1 /* en */,
+				DC898468EBD92F30765669F1 /* zh-Hans */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		3D68474016287D62962028B6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"../../native/build/iphoneos/lib\"",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = NodeLift;
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "NodeLift si collega al tuo computer per misurare rete e capacità del dispositivo.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "NodeLift connects to your computer to measure network and device capabilities.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.2.1;
+				MARKETING_VERSION = 0.2.2;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.nodelift.companion;
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = NodeLift/Bridge.h;
@@ -345,21 +371,21 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"../../native/build/iphoneos/lib\"",
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = NodeLift;
-				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "NodeLift si collega al tuo computer per misurare rete e capacità del dispositivo.";
+				INFOPLIST_KEY_NSLocalNetworkUsageDescription = "NodeLift connects to your computer to measure network and device capabilities.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.2.1;
+				MARKETING_VERSION = 0.2.2;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.nodelift.companion;
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = NodeLift/Bridge.h;

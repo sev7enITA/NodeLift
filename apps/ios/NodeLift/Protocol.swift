@@ -15,10 +15,10 @@ struct Ticket: Codable, Sendable {
         return Data(base64Encoded: lines)
     }
     func validate() throws {
-        guard self.protocol == 1, let u = URLComponents(string: url), u.scheme == "https", u.user == nil, u.password == nil, u.query == nil, u.fragment == nil, u.path.isEmpty || u.path == "/", let host = u.host else { throw NodeError.message("Invito HTTPS non valido") }
+        guard self.protocol == 1, let u = URLComponents(string: url), u.scheme == "https", u.user == nil, u.password == nil, u.query == nil, u.fragment == nil, u.path.isEmpty || u.path == "/", let host = u.host else { throw NodeError.message("Invalid HTTPS invitation") }
         let parts = host.split(separator: ".").compactMap { Int($0) }
-        guard parts.count == 4, parts.allSatisfy({ (0...255).contains($0) }), parts[0] == 10 || parts[0] == 127 || parts[0] == 192 && parts[1] == 168 || parts[0] == 172 && (16...31).contains(parts[1]) else { throw NodeError.message("Il computer deve essere nella rete locale") }
-        guard let data = certificateData, data.count <= 16384, SecCertificateCreateWithData(nil, data as CFData) != nil, SHA256.hash(data: data).map({ String(format:"%02x", $0) }).joined() == sha256.lowercased() else { throw NodeError.message("Identità del computer non valida") }
+        guard parts.count == 4, parts.allSatisfy({ (0...255).contains($0) }), parts[0] == 10 || parts[0] == 127 || parts[0] == 192 && parts[1] == 168 || parts[0] == 172 && (16...31).contains(parts[1]) else { throw NodeError.message("The computer must be on your local network") }
+        guard let data = certificateData, data.count <= 16384, SecCertificateCreateWithData(nil, data as CFData) != nil, SHA256.hash(data: data).map({ String(format:"%02x", $0) }).joined() == sha256.lowercased() else { throw NodeError.message("Invalid computer identity") }
     }
 }
 struct Credentials: Codable { var pairing: Ticket; let token: String; let node_id: String }
@@ -67,7 +67,7 @@ final class NodeClient: @unchecked Sendable {
     }
     func cancel() { session.invalidateAndCancel() }
     func bytes(_ path: String, body: Data? = nil, raw: Bool = false) async throws -> Data {
-        guard let url = URL(string: ticket.url.trimmingCharacters(in: CharacterSet(charactersIn: "/")) + path) else { throw NodeError.message("Indirizzo non valido") }
+        guard let url = URL(string: ticket.url.trimmingCharacters(in: CharacterSet(charactersIn: "/")) + path) else { throw NodeError.message("Invalid address") }
         var request = URLRequest(url: url)
         request.setValue("identity", forHTTPHeaderField: "Accept-Encoding")
         if !token.isEmpty { request.setValue("Bearer " + token, forHTTPHeaderField: "Authorization") }
@@ -76,14 +76,14 @@ final class NodeClient: @unchecked Sendable {
             request.setValue(raw ? "application/octet-stream" : "application/json", forHTTPHeaderField: "Content-Type")
         }
         let (data, response) = try await session.data(for: request)
-        guard let response = response as? HTTPURLResponse, (200...299).contains(response.statusCode) else { throw NodeError.message("Richiesta rifiutata: controlla connessione e associazione") }
+        guard let response = response as? HTTPURLResponse, (200...299).contains(response.statusCode) else { throw NodeError.message("Request rejected: check connection and pairing") }
         lastConnectionId = response.value(forHTTPHeaderField:"X-NodeLift-Connection-ID") ?? ""
-        guard data.count <= 1048576 else { throw NodeError.message("Risposta troppo grande") }
+        guard data.count <= 1048576 else { throw NodeError.message("Response too large") }
         return data
     }
     func json(_ path: String, body: [String: Any]) async throws -> [String: Any] {
         let data = try await bytes(path, body: JSONSerialization.data(withJSONObject: body))
-        guard let value = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { throw NodeError.message("Risposta non valida") }
+        guard let value = try JSONSerialization.jsonObject(with: data) as? [String: Any] else { throw NodeError.message("Invalid response") }
         return value
     }
 }
@@ -94,8 +94,8 @@ enum Vault {
         let data = try JSONEncoder().encode(credentials)
         var update: [String: Any] = [kSecValueData as String: data, kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlockedThisDeviceOnly]
         let status = SecItemUpdate(query as CFDictionary, update as CFDictionary)
-        if status == errSecItemNotFound { update.merge(query) { _,new in new }; guard SecItemAdd(update as CFDictionary, nil) == errSecSuccess else { throw NodeError.message("Salvataggio sicuro non riuscito") } }
-        else if status != errSecSuccess { throw NodeError.message("Salvataggio sicuro non riuscito") }
+        if status == errSecItemNotFound { update.merge(query) { _,new in new }; guard SecItemAdd(update as CFDictionary, nil) == errSecSuccess else { throw NodeError.message("Secure storage failed") } }
+        else if status != errSecSuccess { throw NodeError.message("Secure storage failed") }
     }
     static func load() -> Credentials? {
         var q = query; q[kSecReturnData as String] = true; q[kSecMatchLimit as String] = kSecMatchLimitOne

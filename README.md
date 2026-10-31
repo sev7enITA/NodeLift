@@ -8,9 +8,9 @@ NodeLift is an experimental local inference workbench and mobile companion syste
 
 **[Live project showcase and interactive atlas](https://www.fabriziodegni.com/NodeLift/)** · [55-entry detailed matrix](site/NodeLift/data/comparison.md) · [Assessment and engineering lessons](research/comparison-2026-10-31/ASSESSMENT.md) · [Publication verification](docs/SHOWCASE_DEPLOYMENT.md). The dated atlas distinguishes applications, runtimes, serving systems and research; it is not an exhaustive inventory or a universal performance ranking.
 
-**[0.2.1 experimental prerelease](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.1), 31 October 2026.** Native inference, authenticated mobile work leases, an OpenAI-style text gateway, Android/iOS companion sources and an LM Studio generator adapter are implemented. **Phone inference speedup, pooled RAM, large hybrid-model speculation and sustained mobile operation are not yet qualified.** The first real-weight control experiments found local drafting slower than target-only inference on the small test pair. Negative results are published.
+**[0.2.2 experimental prerelease](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.2), 1 November 2026.** Native inference, authenticated mobile work leases, an OpenAI-style text gateway, Android/iOS companion sources and an LM Studio generator adapter are implemented. **Phone inference speedup, pooled RAM, large hybrid-model speculation and sustained mobile operation are not yet qualified.** The first real-weight control experiments found local drafting slower than target-only inference on the small test pair. Negative results are published.
 
-**Unreleased engine update:** measured adaptive draft control, context lookup without a second model, and greedy argmax caching are available in source and the dashboard. [Optimization study and measured limits](research/optimization-2026-10-31/REPORT.md). The downloadable mobile artifacts above remain 0.2.1.
+**Engine controls:** measured adaptive draft control, context lookup without a second model, and greedy argmax caching are available in source and the dashboard. [Optimization study and measured limits](research/optimization-2026-10-31/REPORT.md). The 0.2.2 companions add English (default) and Simplified Chinese, with a saved in-app language choice. [Localization and validation](docs/LOCALIZATION.md).
 
 ## Implementation and evidence
 
@@ -26,7 +26,7 @@ NodeLift is an experimental local inference workbench and mobile companion syste
 
 This is **not an Ollama backend patch**. Clients with a custom OpenAI-style endpoint can call NodeLift within its text/greedy subset. The LM Studio adapter selects NodeLift as a generator; it does not split LM Studio's own loaded model across phones.
 
-[Download Android 0.2.1](https://github.com/sev7enITA/NodeLift/releases/download/v0.2.1/NodeLift-0.2.1-android-debug.apk) · [Source checks](https://github.com/sev7enITA/NodeLift/actions)
+[Download Android 0.2.2](https://github.com/sev7enITA/NodeLift/releases/download/v0.2.2/NodeLift-0.2.2-android-debug.apk) · [Source checks](https://github.com/sev7enITA/NodeLift/actions)
 
 ## Start on the host
 

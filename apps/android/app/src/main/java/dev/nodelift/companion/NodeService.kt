@@ -13,13 +13,26 @@ import kotlin.math.abs
 
 class NodeService : Service() {
     companion object {
+
+        private fun notification(context: Context): Notification {
+            val manager = context.getSystemService(NotificationManager::class.java)
+            manager.createNotificationChannel(NotificationChannel("session", L10n.text(context,"NodeLift session"), NotificationManager.IMPORTANCE_LOW))
+            val open = PendingIntent.getActivity(context,0,Intent(context,MainActivity::class.java),PendingIntent.FLAG_IMMUTABLE)
+            return Notification.Builder(context,"session").setSmallIcon(R.drawable.ic_node)
+                .setContentTitle(L10n.text(context,"NodeLift · active node"))
+                .setContentText(L10n.text(context,"Measurements authorized by your computer. Open to pause."))
+                .setContentIntent(open).setOngoing(true).build()
+        }
+        fun refreshNotification(context: Context) {
+            if (running) context.getSystemService(NotificationManager::class.java).notify(1,notification(context))
+        }
         @Volatile var running = false
-        @Volatile var status = "Pronto per l’associazione"
-        @Volatile var lastResult = "Nessuna misura eseguita"
-        @Volatile var telemetry = ""
+        @Volatile var status = ui("Ready to pair")
+        @Volatile var lastResult = ui("No measurements yet")
+        @Volatile var telemetry = ui("")
         val generation = AtomicLong(0)
         val downloadRequested = AtomicBoolean(false)
-        @Volatile var engineStatus = "Draft non caricato · CPU ARM64"
+        @Volatile var engineStatus = ui("Draft not loaded · ARM64 CPU")
     }
     private val stop = AtomicBoolean(false)
     private var worker: Thread? = null
@@ -38,7 +51,7 @@ class NodeService : Service() {
         super.onCreate()
         if(Build.VERSION.SDK_INT>=29) {
             thermalListener=PowerManager.OnThermalStatusChangedListener { level ->
-                if(level>=PowerManager.THERMAL_STATUS_MODERATE) {mobileDraft?.cancel();engineStatus="Pausa termica · in attesa di raffreddamento"}
+                if(level>=PowerManager.THERMAL_STATUS_MODERATE) {mobileDraft?.cancel();engineStatus=ui("Thermal pause · waiting to cool down")}
             }
             getSystemService(PowerManager::class.java).addThermalStatusListener(mainExecutor,thermalListener!!)
         }
@@ -46,17 +59,14 @@ class NodeService : Service() {
     override fun onBind(intent: Intent?) = null
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (running) return START_NOT_STICKY
-        val manager = getSystemService(NotificationManager::class.java)
-        manager.createNotificationChannel(NotificationChannel("session", "Sessione NodeLift", NotificationManager.IMPORTANCE_LOW))
-        val open = PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), PendingIntent.FLAG_IMMUTABLE)
-        startForeground(1, Notification.Builder(this, "session").setSmallIcon(dev.nodelift.companion.R.drawable.ic_node).setContentTitle("NodeLift · nodo attivo").setContentText("Misure autorizzate dal tuo computer. Apri per mettere in pausa.").setContentIntent(open).setOngoing(true).build())
+        startForeground(1, notification(this))
         stop.set(false); running = true; runId = generation.incrementAndGet()
         val ticketText = intent?.getStringExtra("ticket")
         worker = Thread {
             try {
-                status = "Connessione al computer…"
+                status = ui("Connecting to your computer…")
                 val saved = if (ticketText == null) Vault.load(this) else null
-                val ticket = Pairing.parse(if (ticketText != null) JSONObject(ticketText) else saved?.getJSONObject("pairing") ?: error("Incolla un invito dal computer."))
+                val ticket = Pairing.parse(if (ticketText != null) JSONObject(ticketText) else saved?.getJSONObject("pairing") ?: error("Paste an invitation from your computer."))
                 val c = Client(ticket, saved?.optString("token") ?: ""); client = c
                 if (ticketText != null) {
                     val response = c.json("/v1/pair", JSONObject().put("invite", ticket.invite).put("name", "${Build.MANUFACTURER} ${Build.MODEL}").put("capabilities", capabilities()))
@@ -67,35 +77,35 @@ class NodeService : Service() {
                 var lastHeartbeat = 0L
                 while (!stop.get()) {
                     try {
-                        if(!enginePrefs.getBoolean("enabled",false) && mobileDraft!=null){mobileDraft?.close();mobileDraft=null;engineStatus="Motore in pausa"}
+                        if(!enginePrefs.getBoolean("enabled",false) && mobileDraft!=null){mobileDraft?.close();mobileDraft=null;engineStatus=ui("Engine paused")}
                         if(downloadRequested.getAndSet(false)) {
                             try {
-                                check(energyAllowed()){ "Batteria o stato termico non consentono il caricamento" }
+                                check(energyAllowed()){ "Battery or thermal status prevents loading" }
                                 mobileDraft?.close();mobileDraft=MobileDraft(this)
-                                engineStatus="Scaricamento draft dal computer…"
-                                mobileDraft!!.download(c){done,total -> engineStatus="Scaricamento draft: ${done*100/total}%"}
+                                engineStatus=ui("Downloading draft from your computer…")
+                                mobileDraft!!.download(c){done,total -> engineStatus=ui("Draft download: {0}%",done*100/total)}
                                 enginePrefs.edit().putBoolean("enabled",true).apply()
-                                engineStatus="Draft pronto · CPU ARM64 · SHA-256 verificato"
-                            } catch(e:Exception){mobileDraft?.close();mobileDraft=null;engineStatus=e.message ?: "Caricamento fallito";lastResult=engineStatus;enginePrefs.edit().putBoolean("enabled",false).apply()}
+                                engineStatus=ui("Draft ready · ARM64 CPU · SHA-256 verified")
+                            } catch(e:Exception){mobileDraft?.close();mobileDraft=null;engineStatus=ui(e.message ?: "Loading failed");lastResult=engineStatus;enginePrefs.edit().putBoolean("enabled",false).apply()}
                         } else if(enginePrefs.getBoolean("enabled",false) && mobileDraft==null && energyAllowed()) {
-                            try {engineStatus="Caricamento draft…";mobileDraft=MobileDraft(this).also { it.loadSaved() };engineStatus="Draft pronto · CPU ARM64"}
-                            catch(e:Exception){mobileDraft?.close();mobileDraft=null;enginePrefs.edit().putBoolean("enabled",false).apply();engineStatus=e.message ?: "Caricamento fallito"}
+                            try {engineStatus=ui("Loading draft…");mobileDraft=MobileDraft(this).also { it.loadSaved() };engineStatus=ui("Draft ready · ARM64 CPU")}
+                            catch(e:Exception){mobileDraft?.close();mobileDraft=null;enginePrefs.edit().putBoolean("enabled",false).apply();engineStatus=ui(e.message ?: "Loading failed")}
                         }
                         var job: JSONObject? = null
                         if(SystemClock.elapsedRealtime()-lastHeartbeat>=3000) {
                             val response = c.json("/v1/heartbeat", capabilities())
                             lastHeartbeat=SystemClock.elapsedRealtime()
                             job=response.optJSONObject("job")
-                            status = "Connesso · nodo disponibile"
+                            status = ui("Connected · node available")
                         }
                         if (job != null) runJob(c, job)
                         else if(mobileDraft?.ready==true && enginePrefs.getBoolean("enabled",false) && energyAllowed()) {
                             val work=JSONObject(String(c.bytes("/v1/engine/poll"),Charsets.UTF_8)).optJSONObject("work")
                             if(work!=null) {
                                 val answer=if(energyAllowed() && enginePrefs.getBoolean("enabled",false)) mobileDraft!!.draft(work)
-                                else JSONObject().apply {for(key in listOf("id","epoch","prefix_hash","tokenizer_fingerprint","model_sha256"))put(key,work.getString(key));put("error","Nodo in pausa energetica")}
+                                else JSONObject().apply {for(key in listOf("id","epoch","prefix_hash","tokenizer_fingerprint","model_sha256"))put(key,work.getString(key));put("error","Node paused to protect battery")}
                                 if(stop.get()) break
-                                if(!energyAllowed()) {answer.remove("tokens");answer.put("error","Pausa energetica durante il draft")}
+                                if(!energyAllowed()) {answer.remove("tokens");answer.put("error","Draft paused to protect battery")}
                                 c.json("/v1/engine/result",answer)
                             }
                         } else Thread.sleep(3000)
@@ -103,15 +113,15 @@ class NodeService : Service() {
                     } catch (e: Exception) {
                         if (stop.get()) break
                         errors++
-                        status = "Connessione interrotta · tentativo $errors/3"
+                        status = ui("Connection interrupted · attempt {0}/3",errors)
                         if (errors >= 3) throw e
                         Thread.sleep(1000)
                     }
                 }
             } catch (e: Exception) {
-                if (!stop.get()) status = e.message ?: "Connessione non riuscita"
+                if (!stop.get()) status = ui(e.message ?: "Connection failed")
             } finally {
-                mobileDraft?.close();mobileDraft=null;engineStatus="Draft scaricato dalla memoria"
+                mobileDraft?.close();mobileDraft=null;engineStatus=ui("Draft unloaded from memory")
                 if (generation.get() == runId) running = false
                 stopSelfResult(startId)
             }
@@ -124,17 +134,19 @@ class NodeService : Service() {
         val pct = battery?.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) ?: -1
         val cm = getSystemService(ConnectivityManager::class.java)
         val network = cm.getNetworkCapabilities(cm.activeNetwork)
-        val transport = when { network?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true -> "Wi-Fi / hotspot"; network?.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) == true -> "Ethernet"; network?.hasTransport(NetworkCapabilities.TRANSPORT_USB) == true -> "USB"; else -> "altro / non rilevato" }
+        val transport = when { network?.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) == true -> "Wi-Fi / hotspot"; network?.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) == true -> "Ethernet"; network?.hasTransport(NetworkCapabilities.TRANSPORT_USB) == true -> "USB"; else -> "other / not detected" }
         val thermal = if (Build.VERSION.SDK_INT >= 29) getSystemService(PowerManager::class.java).currentThermalStatus else -1
         val thermalName = when(thermal) { 0 -> "nominal"; 1 -> "light"; 2 -> "moderate"; 3 -> "severe"; 4 -> "critical"; 5 -> "emergency"; 6 -> "shutdown"; else -> "unknown" }
-        telemetry = "${Build.MODEL}\nRAM fisica: %.1f GiB · disponibile al sistema: %.1f GiB\n%s · termica: %s".format(mem.totalMem/1073741824.0, mem.availMem/1073741824.0, transport, thermalName)
-        return JSONObject().put("model", "${Build.MANUFACTURER} ${Build.MODEL}").put("os", "Android ${Build.VERSION.RELEASE} / API ${Build.VERSION.SDK_INT}").put("app_version", "0.2.1").put("physical_memory_bytes", mem.totalMem).put("available_memory_bytes", mem.availMem).put("process_memory_bytes", Debug.getPss()*1024L).put("cpu_cores", Runtime.getRuntime().availableProcessors()).put("battery_percent", pct.coerceAtLeast(0)).put("thermal", thermalName).put("transport", transport).put("lifecycle", "foreground-service").put("supported_jobs", JSONArray(listOf("network", "network_paced", "cpu")))
+        telemetry = ui("{0}\n{1}\n{2}", Build.MODEL,
+            ui("Physical RAM: {0} GiB · available to system: {1} GiB", "%.1f".format(mem.totalMem/1073741824.0), "%.1f".format(mem.availMem/1073741824.0)),
+            ui("{0} · thermal: {1}",ui(transport),ui(thermalName)))
+        return JSONObject().put("model", "${Build.MANUFACTURER} ${Build.MODEL}").put("os", "Android ${Build.VERSION.RELEASE} / API ${Build.VERSION.SDK_INT}").put("app_version", "0.2.2").put("physical_memory_bytes", mem.totalMem).put("available_memory_bytes", mem.availMem).put("process_memory_bytes", Debug.getPss()*1024L).put("cpu_cores", Runtime.getRuntime().availableProcessors()).put("battery_percent", pct.coerceAtLeast(0)).put("thermal", thermalName).put("transport", transport).put("lifecycle", "foreground-service").put("supported_jobs", JSONArray(listOf("network", "network_paced", "cpu")))
             .put("engine_ready",mobileDraft?.ready==true && energyAllowed() && enginePrefs.getBoolean("enabled",false))
             .put("draft_sha256",mobileDraft?.sha256 ?: "").put("tokenizer_fingerprint",mobileDraft?.fingerprint ?: "")
     }
     private fun checkReady(started: Long) {
         check(!stop.get()) { "cancelled" }
-        check(SystemClock.elapsedRealtime()-started < 90000) { "Tempo massimo della misura superato" }
+        check(SystemClock.elapsedRealtime()-started < 90000) { "Measurement time limit exceeded" }
         if (Build.VERSION.SDK_INT >= 29) check(getSystemService(PowerManager::class.java).currentThermalStatus < PowerManager.THERMAL_STATUS_SEVERE) { "thermal_pause" }
     }
     private fun runJob(c: Client, job: JSONObject) {
@@ -145,7 +157,7 @@ class NodeService : Service() {
         try {
             checkReady(started)
             if (job.getString("kind") in listOf("network", "network_paced")) {
-                status = "Misura rete in corso…"
+                status = ui("Measuring network…")
                 c.bytes("/v1/probe?size=64") // Warmup excluded.
                 val paced = job.getString("kind") == "network_paced"
                 for (pace in if (paced) listOf(0,30,60) else listOf(0)) {
@@ -176,13 +188,14 @@ class NodeService : Service() {
                         samples.put(JSONObject().put("kind", "upload").put("bytes", size).put("ms", ms))
                     }
                 }
-                note = if (paced) "600 RTT in gruppi con pause 0/30/60ms; confrontare ogni gruppo separatamente. Test HTTPS applicativo, non LLM." else "Diagnostica breve: 32 RTT, p95 esplorativo. Warmup escluso; non è un benchmark LLM."
-                lastResult=(if(paced) listOf(0,30,60) else listOf(0)).joinToString("\n") { pace ->
+                note = if (paced) "600 RTT samples grouped by 0/30/60 ms pauses; compare groups separately. Application-level HTTPS test, not LLM inference." else "Quick diagnostics: 32 RTT samples, exploratory p95. Warmup excluded; not an LLM benchmark."
+                val measurements=(if(paced) listOf(0,30,60) else listOf(0)).map { pace ->
                     val rtts=(0 until samples.length()).map { samples.getJSONObject(it) }.filter {it.getString("kind")=="rtt" && it.optInt("pace_ms")==pace}.map{it.getDouble("ms")}.sorted()
-                    "Pausa ${pace}ms · p50 %.2f · p95 %.2f ms".format(rtts[kotlin.math.ceil(rtts.size*.5).toInt()-1],rtts[kotlin.math.ceil(rtts.size*.95).toInt()-1])
+                    ui("Pause {0} ms · p50 {1} · p95 {2} ms",pace,"%.2f".format(rtts[kotlin.math.ceil(rtts.size*.5).toInt()-1]),"%.2f".format(rtts[kotlin.math.ceil(rtts.size*.95).toInt()-1]))
                 }
+                lastResult=UiText(measurements.indices.joinToString("\n") { "{$it}" },measurements)
             } else if (job.getString("kind") == "cpu") {
-                status = "Calibrazione CPU sintetica…"
+                status = ui("Running synthetic CPU calibration…")
                 val matrix = FloatArray(256*256) { ((it%97)-48)/97f }
                 val vector = FloatArray(256) { (it%13)/13f }
                 val out = FloatArray(256)
@@ -196,13 +209,13 @@ class NodeService : Service() {
                 } while (SystemClock.elapsedRealtimeNanos()-t < 1_500_000_000L)
                 val ms = (SystemClock.elapsedRealtimeNanos()-t)/1e6
                 samples.put(JSONObject().put("kind", "cpu").put("iterations", iterations).put("ms", ms).put("checksum", abs(out.sum().toDouble())))
-                note = "FP32 matvec 256×256, Kotlin/JVM, singolo thread. Nessuna previsione token/s."
-                lastResult = "CPU · $iterations iterazioni in %.0f ms".format(ms)
-            } else error("Job non supportato")
+                note = "FP32 matvec 256×256, Kotlin/JVM, single thread. No tokens/s prediction."
+                lastResult = ui("CPU · {0} iterations in {1} ms",iterations,"%.0f".format(ms))
+            } else error("Unsupported job")
         } catch(e: Exception) {
             outcome = if (stop.get()) "cancelled" else if(e.message == "thermal_pause") "thermal_pause" else "failed"
-            note = e.message ?: "Misura interrotta"
-            lastResult = "Misura interrotta: $note"
+            note = e.message ?: "Measurement interrupted"
+            lastResult = ui("Measurement interrupted: {0}",ui(note))
         }
         if (!stop.get()) c.json("/v1/result", JSONObject().put("job_id", job.getString("id")).put("status", outcome).put("samples", samples).put("note", note))
     }
@@ -211,7 +224,7 @@ class NodeService : Service() {
         stop.set(true); client?.cancel(); worker?.interrupt()
         if(Build.VERSION.SDK_INT>=29) thermalListener?.let {getSystemService(PowerManager::class.java).removeThermalStatusListener(it)}
         if(worker==null && generation.get() == runId) running = false
-        if (status.startsWith("Connesso") || status.contains("corso") || status.startsWith("Calibrazione")) status = "In pausa · nessun lavoro delegato"
+        if (status.key in setOf("Connected · node available", "Measuring network…", "Running synthetic CPU calibration…", "Connecting to your computer…")) status = ui("Paused · no delegated work")
         super.onDestroy()
     }
 }
