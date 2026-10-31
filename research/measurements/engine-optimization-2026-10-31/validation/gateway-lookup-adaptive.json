@@ -1,0 +1,16 @@
+{
+  "real_weights": true,
+  "nonstream_and_stream_equal": true,
+  "utf8_valid": true,
+  "mode": "lookup",
+  "draft_policy": "adaptive",
+  "stream_chunks": 6,
+  "usage": {
+    "prompt_tokens": 46,
+    "completion_tokens": 14,
+    "total_tokens": 60
+  },
+  "disconnect_status": "cancelled",
+  "timestamp": 1793486772.968199,
+  "scope": "configured small target; single-user greedy gateway"
+}

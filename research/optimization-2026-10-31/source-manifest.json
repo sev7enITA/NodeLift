@@ -1,0 +1,45 @@
+{
+  "scope": "Read-only local implementation study. No financial data, credentials, private browser sessions or complete private source files copied. Local project names and code identities only.",
+  "sources": [
+    {
+      "project_component": "AudioEnhancer cluster dispatch",
+      "relative_path": "AudioEnhancer/AudioEnhancer/app/services/cluster_manager.py",
+      "sha256": "60742d145153423cb7df7665b730d8c5dc927f66e4286558f6d710d6e788f6a9"
+    },
+    {
+      "project_component": "AudioEnhancer timing estimates",
+      "relative_path": "AudioEnhancer/AudioEnhancer/app/services/timing_engine.py",
+      "sha256": "6e2331d7abdbe21ccdd56e311ed3ed989a1830f4317ae4cf7c2a7e3a91b92e34"
+    },
+    {
+      "project_component": "myTrader Jev/Decision-1 study",
+      "relative_path": "myTrader/docs/wiki/11-Jev-Decision1-e-determinismo.md",
+      "sha256": "339a9ced6f9ae8ed06fc801f03dc621cfb96543089ce8185d167029e1b40b126"
+    },
+    {
+      "project_component": "myTrader review disposition",
+      "relative_path": "myTrader/docs/JEV_DECISION1_GLM_DISPOSITION_2026_10_11.md",
+      "sha256": "59903b0031582a32374f749ac4389e8bb64c29ae6459e494bef3202452ee0604"
+    },
+    {
+      "project_component": "myTrader non-hydrating local resource reader",
+      "relative_path": "myTrader/app/local_resources.py",
+      "sha256": "3eb695be29d2f63d586fa4b92e3d7f79033e68f66b76d480b47b2513348e022c"
+    },
+    {
+      "project_component": "myTrader promotion evidence",
+      "relative_path": "myTrader/app/promotion_protocol.py",
+      "sha256": "05f529cb3671fee5290d3095c335f940f172a167cd8265a38b3374ec34ea2bef"
+    }
+  ],
+  "primary_web_sources": [
+    "https://docs.typesafe.ai/introduction",
+    "https://docs.typesafe.ai/models",
+    "https://docs.typesafe.ai/confidence",
+    "https://docs.typesafe.ai/patterns/confidence-routing",
+    "https://docs.typesafe.ai/model-jaggedness/jev-1.13",
+    "https://github.com/apoorvumang/prompt-lookup-decoding"
+  ],
+  "implementation_basis": "Fresh NodeLift implementation; no copied third-party or private project code.",
+  "unavailable_scope": "MakeMyVoice runtime_benchmark.py and several other files were cloud-only placeholders; no claim of inspecting their content."
+}

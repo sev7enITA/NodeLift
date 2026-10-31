@@ -56,6 +56,31 @@ class MailboxTests(unittest.TestCase):
 
 
 class ControllerTests(unittest.TestCase):
+    def test_adaptive_remote_timeout_is_not_a_completed_cost_sample(self):
+        now=[0.0]
+        class HostNative:
+            def call(self,op,**args):
+                if op=='tokenize':return {'tokens':[1]}
+                if op=='draft':now[0]+=.005;return {'tokens':[2],'eos':False}
+                if op=='text':return {'bytes_hex':'78'}
+                return {}
+        with tempfile.TemporaryDirectory() as folder:
+            engine=Controller(State(Path(folder)));engine.target=HostNative()
+            engine.target_info={'tokenizer_fingerprint':'test','vocab_size':10}
+            def timeout(*args,**kwargs):
+                now[0]+=kwargs['timeout'];raise TimeoutError('remote draft deadline exceeded')
+            run={'id':'timeout-evidence','epoch':'test-epoch','mode':'remote_draft','draft_policy':'adaptive','prompt':'Hello','max_tokens':16,
+                 'draft_k':4,'node_id':'emulated','remote_timeout_ms':500,'text':'','metrics':{},'blocks':[]}
+            with patch.object(engine,'_load'),patch.object(engine,'_sha',return_value='test'),patch.object(engine.mailbox,'request',side_effect=timeout) as request,patch('nodelift.engine.time.perf_counter',side_effect=lambda:now[0]):
+                engine._execute(run,{'n_ctx':256,'target_model':'unused','draft_model':'unused'})
+            self.assertEqual(run['status'],'completed',run.get('error'))
+            self.assertEqual(request.call_count,1);self.assertEqual(run['metrics']['fallbacks'],1)
+            self.assertEqual(run['metrics']['draft_disabled_reason'],'remote_probe_timeout')
+            for block in run['blocks'][5:]:
+                self.assertEqual(block['decision']['reason'],'remote_probe_timeout')
+                self.assertEqual(block['decision']['draft_samples'],0)
+                self.assertIsNone(block['decision']['draft_ms_per_token'])
+
     def test_stop_during_load_does_not_create_draft_or_begin_prefill(self):
         entered=threading.Event();release=threading.Event();instances=[]
         class LoadingNative:

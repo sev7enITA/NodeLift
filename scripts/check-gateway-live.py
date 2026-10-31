@@ -1,6 +1,7 @@
 """Bounded real-weight gateway smoke test against an already configured local host."""
 import http.client
 import json
+import os
 import re
 import time
 import urllib.request
@@ -16,7 +17,9 @@ def status():
 assert not status()['busy'],'do not interrupt an existing run'
 messages=[{'role':'system','content':'Rispondi in italiano, brevemente.'},
           {'role':'user','content':'Parla di città, energia e caffè. Aggiungi un simbolo 🌍.'}]
-body={'model':'nodelift','messages':messages,'temperature':0,'max_tokens':64}
+body={'model':'nodelift','messages':messages,'temperature':0,'max_tokens':64,
+      'nodelift_mode':os.environ.get('NODELIFT_MODE','host'),
+      'nodelift_draft_policy':os.environ.get('NODELIFT_DRAFT_POLICY','fixed')}
 def request(value):
     data=json.dumps(value).encode()
     req=urllib.request.Request(base+'/v1/chat/completions',data=data,
@@ -48,6 +51,7 @@ while status()['busy'] and time.monotonic()<deadline:time.sleep(.1)
 last=status()['runs'][0]
 assert last['status']=='cancelled',last['status']
 report={'real_weights':True,'nonstream_and_stream_equal':True,'utf8_valid':True,
+        'mode':body['nodelift_mode'],'draft_policy':body['nodelift_draft_policy'],
         'stream_chunks':chunks,'usage':normal['usage'],'disconnect_status':last['status'],
         'timestamp':time.time(),'scope':'configured small target; single-user greedy gateway'}
 out=Path(__file__).resolve().parents[1]/'artifacts/gateway-live.json'

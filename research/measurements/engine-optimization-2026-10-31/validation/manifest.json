@@ -1,0 +1,13 @@
+{
+  "engine_source_commit": "2063d237c658b8a070df86e5e34d01789de7cbf1",
+  "host_tests_passed": 40,
+  "adapter_stream_tests_passed": 3,
+  "native_checks_passed": 29,
+  "remote_loopback_cases_passed": 5,
+  "dashboard_lookup_adaptive_completed": true,
+  "native_library_sha256": "4aa209157112cdb4189e6a6b9d3d3d448fafb003aeb1eef8eba13c8efbaa0239",
+  "physical_phone_inference_tested": false,
+  "full_lmstudio_gui_tested": false,
+  "benchmark_exit_code": 1,
+  "benchmark_exit_reason": "four fixed-draft token mismatches, retained; all 112 runs completed"
+}

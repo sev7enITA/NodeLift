@@ -1,0 +1,9 @@
+{
+  "scope": "SDK Chat and generator handler through live NodeLift; LM Studio UI runtime not exercised",
+  "mode": "lookup",
+  "draftPolicy": "adaptive",
+  "passed": true,
+  "fragments": 7,
+  "characters": 111,
+  "timestamp": "2026-10-31T22:46:28.430Z"
+}

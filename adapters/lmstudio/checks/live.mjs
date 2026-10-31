@@ -12,6 +12,7 @@ const controller={getGlobalPluginConfig:()=>global,getPluginConfig:()=>config,
 await generate(controller,Chat.from([{role:'user',content:'Explain RAM in one short sentence.'}]));
 if(!output.trim() || !fragments)throw new Error('No generated content');
 const result={scope:'SDK Chat and generator handler through live NodeLift; LM Studio UI runtime not exercised',
+  mode:config.get('mode'),draftPolicy:config.get('draftPolicy'),
   passed:true,fragments,characters:output.length,timestamp:new Date().toISOString()};
 await writeFile(new URL('../../../artifacts/lmstudio-live.json',import.meta.url),JSON.stringify(result,null,2)+'\n');
 console.log(JSON.stringify(result));

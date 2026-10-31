@@ -1,0 +1,43 @@
+{
+  "scope": "loopback TLS with emulated native node; NOT Android/iOS device evidence",
+  "real_weights": true,
+  "checks": [
+    {
+      "case": "valid",
+      "exact_tokens": true,
+      "generated": 32,
+      "fallbacks": 0,
+      "blocks": 12
+    },
+    {
+      "case": "wrong",
+      "exact_tokens": true,
+      "generated": 32,
+      "fallbacks": 0,
+      "blocks": 32
+    },
+    {
+      "case": "error",
+      "exact_tokens": true,
+      "generated": 32,
+      "fallbacks": 1,
+      "blocks": 32
+    },
+    {
+      "case": "drop",
+      "exact_tokens": true,
+      "generated": 32,
+      "fallbacks": 1,
+      "blocks": 32
+    },
+    {
+      "case": "adaptive deadline and late reply",
+      "exact_tokens": true,
+      "generated": 32,
+      "fallbacks": 1,
+      "late_replies_rejected": 1,
+      "effective_deadline_ms": 90.65770485904068
+    }
+  ],
+  "timestamp": 1793486570.168322
+}

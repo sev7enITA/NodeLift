@@ -5,7 +5,10 @@ flowchart LR
   C[Desktop or LM Studio client] --> G[Loopback gateway]
   G --> H[Host controller]
   H --> T[Native target verifier]
-  H --> L[Local native draft]
+  H --> D[Fixed or measured draft control]
+  D --> L[Local native draft]
+  D --> N[Context n-gram lookup]
+  N --> T
   P[Android or iOS worker] -->|Outbound pinned TLS| M[Per-node work lease]
   H --> M
   M -->|Candidate token IDs| T
@@ -20,12 +23,22 @@ Worker-owned run records are published as locked snapshots. Prompts/results rema
 
 The full prefix is sent each round: explicit recovery is simple, but serialization/retransmission grow with context. A future delta protocol needs acknowledged cursors, epoch recovery and measured benefit.
 
+## Measured control and context reuse (unreleased source update)
+
+The greedy core caches one finite-checked argmax token instead of copying a full vocabulary logit vector. This does not change the verifier or establish numerical equivalence across batch shapes.
+
+`fixed` retains the chosen strategy. `adaptive` emits four useful host tokens, then measures up to two initial proposal rounds (one if very costly). It compares total round time per committed token against the recent median host cost with a 10% margin, continues measuring successful delegation and sticks to host after a loss/failure. The first local probe includes deferred draft loading/prefill. Request-local history avoids transferring decisions across models/nodes/prompts. These are heuristic thresholds, not calibrated confidence or a no-regression guarantee; cold probes and stale host cost remain limitations.
+
+`lookup` incrementally indexes committed 3–8 token sequences and proposes continuations of the longest matching suffix, up to the selected block size. It needs no draft model. Misses use ordinary target decoding; hits use the existing verifier. All modes retain target authority, cancellation checks and lease identity validation. This implements known prompt-lookup prior art, not a novel algorithm.
+
+See the [optimization assessment](../research/optimization-2026-10-31/REPORT.md) for Jev/System One lessons, local-project provenance, same-output comparisons and the pre-existing 96-token drift counterexample.
+
 ## Remaining research gates
 
 1. Physical native Xiaomi inference, screen-off/thermal/battery/failure tests, hotspot-role and wired comparisons.
 2. Large compatible target/draft pair. Existing Qwen35 hybrids need checkpoint restoration with measured cost and correctness.
 3. Strongest applicable local baseline: target-only, local draft, n-gram, MTP/EAGLE/DFlash and async where supported.
-4. Evidence-based node/block choice using committed tokens and total round time, retaining host-only when delegation loses. Current modes are manual.
+4. Validate the opt-in measured host/draft gate on physical devices and held-out workloads; node selection and block size remain manual.
 5. Asynchronous drafting with wasted-work accounting, then multi-user batching. Neither automatically proves single-chat acceleration.
 6. Capacity sharding as a separate path; phone memory is not coherent host RAM.
 

@@ -64,6 +64,12 @@ The already available `Qwen3.8-27B-Q6_K.gguf` reports architecture `qwen35`; thi
 
 The [physical hotspot pilot](2026-10-31-xiaomi-hotspot/REPORT.md) remains separate: median HTTPS RTT approximately 6–9 ms, a pronounced tail in the 60 ms-paced group, and payload-dependent bandwidth. Native phone drafting, under-load RTT, long thermal sessions, battery cost and wired alternatives remain unmeasured.
 
+## Subsequent 96-token optimization study
+
+The [Jev/local-project optimization study](../optimization-2026-10-31/REPORT.md) adds argmax caching, opt-in measured draft control and prompt lookup. A frozen 112-call repeat at `2063d237c658b8a070df86e5e34d01789de7cbf1` completed all runs, but the exact-output gate failed on four fixed-draft runs: both old and optimized fixed verification diverged from host-only on the Italian latency prompt at output position **75** (index 74). This is a pre-existing numerical batch/single counterexample beyond the earlier 64-token tests. It invalidates extrapolation of those sample equality results to arbitrary lengths.
+
+On the six general prompts, adaptive local drafting gave a median **1.149× vs old fixed draft on ten same-output pairs**, but **0.961× vs host-only on twelve pairs**. Context lookup helped the small repetition subgroup; the 53-token copy case gave about 1.9× speed ratios in two adaptive-lookup repetitions. These are narrow results, not general speedup or phone evidence. All denominators, actual outputs, failures, source/library identities and the nonzero benchmark qualification result are [published together](engine-optimization-2026-10-31/final/summary.json).
+
 ## Decision
 
 Retain host-only as the default. Do not route to a phone solely because it has spare RAM. Next discriminating work requires the updated native companion online and a qualified large target/draft pair. Report per-round committed tokens and full round time, exact output comparisons, TTFT, total completion time, rejected work and failures. No projection from 64 to 300 generated tokens substitutes for a real 300-token run.
