@@ -4,6 +4,22 @@
 
 Every published companion build has an entry below. Android packages are laboratory builds; iOS packages require Apple signing and provisioning. Historical validation belongs to the named version and does not establish current physical-device performance.
 
+## [0.2.6](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.6): build 8 · 2026-11-01
+
+**Reliable controls, local diagnostics and automatic update checks** · experimental-prerelease
+
+- Replace the Android legacy scanner activity with lifecycle-bound CameraX, an offline ZXing decoder, retry/cancel controls and a camera-open timeout. Permission denial and camera errors return actionable feedback; invitation validation and identity confirmation remain required.
+- Android controls distinguish available, disabled, pressed, selected and busy states. Session status, engine permission and actual draft readiness are separate; saved engine permission is synchronized after service changes.
+- Desktop actions show request progress across polling updates and block duplicate submissions. Narrow-screen Add device labels and QR spacing are repaired. iOS controls gain explicit pressed/disabled styling and connection progress.
+- English, Simplified Chinese and Italian messages, Android APK and unsigned iOS packages share version 0.2.6/build 8. Native LLM libraries are reused without engine changes.
+- Add bounded local Android/iOS diagnostic journals with explicit export and clear, sanitized managed exception context, supported Android process exit reasons and reduced iOS MetricKit events. Previous interruption markers do not establish a crash cause.
+- Check official companion release metadata at launch and weekly while running, with due checks after OS suspension, offline retry and an explicit Check now action. Installation remains manual.
+- Use the current original orbital NodeLift mark in native headers and launcher icons. Add project acknowledgements and preserve original third-party licenses and source.
+
+**Validation:** Android app/instrumentation compilation and lint, ten JVM QR/support policy tests, unsigned iOS device compilation, Swift journal/update checks, 19 host protocol tests, localization and focused desktop control tests passed. Android signing continuity and unchanged native libraries were verified. Actual external source/design reviews are scoped in release evidence. Physical scanning, sharing and weekly scheduling on a phone were not tested.
+
+**Limits:** The reported Xiaomi crash remains unconfirmed without a device log; install and exercise the new APK. Logs are best effort and cannot capture every native crash. OS suspension delays checks until execution resumes. iOS packages require Apple signing; TestFlight/App Store distribution is planned, not available. HarmonyOS/NEXT builds remain deferred. No new inference speedup or pooled-RAM result.
+
 ## [0.2.5](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.5): build 7 · 2026-11-01
 
 **Desktop QR pairing and native mobile scanning** · experimental-prerelease
@@ -66,6 +82,12 @@ Every published companion build has an entry below. Android packages are laborat
 **Limits:** The remote test node was emulated. Physical-phone inference/speedup, sustained thermals, capacity sharding, hybrid speculative checkpoints, HarmonyOS native worker and installed LM Studio GUI qualification remained open. The 27B upstream kernel result is not NodeLift hybrid-model support.
 
 ## Documentation and tooling updates
+
+### 2026-11-01: Project acknowledgements and editorial consistency
+
+- Add a dedicated showcase Credits chapter and repository acknowledgements with direct links to DistAI and other studied projects, actual dependencies, integration providers and all 54 external comparison entries.
+- Name contributors and distinguish incorporated software from research references. Preserve original licenses, source snapshots, benchmark records and archived reviewer text.
+- Remove em dashes from NodeLift-authored prose and UI placeholders, including release-history generation, while preserving verbatim third-party evidence.
 
 ### 2026-11-01: English documentation and synchronized release history
 

@@ -1,0 +1,18 @@
+[
+  {
+    "tag": "v0.2.5",
+    "updated_fields": [
+      "name"
+    ],
+    "assets_changed": false,
+    "published_at_unchanged": true
+  },
+  {
+    "tag": "v0.2.3",
+    "updated_fields": [
+      "body"
+    ],
+    "assets_changed": false,
+    "published_at_unchanged": true
+  }
+]

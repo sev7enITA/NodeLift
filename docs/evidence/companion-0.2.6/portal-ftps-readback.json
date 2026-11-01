@@ -1,0 +1,19 @@
+{
+  "secure_ftps": true,
+  "published": [
+    "assets/showcase.css",
+    "assets/showcase.js",
+    "assets/site-locales.js",
+    "data/assessment.md",
+    "data/methodology.md",
+    "data/comparison.md",
+    "data/manifest.json",
+    "data/mobile-downloads.json",
+    "data/mobile-installation.md",
+    "data/changelog.md",
+    "data/changelog.json",
+    "index.html"
+  ],
+  "remote_readback_verified": true,
+  "mobile_packages_changed": true
+}
