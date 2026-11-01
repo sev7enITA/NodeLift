@@ -36,6 +36,10 @@ TypeScript, stream tests and actual SDK Chat → handler → live NodeLift infer
 
 Clients with a configurable OpenAI-style text endpoint can point directly to NodeLift. Their default parameters, tools, network topology and streaming expectations still require individual qualification.
 
+## Z.ai and Xiaomi MiMo
+
+These are hosted web environments, distinct from local runtimes and from Xiaomi phone hardware. Both publish developer APIs: [Z.ai](https://docs.z.ai/guides/overview/quick-start) and [MiMo](https://mimo.mi.com/docs/en-US/quick-start/summary/first-api-call). NodeLift does not currently include direct adapters for either API, and no connection from their hosted GUI to a custom NodeLift endpoint has been qualified. Browser access alone is not API access. Planned direct integration should use their documented APIs with explicit cloud selection; it will not contribute local phone RAM or native drafting. See [product shape and device attribution](DEVICE-GRAPH.md).
+
 ## Model sources and external engines (host 0.3.0 preview)
 
 The **Models** section now supports public Hugging Face search and immutable GGUF downloads, registration of an existing absolute local model path without copying, and browser file import. Select a model as target/draft and apply configuration before native inference. Complete single-file GGUF v2/v3 is the import format; the pinned llama.cpp runtime still determines architecture support at load time. No pickle/Python execution, automatic safetensors conversion, split-file assembly or remote license acceptance occurs. An interrupted download must restart; partial files are not model candidates.

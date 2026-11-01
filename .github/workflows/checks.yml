@@ -32,3 +32,5 @@ jobs:
       - run: npm test
       - run: node scripts/check-localization.cjs
         working-directory: .
+      - run: node scripts/check-device-graph.cjs
+        working-directory: .

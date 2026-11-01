@@ -16,6 +16,7 @@ import threading
 from urllib.parse import parse_qs, urlsplit
 
 from .state import State
+from .telemetry import host_inventory
 
 MAX_BODY = 1024 * 1024
 PAYLOAD = os.urandom(MAX_BODY)
@@ -197,7 +198,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         expected = "127.0.0.1:" + str(self.server.server_port)
         if host != expected or self.headers.get("Origin", "http://" + expected) != "http://" + expected:
             raise PermissionError("loopback origin required")
-        assets = {"/": ("dashboard.html", "text/html; charset=utf-8"), "/app.js": ("dashboard.js", "text/javascript"), "/models.js": ("models.js", "text/javascript"), "/i18n.js": ("i18n.js", "text/javascript"), "/style.css": ("dashboard.css", "text/css")}
+        assets = {"/": ("dashboard.html", "text/html; charset=utf-8"), "/app.js": ("dashboard.js", "text/javascript"), "/graph.js": ("graph.js", "text/javascript"), "/models.js": ("models.js", "text/javascript"), "/i18n.js": ("i18n.js", "text/javascript"), "/style.css": ("dashboard.css", "text/css")}
         if method == "GET" and path in assets:
             name, kind = assets[path]
             return self.send(200, Path(__file__).with_name(name).read_bytes(), kind)
@@ -238,7 +239,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             if method == 'POST' and path == '/admin/engine/run':return self.send(200,self.server.engine.start(self.body()))
             if method == 'POST' and path == '/admin/engine/stop':return self.send(200,self.server.engine.stop(self.body().get('run_id')))
         if method == "GET" and path == "/admin/status":
-            return self.send(200, self.server.state.snapshot())
+            return self.send(200, {**self.server.state.snapshot(), "host": host_inventory()})
         if method == "POST" and path == "/admin/invite":
             self.body()
             return self.send(200, self.server.ticket_factory())

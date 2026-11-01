@@ -33,7 +33,7 @@ NodeLift is an experimental local inference workbench and mobile companion syste
 | Android | ARM64 CPU draft worker, checked LAN model transfer, battery/thermal controls | APK built; physical Xiaomi measurements used the earlier 0.1 qualification app |
 | iOS | Native Metal/CPU worker, GGUF import, foreground lifecycle, user limits | Unsigned device build compiled; physical iPhone inference remains open |
 | HarmonyOS NEXT | Separate ArkTS qualification candidate | No HAP or native inference worker |
-| Desktop | Control room, pairing, telemetry, diagnostics, model settings, run history | Browser functional checks and Gemini design review; post-fix visual recheck limited |
+| Desktop | [Device graph](docs/DEVICE-GRAPH.md), hardware inspector, run contribution, pairing, diagnostics, model settings | Browser functional checks and accounting tests; contribution is accepted token attribution, not compute share |
 | Integration | Authenticated text chat gateway and LM Studio generator | Real-weight HTTP/adapter-handler tests; LM Studio GUI qualification open |
 
 This is **not an Ollama backend patch**. Clients with a custom OpenAI-style endpoint can call NodeLift within its text/greedy subset. The LM Studio adapter selects NodeLift as a generator; it does not split LM Studio's own loaded model across phones.

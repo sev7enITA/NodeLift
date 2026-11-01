@@ -13,6 +13,7 @@
 | Fix common problems | [Troubleshooting](wiki/Troubleshooting.md) |
 | Build and verify | [Development / workflows](wiki/Development-and-workflows.md) |
 | Understand execution | [Architecture](wiki/Architecture.md) |
+| Inspect devices and their contribution | [Device graph and product shape](DEVICE-GRAPH.md) |
 | Change language | [Localization](LOCALIZATION.md) |
 | Identify authorship and dependencies | [Credits](wiki/About-and-credits.md) |
 

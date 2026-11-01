@@ -4,6 +4,8 @@ The control room and Android/iOS companions use **English by default**, independ
 
 Mobile version: **0.2.3, build 5**. Update the Android APK over the existing same-key installation to retain pairing. The unsigned iOS app requires Apple signing and provisioning before installation. The HarmonyOS candidate has the same language selection in source; it remains uncompiled and unqualified on a physical device. LM Studio's SDK-owned configuration schema, developer CLI diagnostics and the public showcase are separate surfaces and remain in their existing languages.
 
+The device-graph source update adds 105 shared messages. Generated mobile dictionaries are synchronized in source; this desktop update does not rebuild or replace the published 0.2.3 companion binaries.
+
 ## Behavior
 
 - Dashboard labels, controls, validation messages, run states, measurements, pairing instructions, dates and accessibility labels follow the selected language. The API key panel closes and clears its in-memory access data on a language change.
@@ -13,7 +15,7 @@ Mobile version: **0.2.3, build 5**. Update the Android APK over the existing sam
 
 ## Catalogs and contribution
 
-`localization/en.json` is the canonical English message catalog, with English source text as the message ID. `localization/zh-Hans.json` and `localization/it.json` each have the same 557 keys, including model-library and external-provider messages. Numbered placeholders (`{0}`, `{1}`, ...) support Chinese argument ordering. Nested mobile messages localize telemetry labels while retaining raw numeric/device values. Parameters are substituted once and never treated as markup or translated content.
+`localization/en.json` is the canonical English message catalog, with English source text as the message ID. `localization/zh-Hans.json` and `localization/it.json` each have the same 662 keys, including device-graph, model-library and external-provider messages. Numbered placeholders (`{0}`, `{1}`, ...) support Chinese argument ordering. Nested mobile messages localize telemetry labels while retaining raw numeric/device values. Parameters are substituted once and never treated as markup or translated content.
 
 Edit the canonical catalogs, then run:
 

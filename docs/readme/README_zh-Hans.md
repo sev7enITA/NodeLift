@@ -10,6 +10,7 @@ NodeLift 是由 **Fabrizio Degni** 发起和开发的实验性项目。手机上
 - 先完成[电脑端入门](../wiki/Quickstart.md)，再连接 [Android](../wiki/Android.md) 或 [iPhone/iPad](../wiki/iOS-and-iPadOS.md)。详细技术指南目前以英语为主。
 - [模型与提供商](../wiki/Models-and-providers.md)、[本地化和验证](../LOCALIZATION.md)、[基准测试](../wiki/Benchmarking.md)。
 - [Wiki](https://github.com/sev7enITA/NodeLift/wiki)、[图片](../GALLERY.md)、[项目展示](https://www.fabriziodegni.com/NodeLift/)。
+- [设备关系图与贡献说明](../DEVICE-GRAPH.md)：硬件、历史遥测和已接受的移动端提案占比；该占比不代表计算利用率或加速比。
 
 Hugging Face 下载和直接导入支持完整的单文件 GGUF。OpenRouter 是可选的云端路径，会发送提示词且可能产生费用。LM Studio/oMLX 本地 API 路径与手机草稿推理分开，不会自动获得手机加速。
 

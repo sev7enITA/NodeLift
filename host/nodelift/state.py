@@ -52,6 +52,11 @@ class State:
                     id TEXT PRIMARY KEY, node TEXT NOT NULL, kind TEXT NOT NULL, state TEXT NOT NULL,
                     created REAL NOT NULL, started REAL, finished REAL, result TEXT);
             """)
+            # Legacy rows deliberately retain an unknown telemetry timestamp:
+            # last_seen also changes on authenticated probes and is not a sample.
+            db.execute("BEGIN IMMEDIATE")
+            if "capabilities_updated_at" not in {r["name"] for r in db.execute("PRAGMA table_info(nodes)")}:
+                db.execute("ALTER TABLE nodes ADD COLUMN capabilities_updated_at REAL")
         self.path.chmod(0o600)
 
     @contextmanager
@@ -82,7 +87,8 @@ class State:
             row = db.execute("DELETE FROM invites WHERE hash=? AND expires>? RETURNING hash", (digest(invite), time.time())).fetchone()
             if row is None:
                 raise PermissionError("invitation expired or already used")
-            db.execute("INSERT INTO nodes VALUES (?,?,?,?,?,0)", (node, digest(token), name.strip(), json.dumps(capabilities), time.time()))
+            now = time.time()
+            db.execute("INSERT INTO nodes (id,token_hash,name,capabilities,last_seen,revoked,capabilities_updated_at) VALUES (?,?,?,?,?,0,?)", (node, digest(token), name.strip(), json.dumps(capabilities), now, now))
         return {"node_id": node, "token": token, "protocol": 1}
 
     def authenticate(self, token):
@@ -100,7 +106,7 @@ class State:
         now = time.time()
         with self.db() as db:
             db.execute("BEGIN IMMEDIATE")
-            db.execute("UPDATE nodes SET capabilities=?,last_seen=? WHERE id=?", (json.dumps(clean_caps(caps)), now, node))
+            db.execute("UPDATE nodes SET capabilities=?,last_seen=?,capabilities_updated_at=? WHERE id=?", (json.dumps(clean_caps(caps)), now, now, node))
             db.execute("UPDATE jobs SET state='timed_out',finished=? WHERE node=? AND state='running' AND started<?", (now, node, now - 120))
             db.execute("UPDATE jobs SET state='expired',finished=? WHERE node=? AND state='queued' AND created<?", (now, node, now - 300))
             active = db.execute("SELECT id FROM jobs WHERE node=? AND state='running'", (node,)).fetchone()
@@ -163,7 +169,7 @@ class State:
         with self.db() as db:
             db.execute("UPDATE jobs SET state='timed_out',finished=? WHERE state='running' AND started<?", (now, now-120))
             db.execute("UPDATE jobs SET state='expired',finished=? WHERE state='queued' AND created<?", (now, now-300))
-            nodes = [dict(r) for r in db.execute("SELECT id,name,capabilities,last_seen,revoked FROM nodes ORDER BY name")]
+            nodes = [dict(r) for r in db.execute("SELECT id,name,capabilities,last_seen,revoked,capabilities_updated_at FROM nodes ORDER BY name")]
             jobs = [dict(r) for r in db.execute("SELECT * FROM jobs ORDER BY created DESC LIMIT 100")]
         for n in nodes:
             n["capabilities"] = json.loads(n["capabilities"])
@@ -171,4 +177,4 @@ class State:
         for j in jobs:
             if j["result"]:
                 j["result"] = json.loads(j["result"])
-        return {"protocol": 1, "version": "0.1.0", "inference_available": False, "nodes": nodes, "jobs": jobs}
+        return {"protocol": 1, "version": "0.1.0", "observed_at": now, "inference_available": False, "nodes": nodes, "jobs": jobs}

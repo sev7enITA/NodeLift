@@ -10,6 +10,7 @@ L’app usa l’inglese come lingua predefinita. Dal selettore **Language** puoi
 - [Inizia dal computer](../wiki/Quickstart.md), poi aggiungi [Android](../wiki/Android.md) o [iPhone/iPad](../wiki/iOS-and-iPadOS.md).
 - [Guida tecnica in italiano](../ENGINE_0_2.md), [lingue e verifiche](../LOCALIZATION.md), [modelli e provider](../wiki/Models-and-providers.md).
 - [Wiki](https://github.com/sev7enITA/NodeLift/wiki), [immagini](../GALLERY.md), [vetrina](https://www.fabriziodegni.com/NodeLift/).
+- [Grafo dei dispositivi e interpretazione del contributo](../DEVICE-GRAPH.md): hardware, dati storici e quota delle proposte mobili accettate, separati da utilizzo del calcolo e accelerazione.
 
 Hugging Face e l’importazione diretta gestiscono GGUF completi. OpenRouter è facoltativo, invia i prompt al cloud e può comportare costi. Le API locali di LM Studio/oMLX sono percorsi separati dalle proposte del telefono.
 

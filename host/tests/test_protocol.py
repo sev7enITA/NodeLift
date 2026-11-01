@@ -125,6 +125,20 @@ class ProtocolTests(unittest.TestCase):
         self.assertNotIn("token_hash",snapshot)
         self.assertFalse(self.state.snapshot()["inference_available"])
 
+    def test_host_inventory_is_only_returned_to_dashboard_admin(self):
+        c = http.client.HTTPConnection("127.0.0.1", self.admin.server_port, timeout=5)
+        try:
+            c.request("GET", "/admin/status", headers={"Authorization": "Bearer test-admin"})
+            response = c.getresponse()
+            value = json.loads(response.read())
+            self.assertEqual(response.status, 200)
+            self.assertEqual(value["host"]["id"], "host")
+            self.assertIsNone(value["host"]["available_memory_bytes"])
+            self.assertIsInstance(value["observed_at"], (int, float))
+            self.assertNotIn("hostname", value["host"])
+        finally:
+            c.close()
+
     def test_public_key_pin_is_sha256_base64(self):
         import base64
         self.assertEqual(len(base64.b64decode(public_key_pin(self.cert))),32)
