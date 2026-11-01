@@ -72,6 +72,24 @@ run('api=testApi;refreshEngine=async()=>{renderModelLibrary();};authenticated=tr
   run('engineSnapshot.library.transfer=null');handler=async()=>({});node('access-backend').value='local_api';node('local-provider-url').value='http://127.0.0.1:8000/v1';node('provider-key').value='synthetic-key';
   await submit('provider-access-form');assert.equal(node('provider-key').value,'');assert.equal(calls.at(-1).body.api_key,'synthetic-key');
   await node('clear-provider-key').onclick();assert.equal(calls.at(-1).body.api_key,'');await node('refresh-provider-models').onclick();assert.equal(calls.at(-1).route,'providers/models');
+  // Catalog retrieval belongs to the execution backend, not the separate access form.
+  run("engineSnapshot.config={target_model:'target.gguf',draft_model:'',n_ctx:2048,threads:4,gpu_layers:999};writeAppliedConfiguration();engineSnapshot.providers={models:{},openrouter_key_set:false,local_url:'http://127.0.0.1:8000/v1'}");
+  node('run-backend').value='openrouter';node('access-backend').value='local_api';node('prompt').value='Synthetic prompt';
+  run('renderModelLibrary();updateEngineControls()');
+  assert.equal(node('target-model').disabled,true,'external route does not use native configuration');
+  assert.equal(node('provider-run-controls').hidden,false);assert.match(node('provider-run-status').textContent,/session API key/);
+  handler=()=>new Promise(resolve=>finish=resolve);
+  const catalogRequest=node('load-run-models').onclick();const requestCount=calls.length;
+  await node('load-run-models').onclick();assert.equal(calls.length,requestCount,'catalog duplicate guarded');
+  assert.equal(calls.at(-1).body.backend,'openrouter','execution selection owns the catalog request');
+  run('renderModelLibrary()');assert.equal(node('load-run-models').disabled,true,'poll preserves busy state');
+  finish({});await catalogRequest;assert.match(node('provider-run-status').textContent,/returned no models/);
+  handler=async()=>{throw Error('Synthetic connection refused')};await node('load-run-models').onclick();assert.equal(node('provider-run-error').hidden,false);assert.match(node('provider-run-error').textContent,/connection refused/);
+  node('run-backend').value='local_api';node('run-backend').events.get('change')();assert.equal(node('provider-run-error').hidden,true,'error stays on its backend');
+  node('configure-run-provider').onclick();assert.equal(node('access-backend').value,'local_api');assert.equal(node('provider-settings').open,true);assert.equal(node('local-url-field').hidden,false);
+  handler=async()=>{run("engineSnapshot.providers.models.local_api=[{id:'fixture-model',name:'Fixture model'}]");return {}};
+  await node('load-run-models').onclick();node('provider-model').value='fixture-model';node('provider-model').events.get('change')();assert.equal(node('start-run').disabled,false,'change event immediately enables a configured local route');
+  node('run-backend').value='openrouter';node('run-backend').events.get('change')();node('provider-model').value='';run('updateEngineControls()');assert.equal(node('start-run').disabled,true,'missing cloud key/catalog cannot run');
   run('sessionReady(false)');for(const id of ['hf-search','hf-inspect','import-path-button','upload-model','save-provider-access'])assert.equal(node(id).disabled,true,id);
   console.log('PASS: model search/results, inspect/select/download, empty/error/retry, polling-safe duplicate guards, import, chunked upload/cancel, provider controls and session loss. Synthetic UI tests, not live network or inference.');
 })().catch(error=>{console.error(error);process.exitCode=1;});

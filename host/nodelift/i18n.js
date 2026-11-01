@@ -980,7 +980,18 @@ const NodeLiftChinese = {
   "● CONNECTED": "● 已连接",
   "● Session active": "● 会话已启用",
   "✓ Draft ready": "✓ 草稿模型已就绪",
-  "✓ Session active": "✓ 会话已启用"
+  "✓ Session active": "✓ 会话已启用",
+  "Local GGUF inventory from NodeLift, imported files and the LM Studio model folder. This is not a recommendation or compatibility check.": "来自 NodeLift、导入文件和 LM Studio 模型文件夹的本地 GGUF 清单。这不是模型推荐或兼容性验证。",
+  "Optional smaller model that proposes tokens for the main model to verify. Used only by Local proposals or Phone proposals; token vocabularies must match. Computer only needs no draft.": "可选的小模型，负责提出 token，由主模型验证。仅用于本地提案或手机提案；token 词表必须匹配。仅电脑模式无需草稿模型。",
+  "Load backend models": "加载后端模型",
+  "Configure selected backend": "配置所选后端",
+  "Loading backend models…": "正在加载后端模型…",
+  "Select a provider model after loading the catalog.": "加载目录后选择提供商模型。",
+  "Local server: {0}. It must be running; LM Studio commonly uses port 1234.": "本地服务器：{0}。服务器必须正在运行；LM Studio 通常使用端口 1234。",
+  "OpenRouter needs a session API key before generation. Loading its public catalog is free and does not generate text.": "OpenRouter 生成文本前需要会话 API 密钥。加载公共目录是免费的，不会生成文本。",
+  "OpenRouter access is configured for this session. Generation may incur charges.": "本次会话已配置 OpenRouter 访问权限。生成可能产生费用。",
+  "No catalog loaded. Choose Load backend models or configure the selected backend.": "尚未加载目录。请选择加载后端模型或配置所选后端。",
+  "The backend returned no models. Check its model server or catalog and retry.": "后端未返回模型。请检查模型服务器或目录，然后重试。"
 };
 const NodeLiftItalian = {
   "0 layers uses CPU. 999 requests the maximum GPU offload supported by the backend. Compatibility depends on the model.": "0 livelli usa la CPU. 999 richiede il massimo numero di livelli sulla GPU supportato dal backend. La compatibilità dipende dal modello.",
@@ -1962,7 +1973,18 @@ const NodeLiftItalian = {
   "● CONNECTED": "● CONNESSO",
   "● Session active": "● Sessione attiva",
   "✓ Draft ready": "✓ Draft pronto",
-  "✓ Session active": "✓ Sessione attiva"
+  "✓ Session active": "✓ Sessione attiva",
+  "Local GGUF inventory from NodeLift, imported files and the LM Studio model folder. This is not a recommendation or compatibility check.": "Inventario GGUF locale da NodeLift, file importati e cartella modelli di LM Studio. Non è una raccomandazione né una verifica di compatibilità.",
+  "Optional smaller model that proposes tokens for the main model to verify. Used only by Local proposals or Phone proposals; token vocabularies must match. Computer only needs no draft.": "Modello più piccolo e facoltativo che propone token da verificare con il modello principale. Usato solo con Proposte locali o Proposte dal telefono; i vocabolari dei token devono corrispondere. Solo computer non richiede un draft.",
+  "Load backend models": "Carica modelli del backend",
+  "Configure selected backend": "Configura backend selezionato",
+  "Loading backend models…": "Caricamento modelli del backend…",
+  "Select a provider model after loading the catalog.": "Seleziona un modello del provider dopo aver caricato il catalogo.",
+  "Local server: {0}. It must be running; LM Studio commonly uses port 1234.": "Server locale: {0}. Deve essere in esecuzione; LM Studio usa normalmente la porta 1234.",
+  "OpenRouter needs a session API key before generation. Loading its public catalog is free and does not generate text.": "OpenRouter richiede una chiave API di sessione per generare testo. Il caricamento del catalogo pubblico è gratuito e non genera testo.",
+  "OpenRouter access is configured for this session. Generation may incur charges.": "Accesso OpenRouter configurato per questa sessione. La generazione può comportare costi.",
+  "No catalog loaded. Choose Load backend models or configure the selected backend.": "Nessun catalogo caricato. Scegli Carica modelli del backend oppure configura il backend selezionato.",
+  "The backend returned no models. Check its model server or catalog and retry.": "Il backend non ha restituito modelli. Controlla il server o il catalogo e riprova."
 };
 const NodeLiftCatalogs = {"zh-Hans": NodeLiftChinese, it: NodeLiftItalian};
 'use strict';

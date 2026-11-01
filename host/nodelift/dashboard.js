@@ -335,13 +335,15 @@ function updateEngineControls() {
   const busy=!!engineSnapshot?.busy||actionPending;
   const configured=external?(!!$('provider-model').value&&($('run-backend').value!=='openrouter'||!!engineSnapshot?.providers?.openrouter_key_set)):!!engineSnapshot?.config?.target_model;
   const mode=external?'host':$('run-mode').value;
-  for(const id of ['target-model','draft-model','context-size','threads','gpu-layers'])$(id).disabled=!available||busy;
-  $('configure').disabled=!available||busy||!$('target-model').value||!configurationDirty;
-  $('revert-config').disabled=!available||busy;
+  for(const id of ['target-model','draft-model','context-size','threads','gpu-layers'])$(id).disabled=!available||busy||external;
+  $('configure').disabled=!available||busy||external||!$('target-model').value||!configurationDirty;
+  $('revert-config').disabled=!available||busy||external;
   $('run-backend').disabled=!authenticated||busy;
   $('provider-model').disabled=!authenticated||busy;
   $('provider-model-field').hidden=!external;
   $('provider-model-info').hidden=!external;
+  $('provider-run-controls').hidden=!external;
+  $('applied-config').hidden=external;
   $('run-mode').disabled=!available||busy||external;
   if(external)$('run-mode').value='host';
   $('remote-node').disabled=!available||busy||mode!=='remote_draft';

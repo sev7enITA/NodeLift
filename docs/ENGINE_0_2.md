@@ -1,6 +1,6 @@
-# NodeLift laboratory guide (companion 0.2.7)
+# NodeLift laboratory guide (companion 0.2.9)
 
-The native engine was introduced in 0.2.1. The current companion is **0.2.7 / build 9**, with desktop QR pairing, local diagnostic export, automatic update discovery, default English, Simplified Chinese and Italian. **No inference speedup on a physical phone has been demonstrated.** See the [changelog](../CHANGELOG.md) and [installation requirements](MOBILE_DOWNLOADS.md).
+The native engine was introduced in 0.2.1. The current companion is **0.2.9 / build 11**, with desktop QR pairing, local diagnostic export, automatic update discovery, default English, Simplified Chinese and Italian. **No inference speedup on a physical phone has been demonstrated.** See the [changelog](../CHANGELOG.md) and [installation requirements](MOBILE_DOWNLOADS.md).
 
 ## Computer
 
@@ -13,9 +13,19 @@ The native engine was introduced in 0.2.1. The current companion is **0.2.7 / bu
 
 Configuration stays in the private state directory. The dashboard token rotates on restart; the client API key is separate and persistent. Update and restart the host to use QR pairing.
 
+## Main model, draft and execution backend
+
+Main model lists local GGUF files discovered in NodeLift's `.models` directory, the user's `.lmstudio/models` directory and registered Model library imports/downloads. Entries are deduplicated by resolved path, not content hash. Two copies of the same weights can appear separately. This is an inventory, not a hardware recommendation, compatibility certification or a list of every Hugging Face model. Architecture support is checked when the native runtime loads the file.
+
+The main model generates and verifies output. A draft is an optional smaller model that proposes token blocks, used only by Local proposals or Phone proposals. The target and draft must share token-ID semantics. Computer only and Context reuse require no draft. The Qwen2.5 1.5B/0.5B pair is a control fixture, not a best-model recommendation.
+
+Execution backend selects where inference runs. Native uses the applied local GGUF configuration. OpenRouter and Local API use Provider model from that backend's own catalog; native configuration is disabled for those routes. Select **Load backend models** next to the execution selector to load the chosen backend's catalog. **Configure selected backend** opens the matching access panel and focuses its key or URL. Catalog errors are displayed beside the selector. OpenRouter public catalog retrieval requires no key and does not generate text, but cloud generation requires session access and may incur charges.
+
+For Local API, the server must already be running. Set its actual loopback URL, such as `http://127.0.0.1:1234/v1` for the common LM Studio configuration, save session access and load its models. A different port is not automatically discovered. Provider keys, URL configuration and catalogs are held in memory for this host session and must be set again after a restart. Connecting this route does not add NodeLift phone drafting to LM Studio.
+
 ## Android ARM64
 
-Version 0.2.7 retains the existing laboratory debug signing identity. Updating an installation requires the same signing key. Install over the existing app to preserve saved pairings; do not uninstall first. This is a laboratory build, not a Play Store release.
+Version 0.2.9 retains the existing laboratory debug signing identity. Updating an installation requires the same signing key. Install over the existing app to preserve saved pairings; do not uninstall first. This is a laboratory build, not a Play Store release.
 
 1. Install the updated APK and open NodeLift. For an existing pairing, choose Resume session. For a new pairing, choose **Add device** on the desktop and **Scan QR** on the phone, then confirm the computer address and fingerprint. See [QR pairing](QR_PAIRING.md).
 2. On the Mac, select `qwen2.5-1.5b-instruct-q4_k_m.gguf` as target and `qwen2.5-0.5b-instruct-q4_k_m.gguf` as draft; apply the configuration.

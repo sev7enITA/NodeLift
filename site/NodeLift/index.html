@@ -219,6 +219,11 @@
 <p><strong>Limits:</strong> The remote test node was emulated. Physical-phone inference/speedup, sustained thermals, capacity sharding, hybrid speculative checkpoints, HarmonyOS native worker and installed LM Studio GUI qualification remained open. The 27B upstream kernel result is not NodeLift hybrid-model support.</p>
 <p><a href="https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.1" target="_blank" rel="noopener noreferrer">Release assets and original notes ↗</a></p></div></details>
 <details class="release-entry"><summary><strong>Host, documentation and tooling updates</strong></summary><div class="release-body">
+<h3>2026-11-02: Execution backend catalog controls and model-selection guidance</h3><ul>
+<li>Add catalog loading and matching provider configuration next to Execution backend, with inline errors, empty-catalog guidance and immediate model-selection readiness. Native target/draft controls are disabled for external execution.</li>
+<li>Explain that Main model lists discovered/imported GGUF files, not recommended or certified-compatible models, and that draft models are optional token proposers for drafting strategies.</li>
+<li>Verify actual OpenRouter catalog selection without cloud generation and an end-to-end text response through an existing LM Studio local server. Focused control, model-library, graph and localization suites pass. Host/UI update only; mobile packages remain 0.2.9/build 11.</li>
+</ul>
 <h3>2026-11-01: Host functional QA with GLM and Gemini, fixes and physical-device limits</h3><ul>
 <li>Fix cancelled-download error feedback, canonical model provenance and small-model size labels. Localize additional native/validation errors and expose the recorded reason when a run falls back to the computer.</li>
 <li>Execute real browser model upload, cancellation, native run/stop/reconfiguration, gateway and localization checks with GLM 5.3 Max and Gemini 4 High providing mediated test plans and reviews. Publish a scoped audit and sanitized receipts; external models did not operate localhost.</li>

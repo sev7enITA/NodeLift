@@ -1,6 +1,8 @@
 'use strict';
 let hubInfo=null,hubRows=[],libraryMessage='',uploading=false,uploadCancelled=false,uploadController=null;
 const libraryBusy=new Set();
+let providerRunError=null;
+const loadedProviderCatalogs=new Set();
 let hubStatus='';
 function activeTransfer(){return ['transferring','verifying'].includes(engineSnapshot?.library?.transfer?.status);}
 function updateLibraryControls(){
@@ -13,6 +15,10 @@ function updateLibraryControls(){
   for(const button of $('hf-results').querySelectorAll('button'))button.disabled=!enabled||libraryBusy.has('hub');
   const download=$('hf-download');if(download){download.disabled=!enabled||active||uploading||libraryBusy.has('download')||!$('hf-file')?.value;download.setAttribute('aria-busy',String(libraryBusy.has('download')));}
   $('hf-status').textContent=t(hubStatus);
+  const providerLocked=!enabled||libraryBusy.has('provider')||!!engineSnapshot?.busy||actionPending;
+  for(const id of ['load-run-models','configure-run-provider'])$(id).disabled=providerLocked;
+  $('load-run-models').textContent=t(libraryBusy.has('provider')?'Loading backend models…':'Load backend models');
+  $('load-run-models').setAttribute('aria-busy',String(libraryBusy.has('provider')));
 }
 function libraryAction(label,fn){
   const button=el('button',t(label),'quiet');button.type='button';button.disabled=!authenticated;
@@ -29,9 +35,35 @@ const transferNames={transferring:'Transferring',verifying:'Verifying',completed
 function modelMessage(message){libraryMessage=message;$('transfer-status').textContent=t(message);}
 function renderProviderInfo(){
   const backend=$('run-backend').value,model=(engineSnapshot?.providers?.models?.[backend]||[]).find(m=>m.id===$('provider-model').value);
-  let label=model?t('Model: {0} · context: {1}',model.id,model.context_length??'-'):t('Refresh provider models first');
+  let label=model?t('Model: {0} · context: {1}',model.id,model.context_length??'-'):t('Select a provider model after loading the catalog.');
   if(backend==='openrouter'&&model){const p=model.pricing||{};const price=x=>typeof x==='string'&&x.trim()!==''&&Number.isFinite(Number(x))?number(Number(x)*1e6,4):'-';label+=' · '+t('USD / million tokens · input {0} · output {1}. Published rates may change; other charges may apply.',price(p.prompt),price(p.completion));}
   $('provider-model-info').textContent=label;
+}
+function renderProviderReadiness(){
+  const backend=$('run-backend').value,external=backend!=='native',providers=engineSnapshot?.providers||{};
+  $('provider-run-controls').hidden=!external;
+  const rows=providers.models?.[backend]||[];
+  const label=backend==='local_api'?t('Local server: {0}. It must be running; LM Studio commonly uses port 1234.',providers.local_url||'http://127.0.0.1:8000/v1'):t(providers.openrouter_key_set?'OpenRouter access is configured for this session. Generation may incur charges.':'OpenRouter needs a session API key before generation. Loading its public catalog is free and does not generate text.');
+  $('provider-run-status').textContent=label+' '+t(rows.length?'Select a provider model after loading the catalog.':loadedProviderCatalogs.has(backend)?'The backend returned no models. Check its model server or catalog and retry.':'No catalog loaded. Choose Load backend models or configure the selected backend.');
+  $('provider-run-error').hidden=!external||providerRunError?.backend!==backend;
+  $('provider-run-error').textContent=$('provider-run-error').hidden?'':t(providerRunError.message);
+}
+async function loadRunModels(){
+  if($('load-run-models').disabled||!authenticated)return;
+  const backend=$('run-backend').value;if(backend==='native')return;
+  providerRunError=null;renderProviderReadiness();
+  await modelTask(async()=>{
+    try{await api('providers/models',{backend});loadedProviderCatalogs.add(backend);await refreshEngine();}
+    catch(error){providerRunError={backend,message:error?.message||'Request failed'};}
+  },'provider');
+  renderProviderReadiness();updateEngineControls();
+}
+function configureRunProvider(){
+  if($('configure-run-provider').disabled||!authenticated)return;
+  const backend=$('run-backend').value;if(backend==='native')return;
+  $('access-backend').value=backend;$('provider-key').value='';$('provider-settings').open=true;
+  renderModelLibrary();$('provider-settings').scrollIntoView({block:'center'});
+  $(backend==='local_api'?'local-provider-url':'provider-key').focus({preventScroll:true});
 }
 function renderHub(){
   $('hf-results').replaceChildren();
@@ -68,7 +100,7 @@ function renderModelLibrary(){
   const access=$('access-backend').value;
   $('provider-access-status').textContent=t(providers[access==='openrouter'?'openrouter_key_set':'local_key_set']?'Key configured for this host session':'No key configured');
   $('local-url-field').hidden=access!=='local_api';
-  renderProviderInfo();updateLibraryControls();
+  renderProviderInfo();renderProviderReadiness();updateLibraryControls();
 }
 async function inspectHub(){
   hubInfo=null;renderHub();hubStatus='Inspecting model files…';updateLibraryControls();
@@ -102,12 +134,14 @@ $('upload-form').onsubmit=event=>{event.preventDefault();return modelTask(async(
   }catch(e){if(transfer)await api('models/cancel',{id:transfer.id}).catch(()=>{});if(!uploadCancelled)throw e;}
   finally{uploading=false;await refreshEngine();}
 },'upload');};
-$('provider-access-form').onsubmit=event=>{event.preventDefault();const secret=$('provider-key').value;$('provider-key').value='';return modelTask(async()=>{const backend=$('access-backend').value;await api('providers/configure',{backend,api_key:secret,base_url:backend==='local_api'?$('local-provider-url').value.trim():undefined});await refreshEngine();},'provider');};
+$('provider-access-form').onsubmit=event=>{event.preventDefault();const secret=$('provider-key').value;$('provider-key').value='';return modelTask(async()=>{const backend=$('access-backend').value;await api('providers/configure',{backend,api_key:secret,base_url:backend==='local_api'?$('local-provider-url').value.trim():undefined});loadedProviderCatalogs.delete(backend);if(providerRunError?.backend===backend)providerRunError=null;await refreshEngine();},'provider');};
 $('clear-provider-key').onclick=()=>modelTask(async()=>{await api('providers/configure',{backend:$('access-backend').value,api_key:''});$('provider-key').value='';await refreshEngine();},'provider');
-$('refresh-provider-models').onclick=()=>modelTask(async()=>{await api('providers/models',{backend:$('access-backend').value});await refreshEngine();},'provider');
+$('refresh-provider-models').onclick=()=>modelTask(async()=>{const backend=$('access-backend').value;await api('providers/models',{backend});loadedProviderCatalogs.add(backend);if(providerRunError?.backend===backend)providerRunError=null;await refreshEngine();},'provider');
 $('access-backend').onchange=()=>{$('provider-key').value='';renderModelLibrary();};
 $('run-backend').addEventListener('change',()=>{renderModelLibrary();updateEngineControls();});
-$('provider-model').addEventListener('change',renderProviderInfo);
+$('provider-model').addEventListener('change',()=>{renderProviderInfo();updateEngineControls();});
+$('load-run-models').onclick=loadRunModels;
+$('configure-run-provider').onclick=configureRunProvider;
 document.addEventListener('nodelift-languagechange',()=>{renderHub();renderModelLibrary();if($('model-error').dataset.message)$('model-error').textContent=t($('model-error').dataset.message);});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)$('provider-key').value='';});
 

@@ -1,0 +1,38 @@
+{
+  "scope": "Real desktop browser controls and live local LM Studio request; no phone delegation or cloud generation",
+  "openrouter_catalog_count": 433,
+  "openrouter_selection_and_rates_visible": true,
+  "openrouter_run_blocked_without_key": true,
+  "local_wrong_port_error_visible": true,
+  "selected_backend_configuration_focus_verified": true,
+  "local_model_count": 3,
+  "native_model_controls_disabled_for_external_route": true,
+  "local_runs": [
+    {
+      "backend": "local_api",
+      "provider_model": "qwen3.8-27b-uncensored",
+      "status": "completed",
+      "max_tokens": 128,
+      "text": "OK",
+      "metrics": {
+        "elapsed_seconds": 1.7339647079934366,
+        "ttft_ms": 1733.7067909538746,
+        "request_total_ms": 1733.963250007946,
+        "generated_tokens": 34
+      }
+    },
+    {
+      "backend": "local_api",
+      "provider_model": "qwen3.8-27b-uncensored",
+      "status": "completed",
+      "max_tokens": 16,
+      "text": "",
+      "metrics": {
+        "elapsed_seconds": 21.075762332999147,
+        "request_total_ms": 21075.76004101429,
+        "generated_tokens": 16
+      }
+    }
+  ],
+  "performance_benchmark": false
+}

@@ -978,5 +978,16 @@
   "● CONNECTED": "● CONNECTED",
   "● Session active": "● Session active",
   "✓ Draft ready": "✓ Draft ready",
-  "✓ Session active": "✓ Session active"
+  "✓ Session active": "✓ Session active",
+  "Local GGUF inventory from NodeLift, imported files and the LM Studio model folder. This is not a recommendation or compatibility check.": "Local GGUF inventory from NodeLift, imported files and the LM Studio model folder. This is not a recommendation or compatibility check.",
+  "Optional smaller model that proposes tokens for the main model to verify. Used only by Local proposals or Phone proposals; token vocabularies must match. Computer only needs no draft.": "Optional smaller model that proposes tokens for the main model to verify. Used only by Local proposals or Phone proposals; token vocabularies must match. Computer only needs no draft.",
+  "Load backend models": "Load backend models",
+  "Configure selected backend": "Configure selected backend",
+  "Loading backend models…": "Loading backend models…",
+  "Select a provider model after loading the catalog.": "Select a provider model after loading the catalog.",
+  "Local server: {0}. It must be running; LM Studio commonly uses port 1234.": "Local server: {0}. It must be running; LM Studio commonly uses port 1234.",
+  "OpenRouter needs a session API key before generation. Loading its public catalog is free and does not generate text.": "OpenRouter needs a session API key before generation. Loading its public catalog is free and does not generate text.",
+  "OpenRouter access is configured for this session. Generation may incur charges.": "OpenRouter access is configured for this session. Generation may incur charges.",
+  "No catalog loaded. Choose Load backend models or configure the selected backend.": "No catalog loaded. Choose Load backend models or configure the selected backend.",
+  "The backend returned no models. Check its model server or catalog and retry.": "The backend returned no models. Check its model server or catalog and retry."
 }

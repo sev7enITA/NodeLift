@@ -170,7 +170,7 @@
   }
 
   function renderInspector(node,run,c) {
-    const signature=JSON.stringify([node,run,c,state?.jobs,connected,NodeLiftI18n.language,telemetryAge(node)]);
+    const signature=JSON.stringify([node,run,c,state?.jobs,engine?.available,connected,NodeLiftI18n.language,telemetryAge(node)]);
     if(signature===detailSignature)return;detailSignature=signature;
     const area=$('graph-inspector'),focused=document.activeElement,focusedInside=area.contains(focused),focusedSection=focusedInside?focused.closest('details')?.dataset.section:null;
     const inspectorScroll=area.dataset.device===node.id?area.scrollTop:0;area.dataset.device=node.id;

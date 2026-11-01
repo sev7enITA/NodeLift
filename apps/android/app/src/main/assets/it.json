@@ -978,5 +978,16 @@
   "● CONNECTED": "● CONNESSO",
   "● Session active": "● Sessione attiva",
   "✓ Draft ready": "✓ Draft pronto",
-  "✓ Session active": "✓ Sessione attiva"
+  "✓ Session active": "✓ Sessione attiva",
+  "Local GGUF inventory from NodeLift, imported files and the LM Studio model folder. This is not a recommendation or compatibility check.": "Inventario GGUF locale da NodeLift, file importati e cartella modelli di LM Studio. Non è una raccomandazione né una verifica di compatibilità.",
+  "Optional smaller model that proposes tokens for the main model to verify. Used only by Local proposals or Phone proposals; token vocabularies must match. Computer only needs no draft.": "Modello più piccolo e facoltativo che propone token da verificare con il modello principale. Usato solo con Proposte locali o Proposte dal telefono; i vocabolari dei token devono corrispondere. Solo computer non richiede un draft.",
+  "Load backend models": "Carica modelli del backend",
+  "Configure selected backend": "Configura backend selezionato",
+  "Loading backend models…": "Caricamento modelli del backend…",
+  "Select a provider model after loading the catalog.": "Seleziona un modello del provider dopo aver caricato il catalogo.",
+  "Local server: {0}. It must be running; LM Studio commonly uses port 1234.": "Server locale: {0}. Deve essere in esecuzione; LM Studio usa normalmente la porta 1234.",
+  "OpenRouter needs a session API key before generation. Loading its public catalog is free and does not generate text.": "OpenRouter richiede una chiave API di sessione per generare testo. Il caricamento del catalogo pubblico è gratuito e non genera testo.",
+  "OpenRouter access is configured for this session. Generation may incur charges.": "Accesso OpenRouter configurato per questa sessione. La generazione può comportare costi.",
+  "No catalog loaded. Choose Load backend models or configure the selected backend.": "Nessun catalogo caricato. Scegli Carica modelli del backend oppure configura il backend selezionato.",
+  "The backend returned no models. Check its model server or catalog and retry.": "Il backend non ha restituito modelli. Controlla il server o il catalogo e riprova."
 }

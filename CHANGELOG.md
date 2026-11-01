@@ -123,6 +123,12 @@ Every published companion build has an entry below. Android packages are laborat
 
 ## Host, documentation and tooling updates
 
+### 2026-11-02: Execution backend catalog controls and model-selection guidance
+
+- Add catalog loading and matching provider configuration next to Execution backend, with inline errors, empty-catalog guidance and immediate model-selection readiness. Native target/draft controls are disabled for external execution.
+- Explain that Main model lists discovered/imported GGUF files, not recommended or certified-compatible models, and that draft models are optional token proposers for drafting strategies.
+- Verify actual OpenRouter catalog selection without cloud generation and an end-to-end text response through an existing LM Studio local server. Focused control, model-library, graph and localization suites pass. Host/UI update only; mobile packages remain 0.2.9/build 11.
+
 ### 2026-11-01: Host functional QA with GLM and Gemini, fixes and physical-device limits
 
 - Fix cancelled-download error feedback, canonical model provenance and small-model size labels. Localize additional native/validation errors and expose the recorded reason when a run falls back to the computer.
