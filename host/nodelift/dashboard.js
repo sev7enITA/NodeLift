@@ -93,6 +93,7 @@ function number(value, digits=2) { return typeof value === 'number' && Number.is
 function gib(value) { return typeof value === 'number' ? number(value / 1073741824,1) + ' GiB' : t("Not detected"); }
 function modelSize(bytes){return typeof bytes==='number'&&bytes>=0&&bytes<1073741824?number(bytes/1048576,1)+' MiB':gib(bytes);}
 function quantile(values,q) { const a=[...values].filter(Number.isFinite).sort((x,y)=>x-y); return a.length ? a[Math.ceil(q*a.length)-1] : null; }
+function contactDate(epoch) { return typeof epoch==='number'&&Number.isFinite(epoch)&&epoch>0?new Date(epoch*1000).toLocaleString(NodeLiftI18n.locale):t('Unknown'); }
 function when(epoch) { const d=new Date(epoch*1000); return Number.isFinite(d.getTime()) ? d.toLocaleString(NodeLiftI18n.locale,{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}) : '-'; }
 function empty(title, detail) { const box=el('div',undefined,'empty'); box.append(el('span','⌁','empty-symbol'),el('h3',title),el('p',detail)); return box; }
 function metric(list,label,value,small=false) { const wrap=el('div',undefined,'metric'); wrap.append(el('dt',label),el('dd',value,small?'small':''));list.append(wrap); }
@@ -113,16 +114,16 @@ function action(label,fn,{quiet=false,disabled=false,danger=false,nodeId,kind,bu
     if(b.disabled||!authenticated||pendingNodeActions.has(nodeId))return;
     const requestedAt=Date.now()/1000,priorJobs=(snapshot?.jobs||[]).filter(job=>job.node===nodeId&&job.kind===kind).map(job=>job.id??job.created);
     pendingNodeActions.set(nodeId,{kind,message:busyLabel});
-    nodeActionFeedback.set(nodeId,{state:'busy',message:busyLabel});clearError();renderNodes();
+    nodeActionFeedback.set(nodeId,{state:'busy',message:busyLabel});clearError();renderNodes();NodeLiftGraph.refresh?.();
     try{
       await fn();
-      if(authenticated){const message=kind==='revoke'?'Pairing revoked.':'Test requested. Follow its result in Measurements.';nodeActionFeedback.set(nodeId,{state:'success',kind,requestedAt,priorJobs,message});announceNodeAction(nodeId,message);}
+      if(authenticated){const message=kind==='revoke'?'Pairing revoked.':kind==='assessment'?'Assessment requested. Results appear in the device inspector.':'Test requested. Follow its result in Measurements.';nodeActionFeedback.set(nodeId,{state:'success',kind,requestedAt,priorJobs,message});announceNodeAction(nodeId,message);}
     }catch(e){
       if(authenticated){const message='Request failed. Review the error and try again.';nodeActionFeedback.set(nodeId,{state:'error',message});announceNodeAction(nodeId,message);}
       showError(e);
     }finally{
       pendingNodeActions.delete(nodeId);
-      if(authenticated&&snapshot)renderNodes();
+      if(authenticated&&snapshot){renderNodes();NodeLiftGraph.refresh?.();}
       else for(const button of $('nodes').querySelectorAll('button'))if(button.dataset.node===nodeId){button.removeAttribute('aria-busy');setButtonLabel(button,button.dataset.idleLabel);button.disabled=true;}
     }
   };
@@ -174,10 +175,19 @@ async function api(path, body) {
   } catch(e) { if(e.name==='AbortError')throw Error("The computer did not respond in time. Check that NodeLift is running.");throw e; }
   finally {clearTimeout(timer);}
 }
+function assessmentControl(node) {
+  const a=node.assessment||{},pending=(snapshot?.jobs||[]).some(job=>job.node===node.id&&['queued','running'].includes(job.state));
+  const busy=a.reason!=='needs_assessment'&&['pending','running'].includes(a.state);
+  const control=action(a.state&&a.reason!=='needs_assessment'?'Repeat basic assessment':'Assess device',async()=>{await api('assessment',{node_id:node.id});await refresh();},{nodeId:node.id,kind:'assessment',busyLabel:'Requesting assessment…',disabled:!node.online||!!node.revoked||pending||busy||!(node.capabilities?.supported_jobs||[]).some(kind=>['network','cpu'].includes(kind))});
+  control.classList.add('assessment-action');return control;
+}
+NodeLiftGraph.createAssessmentControl=assessmentControl;
 function renderNodes() {
   const nodes=snapshot.nodes||[];
   for(const [id,feedback] of nodeActionFeedback){
-    const finished=feedback.state==='success'&&feedback.kind!=='revoke'&&(snapshot.jobs||[]).some(job=>job.node===id&&job.kind===feedback.kind&&job.created>=feedback.requestedAt-1&&!(feedback.priorJobs||[]).includes(job.id??job.created)&&!['queued','running'].includes(job.state));
+    const assessmentForNode=nodes.find(node=>node.id===id)?.assessment;
+    const assessmentFinished=feedback.kind==='assessment'&&assessmentForNode&&!['pending','running'].includes(assessmentForNode.state)&&assessmentForNode.updated_at>=feedback.requestedAt-1;
+    const finished=feedback.state==='success'&&feedback.kind!=='revoke'&&(assessmentFinished||(snapshot.jobs||[]).some(job=>job.node===id&&job.kind===feedback.kind&&job.created>=feedback.requestedAt-1&&!(feedback.priorJobs||[]).includes(job.id??job.created)&&!['queued','running'].includes(job.state)));
     if(!nodes.some(node=>node.id===id)||finished){nodeActionFeedback.delete(id);if(nodeAnnouncement?.nodeId===id)announceNodeAction(null,null);}
   }
   const online=nodes.filter(n=>n.online&&!n.revoked).length;
@@ -185,7 +195,7 @@ function renderNodes() {
   $('nav-count').textContent=nodes.length;
   $('registered-label').textContent=nodes.length===1?t('1 paired device'):t('{0} paired devices',nodes.length);
   $('cluster-caption').textContent=online?t("Detected availability and capabilities"):t("Devices waiting to connect");
-  const signature=JSON.stringify(nodes.map(n=>({id:n.id,name:n.name,online:n.online,revoked:n.revoked,capabilities:n.capabilities})))+JSON.stringify((snapshot.jobs||[]).filter(j=>['queued','running'].includes(j.state)).map(j=>j.node))+JSON.stringify([...pendingNodeActions])+JSON.stringify([...nodeActionFeedback]);
+  const signature=JSON.stringify(nodes.map(n=>({id:n.id,name:n.name,online:n.online,revoked:n.revoked,capabilities:n.capabilities,ip_address:n.ip_address,last_seen:n.last_seen,last_paired_at:n.last_paired_at,session_started_at:n.session_started_at,assessment:n.assessment})))+JSON.stringify((snapshot.jobs||[]).filter(j=>['queued','running'].includes(j.state)).map(j=>j.node))+JSON.stringify([...pendingNodeActions])+JSON.stringify([...nodeActionFeedback]);
   if(signature===nodeSignature)return;
   nodeSignature=signature;
   const container=$('nodes'),focused=document.activeElement;
@@ -198,10 +208,14 @@ function renderNodes() {
     card.dataset.node=n.id;card.tabIndex=-1;
     const heading=el('div',undefined,'node-head'),icon=el('span',undefined,'device-symbol');icon.setAttribute('aria-hidden','true');
     const label=el('div',undefined,'node-heading');label.append(el('h3',n.name),el('small',c.os||t("System not detected")));
-    const state=el('div',undefined,'node-status');state.append(el('span',n.revoked?t("REVOKED"):n.online?t("● CONNECTED"):t("○ OFFLINE"),'state '+(n.online&&!n.revoked?'':'offline')),el('span',c.engine_ready?t("LLM READY"):t("QUALIFICATION"),'chip '+(c.engine_ready?'':'neutral')));heading.append(icon,label,state);card.append(heading);
+    const state=el('div',undefined,'node-status');state.append(el('span',n.revoked?t("REVOKED"):n.online?t("● CONNECTED"):t("○ OFFLINE"),'state '+(n.online&&!n.revoked?'':'offline')),el('span',c.engine_ready?t('Draft reported ready'):t('Draft not ready'),'chip '+(c.engine_ready?'':'neutral')));heading.append(icon,label,state);card.append(heading);
     const d=el('dl');metric(d,t("Physical RAM"),gib(c.physical_memory_bytes));metric(d,t(NodeLiftGraph.memoryScope(c))+"¹",gib(c.available_memory_bytes));metric(d,t("Thermal status"),t(c.thermal||"Not detected"));metric(d,t("Connection"),t(c.transport||"Not detected"),true);metric(d,t("Battery"),typeof c.battery_percent==='number'?number(c.battery_percent,0)+'%':t("Not detected"));metric(d,t('Companion'),c.app_version||t("Not detected"));card.append(d);
+    const connection=el('dl',undefined,'node-connections');metric(connection,t('Observed IP address'),n.ip_address||t('Not observed'));metric(connection,t('Last authenticated contact'),contactDate(n.last_seen),true);metric(connection,t('Latest session started'),contactDate(n.session_started_at),true);metric(connection,t('Last paired'),contactDate(n.last_paired_at),true);card.append(connection);
+    const a=n.assessment||{},presentation=NodeLiftGraph.assessmentPresentation?NodeLiftGraph.assessmentPresentation(a):{role:'Needs assessment',state:'Assessment not started'};
+    const assessment=el('div',undefined,'node-assessment');assessment.dataset.state=a.state||'unknown';assessment.append(el('strong',t(presentation.role)),el('span',t(presentation.state)));card.append(assessment);
     const footer=el('div',undefined,'node-footer'),buttons=el('div',undefined,'actions');
     const pending=(snapshot.jobs||[]).some(j=>j.node===n.id&&['queued','running'].includes(j.state));
+    buttons.append(assessmentControl(n));
     for(const [label,kind] of [["Quick network test",'network'],["Paced network test",'network_paced'],["CPU test",'cpu']])buttons.append(action(label,async()=>{await api('job',{node_id:n.id,kind});await refresh();},{nodeId:n.id,kind,busyLabel:"Requesting test…",disabled:!n.online||!!n.revoked||pending||!(c.supported_jobs||[]).includes(kind)}));
     const revoke=action("Revoke pairing",async()=>{await api('revoke',{node_id:n.id});await refresh();},{nodeId:n.id,kind:'revoke',busyLabel:"Revoking pairing…",quiet:true,danger:true,disabled:!!n.revoked});revoke.classList.add('revoke-action');footer.append(buttons,revoke);card.append(footer);
     const feedback=nodeActionFeedback.get(n.id);

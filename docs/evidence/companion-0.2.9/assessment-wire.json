@@ -1,0 +1,39 @@
+{
+  "scope": "TLS/HTTP assessment dispatch and synthetic-result UI fixture; not physical performance",
+  "job_order": [
+    "network",
+    "cpu",
+    "network",
+    "cpu"
+  ],
+  "assessment": {
+    "state": "completed",
+    "classification": "diagnostics_only",
+    "updated_at": 1793572800.137415,
+    "network": {
+      "rtt_p50_ms": 10,
+      "rtt_p95_ms": 10,
+      "samples": 1,
+      "download_mib_s": 10.0,
+      "upload_mib_s": 5.0
+    },
+    "cpu": {
+      "iterations_per_second": 66.66666666666667,
+      "ms": 1500
+    },
+    "llm_qualified": false,
+    "reason": "engine_not_ready",
+    "steps": [
+      {
+        "kind": "network",
+        "state": "completed"
+      },
+      {
+        "kind": "cpu",
+        "state": "completed"
+      }
+    ]
+  },
+  "peer_ip_observed": true,
+  "timestamps_observed": true
+}

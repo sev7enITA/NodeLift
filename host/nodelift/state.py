@@ -1,4 +1,5 @@
 """Persistent enrollment and bounded jobs. Only hashes of credentials are stored."""
+import ipaddress
 import hashlib
 import hmac
 import re
@@ -13,6 +14,13 @@ from pathlib import Path
 
 def digest(value):
     return hashlib.sha256(value.encode()).hexdigest()
+
+
+def observed_address(value):
+    # Supplied by the socket peer only, never device JSON or forwarding headers.
+    if value is None: return None
+    try: return str(ipaddress.ip_address(value))
+    except ValueError: raise ValueError("invalid observed peer address")
 
 
 def clean_caps(value):
@@ -39,7 +47,8 @@ def clean_caps(value):
 
 
 class State:
-    def __init__(self, folder):
+    def __init__(self, folder, automatic_assessment=False):
+        self.automatic_assessment = automatic_assessment
         self.folder = Path(folder)
         self.folder.mkdir(parents=True, exist_ok=True, mode=0o700)
         self.folder.chmod(0o700)
@@ -69,6 +78,14 @@ class State:
                 db.execute("ALTER TABLE jobs ADD COLUMN original_node TEXT")
             if "capabilities_updated_at" not in {r["name"] for r in db.execute("PRAGMA table_info(nodes)")}:
                 db.execute("ALTER TABLE nodes ADD COLUMN capabilities_updated_at REAL")
+            columns = {r["name"] for r in db.execute("PRAGMA table_info(nodes)")}
+            for name, sql_type in (("ip_address", "TEXT"), ("first_paired_at", "REAL"), ("last_paired_at", "REAL"), ("session_started_at", "REAL"), ("previous_session_ended_at", "REAL"), ("session_count", "INTEGER DEFAULT 0")):
+                if name not in columns: db.execute(f"ALTER TABLE nodes ADD COLUMN {name} {sql_type}")
+            db.execute("CREATE TABLE IF NOT EXISTS assessments (id TEXT PRIMARY KEY, node TEXT NOT NULL, created REAL NOT NULL, peer_address TEXT)")
+            if "peer_address" not in {r["name"] for r in db.execute("PRAGMA table_info(assessments)")}:
+                db.execute("ALTER TABLE assessments ADD COLUMN peer_address TEXT")
+            if "assessment_id" not in {r["name"] for r in db.execute("PRAGMA table_info(jobs)")}:
+                db.execute("ALTER TABLE jobs ADD COLUMN assessment_id TEXT")
         self.path.chmod(0o600)
 
     @contextmanager
@@ -104,7 +121,7 @@ class State:
         with self.db() as db:
             return db.execute("SELECT value FROM metadata WHERE key='pairing_scope'").fetchone()[0]
 
-    def pair(self, invite, name, caps, device_key=None, previous=None):
+    def pair(self, invite, name, caps, device_key=None, previous=None, peer_address=None):
         if not isinstance(invite, str) or len(invite) > 128 or not isinstance(name, str) or not name.strip() or len(name) > 80:
             raise ValueError("invalid enrollment")
         if device_key is not None and (not isinstance(device_key, str) or not re.fullmatch(r"[0-9a-f]{64}", device_key)):
@@ -113,6 +130,7 @@ class State:
                 or not isinstance(previous.get("node_id"), str) or not re.fullmatch(r"[0-9a-f]{24}", previous["node_id"])
                 or not isinstance(previous.get("proof"), str) or not re.fullmatch(r"[0-9a-f]{64}", previous["proof"])):
             raise ValueError("invalid continuity proof")
+        peer_address = observed_address(peer_address)
         capabilities = clean_caps(caps)
         identity = digest(device_key) if device_key else None
         node, token = secrets.token_hex(12), secrets.token_urlsafe(32)
@@ -147,6 +165,10 @@ class State:
             else:
                 db.execute("INSERT INTO nodes (id,token_hash,name,capabilities,last_seen,revoked,capabilities_updated_at,identity_hash) VALUES (?,?,?,?,?,0,?,?)",
                            (node, digest(token), name.strip(), json.dumps(capabilities), now, now, identity))
+            db.execute("UPDATE nodes SET ip_address=COALESCE(?,ip_address),first_paired_at=CASE WHEN ? THEN first_paired_at ELSE ? END,last_paired_at=?,previous_session_ended_at=?,session_started_at=?,session_count=COALESCE(session_count,0)+1 WHERE id=?",
+                       (peer_address, known is not None, now, now, known["last_seen"] if known else None, now, node))
+            if self.automatic_assessment and not known:
+                self._assessment(db, node, capabilities, now)
         return {"node_id": node, "token": token, "protocol": 1, "reused": known is not None}
 
     def merge_nodes(self, source, target, reason):
@@ -166,31 +188,76 @@ class State:
             db.execute("UPDATE jobs SET original_node=COALESCE(original_node,node),node=? WHERE node=?", (target, source))
             db.execute("INSERT INTO node_merges VALUES (?,?,?,?)", (source, target, time.time(), reason[:500]))
 
-    def authenticate(self, token):
+    def authenticate(self, token, peer_address=None):
+        peer_address = observed_address(peer_address)
         if not token or len(token) > 128:
             raise PermissionError("authentication required")
         with self.db() as db:
-            row = db.execute("SELECT id FROM nodes WHERE token_hash=? AND revoked=0", (digest(token),)).fetchone()
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute("SELECT id,last_seen,session_started_at FROM nodes WHERE token_hash=? AND revoked=0", (digest(token),)).fetchone()
             if row:
-                db.execute("UPDATE nodes SET last_seen=? WHERE id=?", (time.time(), row["id"]))
+                now = time.time()
+                if row["session_started_at"] is None or now-row["last_seen"] > 20:
+                    db.execute("UPDATE nodes SET previous_session_ended_at=?,session_started_at=?,session_count=COALESCE(session_count,0)+1 WHERE id=?", (row["last_seen"], now, row["id"]))
+                db.execute("UPDATE nodes SET last_seen=?,ip_address=COALESCE(?,ip_address) WHERE id=?", (now, peer_address, row["id"]))
         if row is None:
             raise PermissionError("device not authorized")
         return row["id"]
 
-    def heartbeat(self, node, caps):
+    def heartbeat(self, node, caps, allow_assessment=True):
         now = time.time()
         with self.db() as db:
             db.execute("BEGIN IMMEDIATE")
+            def response(job=None, reason=None):
+                latest=db.execute("SELECT id FROM assessments WHERE node=? ORDER BY created DESC,rowid DESC LIMIT 1",(node,)).fetchone()
+                progress={"phase":"none","reason":None}
+                if latest:
+                    steps=[dict(r) for r in db.execute("SELECT kind,state FROM jobs WHERE assessment_id=? ORDER BY rowid",(latest["id"],))]
+                    active=next((x for x in steps if x["state"]=="running"),None)
+                    if active:progress["phase"]=active["kind"]
+                    elif any(x["state"]=="queued" for x in steps):progress.update(phase="deferred" if reason else "pending",reason=reason or "waiting")
+                    elif not steps:progress["phase"]="unsupported"
+                    else:progress["phase"]="completed" if all(x["state"]=="completed" for x in steps) else "failed"
+                return {"job":{"id":job["id"],"kind":job["kind"]} if job else None,"protocol":1,"assessment":progress}
             db.execute("UPDATE nodes SET capabilities=?,last_seen=?,capabilities_updated_at=? WHERE id=?", (json.dumps(clean_caps(caps)), now, now, node))
-            db.execute("UPDATE jobs SET state='timed_out',finished=? WHERE node=? AND state='running' AND started<?", (now, node, now - 120))
-            db.execute("UPDATE jobs SET state='expired',finished=? WHERE node=? AND state='queued' AND created<?", (now, node, now - 300))
+            db.execute("UPDATE jobs SET state='timed_out',finished=? WHERE state='running' AND started<?", (now, now - 120))
+            db.execute("UPDATE jobs SET state='expired',finished=? WHERE state='queued' AND created<?", (now, now - 300))
             active = db.execute("SELECT id FROM jobs WHERE node=? AND state='running'", (node,)).fetchone()
             if active:
-                return {"job": None, "protocol": 1}
-            row = db.execute("SELECT id,kind FROM jobs WHERE node=? AND state='queued' ORDER BY created LIMIT 1", (node,)).fetchone()
+                return response()
+            row = db.execute("SELECT id,kind,assessment_id FROM jobs WHERE node=? AND state='queued' ORDER BY created,rowid LIMIT 1", (node,)).fetchone()
+            # Keep automatic assessments isolated from other diagnostic work.
+            # Manual jobs also wait while an assessment step is running.
+            if row and db.execute("SELECT 1 FROM jobs WHERE state='running' AND (? IS NOT NULL OR assessment_id IS NOT NULL)", (row["assessment_id"],)).fetchone():
+                return response(reason="other_work")
+            if row and row["assessment_id"] and (not allow_assessment or caps.get("thermal") in ("severe", "serious", "critical", "emergency", "shutdown") or (isinstance(caps.get("battery_percent"), (int,float)) and caps["battery_percent"] < 20)):
+                reason="host_busy" if not allow_assessment else "thermal" if caps.get("thermal") in ("severe","serious","critical","emergency","shutdown") else "low_battery"
+                return response(reason=reason)
             if row:
                 db.execute("UPDATE jobs SET state='running',started=? WHERE id=?", (now, row["id"]))
-        return {"job": dict(row) if row else None, "protocol": 1}
+            return response(row)
+
+    def _assessment(self, db, node, caps, now):
+        assessment = secrets.token_hex(12)
+        db.execute("INSERT INTO assessments (id,node,created,peer_address) VALUES (?,?,?,(SELECT ip_address FROM nodes WHERE id=?))", (assessment, node, now, node))
+        for kind in ("network", "cpu"):
+            if kind in caps.get("supported_jobs", []):
+                db.execute("INSERT INTO jobs (id,node,kind,state,created,assessment_id) VALUES (?,?,?,'queued',?,?)", (secrets.token_hex(12), node, kind, now, assessment))
+        return assessment
+
+    def assess(self, node):
+        now = time.time()
+        with self.db() as db:
+            db.execute("BEGIN IMMEDIATE")
+            peer = db.execute("SELECT capabilities,last_seen FROM nodes WHERE id=? AND revoked=0 AND merged_into IS NULL", (node,)).fetchone()
+            if not peer or now-peer["last_seen"] > 20:
+                raise ValueError("device is offline; open the companion")
+            db.execute("UPDATE jobs SET state='timed_out',finished=? WHERE node=? AND state='running' AND started<?", (now,node,now-120))
+            db.execute("UPDATE jobs SET state='expired',finished=? WHERE node=? AND state='queued' AND created<?", (now,node,now-300))
+            if db.execute("SELECT 1 FROM jobs WHERE node=? AND state IN ('queued','running')", (node,)).fetchone():
+                raise ValueError("a job is already pending")
+            self._assessment(db,node,json.loads(peer["capabilities"]),now)
+        return next(n["assessment"] for n in self.snapshot()["nodes"] if n["id"] == node)
 
     def queue(self, node, kind):
         if kind not in ("network", "network_paced", "cpu"):
@@ -244,11 +311,18 @@ class State:
         with self.db() as db:
             db.execute("UPDATE jobs SET state='timed_out',finished=? WHERE state='running' AND started<?", (now, now-120))
             db.execute("UPDATE jobs SET state='expired',finished=? WHERE state='queued' AND created<?", (now, now-300))
-            nodes = [dict(r) for r in db.execute("SELECT id,name,capabilities,last_seen,revoked,capabilities_updated_at FROM nodes WHERE merged_into IS NULL ORDER BY name")]
+            nodes = [dict(r) for r in db.execute("SELECT id,name,capabilities,last_seen,revoked,capabilities_updated_at,ip_address,first_paired_at,last_paired_at,session_started_at,previous_session_ended_at,session_count FROM nodes WHERE merged_into IS NULL ORDER BY name")]
             jobs = [dict(r) for r in db.execute("SELECT * FROM jobs ORDER BY created DESC LIMIT 100")]
+            assessments = {}
+            for n in nodes:
+                latest = db.execute("SELECT * FROM assessments WHERE node=? ORDER BY created DESC,rowid DESC LIMIT 1", (n["id"],)).fetchone()
+                steps = [dict(r) for r in db.execute("SELECT kind,state,finished,result FROM jobs WHERE assessment_id=?", (latest["id"],))] if latest else []
+                assessments[n["id"]] = (dict(latest) if latest else None, steps)
         for n in nodes:
             n["capabilities"] = json.loads(n["capabilities"])
             n["online"] = not n["revoked"] and now-n["last_seen"] <= 20
+            from .assessment import summarize
+            n["assessment"] = summarize(*assessments[n["id"]], n["capabilities"], n["ip_address"])
         for j in jobs:
             if j["result"]:
                 j["result"] = json.loads(j["result"])

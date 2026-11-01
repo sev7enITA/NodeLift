@@ -51,12 +51,13 @@ class Server(http.server.ThreadingHTTPServer):
     daemon_threads = True
     allow_reuse_address = True
 
-    def __init__(self, address, state, context=None, admin_token=None, ticket_factory=None, engine=None, client_token=None, pairing_network=None):
+    def __init__(self, address, state, context=None, admin_token=None, ticket_factory=None, engine=None, client_token=None, pairing_network=None, host_address=None):
         self.state = state
         self.context = context
         self.admin_token = admin_token
         self.ticket_factory = ticket_factory
         self.pairing_network = pairing_network
+        self.host_address = host_address
         self.engine = engine
         self.client_token = client_token
         self.slots = threading.BoundedSemaphore(32)
@@ -154,8 +155,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 return self.send(200, {"service": "NodeLift", "protocol": 1, "pairing_scope": self.server.state.pairing_scope()})
             if method == "POST" and path == "/v1/pair":
                 v = self.body()
-                return self.send(200, self.server.state.pair(v.get("invite"), v.get("name"), v.get("capabilities", {}), v.get("device_key"), v.get("previous")))
-            node = self.server.state.authenticate(self.bearer())
+                return self.send(200, self.server.state.pair(v.get("invite"), v.get("name"), v.get("capabilities", {}), v.get("device_key"), v.get("previous"), peer_address=self.client_address[0]))
+            node = self.server.state.authenticate(self.bearer(), peer_address=self.client_address[0])
             if self.server.engine:
                 if method == "GET" and path == "/v1/engine/poll":
                     return self.send(200, self.server.engine.mailbox.poll(node))
@@ -182,7 +183,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 data = self.body(raw=True)
                 return self.send(200, {"bytes": len(data)})
             if method == "POST" and path == "/v1/heartbeat":
-                return self.send(200, self.server.state.heartbeat(node, self.body()))
+                return self.send(200, self.server.state.heartbeat(node, self.body(), allow_assessment=not (self.server.engine and self.server.engine.status().get("busy"))))
             if method == "POST" and path == "/v1/result":
                 return self.send(200, self.server.state.finish(node, self.body()))
             self.send(404, {"error": "unknown endpoint"})
@@ -230,6 +231,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
             return self.send(405,{'error':'method not allowed'})
         if not secrets.compare_digest(self.bearer(), self.server.admin_token):
             raise PermissionError("open the dashboard link printed by NodeLift")
+        if method == "POST" and path == "/admin/assessment":
+            if self.server.engine and self.server.engine.status().get("busy"):
+                raise ValueError("engine is busy")
+            return self.send(200, self.server.state.assess(self.body().get("node_id")))
         if method == "GET" and path == "/admin/about":
             return self.send(200, {"version": __version__, "component": "host", "release_channel": "source-preview"})
         if self.server.engine:
@@ -254,7 +259,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             if method == 'POST' and path == '/admin/engine/run':return self.send(200,self.server.engine.start(self.body()))
             if method == 'POST' and path == '/admin/engine/stop':return self.send(200,self.server.engine.stop(self.body().get('run_id')))
         if method == "GET" and path == "/admin/status":
-            return self.send(200, {**self.server.state.snapshot(), "host": host_inventory()})
+            return self.send(200, {**self.server.state.snapshot(), "host": host_inventory(self.server.host_address() if self.server.host_address else None)})
         if method == "POST" and path == "/admin/invite":
             self.body()
             return self.send(200, self.server.ticket_factory())
@@ -396,7 +401,7 @@ def main():
                 raise ValueError()
         except ValueError:
             parser.error("use auto or the private LAN IPv4 address of this computer")
-    state = State(args.state)
+    state = State(args.state, automatic_assessment=True)
     from .engine import Controller
     engine = Controller(state)
     endpoint = PairingEndpoint(state, args.address, args.port, engine)
@@ -410,7 +415,7 @@ def main():
     else:
         client_token=secrets.token_urlsafe(32)
         with open(client_file,'w',opener=lambda p,f:os.open(p,f,0o600)) as stream:stream.write(client_token)
-    admin = Server(("127.0.0.1", args.dashboard_port), state, admin_token=admin_token, ticket_factory=endpoint.ticket, engine=engine,client_token=client_token, pairing_network=endpoint.network_ready)
+    admin = Server(("127.0.0.1", args.dashboard_port), state, admin_token=admin_token, ticket_factory=endpoint.ticket, engine=engine,client_token=client_token, pairing_network=endpoint.network_ready,host_address=lambda: endpoint.address if endpoint.network_ready() else None)
     threads = [threading.Thread(target=s.serve_forever, daemon=True) for s in (admin,)]
     for t in threads:
         t.start()

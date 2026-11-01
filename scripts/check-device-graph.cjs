@@ -82,3 +82,40 @@ assert.equal(edgeAppearance({id:'unselected',online:true},visualRun,remote).shar
 assert.equal(edgeAppearance(online,run('remote_draft',[]),contribution(null)).band,'unmeasured');
 assert.equal(edgeAppearance(online,visualRun,zero).width,2);
 console.log('Evidence-weighted links: live/historical/offline/fallback/unknown/zero distinctions passed.');
+
+// Capability/readiness and contribution are distinct; no run must not erase host responsibility.
+const {contributionStatus,assessmentPresentation}=require('../host/nodelift/graph.js');
+const hostNode={id:'host'},phoneNode={id:'synthetic-phone'},otherPhone={id:'other'};
+assert.equal(contributionStatus(hostNode,null),'Host available · select a native run');
+assert.equal(contributionStatus(phoneNode,null),'No run selected');
+assert.equal(contributionStatus(hostNode,run('host',[],{backend:'openrouter'})),'API coordination only · no local inference');
+assert.equal(contributionStatus(phoneNode,run('host',[],{backend:'local_api'})),'No phone delegation on this route');
+assert.equal(contributionStatus(otherPhone,run('remote_draft',[],{status:'running'})),'Not used in the selected run');
+assert.equal(contributionStatus(phoneNode,run('remote_draft',[],{status:'running'})),'Waiting for recorded output');
+assert.equal(contributionStatus(phoneNode,run('remote_draft',[],{status:'failed'})),'No token accounting recorded');
+assert.equal(contributionStatus(phoneNode,run('remote_draft',[block('remote_draft',1,0,4)])),'No accepted mobile proposals');
+assert.equal(contributionStatus(hostNode,run('remote_draft',[block('remote_draft',2,2,8)])),'Host evaluates every output token','zero host-origin share must not imply the host did no work');
+assert.equal(assessmentPresentation(null).role,'Needs assessment');
+assert.equal(assessmentPresentation({state:'pending'}).busy,true);
+assert.equal(assessmentPresentation({state:'running'}).state,'Assessment running');
+assert.equal(assessmentPresentation({state:'partial',classification:'needs_attention'}).role,'Needs attention');
+assert.equal(assessmentPresentation({state:'completed',classification:'draft_candidate'}).role,'Draft candidate');
+assert.equal(assessmentPresentation({state:'completed',classification:'draft_candidate'}).busy,false);
+console.log('Device assessment and contribution states: host verification, no-run, external route, not selected, missing accounting and measured zero passed.');
+
+const unrequested=assessmentPresentation({state:'pending',classification:'needs_assessment',reason:'needs_assessment'});
+assert.equal(unrequested.state,'Assessment not started');assert.equal(unrequested.busy,false,'legacy nodes with no assessment must remain assessable');
+assert.equal(unrequested.reason,'Run basic checks to identify useful roles for this device.');
+assert.equal(assessmentPresentation({state:'pending',reason:'waiting_for_device'}).busy,true);
+assert.equal(assessmentPresentation({state:'failed',reason:'network_failed'}).reason,'The network check did not complete. Review diagnostics before repeating the assessment.');
+assert.equal(assessmentPresentation({state:'failed',reason:'unknown_backend_code'}).reason,'Assessment details unavailable','internal reason codes are never exposed as untranslated prose');
+
+assert.equal(assessmentPresentation({state:'partial',classification:'needs_assessment',reason:'connection_changed'}).reason,'Connection address changed. Repeat the assessment on this connection.');
+
+// TTFT and total request duration use distinct recorded clocks, never inferred sums.
+const {timingEvidence}=require('../host/nodelift/graph.js');
+assert.deepEqual(timingEvidence({backend:'native',metrics:{ttft_ms:40,prefill_ms:30,load_ms:500,request_total_ms:760}}),{generationTtftMs:40,prefillMs:30,requestTotalMs:760});
+assert.deepEqual(timingEvidence({metrics:{ttft_ms:40,prefill_ms:30,load_ms:500,elapsed_seconds:.2}}),{generationTtftMs:40,prefillMs:30,requestTotalMs:null},'missing request duration must not be manufactured by adding load/prefill/generation');
+assert.deepEqual(timingEvidence({metrics:{ttft_ms:NaN,prefill_ms:-1,request_total_ms:Infinity}}),{generationTtftMs:null,prefillMs:null,requestTotalMs:null});
+assert.deepEqual(timingEvidence({backend:'openrouter',metrics:{ttft_ms:40,request_total_ms:760}}),{generationTtftMs:null,prefillMs:null,requestTotalMs:null},'external timings cannot acquire native clock definitions');
+assert.equal(timingEvidence({metrics:{ttft_ms:0}}).generationTtftMs,0);

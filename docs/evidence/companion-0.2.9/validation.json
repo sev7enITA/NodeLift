@@ -1,0 +1,27 @@
+{
+  "scope": "Local source/build checks and isolated browser plus synthetic TLS worker; no physical device UX qualification",
+  "host_tests": 115,
+  "javascript_suites": [
+    "localization",
+    "device-graph",
+    "control-states",
+    "model-library",
+    "pairing"
+  ],
+  "android_jvm_tests": 18,
+  "android_lint": {
+    "errors": 0,
+    "warnings": 17
+  },
+  "ios_arm64_unsigned_build": true,
+  "physical_screen_reader_tested": false,
+  "physical_large_font_tested": false,
+  "physical_llm_speedup_qualified": false,
+  "desktop_browser": [
+    "host role and IP/session",
+    "automatic assessment result",
+    "manual repeat queued/completed",
+    "English/Italian/Simplified Chinese rendering",
+    "bounded desktop inspector screenshot"
+  ]
+}

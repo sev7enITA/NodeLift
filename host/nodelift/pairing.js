@@ -20,7 +20,8 @@ const NodeLiftPairing = (() => {
   function mount({api,t,authenticated,error}) {
     const $=id=>document.getElementById(id);
     let ticket=null, epoch=0, timer=null, busy=false, polling=false, message='';
-    function erase(){ticket=null;clearInterval(timer);timer=null;$('ticket').value='';$('copy').disabled=true;$('pairing-qr').getContext('2d').clearRect(0,0,$('pairing-qr').width,$('pairing-qr').height);$('pairing-qr').hidden=true;$('pairing-identity').textContent='';$('pairing-manual').open=false;}
+    function identity(value){const el=$('pairing-identity'),host=new URL(value.url).host;el.textContent=t('Computer: {0} · Identity: {1}',host,value.sha256.match(/.{1,4}/g).join(' '));el.setAttribute('aria-label',t('Computer: {0} · Identity: {1}',host,Array.from(value.sha256).join(' ')));}
+    function erase(){ticket=null;clearInterval(timer);timer=null;$('ticket').value='';$('copy').disabled=true;$('pairing-qr').getContext('2d').clearRect(0,0,$('pairing-qr').width,$('pairing-qr').height);$('pairing-qr').hidden=true;$('pairing-identity').textContent='';$('pairing-identity').removeAttribute('aria-label');$('pairing-manual').open=false;}
     function clear(){epoch++;erase();$('pairing').hidden=true;}
     function say(key,...args){message=key;$('expiry').textContent=t(key,...args);}
     async function close(){const previous=ticket;clear();$('invite').focus();if(previous)try{await api('invite/revoke',{invite:previous.invite});}catch(_){error(Error('QR hidden. Revocation could not be confirmed; the invitation expires after 5 minutes.'));}}
@@ -43,14 +44,14 @@ const NodeLiftPairing = (() => {
         const next=await api('invite',{});
         if(stamp!==epoch || !authenticated()){try{await api('invite/revoke',{invite:next.invite});}catch(_){}return;}
         ticket=next;draw($('pairing-qr'),encode(next));$('ticket').value=JSON.stringify(next);$('copy').disabled=false;
-        $('pairing-identity').textContent=t('Computer: {0} · Identity: {1}',new URL(next.url).host,next.sha256.slice(0,16));
+        identity(next);
         $('pairing').hidden=false;await tick();if(ticket===next)timer=setInterval(tick,2000);
         $('pairing').scrollIntoView({behavior:'smooth',block:'center'});$('hide').focus({preventScroll:true});
       }catch(e){const failed=ticket;clear();if(failed)try{await api('invite/revoke',{invite:failed.invite});}catch(_){}error(e);}
       finally{busy=false;$('invite').disabled=!authenticated();$('renew-invite').disabled=false;}
     }
     async function copy(){if(!ticket || ticket.expires_at<=Date.now()/1000)return;try{await navigator.clipboard.writeText($('ticket').value);say('Copied');}catch(_){$('pairing-manual').open=true;$('ticket').select();error(Error('Select and copy the invitation manually.'));}}
-    document.addEventListener('nodelift-languagechange',()=>{if(ticket){$('pairing-identity').textContent=t('Computer: {0} · Identity: {1}',new URL(ticket.url).host,ticket.sha256.slice(0,16));tick();}else if(message)say(message);});
+    document.addEventListener('nodelift-languagechange',()=>{if(ticket){identity(ticket);tick();}else if(message)say(message);});
     window.addEventListener('pagehide',()=>{const previous=ticket;clear();if(previous)api('invite/revoke',{invite:previous.invite}).catch(()=>{});});
     return {open,close,clear,copy};
   }

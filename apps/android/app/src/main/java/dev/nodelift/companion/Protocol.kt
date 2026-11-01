@@ -43,7 +43,7 @@ data class Pairing(val url: String, val certificate: String, val sha256: String,
     }
 }
 
-class Client(val pairing: Pairing, var token: String = "", private val context: Context? = null) {
+class Client(val pairing: Pairing, var token: String = "", private val context: Context? = null, private val onAuthenticatedResponse: (() -> Unit)? = null) {
     @Volatile var lastConnectionId: String = ""
         private set
     private val factory = run {
@@ -120,6 +120,7 @@ class Client(val pairing: Pairing, var token: String = "", private val context: 
             } ?: byteArrayOf()
             require(status in 200..299) { if (status == 401) "Pairing expired or revoked. Create a new invitation." else "The computer rejected the request ($status)." }
             require(data.size <= 1048576) { "Response too large." }
+            if(token.isNotEmpty())onAuthenticatedResponse?.invoke()
             completed = true
             return data
         } finally { active = null; if (!completed) connection.disconnect() }

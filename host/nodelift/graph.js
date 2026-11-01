@@ -20,6 +20,29 @@
     if (!generated || (run.metrics?.generated_tokens !== undefined && run.metrics.generated_tokens !== generated)) return empty;
     return {...empty,measured:true,generated,mobile,host:generated-mobile,proposed,uncommitted:proposed-mobile,share:mobile/generated};
   }
+  function contributionStatus(node,run,c=contribution(run)) {
+    const host=node.id==='host';
+    if(!run)return host?'Host available · select a native run':'No run selected';
+    if(!c.applicable)return host?'API coordination only · no local inference':'No phone delegation on this route';
+    if(!host && (run.mode!=='remote_draft'||run.node_id!==node.id))return 'Not used in the selected run';
+    if(!c.measured)return ['queued','loading','running'].includes(run.status)?'Waiting for recorded output':'No token accounting recorded';
+    if(host)return 'Host evaluates every output token';
+    return c.mobile===0?'No accepted mobile proposals':'Accepted mobile proposals recorded';
+  }
+  function timingEvidence(run) {
+    const m=run?.metrics||{};
+    if(!run||(run.backend&&run.backend!=='native'))return {generationTtftMs:null,prefillMs:null,requestTotalMs:null};
+    // These clocks have distinct origins. Never synthesize an end-to-end TTFT.
+    return {generationTtftMs:finite(m.ttft_ms)?m.ttft_ms:null,prefillMs:finite(m.prefill_ms)?m.prefill_ms:null,requestTotalMs:finite(m.request_total_ms)?m.request_total_ms:null};
+  }
+  function assessmentPresentation(assessment) {
+    const a=assessment||{};
+    const states={pending:'Assessment queued',running:'Assessment running',completed:'Basic checks completed',partial:'Partial assessment',failed:'Assessment failed',unsupported:'Unsupported diagnostics'};
+    const roles={needs_assessment:'Needs assessment',diagnostics_only:'Diagnostics only',draft_candidate:'Draft candidate',needs_attention:'Needs attention'};
+    const reasons={connection_changed:'Connection address changed. Repeat the assessment on this connection.',needs_assessment:'Run basic checks to identify useful roles for this device.',assessment_running:'Network and CPU checks run one at a time.',waiting_for_device:'Waiting for device availability and safe battery and thermal conditions.',basic_complete:'Basic checks passed. Native inference usefulness still needs a matched comparison.',engine_not_ready:'Basic checks passed. Load and enable a draft before testing phone proposals.',unsupported_diagnostics:'This companion does not support the required basic checks.',network_failed:'The network check did not complete. Review diagnostics before repeating the assessment.',cpu_failed:'The CPU check did not complete. Review diagnostics before repeating the assessment.'};
+    const unrequested=a.reason==='needs_assessment';
+    return {state:unrequested?'Assessment not started':states[a.state]||'Assessment not started',role:roles[a.classification]||'Needs assessment',busy:!unrequested&&['pending','running'].includes(a.state),reason:a.reason?(reasons[a.reason]||'Assessment details unavailable'):null};
+  }
   // Orthogonal routes stay in the column gutters, never through preceding device cards.
   function edgePoints(host, peer, trunkY=host.top+host.height+30) {
     const center=host.left+host.width/2, gutter=peer.left-10, target=peer.top+peer.height/2;
@@ -68,7 +91,7 @@
     const flowing=status==='online'&&participant&&run.status==='running'&&last?.effective_mode==='remote_draft';
     return {status,participant,share,band,width:share===null?1.5:2+5*share,flowing};
   }
-  const logic={contribution,memoryScope,measurements,connectionState,connectionAfterUpdate,edgePoints,edgeAppearance};
+  const logic={contribution,contributionStatus,timingEvidence,assessmentPresentation,memoryScope,measurements,connectionState,connectionAfterUpdate,edgePoints,edgeAppearance};
   if (typeof module !== 'undefined' && module.exports) module.exports=logic;
   root.NodeLiftGraph=logic;
   if (typeof document === 'undefined')return;
@@ -105,7 +128,7 @@
     let button=buttons.get(node.id);
     if(!button){
       button=make('button','graph-device');button.type='button';button.dataset.device=node.id;
-      for(const cls of ['graph-device-kicker','graph-device-name','graph-device-spec','graph-device-role','graph-device-weight'])button.append(make('span',cls));
+      for(const cls of ['graph-device-kicker','graph-device-name','graph-device-spec','graph-device-role','graph-device-address','graph-device-weight'])button.append(make('span',cls));
       button.onclick=()=>{selected=node.id;detailSignature='';render();};
       buttons.set(node.id,button);
     }
@@ -116,7 +139,8 @@
     button.setAttribute('aria-controls','graph-inspector');
     const values=[host?tr('HOST / COORDINATOR')+(connected?'':' · '+tr('Contact unknown')):tr(deviceState(node)),host?tr('This computer'):node.name,
       [caps.model || tr('Hardware unknown'),bytes(caps.physical_memory_bytes)].join(' · '),tr(selectedRole(node,run)),
-      c.measured?(!host&&!participating?tr('Not the draft proposer in this run'):tr(host?'Host-origin tokens: {0}%':'Accepted mobile draft: {0}%',fmt(100*(host?c.host/c.generated:c.share)))):tr(c.applicable?'Contribution not measured':'Not applicable to this route')];
+      tr('IP: {0}',node.ip_address||tr('Not observed')),
+      !host&&participating&&c.measured?tr('Accepted mobile draft: {0}%',fmt(100*c.share)):tr(contributionStatus(node,run,c))];
     values.forEach((value,i)=>{if(button.children[i].textContent!==value)button.children[i].textContent=value;});
     return button;
   }
@@ -148,12 +172,48 @@
   function renderInspector(node,run,c) {
     const signature=JSON.stringify([node,run,c,state?.jobs,connected,NodeLiftI18n.language,telemetryAge(node)]);
     if(signature===detailSignature)return;detailSignature=signature;
-    const area=$('graph-inspector'),focusedSection=area.contains(document.activeElement)?document.activeElement.closest('details')?.dataset.section:null,open=new Set([...area.querySelectorAll('details[open]')].map(n=>n.dataset.section));
+    const area=$('graph-inspector'),focused=document.activeElement,focusedInside=area.contains(focused),focusedSection=focusedInside?focused.closest('details')?.dataset.section:null;
+    const inspectorScroll=area.dataset.device===node.id?area.scrollTop:0;area.dataset.device=node.id;
+    const focusedAssessment=focusedInside&&!!focused.closest('.graph-assessment'),open=new Set([...area.querySelectorAll('details[open]')].map(n=>n.dataset.section));
     const host=node.id==='host',caps=host?node:node.capabilities || {};
     area.replaceChildren();
     const heading=make('h3',null,host?tr('This computer'):node.name);heading.id='graph-device-title';
     area.append(make('p','micro',tr('DEVICE INSPECTOR')),heading,make('p','graph-inspector-role',tr(selectedRole(node,run))));
     const freshness=make('p','graph-freshness',telemetryAge(node));freshness.classList.toggle('stale',telemetryAge(node)!==tr('Recent telemetry')&&!host);area.append(freshness);
+    const connection=make('details','graph-connection-details graph-more');connection.dataset.section='connection';connection.open=open.has('connection');connection.append(make('summary',null,tr('Connection and sessions')));
+    const contacts=make('dl','graph-fields');
+    field(contacts,host?'Host LAN address':'Observed IP address',node.ip_address||tr('Not observed'));
+    field(contacts,host?'Host session started':'Latest session started',date(node.session_started_at??node.started_at));
+    if(!host){
+      field(contacts,'Last authenticated contact',date(node.last_seen));
+      field(contacts,'Previous session last contact',date(node.previous_session_ended_at));
+      field(contacts,'First paired',date(node.first_paired_at));field(contacts,'Last paired',date(node.last_paired_at));
+      field(contacts,'Observed sessions',finite(node.session_count)?fmt(node.session_count,0):tr('Unknown'));
+    }
+    connection.append(contacts);
+    if(!host)connection.append(notice('Session boundaries are inferred after a contact gap over 20 seconds. The IP is observed by this host, not a device identifier.'));
+    const assessment=make('section','graph-assessment');assessment.tabIndex=-1;assessment.append(make('h4',null,tr(host?'Host role and readiness':'Basic assessment')));
+    if(host){
+      assessment.append(make('p','assessment-title',tr(run&&c.applicable?'Target execution and verification':'Native target and verifier')),
+        notice('The host runs the main model and evaluates all native output. Phone token share never replaces this work.'));
+      assessment.append(notice(engine?.available?'Native backend detected. Select a completed native run to inspect timings.':'Native backend unavailable. Configure the host before benchmarking.'));
+    }else{
+      const a=node.assessment||{},presentation=assessmentPresentation(a);assessment.dataset.state=a.state||'unknown';
+      assessment.append(make('p','assessment-title',tr(presentation.role)),make('p','assessment-status',tr(presentation.state)));
+      const assessmentFields=make('dl','graph-fields');
+      field(assessmentFields,'Assessment updated',date(a.updated_at));
+      if(a.network){
+        field(assessmentFields,'HTTPS RTT p50',fmt(a.network.rtt_p50_ms,2)+' ms');field(assessmentFields,'HTTPS RTT p95',fmt(a.network.rtt_p95_ms,2)+' ms');
+        field(assessmentFields,'Host → device',fmt(a.network.download_mib_s,2)+' MiB/s');field(assessmentFields,'Device → host',fmt(a.network.upload_mib_s,2)+' MiB/s');
+      }
+      if(a.cpu)field(assessmentFields,'Synthetic CPU rate',fmt(a.cpu.iterations_per_second,0)+' '+tr('iterations/s'));
+      field(assessmentFields,'LLM usefulness',tr('Requires a matched native inference comparison'));
+      assessment.append(assessmentFields);
+      if(presentation.reason)assessment.append(make('p','graph-note',tr(presentation.reason)));
+      assessment.append(notice('Initial checks measure this connection and a short CPU task. They do not predict tokens/s, pool RAM or prove a speedup.'));
+      if(typeof root.NodeLiftGraph.createAssessmentControl==='function')assessment.append(root.NodeLiftGraph.createAssessmentControl(node));
+    }
+    area.append(assessment,connection);
     const hardware=make('dl','graph-fields');
     field(hardware,'Model',caps.model || tr('Not detected'));field(hardware,'Processor',caps.processor || tr('Not reported'));
     field(hardware,'System',caps.os || tr('Not detected'));field(hardware,'CPU cores',finite(caps.cpu_cores)?fmt(caps.cpu_cores,0):tr('Not reported'));
@@ -161,7 +221,7 @@
     field(hardware,host?'System available memory':memoryScope(caps),bytes(caps.available_memory_bytes));
     if(!host && /android/i.test(caps.os || ''))field(hardware,'Process memory · PSS',bytes(caps.process_memory_bytes));
     if(!host){field(hardware,'Thermal status',tr(caps.thermal || 'Not reported'));field(hardware,'Battery',finite(caps.battery_percent)?fmt(caps.battery_percent,0)+'%':tr('Not reported'));field(hardware,'Connection',tr(caps.transport || 'Not reported'));field(hardware,'Companion',caps.app_version || tr('Not reported'));}
-    area.append(hardware);
+    const hardwareDetails=make('details','graph-more');hardwareDetails.dataset.section='hardware';hardwareDetails.open=open.has('hardware');hardwareDetails.append(make('summary',null,tr('Hardware inventory')),hardware);area.append(hardwareDetails);
     const impact=make('section','graph-impact');impact.append(make('h4',null,tr('Contribution in selected run')));
     const impactFields=make('dl','graph-fields');
     if(c.measured){
@@ -170,13 +230,23 @@
       else {
         field(impactFields,host?'Host-origin token IDs':'Accepted draft token IDs',fmt(host?c.host:participating?c.mobile:0,0)+' / '+fmt(c.generated,0));
         field(impactFields,host?'Host-origin token share':'Accepted mobile draft share',fmt(100*(host?c.host/c.generated:participating?c.share:0))+'%');
-        if(participating){field(impactFields,'Submitted draft tokens',fmt(c.proposed,0));field(impactFields,'Draft tokens not committed',fmt(c.uncommitted,0));}
+        if(participating){field(impactFields,'Submitted draft tokens',fmt(c.proposed,0));field(impactFields,'Draft tokens not committed',fmt(c.uncommitted,0));field(impactFields,'Accepted / submitted',c.proposed>0?fmt(100*c.mobile/c.proposed)+'%':tr('No proposals submitted'));}
       }
-    }else field(impactFields,'Token attribution',tr(c.applicable?'Not measured':'Not applicable to this route'));
-    if(host && c.applicable)field(impactFields,'Verification scope',tr('All committed output tokens'));
+    }else field(impactFields,'Token attribution',tr(contributionStatus(node,run,c)));
+    if(host && c.applicable){field(impactFields,'Host responsibility',tr('Main model execution and output verification'));if(c.measured)field(impactFields,'Evaluated output token IDs',fmt(c.generated,0));}
     if(run?.mode==='remote_draft' && c.nodeId===node.id && c.applicable)field(impactFields,'Combined remote wait',finite(run.metrics?.remote_wait_ms)?fmt(run.metrics.remote_wait_ms/1000,2)+' s':tr('Not measured'));
     field(impactFields,'Measured acceleration',tr('No matched baseline in this view'));
-    impact.append(impactFields,notice('Token attribution includes EOS IDs. The host verifies every accepted mobile proposal. This is not a compute share or a speedup.'));area.append(impact);
+    if(run && c.applicable){
+      const timing=timingEvidence(run);
+      field(impactFields,'Generation time to first token',timing.generationTtftMs!==null?fmt(timing.generationTtftMs,1)+' ms':tr('Not recorded'));
+      field(impactFields,'Whole-run prefill time',timing.prefillMs!==null?fmt(timing.prefillMs,1)+' ms':tr('Not recorded'));
+      if(timing.requestTotalMs!==null)field(impactFields,'Total engine request duration',fmt(timing.requestTotalMs,1)+' ms');
+      field(impactFields,'Whole-run fallback count',finite(run.metrics?.fallbacks)?fmt(run.metrics.fallbacks,0):tr('Not recorded'));
+    }
+    if(run?.fallback_reason)field(impactFields,'Fallback reason',tr(run.fallback_reason));
+    impact.append(impactFields);
+    if(run && c.applicable)impact.append(notice('Generation time to first token excludes model loading, tokenization and setup. Total engine request duration is a separate measurement, not end-to-end time to first token.'));
+    impact.append(notice('Token attribution includes EOS IDs. The host verifies every accepted mobile proposal. This is not a compute share or a speedup.'));area.append(impact);
     const details=make('details','graph-more');details.dataset.section='measurements';details.open=open.has('measurements');details.append(make('summary',null,tr('Measurements and freshness')));
     const measured=make('dl','graph-fields');
     field(measured,host?'Inventory sampled':'Last contact',date(host?node.sampled_at:node.last_seen));
@@ -200,7 +270,9 @@
       limits.append(notice('Battery, thermal and memory policies remain enforced by the companion. Readiness is self-reported, not a measured performance guarantee.'));
     }
     limits.append(notice('GPU/NPU utilization, energy and separate phone compute time are not measured.'));area.append(limits);
+    area.scrollTop=inspectorScroll;
     if(focusedSection)area.querySelector('details[data-section="'+focusedSection+'"] summary')?.focus({preventScroll:true});
+    else if(focusedAssessment){const control=assessment.querySelector('[data-action="assessment"]');(control&&!control.disabled?control:assessment).focus({preventScroll:true});}
   }
   function render() {
     if(!state)return;
@@ -231,8 +303,8 @@
     let model=run?.provider_model || run?.identity?.config?.target_model;
     if(model)model=String(model).split(/[\\/]/).pop();
     set('graph-route',run?(run.backend&&run.backend!=='native'?tr('External route · no phone delegation'):tr('Native target → verification'))+(model?' · '+model:''):tr('Select a device to inspect capabilities and evidence.'));
-    set('graph-share-value',c.measured?fmt(c.share*100)+'%':tr(c.applicable?'Not measured':'Not applicable'));
-    set('graph-token-total',c.measured?tr('{0} mobile / {1} committed token IDs',fmt(c.mobile,0),fmt(c.generated,0)):tr('No measured mobile contribution in this view.'));
+    set('graph-share-value',c.measured?fmt(c.share*100)+'%':tr(!run?'No run':c.applicable?'No output data':'Not applicable'));
+    set('graph-token-total',c.measured?tr('{0} mobile / {1} committed token IDs',fmt(c.mobile,0),fmt(c.generated,0)):tr(!run?'Select a native run to measure token contribution.':c.applicable?'No valid token accounting has been recorded for this run.':'This external route does not use phone inference.'));
     $('graph-share-fill').style.width=c.measured?(c.share*100)+'%':'0%';
     $('graph-share-track').classList.toggle('unmeasured',!c.measured);
     set('graph-decode',c.applicable&&finite(run?.metrics?.tokens_per_second)?fmt(run.metrics.tokens_per_second,2)+' '+tr('token IDs/s'):tr('Not measured'));
@@ -245,6 +317,7 @@
     requestAnimationFrame(drawEdges);
   }
   root.NodeLiftGraph.update=function(snapshot,engineSnapshot,statusFetched=false) {state=snapshot;engine=engineSnapshot;connected=connectionAfterUpdate(connected,statusFetched);render();};
+  root.NodeLiftGraph.refresh=function(){detailSignature='';render();};
   root.NodeLiftGraph.disconnected=function(){connected=false;detailSignature='';render();};
   root.NodeLiftGraph.clear=function(){
     state=null;engine=null;connected=false;selected='host';runChoice='latest';optionsSignature='';detailSignature='';announcedSelection=null;buttons.clear();

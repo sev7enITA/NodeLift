@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
 const root=path.join(__dirname,'../host/nodelift');
 const nodes=new Map();
-function node(id){if(!nodes.has(id))nodes.set(id,{hidden:true,value:'',textContent:'',disabled:false,open:false,focus(){},scrollIntoView(){},getContext(){return {fillRect(){},clearRect(){}};}});return nodes.get(id);}
+function node(id){if(!nodes.has(id))nodes.set(id,{hidden:true,value:'',textContent:'',disabled:false,open:false,focus(){},setAttribute(k,v){this[k]=v},removeAttribute(k){delete this[k]},scrollIntoView(){},getContext(){return {fillRect(){},clearRect(){}};}});return nodes.get(id);}
 let now=1800000000000,timer=null,handler={};
 const context=vm.createContext({URL,console,Date:class extends Date{static now(){return now}},document:{getElementById:node,addEventListener:(e,f)=>handler[e]=f},window:{addEventListener(){}},setInterval:f=>(timer=f,1),clearInterval:()=>timer=null,navigator:{clipboard:{writeText:async()=>{}}}});
 vm.runInContext(fs.readFileSync(path.join(root,'vendor/qrcodegen.js'),'utf8')+'\n'+fs.readFileSync(path.join(root,'pairing.js'),'utf8')+'\nthis.pairing=NodeLiftPairing;',context);
@@ -12,7 +12,7 @@ let pending=true,calls=[],deferred=null,errors=[],revokeFails=false;
 const api=async(route,body)=>{calls.push([route,body]);if(route==='invite')return deferred?await deferred:structuredClone(fixture);if(route==='invite/status')return {pending};if(revokeFails)throw Error('offline');return {pending:false};};
 const controller=context.pairing.mount({api,t:(s,...args)=>s.replace(/\{(\d+)\}/g,(_,i)=>args[i]),authenticated:()=>true,error:e=>errors.push(e.message)});
 (async()=>{
- await controller.open();assert.equal(node('pairing').hidden,false);assert.equal(node('pairing-qr').hidden,false);assert.ok(node('ticket').value);
+ await controller.open();assert.equal(node('pairing').hidden,false);assert.equal(node('pairing-qr').hidden,false);assert.ok(node('ticket').value);assert.ok(node('pairing-identity').textContent.endsWith(Array(16).fill('bbbb').join(' ')));assert.ok(node('pairing-identity')['aria-label'].endsWith(Array(64).fill('b').join(' ')));handler['nodelift-languagechange']();assert.ok(node('pairing-identity').textContent.endsWith(Array(16).fill('bbbb').join(' ')));
  await controller.close();assert.equal(node('pairing').hidden,true);assert.equal(node('ticket').value,'');assert.equal(node('pairing-qr').hidden,true);assert.equal(calls.at(-1)[0],'invite/revoke');
  await controller.open();pending=false;await timer();assert.equal(node('ticket').value,'');assert.equal(node('pairing-qr').hidden,true);assert.match(node('expiry').textContent,/used or closed/);
  pending=true;await controller.open();now+=301000;await timer();assert.match(node('expiry').textContent,/expired/);assert.equal(node('ticket').value,'');now-=301000;

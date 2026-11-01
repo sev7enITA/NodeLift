@@ -10,7 +10,16 @@ import CryptoKit
     }
     @Published var status: Message = "Ready to pair"
     @Published var running = false
-    @Published var connected = false
+    @Published private var transportConnected = false
+    var connected: Bool {
+        get { transportConnected && (contactAgeSeconds.map { $0 < 20 } ?? false) }
+        set { transportConnected=newValue }
+    }
+    var contactAgeSeconds: Int? { client?.contactAgeSeconds }
+    @Published private(set) var connectionTick = 0
+    private var freshnessTimer: Timer?
+    @Published var assessmentStatus: Message = ""
+    @Published var diagnosticRunning = false
     @Published var lastResult: Message = "No measurements yet"
     @Published var telemetry: Message = ""
     @Published var hasSavedSession = Vault.load() != nil
@@ -34,6 +43,9 @@ import CryptoKit
 
     init() {
         UIDevice.current.isBatteryMonitoringEnabled = true
+        freshnessTimer=Timer.scheduledTimer(withTimeInterval:1,repeats:true) { [weak self] _ in
+            Task { @MainActor in self?.connectionTick += 1 }
+        }
         monitor.pathUpdateHandler = { [weak self] path in
             let name = path.usesInterfaceType(.wifi) ? "Wi-Fi / hotspot" : path.usesInterfaceType(.wiredEthernet) ? "Ethernet / USB" : path.usesInterfaceType(.cellular) ? "cellular" : "other"
             Task { @MainActor in self?.transport = name }
@@ -47,7 +59,27 @@ import CryptoKit
         }
         _ = capabilities()
     }
-    deinit {if let thermalObserver {NotificationCenter.default.removeObserver(thermalObserver)}}
+    deinit {freshnessTimer?.invalidate();if let thermalObserver {NotificationCenter.default.removeObserver(thermalObserver)}}
+    private func updateAssessment(_ value:[String:Any]?) {
+        let key:String
+        switch value?["phase"] as? String {
+        case "network":key="Assessment: checking the connection"
+        case "cpu":key="Assessment: calibrating the CPU"
+        case "pending":key="Assessment queued by your computer"
+        case "deferred":
+            switch value?["reason"] as? String {
+            case "low_battery":key="Assessment waiting: battery below 20%"
+            case "thermal":key="Assessment waiting: let the device cool down"
+            case "host_busy":key="Assessment waiting: your computer is busy"
+            default:key="Assessment waiting: another diagnostic is running"
+            }
+        case "completed":key="Basic checks finished. LLM usefulness still needs testing."
+        case "failed":key="Assessment incomplete. Check Activity and the desktop results."
+        case "unsupported":key="Automatic diagnostics are not supported by this companion."
+        default:key=""
+        }
+        assessmentStatus=Message(key)
+    }
     func capabilities() -> [String: Any] {
         let info = ProcessInfo.processInfo
         let thermal: String
@@ -162,10 +194,13 @@ import CryptoKit
                             lastHeartbeat=ProcessInfo.processInfo.systemUptime
                             try Task.checkCancellation()
                             guard generation == current else { return }
+                            updateAssessment(value["assessment"] as? [String:Any])
                             if !connected {Diagnostics.shared.record(.sessionConnected)}
                             connected=true; status="Connected · waiting for work"
                         }
                         if let job=value["job"] as? [String:Any], let id=job["id"] as? String, let kind=job["kind"] as? String {
+                            diagnosticRunning=true
+                            defer { if generation == current { diagnosticRunning=false } }
                             status = kind.hasPrefix("network") ? "Measuring network…" : "Running synthetic CPU calibration…"
                             let result = await Benchmarks.run(client:c,id:id,kind:kind)
                             try Task.checkCancellation()
@@ -198,7 +233,7 @@ import CryptoKit
     func pause() {
         if running {Diagnostics.shared.record(.sessionStop)}
         generation = UUID()
-        task?.cancel();draft?.cancel();draft=nil;client?.cancel();client=nil;running=false;connected=false
+        task?.cancel();draft?.cancel();draft=nil;client?.cancel();client=nil;running=false;connected=false;diagnosticRunning=false;assessmentStatus=""
         engineStatus="Engine paused · resume with the app open"
         status="Paused · no delegated work"
     }

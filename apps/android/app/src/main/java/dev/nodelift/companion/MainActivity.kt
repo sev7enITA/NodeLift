@@ -37,6 +37,18 @@ class MainActivity : Activity() {
     private lateinit var busyIndicator: ProgressBar
     private lateinit var engineProgress: ProgressBar
     private lateinit var supportNotice: TextView
+    private lateinit var homeAction: Button
+    private lateinit var nextStep: TextView
+    private lateinit var activityFeedback: TextView
+    private lateinit var draftSummary: TextView
+    private lateinit var contactAge: TextView
+    private lateinit var pairedComputer: TextView
+    private lateinit var assessment: TextView
+    private lateinit var modelSetupHeading: TextView
+    private lateinit var draftCard: LinearLayout
+    private val pages = mutableListOf<View>()
+    private val navigation = mutableListOf<Button>()
+    private var selectedPage = 0
     private var syncingSwitch=false
     private var starting=false
     private var stopping=false
@@ -64,13 +76,24 @@ class MainActivity : Activity() {
         if(starting && SystemClock.elapsedRealtime()-startedAt>15000) {
             starting=false;NodeService.status=ui("Connection did not start. Try again.")
         }
-        val saved=Vault.load(this)!=null
+        val savedSession=Vault.load(this)
+        val saved=savedSession!=null
+        val computer=try{savedSession?.optJSONObject("pairing")?.optString("url")?.let{java.net.URL(it).host}}catch(_:Exception){null}
+        setTextIfChanged(pairedComputer,if(!computer.isNullOrBlank())t("Paired computer: {0}",computer) else "")
+        pairedComputer.visibility=if(computer.isNullOrBlank())View.GONE else View.VISIBLE
+        draftCard.visibility=if(saved)View.VISIBLE else View.GONE
         val busy=starting || stopping || (running && !NodeService.connected)
         val loading=NodeService.modelLoading || NodeService.downloadRequested.get()
-        state.text=NodeService.status.render(this)
+        val assessing=NodeService.diagnosticRunning
+        val assessmentText=NodeService.assessmentStatus.render(this)
+        setTextIfChanged(assessment,assessmentText)
+        assessment.visibility=if(assessmentText.isBlank())View.GONE else View.VISIBLE
+        val age=NodeService.contactAgeSeconds
+        setTextIfChanged(state,if(running && age!=null && age>=20)t("Waiting for a recent response from the computer") else NodeService.status.render(this))
+        setTextIfChanged(contactAge,if(age!=null)t("Last response: {0} s ago",age) else t("No response yet"))
         info.text=NodeService.telemetry.render(this).ifEmpty { "${Build.MANUFACTURER} ${Build.MODEL}\nAndroid ${Build.VERSION.RELEASE}" }
         result.text=NodeService.lastResult.render(this)
-        sessionBadge.text=t(when {stopping->"Pausing…";busy->"Connecting…";running && NodeService.connected->"● Session active";saved->"○ Session paused";else->"○ Not paired"})
+        setTextIfChanged(sessionBadge,t(when {stopping->"Pausing…";running && age!=null && age>=20->"Connection needs checking";busy->"Connecting…";running && NodeService.connected->"● Session active";saved->"○ Session paused";else->"○ Not paired"}))
         sessionBadge.setTextColor(if(running && NodeService.connected)mint else if(busy)ControlUI.amber else muted)
         busyIndicator.visibility=if(busy)View.VISIBLE else View.GONE
         scan.isEnabled=!running && !starting && !scannerPending
@@ -85,21 +108,29 @@ class MainActivity : Activity() {
         engineInfo.text=NodeService.engineStatus.render(this)
         val enabled=getSharedPreferences("engine",0).getBoolean("enabled",false)
         syncingSwitch=true;engineSwitch.isChecked=enabled;syncingSwitch=false
-        engineSwitch.isEnabled=!loading
+        engineSwitch.isEnabled=!loading && !assessing
         engineSwitch.text=t(if(enabled)"LLM proposals · ON" else "LLM proposals · OFF")
-        ControlUI.describe(engineSwitch,t(if(enabled)"Enabled" else "Disabled"))
-        engineBadge.text=t(when {loading->"Loading model…";enabled && NodeService.engineReady->"✓ Draft ready";enabled->"Enabled · waiting for a ready session";else->"Engine off"})
+        ControlUI.describe(engineSwitch,t(if(enabled)"Enabled" else "Disabled")+" · "+engineSwitch.text)
+        setTextIfChanged(engineBadge,t(when {loading->"Loading model…";enabled && NodeService.engineReady->"✓ Draft ready";enabled->"Enabled · waiting for a ready session";else->"Engine off"}))
         engineBadge.setTextColor(if(enabled && NodeService.engineReady)mint else if(loading)ControlUI.amber else muted)
         engineProgress.visibility=if(loading)View.VISIBLE else View.GONE
-        downloadButton.isEnabled=saved && !loading && !starting && !stopping
+        downloadButton.isEnabled=saved && !loading && !starting && !stopping && !assessing
         downloadButton.text=t(if(loading)"Loading model…" else "Download draft from Mac and enable")
-        for(button in listOf(scan,connect,resume,pauseButton,forgetButton,downloadButton)) {
+        val action=HomeAction.choose(saved,running,NodeService.connected,loading,NodeService.engineReady,starting||stopping||scannerPending,NodeService.diagnosticRunning)
+        setTextIfChanged(homeAction,t(if(scannerPending)"Opening camera…" else action.label));homeAction.isEnabled=action.enabled
+        setTextIfChanged(nextStep,t(action.guidance))
+        draftSummary.text=t("Draft readiness is separate from measured contribution. See the computer for assessment and accepted tokens.")
+        pauseButton.visibility=if(running && action !in listOf(HomeAction.PAUSE,HomeAction.ASSESSING))View.VISIBLE else View.GONE
+        for(button in listOf(scan,connect,resume,pauseButton,forgetButton,downloadButton,homeAction)) {
             ControlUI.describe(button,t(if(button.isEnabled)"Available" else "Unavailable")+" · "+button.text)
         }
         if(SystemClock.elapsedRealtime()>feedbackUntil)feedbackMessage=null
-        feedback.text=feedbackMessage?.render(this) ?: ""
+        setTextIfChanged(feedback,feedbackMessage?.render(this) ?: "")
         feedback.visibility=if(feedbackMessage==null)View.GONE else View.VISIBLE
+        setTextIfChanged(activityFeedback,feedbackMessage?.render(this) ?: "")
+        activityFeedback.visibility=if(feedbackMessage==null)View.GONE else View.VISIBLE
     }
+    private fun setTextIfChanged(view:TextView,value:String){if(view.text.toString()!=value)view.text=value}
     private fun acknowledge(key:String) { feedbackMessage=ui(key);feedbackUntil=SystemClock.elapsedRealtime()+6000;if(::feedback.isInitialized){feedback.text=t(key);feedback.visibility=View.VISIBLE} }
     private fun t(key: String, vararg args: Any) = L10n.text(this,key,*args)
     private fun dp(v: Int) = (v*resources.displayMetrics.density).toInt()
@@ -113,125 +144,171 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         scannerPending=savedInstanceState?.getBoolean("scanner_pending") ?: false
+        selectedPage=savedInstanceState?.getInt("selected_page",0) ?: 0
         buildScreen()
         if (savedInstanceState == null) consumeLink(intent)
     }
+    private fun showPage(index:Int) {
+        selectedPage=index.coerceIn(0,2)
+        pages.forEachIndexed { i,page -> page.visibility=if(i==selectedPage)View.VISIBLE else View.GONE }
+        navigation.forEachIndexed { i,button ->
+            button.isSelected=i==selectedPage
+            button.text=(if(i==selectedPage)"✓ " else "")+t(button.tag as String)
+            ControlUI.describe(button,button.text.toString()+" · "+t(if(i==selectedPage)"Selected" else "Available"))
+        }
+    }
+    private fun openModelSettings() {
+        if(NodeService.diagnosticRunning)return
+        showPage(2)
+        modelSetupHeading.post {
+            modelSetupHeading.requestRectangleOnScreen(android.graphics.Rect(0,0,modelSetupHeading.width,modelSetupHeading.height),true)
+            modelSetupHeading.requestFocus()
+        }
+    }
+    private fun heading(label:String)=text(label,24f).apply {
+        setTypeface(null,Typeface.BOLD)
+        if(Build.VERSION.SDK_INT>=28)isAccessibilityHeading=true
+    }
+    private fun openAbout(){aboutDialog?.dismiss();aboutDialog=showAbout(this)}
+    private fun scanCode(){
+        if(scannerPending || starting || NodeService.running)return
+        scannerPending=true;acknowledge("Opening camera…");updateState()
+        if(checkSelfPermission(Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED)openScanner()
+        else try{requestPermissions(arrayOf(Manifest.permission.CAMERA),43)}catch(_:Exception){scannerPending=false;acknowledge("Camera unavailable. Use manual pairing.")}
+    }
     private fun buildScreen() {
         val pendingTicket=if(::ticket.isInitialized)ticket.text.toString() else ""
-        val scroll = ScrollView(this).apply { setBackgroundColor(bg); isFillViewport=true }
-        val root = LinearLayout(this).apply { orientation=LinearLayout.VERTICAL; setPadding(dp(24),dp(24),dp(24),dp(32)) }
-        root.setOnApplyWindowInsetsListener { v,insets -> v.setPadding(dp(24),dp(24)+insets.systemWindowInsetTop,dp(24),dp(32)+insets.systemWindowInsetBottom); insets }
-        root.addView(LinearLayout(this).apply {
-            orientation = LinearLayout.HORIZONTAL; gravity = android.view.Gravity.CENTER_VERTICAL
-            addView(ImageView(this@MainActivity).apply {
-                setImageResource(R.drawable.nodelift_emblem); importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
-            }, LinearLayout.LayoutParams(dp(48), dp(48)).apply { marginEnd = dp(12) })
-            addView(text("NodeLift",30f).apply { setTypeface(null,Typeface.BOLD) })
-        })
-        root.addView(button("About & References") {
-            aboutDialog?.dismiss()
-            aboutDialog = showAbout(this)
-        })
-        supportNotice = text("",14f,ControlUI.amber).apply {
-            visibility = View.GONE
-            accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE
+        pages.clear();navigation.clear()
+        val shell=LinearLayout(this).apply {orientation=LinearLayout.VERTICAL;setBackgroundColor(bg)}
+        shell.setOnApplyWindowInsetsListener { view,insets -> view.setPadding(0,insets.systemWindowInsetTop,0,insets.systemWindowInsetBottom);insets }
+        val frame=FrameLayout(this)
+        fun page():LinearLayout {
+            val content=LinearLayout(this).apply {orientation=LinearLayout.VERTICAL;setPadding(dp(20),dp(20),dp(20),dp(24))}
+            val scroll=ScrollView(this).apply {isFillViewport=true;addView(content)}
+            frame.addView(scroll,FrameLayout.LayoutParams(-1,-1));pages.add(scroll);return content
         }
-        root.addView(supportNotice)
-        root.addView(text("Language",12f,muted))
-        root.addView(Spinner(this).apply {
-            contentDescription=t("Language")
+        val home=page();val activity=page();val settings=page()
+        home.addView(LinearLayout(this).apply {
+            orientation=LinearLayout.HORIZONTAL;gravity=android.view.Gravity.CENTER_VERTICAL
+            addView(ImageView(this@MainActivity).apply {setImageResource(R.drawable.nodelift_emblem);importantForAccessibility=View.IMPORTANT_FOR_ACCESSIBILITY_NO},LinearLayout.LayoutParams(dp(44),dp(44)).apply{marginEnd=dp(12)})
+            addView(heading("NodeLift"))
+        })
+        home.addView(text("Your phone, ready to help",18f,muted))
+        supportNotice=text("",15f,ControlUI.amber).apply {visibility=View.GONE;accessibilityLiveRegion=View.ACCESSIBILITY_LIVE_REGION_POLITE};home.addView(supportNotice)
+        val statusCard=card()
+        statusCard.addView(text("Computer connection",16f,muted))
+        sessionBadge=text("SESSION",18f,mint).apply {setTypeface(null,Typeface.BOLD);accessibilityLiveRegion=View.ACCESSIBILITY_LIVE_REGION_POLITE};statusCard.addView(sessionBadge)
+        state=text("",16f);statusCard.addView(state)
+        contactAge=text("",15f,muted);statusCard.addView(contactAge)
+        assessment=text("",16f,ControlUI.amber).apply{accessibilityLiveRegion=View.ACCESSIBILITY_LIVE_REGION_POLITE;visibility=View.GONE};statusCard.addView(assessment)
+        pairedComputer=text("",15f,muted);statusCard.addView(pairedComputer)
+        busyIndicator=ProgressBar(this,null,android.R.attr.progressBarStyleHorizontal).apply{isIndeterminate=true;indeterminateTintList=android.content.res.ColorStateList.valueOf(mint)};statusCard.addView(busyIndicator)
+        feedback=text("",15f,mint).apply{accessibilityLiveRegion=View.ACCESSIBILITY_LIVE_REGION_POLITE};statusCard.addView(feedback)
+        home.addView(statusCard)
+        val readyCard=card();draftCard=readyCard;readyCard.addView(text("Draft model",16f,muted))
+        engineBadge=text("Engine off",18f,muted).apply{setTypeface(null,Typeface.BOLD)};readyCard.addView(engineBadge)
+        draftSummary=text("",15f,muted);readyCard.addView(draftSummary);home.addView(readyCard)
+        nextStep=text("",16f);home.addView(nextStep)
+        homeAction=button("Scan QR",ControlUI.Tone.PRIMARY){
+            when(HomeAction.choose(Vault.load(this)!=null,NodeService.running,NodeService.connected,NodeService.modelLoading||NodeService.downloadRequested.get(),NodeService.engineReady,starting||stopping||scannerPending,NodeService.diagnosticRunning)) {
+                HomeAction.PAIR->scanCode()
+                HomeAction.RESUME->start(null)
+                HomeAction.SETUP->openModelSettings()
+                HomeAction.PAUSE,HomeAction.ASSESSING->pauseButton.performClick()
+                else->Unit
+            }
+        }.apply{accessibilityLiveRegion=View.ACCESSIBILITY_LIVE_REGION_POLITE};home.addView(homeAction)
+        pauseButton=button("Pause node"){stopping=true;starting=false;stopService(Intent(this,NodeService::class.java));acknowledge("Pause requested. Waiting for current work to stop.")};home.addView(pauseButton)
+        home.addView(text("You choose when this phone contributes. RAM is not pooled automatically.",15f,muted))
+        activity.addView(heading("Activity"))
+        activity.addView(text("Measurements and support",16f,muted))
+        val measurement=card();measurement.addView(text("Last measurement",20f));result=text("",16f,mint);measurement.addView(result)
+        measurement.addView(text("Available RAM is a system indicator, not memory already shared. Synthetic tests do not indicate tokens/s.",15f,muted));activity.addView(measurement)
+        val inventory=card();inventory.addView(text("Device details",20f));info=text("",16f,muted);inventory.addView(info);activity.addView(inventory)
+        activity.addView(button("Export diagnostics") {acknowledge(if(Diagnostics.export(this))"Diagnostic report prepared. Choose where to save or share it." else "Unable to export diagnostics. Try again.")})
+        activityFeedback=text("",15f,mint).apply{visibility=View.GONE;accessibilityLiveRegion=View.ACCESSIBILITY_LIVE_REGION_POLITE};activity.addView(activityFeedback)
+        activity.addView(text("Logs stay on this phone until you choose to share them.",15f,muted))
+        settings.addView(heading("Settings"))
+        settings.addView(button("About & References"){openAbout()})
+        settings.addView(text("Language",16f,muted))
+        settings.addView(Spinner(this).apply {
+            minimumHeight=dp(48);contentDescription=t("Language")
             val languages=listOf("en","zh-Hans","it")
             adapter=ArrayAdapter(this@MainActivity,android.R.layout.simple_spinner_dropdown_item,listOf("English","简体中文","Italiano"))
             setSelection(languages.indexOf(L10n.language(this@MainActivity)))
             onItemSelectedListener=object:AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent:AdapterView<*>?,view:View?,position:Int,id:Long) {
-                    val selected=languages[position]
-                    if(selected!=L10n.language(this@MainActivity)) {
-                        L10n.select(this@MainActivity,selected)
-                        NodeService.refreshNotification(this@MainActivity)
-                        buildScreen()
-                    }
-                }
-                override fun onNothingSelected(parent:AdapterView<*>?) {}
+                override fun onItemSelected(parent:AdapterView<*>?,view:View?,position:Int,id:Long){val selected=languages[position];if(selected!=L10n.language(this@MainActivity)){L10n.select(this@MainActivity,selected);NodeService.refreshNotification(this@MainActivity);buildScreen()}}
+                override fun onNothingSelected(parent:AdapterView<*>?){}
             }
         })
-        root.addView(text("YOUR DEVICE. A NEW NODE.",11f,mint))
-        root.addView(text("More life for your hardware.\nOne node, new possibilities.",23f).apply { setPadding(0,dp(14),0,dp(16)) })
-        val statusCard=card();sessionBadge=text("SESSION",12f,mint).apply{setTypeface(null,Typeface.BOLD);accessibilityLiveRegion=View.ACCESSIBILITY_LIVE_REGION_POLITE};statusCard.addView(sessionBadge)
-        state=text(NodeService.status.render(this),19f);statusCard.addView(state)
-        busyIndicator=ProgressBar(this,null,android.R.attr.progressBarStyleHorizontal).apply{isIndeterminate=true;indeterminateTintList=android.content.res.ColorStateList.valueOf(mint)};statusCard.addView(busyIndicator)
-        info=text("",14f,muted);statusCard.addView(info)
-        feedback=text("",14f,mint).apply{accessibilityLiveRegion=View.ACCESSIBILITY_LIVE_REGION_POLITE};statusCard.addView(feedback)
-        root.addView(statusCard)
-        val pairing=card(); pairing.addView(text("Pair your computer",20f)); pairing.addView(text("Choose Add device on your computer, then scan its QR code. Keep both devices on the same local network or phone hotspot.",14f,muted))
-        scan=button("Scan QR",ControlUI.Tone.PRIMARY) {
-            scannerPending=true;acknowledge("Opening camera…");updateState()
-            if(checkSelfPermission(Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED)openScanner()
-            else try{requestPermissions(arrayOf(Manifest.permission.CAMERA),43)}catch(_:Exception){scannerPending=false;acknowledge("Camera unavailable. Use manual pairing.")}
-        };pairing.addView(scan)
-        pairing.addView(text("Pause an active session before pairing another computer.",13f,muted))
-        val manual=LinearLayout(this).apply{orientation=LinearLayout.VERTICAL;visibility=View.GONE}
-        pairing.addView(button("Manual pairing"){}.apply{setOnClickListener{
-            val expanded=manual.visibility!=View.VISIBLE;manual.visibility=if(expanded)View.VISIBLE else View.GONE
-            isSelected=expanded;text=t(if(expanded)"▾ Hide manual pairing" else "▸ Manual pairing")
-            ControlUI.describe(this,t(if(expanded)"Expanded" else "Collapsed"))
-        }})
-        ticket=EditText(this).apply { hint=t("Paste your NodeLift invitation"); setTextColor(ink); setHintTextColor(muted); minLines=2; maxLines=4; textSize=13f; importantForAutofill=View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS }
-        ticket.setText(pendingTicket)
-        manual.addView(ticket)
-        connect=button("Pair and activate node",ControlUI.Tone.PRIMARY) {
-            val value=ticket.text.toString().trim()
-            try { val obj=PairingCode.decode(value); start(obj.toString()); ticket.text.clear() }
-            catch(e:Exception) { NodeService.status=ui(e.message ?: "Invalid invitation") }
-        }
-        manual.addView(connect);pairing.addView(manual)
-        ticket.addTextChangedListener(object:TextWatcher{
-            override fun beforeTextChanged(s:CharSequence?,start:Int,count:Int,after:Int){}
-            override fun onTextChanged(s:CharSequence?,start:Int,before:Int,count:Int){if(::pauseButton.isInitialized)updateState()}
-            override fun afterTextChanged(s:Editable?){}
-        })
-        resume=button("Resume session"){start(null)};pairing.addView(resume);root.addView(pairing)
         val prefs=getSharedPreferences("engine",0)
-        val engine=card();engine.addView(text("EXPERIMENTAL ENGINE",11f,mint));engine.addView(text("Your phone proposes.\nYour Mac verifies.",23f));engineInfo=text(NodeService.engineStatus.render(this),14f,mint);engine.addView(engineInfo)
-        engine.addView(text("A small GGUF model on your phone proposes token blocks. The main model stays on your computer and verifies every proposal. ARM64 CPU backend; GPU/NPU are not enabled in this build.",14f,muted))
-        engineBadge=text("Engine off",14f,muted);engine.addView(engineBadge)
+        val engine=card();modelSetupHeading=heading("Draft model").apply{isFocusable=true;isFocusableInTouchMode=true};engine.addView(modelSetupHeading);engineInfo=text("",16f,mint);engine.addView(engineInfo)
+        engine.addView(text("A small GGUF model on your phone proposes token blocks. The main model stays on your computer and verifies every proposal. ARM64 CPU backend; GPU/NPU are not enabled in this build.",15f,muted))
         engineProgress=ProgressBar(this,null,android.R.attr.progressBarStyleHorizontal).apply{isIndeterminate=true;indeterminateTintList=android.content.res.ColorStateList.valueOf(mint)};engine.addView(engineProgress)
         engineSwitch=Switch(this).apply {
-            setTextColor(ink);minHeight=dp(56);setPadding(0,dp(8),0,dp(8));isChecked=prefs.getBoolean("enabled",false)
+            setTextColor(ink);textSize=16f;minHeight=dp(56);setPadding(0,dp(8),0,dp(8));isChecked=prefs.getBoolean("enabled",false)
             thumbTintList=android.content.res.ColorStateList(arrayOf(intArrayOf(android.R.attr.state_checked),intArrayOf()),intArrayOf(mint,muted))
             trackTintList=android.content.res.ColorStateList(arrayOf(intArrayOf(android.R.attr.state_checked),intArrayOf()),intArrayOf(Color.rgb(43,128,109),Color.rgb(63,78,89)))
             setOnCheckedChangeListener{_,value->if(!syncingSwitch){prefs.edit().putBoolean("enabled",value).apply();acknowledge(if(value)"LLM permission enabled. Model readiness is shown below." else "LLM permission disabled.");updateState()}}
         };engine.addView(engineSwitch)
-        fun slider(label:String,key:String,min:Int,max:Int,initial:Int) {
-            val caption=text("${t(label)}: ${prefs.getInt(key,initial)}",14f);engine.addView(caption)
-            engine.addView(SeekBar(this).apply { this.max=max-min;progress=prefs.getInt(key,initial)-min;setOnSeekBarChangeListener(object:SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(bar:SeekBar?,value:Int,fromUser:Boolean){caption.text="${t(label)}: ${value+min}";if(fromUser)prefs.edit().putInt(key,value+min).apply()}
-                override fun onStartTrackingTouch(bar:SeekBar?){};override fun onStopTrackingTouch(bar:SeekBar?){}
-            }) })
-        }
-        slider("CPU threads on next load","threads",1,8,4)
-        slider("Minimum battery (%)","min_battery",20,70,20)
-        engine.addView(text("Context on next load",14f))
-        val contexts=listOf(512,1024,2048,4096)
-        engine.addView(Spinner(this).apply {adapter=ArrayAdapter(this@MainActivity,android.R.layout.simple_spinner_dropdown_item,contexts.map{t("{0} tokens",it)});setSelection(contexts.indexOf(prefs.getInt("n_ctx",2048)).coerceAtLeast(0));onItemSelectedListener=object:AdapterView.OnItemSelectedListener{
-            override fun onItemSelected(parent:AdapterView<*>?,view:View?,position:Int,id:Long){prefs.edit().putInt("n_ctx",contexts[position]).apply()}
-            override fun onNothingSelected(parent:AdapterView<*>?){}
-        }})
         downloadButton=button("Download draft from Mac and enable") {
+            if(NodeService.diagnosticRunning){acknowledge("Assessment running");return@button}
             if(Vault.load(this)==null)NodeService.status=ui("Pair your computer first")
             else {NodeService.downloadRequested.set(true);acknowledge("Model download requested. Wait for Draft ready.");if(!NodeService.running)start(null)}
         };engine.addView(downloadButton)
-        engine.addView(text("Select the draft in the Mac dashboard first. Local downloads support up to 1 GiB with SHA-256 verification. Proposals pause when battery is low or thermal status is moderate. CPU and context settings apply on the next load.",13f,muted));root.addView(engine)
-        val control=card();control.addView(text("You stay in control",20f));control.addView(text("Your paired computer can start measurements. LLM proposals require enabling the engine above. RAM is not shared automatically.",14f,muted))
-        pauseButton=button("Pause node"){stopping=true;starting=false;stopService(Intent(this,NodeService::class.java));acknowledge("Pause requested. Waiting for current work to stop.")};control.addView(pauseButton)
+        engine.addView(text("Select the draft in the Mac dashboard first. Local downloads support up to 1 GiB with SHA-256 verification. Proposals pause when battery is low or thermal status is moderate. CPU and context settings apply on the next load.",15f,muted))
+        val resources=LinearLayout(this).apply{orientation=LinearLayout.VERTICAL;visibility=View.GONE}
+        engine.addView(button("Resource limits"){}.apply{setOnClickListener{
+            val expanded=resources.visibility!=View.VISIBLE;resources.visibility=if(expanded)View.VISIBLE else View.GONE
+            isSelected=expanded;ControlUI.describe(this,text.toString()+" · "+t(if(expanded)"Expanded" else "Collapsed"))
+        }})
+        fun slider(label:String,key:String,min:Int,max:Int,initial:Int) {
+            val caption=text("${t(label)}: ${prefs.getInt(key,initial)}",16f);caption.id=View.generateViewId();resources.addView(caption)
+            resources.addView(SeekBar(this).apply {
+                minimumHeight=dp(48);this.max=max-min;progress=prefs.getInt(key,initial)-min;contentDescription=t(label)
+                setOnSeekBarChangeListener(object:SeekBar.OnSeekBarChangeListener {
+                    override fun onProgressChanged(bar:SeekBar?,value:Int,fromUser:Boolean){caption.text="${t(label)}: ${value+min}";ControlUI.describe(this@apply,"${t(label)}: ${value+min}");if(fromUser)prefs.edit().putInt(key,value+min).apply()}
+                    override fun onStartTrackingTouch(bar:SeekBar?){};override fun onStopTrackingTouch(bar:SeekBar?){}
+                })
+            })
+        }
+        slider("CPU threads on next load","threads",1,8,4);slider("Minimum battery (%)","min_battery",20,70,20)
+        resources.addView(text("Context on next load",16f));val contexts=listOf(512,1024,2048,4096)
+        resources.addView(Spinner(this).apply {minimumHeight=dp(48);contentDescription=t("Context on next load");adapter=ArrayAdapter(this@MainActivity,android.R.layout.simple_spinner_dropdown_item,contexts.map{t("{0} tokens",it)});setSelection(contexts.indexOf(prefs.getInt("n_ctx",2048)).coerceAtLeast(0));onItemSelectedListener=object:AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(parent:AdapterView<*>?,view:View?,position:Int,id:Long){prefs.edit().putInt("n_ctx",contexts[position]).apply()}
+            override fun onNothingSelected(parent:AdapterView<*>?){}
+        }})
+        engine.addView(resources);settings.addView(engine)
+        val pairCard=card();pairCard.addView(text("Computer pairing",20f));pairCard.addView(text("Choose Add device on your computer, then scan its QR code. Keep both devices on the same local network or phone hotspot.",15f,muted))
+        scan=button("Scan QR"){scanCode()};pairCard.addView(scan)
+        resume=button("Resume session"){start(null)};pairCard.addView(resume)
+        pairCard.addView(text("Pause an active session before pairing another computer.",15f,muted))
+        val manual=LinearLayout(this).apply{orientation=LinearLayout.VERTICAL;visibility=View.GONE}
+        pairCard.addView(button("Manual pairing"){}.apply{setOnClickListener{
+            val expanded=manual.visibility!=View.VISIBLE;manual.visibility=if(expanded)View.VISIBLE else View.GONE
+            isSelected=expanded;ControlUI.describe(this,text.toString()+" · "+t(if(expanded)"Expanded" else "Collapsed"))
+        }})
+        ticket=EditText(this).apply {hint=t("Paste your NodeLift invitation");contentDescription=t("NodeLift invitation");setTextColor(ink);setHintTextColor(muted);minLines=2;maxLines=4;textSize=16f;importantForAutofill=View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS};ticket.setText(pendingTicket);manual.addView(ticket)
+        connect=button("Pair and activate node"){
+            try{val obj=PairingCode.decode(ticket.text.toString().trim());acceptCode(obj.toString())}catch(e:Exception){NodeService.status=ui(e.message?:"Invalid invitation")}
+        };manual.addView(connect);pairCard.addView(manual)
+        ticket.addTextChangedListener(object:TextWatcher{
+            override fun beforeTextChanged(s:CharSequence?,start:Int,count:Int,after:Int){}
+            override fun onTextChanged(s:CharSequence?,start:Int,before:Int,count:Int){if(::forgetButton.isInitialized)updateState()}
+            override fun afterTextChanged(s:Editable?){}
+        })
         forgetButton=button("Forget computer",ControlUI.Tone.DANGER){
-            android.app.AlertDialog.Builder(this).setTitle(t("Forget computer"))
-                .setMessage(t("Remove the saved pairing from this phone? To revoke its server access too, use Revoke on the computer."))
+            android.app.AlertDialog.Builder(this).setTitle(t("Forget computer")).setMessage(t("Remove the saved pairing from this phone? To revoke its server access too, use Revoke on the computer."))
                 .setNegativeButton(t("Cancel"),null).setPositiveButton(t("Forget computer")){_,_->Vault.clear(this);NodeService.status=ui("Computer forgotten");acknowledge("Computer forgotten");updateState()}.show()
-        };control.addView(forgetButton);control.addView(text("Pause the node before removing its saved pairing.",13f,muted));root.addView(control)
-        val measurement=card();measurement.addView(text("Last measurement",20f));result=text(NodeService.lastResult.render(this),15f,mint);measurement.addView(result);measurement.addView(text("Available RAM is a system indicator, not memory already shared. Synthetic tests do not indicate tokens/s.",13f,muted));root.addView(measurement)
-        root.addView(text(installedCompanionVersion(this),12f,muted))
-        root.addView(text("Experimental companion",12f,muted));scroll.addView(root);setContentView(scroll); updateState()
+        };pairCard.addView(forgetButton);settings.addView(pairCard)
+        settings.addView(text(installedCompanionVersion(this),15f,muted));settings.addView(text("Experimental companion",15f,muted))
+        shell.addView(frame,LinearLayout.LayoutParams(-1,0,1f))
+        val nav=LinearLayout(this).apply{orientation=LinearLayout.HORIZONTAL;setPadding(dp(8),dp(4),dp(8),dp(4));setBackgroundColor(ControlUI.panel)}
+        listOf("Home","Activity","Settings").forEachIndexed{index,label->
+            val item=button(label){showPage(index)}.apply{tag=label;layoutParams=LinearLayout.LayoutParams(0,-2,1f).apply{marginStart=dp(3);marginEnd=dp(3)};setPadding(dp(5),dp(12),dp(5),dp(12))}
+            navigation.add(item);nav.addView(item)
+        }
+        shell.addView(nav);setContentView(shell);showPage(selectedPage);updateState()
     }
     private fun openScanner() {
         if(NodeService.running){scannerPending=false;return}
@@ -256,7 +333,7 @@ class MainActivity : Activity() {
             updateState()
         }
     }
-    override fun onSaveInstanceState(out:Bundle){out.putBoolean("scanner_pending",scannerPending);super.onSaveInstanceState(out)}
+    override fun onSaveInstanceState(out:Bundle){out.putBoolean("scanner_pending",scannerPending);out.putInt("selected_page",selectedPage);super.onSaveInstanceState(out)}
     override fun onNewIntent(value:Intent) { super.onNewIntent(value);consumeLink(value) }
     private fun consumeLink(value:Intent?) {
         val link=value?.dataString ?: return
@@ -267,17 +344,25 @@ class MainActivity : Activity() {
         if(NodeService.running){NodeService.status=ui("Pause the node before pairing another computer.");return}
         try {
             val obj=PairingCode.decode(value); val pairing=Pairing.parse(obj)
-            android.app.AlertDialog.Builder(this).setTitle(t("Pair your computer"))
-                .setMessage(t("Computer: {0} · Identity: {1}",java.net.URL(pairing.url).authority,pairing.sha256.take(16)))
+            val computer=java.net.URL(pairing.url).authority
+            val fingerprint=pairing.sha256.chunked(4).joinToString(" ")
+            val spokenFingerprint=pairing.sha256.toList().joinToString(" ")
+            val dialog=android.app.AlertDialog.Builder(this).setTitle(t("Pair your computer"))
+                .setMessage(t("Computer: {0} · Identity: {1}",computer,"\n"+fingerprint))
                 .setNegativeButton(t("Cancel"),null)
                 .setPositiveButton(t("Pair and activate node")){_,_->
                     try{if(!NodeService.running){start(PairingCode.decode(obj.toString()).toString());ticket.text.clear()}}
                     catch(e:Exception){NodeService.status=ui(e.message ?: "Invalid invitation")}
                 }.show()
+            dialog.findViewById<TextView>(android.R.id.message)?.apply {
+                textSize=16f
+                contentDescription=t("Computer: {0} · Identity: {1}",computer,spokenFingerprint)
+            }
         } catch(e:Exception){NodeService.status=ui(e.message ?: "Invalid invitation")}
     }
     private fun start(value: String?) {
         if(starting || NodeService.running)return
+        showPage(0)
         starting=true;startedAt=SystemClock.elapsedRealtime();NodeService.status=ui("Connecting to your computer…");acknowledge("Connection requested…");updateState()
         try {
             if(Build.VERSION.SDK_INT>=33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED)requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS),42)

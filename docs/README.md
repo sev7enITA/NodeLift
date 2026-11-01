@@ -22,7 +22,7 @@
 | Find app information and updates | [About, references and updates](ABOUT_AND_UPDATES.md) |
 | Identify authorship and dependencies | [Credits](wiki/About-and-credits.md) |
 
-The current companions are 0.2.8/build 10. Host sources include the 0.3.0 integration preview. Historical reports are dated evidence, not automatically current support claims.
+The current companions are 0.2.9/build 11. Host sources include the 0.3.0 integration preview. Historical reports are dated evidence, not automatically current support claims.
 
 Repository documentation is maintained in English. Application and showcase languages remain English (default), Simplified Chinese and Italian.
 
@@ -42,3 +42,5 @@ Repository documentation is maintained in English. Application and showcase lang
 - [Model library functional audit and tested limits](evidence/model-library-2026-11-01/REPORT.md)
 
 - [Exploratory QA with GLM and Gemini, including physical-device failures](EXPLORATORY_QA_2026_11_01.md)
+
+- [Device assessment, connection history and KPI definitions](DEVICE_ASSESSMENT_AND_KPIS.md)

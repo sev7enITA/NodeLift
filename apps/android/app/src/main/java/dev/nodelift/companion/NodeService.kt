@@ -27,10 +27,17 @@ class NodeService : Service() {
             if (running) context.getSystemService(NotificationManager::class.java).notify(1,notification(context))
         }
         @Volatile var running = false
-        @Volatile var connected = false
+        @Volatile private var transportConnected = false
+        @Volatile private var lastContactElapsed = 0L
+        val contactAgeSeconds: Long? get() = if(lastContactElapsed>0) ((SystemClock.elapsedRealtime()-lastContactElapsed).coerceAtLeast(0)/1000) else null
+        var connected: Boolean
+            get() = transportConnected && (contactAgeSeconds?.let { it<20 } ?: false)
+            set(value) { transportConnected=value }
         @Volatile var modelLoading = false
         @Volatile var engineReady = false
         @Volatile var status = ui("Ready to pair")
+        @Volatile var assessmentStatus = ui("")
+        @Volatile var diagnosticRunning = false
         @Volatile var lastResult = ui("No measurements yet")
         @Volatile var telemetry = ui("")
         val generation = AtomicLong(0)
@@ -64,7 +71,7 @@ class NodeService : Service() {
         if (running) return START_NOT_STICKY
         Diagnostics.record(DiagnosticEvent.SESSION_START)
         startForeground(1, notification(this))
-        stop.set(false); connected=false;running = true; runId = generation.incrementAndGet()
+        stop.set(false); connected=false;lastContactElapsed=0;running = true; runId = generation.incrementAndGet()
         val ticketText = intent?.getStringExtra("ticket")
         worker = Thread {
             try {
@@ -72,7 +79,8 @@ class NodeService : Service() {
                 val previous = Vault.load(this)
                 val saved = if (ticketText == null) previous else null
                 val ticket = Pairing.parse(if (ticketText != null) JSONObject(ticketText) else saved?.getJSONObject("pairing") ?: error("Paste an invitation from your computer."))
-                val c = Client(ticket, saved?.optString("token") ?: "", this); client = c
+                val ownerRun = runId
+                val c = Client(ticket, saved?.optString("token") ?: "", this) { if(generation.get()==ownerRun)lastContactElapsed=SystemClock.elapsedRealtime() }; client = c
                 if (ticketText != null) {
                     val health = JSONObject(String(c.bytes("/health"), Charsets.UTF_8))
                     val body = Vault.enrollment(this, health.optString("pairing_scope"), ticket.invite, previous)
@@ -111,10 +119,26 @@ class NodeService : Service() {
                             val response = c.json("/v1/heartbeat", capabilities())
                             lastHeartbeat=SystemClock.elapsedRealtime()
                             job=response.optJSONObject("job")
+                            val assessment=response.optJSONObject("assessment")
+                            assessmentStatus=ui(when(assessment?.optString("phase")) {
+                                "network"->"Assessment: checking the connection"
+                                "cpu"->"Assessment: calibrating the CPU"
+                                "pending"->"Assessment queued by your computer"
+                                "deferred"->when(assessment?.optString("reason")) {
+                                    "low_battery"->"Assessment waiting: battery below 20%"
+                                    "thermal"->"Assessment waiting: let the device cool down"
+                                    "host_busy"->"Assessment waiting: your computer is busy"
+                                    else->"Assessment waiting: another diagnostic is running"
+                                }
+                                "completed"->"Basic checks finished. LLM usefulness still needs testing."
+                                "failed"->"Assessment incomplete. Check Activity and the desktop results."
+                                "unsupported"->"Automatic diagnostics are not supported by this companion."
+                                else->""
+                            })
                             if(!connected)Diagnostics.record(DiagnosticEvent.SESSION_CONNECTED)
                             connected=true;status = ui("Connected · node available")
                         }
-                        if (job != null) runJob(c, job)
+                        if (job != null) { diagnosticRunning=true;try {runJob(c, job)} finally {if(generation.get()==ownerRun)diagnosticRunning=false} }
                         else if(mobileDraft?.ready==true && enginePrefs.getBoolean("enabled",false) && energyAllowed()) {
                             val work=JSONObject(String(c.bytes("/v1/engine/poll"),Charsets.UTF_8)).optJSONObject("work")
                             if(work!=null) {
@@ -239,7 +263,7 @@ class NodeService : Service() {
     }
     override fun onDestroy() {
         Diagnostics.record(DiagnosticEvent.SESSION_STOP)
-        mobileDraft?.cancel();connected=false;engineReady=false;downloadRequested.set(false)
+        mobileDraft?.cancel();connected=false;engineReady=false;diagnosticRunning=false;assessmentStatus=ui("");downloadRequested.set(false)
         stop.set(true); client?.cancel(); worker?.interrupt()
         if(Build.VERSION.SDK_INT>=29) thermalListener?.let {getSystemService(PowerManager::class.java).removeThermalStatusListener(it)}
         if(worker==null && generation.get() == runId) running = false

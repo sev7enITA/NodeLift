@@ -40,10 +40,10 @@ object ControlUI {
         button.setTextColor(ColorStateList(arrayOf(intArrayOf(-android.R.attr.state_enabled),intArrayOf(android.R.attr.state_pressed),intArrayOf(android.R.attr.state_selected),intArrayOf()),intArrayOf(muted,ink,accent,if(primary)canvas else accent)))
         button.isAllCaps=false;button.minHeight=dp(context,52);button.minimumHeight=dp(context,52)
         button.setPadding(dp(context,14),dp(context,12),dp(context,14),dp(context,12))
-        button.setTypeface(null,Typeface.BOLD);button.textSize=15f
+        button.setTypeface(null,Typeface.BOLD);button.textSize=16f
     }
     fun describe(view:View, text:String) {
-        if(android.os.Build.VERSION.SDK_INT>=30)view.stateDescription=text
-        else view.contentDescription=text
+        if(android.os.Build.VERSION.SDK_INT>=30){if(view.stateDescription?.toString()!=text)view.stateDescription=text}
+        else if(view.contentDescription?.toString()!=text)view.contentDescription=text
     }
 }

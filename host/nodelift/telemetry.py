@@ -9,6 +9,8 @@ import platform
 import subprocess
 import time
 
+PROCESS_STARTED_AT = time.time()
+
 
 def _sysctl(name):
     try:
@@ -49,6 +51,6 @@ def _inventory():
     }
 
 
-def host_inventory():
+def host_inventory(ip_address=None):
     # A caller must not be able to mutate the cached inventory.
-    return dict(_inventory())
+    return {**_inventory(), "ip_address": ip_address, "session_started_at": PROCESS_STARTED_AT}

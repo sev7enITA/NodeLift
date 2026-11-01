@@ -98,3 +98,32 @@ button[aria-busy="true"]>[aria-hidden="true"],#start-run[data-state="running"]>[
 .session-recovery p{margin:8px 0 0}
 #session-recovery-status:empty{display:none}
 #session-recovery-status{flex-basis:100%}
+
+/* Evidence-first device assessment: labels remain readable at narrow widths. */
+.graph-device .graph-device-address{font:11px/1.5 var(--mono);color:#c2d9df;overflow-wrap:anywhere}
+.graph-connection-details h4,.graph-assessment h4{font-size:13px;margin:0 0 9px;color:var(--ink)}
+.graph-connection-details{margin:18px 0 22px}.graph-assessment{padding:16px;border:1px solid #3f626b;border-left:3px solid var(--cyan);background:#0c1c22;margin:0 0 23px}
+.graph-assessment[data-state="failed"],.graph-assessment[data-state="partial"]{border-left-color:var(--amber)}
+.graph-assessment .assessment-title{font-size:16px;line-height:1.45;color:var(--ink);font-weight:650;margin:0 0 5px}.graph-assessment .assessment-status{font-size:12px;color:var(--muted);margin:0 0 13px}
+.graph-assessment .assessment-action{margin-top:17px;width:100%;min-height:44px;white-space:normal}.graph-assessment .graph-fields{grid-template-columns:1fr}
+.node-connections{border-top:1px solid var(--line);padding-top:15px}.node .node-connections dd{overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.node-assessment{display:flex;gap:8px 16px;align-items:baseline;flex-wrap:wrap;border-left:3px solid var(--cyan);padding:10px 13px;background:#0c1c22;margin:15px 0}
+.node-assessment strong{font-size:14px}.node-assessment span{font-size:12px;color:var(--muted)}.node-assessment[data-state="failed"],.node-assessment[data-state="partial"]{border-left-color:var(--amber)}
+.node-footer .assessment-action{min-height:44px}.graph-field dt{font-size:11px}.graph-field dd{font-size:12px}.graph-more summary{font-size:12px;min-height:32px}.graph-note{font-size:12px}.graph-device .graph-device-weight{font-size:11px}
+@media(max-width:650px){.node-connections .metric dt{font-size:11px}.node-connections .metric dd{font-size:12px}.node-footer .actions button{min-height:44px;white-space:normal}.node-footer .actions{align-items:stretch}.node-assessment{align-items:flex-start;flex-direction:column;gap:4px}.graph-assessment{padding:15px}}
+
+.graph-assessment:focus-visible{outline:2px solid var(--aqua);outline-offset:4px}
+
+/* Keep device topology in view while inspecting longer evidence on desktop. */
+.graph-inspector:focus-visible{outline:2px solid var(--aqua);outline-offset:-4px}
+.graph-inspector .graph-connection-details{margin:0 0 19px;padding-top:14px}
+.graph-inspector .graph-assessment{margin-top:0}
+@media(min-width:901px) and (min-height:600px){
+  .graph-workspace{align-items:start}
+  .graph-inspector{max-height:calc(100vh - var(--header-height) - 36px);max-height:calc(100dvh - var(--header-height) - 36px);overflow-y:auto;overscroll-behavior-y:contain;scrollbar-gutter:stable;scroll-padding-block:20px}
+  .graph-overview{align-self:start}
+  .graph-attribution{margin-top:0}
+}
+@media(max-width:900px),(max-height:599px){
+  .graph-workspace{grid-template-columns:1fr}
+  .graph-inspector{max-height:none;overflow:visible;border-left:0;border-top:1px solid var(--line)}
+}

@@ -80,6 +80,10 @@ final class NodeClient: @unchecked Sendable {
     let ticket: Ticket
     let token: String
     private(set) var lastConnectionId: String = ""
+    private let responseLock = NSLock()
+    private var responseUptime: TimeInterval?
+    var contactAgeSeconds: Int? { responseLock.withLock { responseUptime.map { Int(max(0,ProcessInfo.processInfo.systemUptime-$0)) } } }
+    private func recordResponse() { responseLock.withLock { responseUptime=ProcessInfo.processInfo.systemUptime } }
     private let session: URLSession
     init(ticket: Ticket, token: String = "") throws {
         try ticket.validate()
@@ -106,6 +110,7 @@ final class NodeClient: @unchecked Sendable {
         guard let response = response as? HTTPURLResponse, (200...299).contains(response.statusCode) else { throw NodeError.message("Request rejected: check connection and pairing") }
         lastConnectionId = response.value(forHTTPHeaderField:"X-NodeLift-Connection-ID") ?? ""
         guard data.count <= 1048576 else { throw NodeError.message("Response too large") }
+        if !token.isEmpty { recordResponse() }
         return data
     }
     func json(_ path: String, body: [String: Any]) async throws -> [String: Any] {
