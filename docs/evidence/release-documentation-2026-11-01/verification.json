@@ -1,0 +1,31 @@
+{
+  "date": "2026-11-01",
+  "companion_version": "0.2.5",
+  "build": 7,
+  "new_binary_produced": false,
+  "release_integrity": "5 existing public assets verified; source tag unchanged",
+  "documentation": "Authored guides and research dossiers translated to English; historical measurement values and raw-source evidence preserved",
+  "documentation_checks": {
+    "pages": 68,
+    "local_targets": 292,
+    "errors": 0
+  },
+  "tooling_tests": {
+    "passed": 12,
+    "new_release_gate_cases": 5
+  },
+  "release_history": "Canonical releases/history.json generates root Markdown, portal Markdown/JSON and rendered HTML",
+  "browser_checks": {
+    "locales": [
+      "en",
+      "zh-Hans",
+      "it"
+    ],
+    "native_details_controls": true,
+    "narrow_viewport_css_pixels": 390,
+    "narrow_document_scroll_width": 390
+  },
+  "physical_device_tests": false,
+  "ios_signing": "unsigned; personal signing/provisioning required",
+  "benchmark_work": "unchanged and excluded from this documentation release"
+}

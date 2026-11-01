@@ -1,94 +1,94 @@
-# ExpandMyHW — protocollo sperimentale proposto
+# ExpandMyHW — proposed experimental protocol
 
-Versione preliminare, 31 ottobre 2026. Nessun risultato hardware ancora raccolto. Il protocollo va congelato dopo l'inventario dei dispositivi e prima di osservare i risultati decisivi. Le soglie seguenti sono proposte ingegneristiche per rendere misurabile «superare nettamente», non prestazioni previste né già approvate dall'utente.
+Preliminary version, 31 October 2026, written before hardware results were collected. Freeze the protocol after device inventory and before observing decisive results. The thresholds below are engineering proposals to make “clearly outperform” measurable, not predicted performance or thresholds already approved by the owner.
 
-Aggiornamento successivo dello stesso giorno: raccolta la [prima diagnostica fisica Xiaomi/hotspot](research/measurements/2026-10-31-xiaomi-hotspot/REPORT.md). È un pilot di trasporto e CPU sintetica, con replica esplorativa, non il benchmark end-to-end o la verifica dei gate descritti sotto.
+Later that day, the [first physical Xiaomi/hotspot diagnostics](research/measurements/2026-10-31-xiaomi-hotspot/REPORT.md) were collected. This transport/synthetic-CPU pilot with an exploratory repeat is not the end-to-end benchmark or a test of the gates below.
 
-## Domanda primaria e controlli
+## Primary question and controls
 
-**Una singola conversazione con lo stesso target diventa sensibilmente più veloce aggiungendo uno o più telefoni, rispetto alla migliore configurazione locale praticabile?**
+**Does adding one or more phones make a single conversation with the same target materially faster than the strongest practical local configuration?**
 
-Baseline da misurare e pubblicare:
+Baselines to measure and publish:
 
-| ID | Configurazione | Perché serve |
+| ID | Configuration | Purpose |
 |---|---|---|
-| B0 | Host target solo, backend accelerato e parametri ottimizzati | Guadagno rispetto all'esecuzione usuale ottimizzata |
-| B1 | Host target + migliore draft locale compatibile | Evita di attribuire alla rete il guadagno della sola speculation |
-| B2 | B1 con overlap/asincronia locale, se supportata | Controlla che il guadagno non venga da una migliore pipeline disponibile anche localmente |
-| D1 | Target host + draft autonomo telefono, blocchi sincronizzati | Isola costo rete e vantaggio di delega |
-| D2 | D1 con overlap e cancellazione/rollback | Misura il vantaggio asincrono, non lo presume |
-| P1 | Stesso target distribuito per layer, come riferimento DistAI | Controllo negativo/positivo a seconda della capacità dell'host |
-| C0/C1 | Target fuori capacità host: out-of-core locale / shard residenti remoti | Esperimento capacità separato |
+| B0 | Host target only, accelerated backend and tuned settings | Gain over optimized ordinary execution |
+| B1 | Host target + strongest compatible local draft | Avoid attributing speculation alone to networking |
+| B2 | B1 with local overlap/asynchrony, where supported | Control for a better pipeline also available locally |
+| D1 | Host target + autonomous phone draft, synchronized blocks | Isolate network costs and delegation benefit |
+| D2 | D1 with overlap and cancellation/rollback | Measure, rather than assume, asynchronous benefit |
+| P1 | Same target distributed by layers, as a DistAI reference | Negative/positive control depending on host capacity |
+| C0/C1 | Target exceeding host capacity: local out-of-core / resident remote shards | Separate capacity experiment |
 
-Se un'opzione locale non è supportata dal backend, documentare il limite e restringere il claim. Non dichiarare «batte ogni soluzione locale» dopo aver provato solo B0. Usare budget di tuning comparabile e dati di tuning separati da quelli di test.
+If the backend lacks a local option, document it and narrow the claim. Do not claim “beats every local solution” after testing only B0. Use comparable tuning budgets and separate tuning from test data.
 
-## Identità e condizioni da registrare
+## Identity and conditions to record
 
-- Computer e telefoni/tablet: modello/SoC, RAM fisica e utilizzabile dal processo, OS/build, backend, driver, alimentazione, temperatura/stato termico, batteria, app concorrenti.
-- Modello target e draft: repository, revisione immutabile, SHA-256, quantizzazione, tokenizer completo, chat template, contesto, KV dtype, cache, sampler, seed, numero esperti e routing invariati.
-- Runtime: commit completo, build flags, patch hash, backend effettivamente usato, offload layer, thread, batch/ubatch, flash attention, cache prompt. Verificare che nessuna fase sia caduta su CPU involontariamente.
-- Rete: AP/router, banda/canale e modalità negoziata, distanza/ostacoli, numero peer e carico concorrente; porte USB, cavo/hub, adattatore e switch. Identificatori privati sostituiti da ID anonimi nei log da pubblicare.
-- Policy: nessuna inferenza cloud o download durante la prova; modelli già locali per run warm. Il caricamento cold viene cronometrato separatamente.
+- Computers/phones/tablets: model/SoC, physical and process-usable RAM, OS/build, backend, drivers, power, temperature/thermal state, battery and concurrent apps.
+- Target/draft: repository, immutable revision, SHA-256, quantization, complete tokenizer, chat template, context, KV dtype, cache, sampler, seed, unchanged expert count/routing.
+- Runtime: full commit, build flags, patch hashes, actual backend, offloaded layers, threads, batch/ubatch, flash attention and prompt cache. Verify no unintended CPU fallback in any phase.
+- Network: AP/router, band/channel/negotiated mode, distance/obstacles, peers and concurrent traffic; USB ports/cable/hub, adapter/switch. Replace private identifiers with anonymous IDs in published logs.
+- Policy: no cloud inference or downloads during trials; models already local for warm runs. Time cold loading separately.
 
-## Fase 0: trasporto e capacità, prima di un runtime completo
+## Phase 0: transport and capacity before a full runtime
 
-Stesso telefono sui trasporti disponibili: Wi-Fi, USB networking, ADB di laboratorio Android, Ethernet compatibile. Misurare entrambe le direzioni e full duplex, con peer singolo e più peer simultanei.
+Test the same phone over available Wi-Fi, USB networking, Android laboratory ADB and compatible Ethernet. Measure both directions and full duplex, with one and multiple simultaneous peers.
 
-Dimensioni indicative dei messaggi: 64 B, 4 KiB, 16 KiB, 64 KiB, 1 MiB, 16 MiB, più trasferimento pesi sostenuto. Poi sostituirle/affiancarle con le dimensioni effettive dei tensori e dei blocchi del modello scelto. Registrare latenza applicativa p50/p95/p99, goodput, perdita/errori e queueing; distinguere RTT da tempo unidirezionale. Senza clock sincronizzati, non sottrarre timestamp di host differenti come se lo fossero.
+Indicative messages: 64 B, 4 KiB, 16 KiB, 64 KiB, 1 MiB, 16 MiB, plus sustained weight transfer. Replace or supplement these with actual tensor/block sizes for the selected model. Record application latency p50/p95/p99, goodput, loss/errors and queueing; distinguish RTT from one-way time. Without synchronized clocks, do not subtract timestamps from different hosts as though synchronized.
 
-Ripetere radio idle, traffico continuo e rete contesa; misurare keepalive attivo/spento con relativo consumo. Non usare il migliore ping o la copia più veloce come costo per ogni token. Misurare anche caricamento, picco RAM e pressione dopo 30 minuti; non forzare OOM deliberati sul computer di lavoro.
+Repeat with idle radio, continuous traffic and contested networking; compare keepalive on/off and its energy cost. Do not use the best ping or fastest copy as the per-token cost. Measure loading, peak RAM and pressure after 30 minutes; do not deliberately force OOM on the owner's working computer.
 
-## Fase 1: microesperimenti discriminanti
+## Phase 1: discriminating microexperiments
 
-### E1 — draft autonomo, una sola chat
+### E1 — autonomous draft, one chat
 
-Un telefono ospita tutto il draft e propone blocchi k=1/2/4/8/16 (solo valori supportati e sicuri). Host verifica e committa; contesto e sequenza delle proposte hanno ID/versione. Iniziare greedy. Misurare per blocco: tempo draft, trasferimento, attesa, verifica, token accettati, rollback, bytes reali e lavoro scartato.
+A phone hosts the entire draft and proposes blocks k=1/2/4/8/16, restricted to safe supported values. The host verifies and commits; contexts and proposal sequences carry IDs/versions. Start greedy. Per block, measure draft, transfer, wait, verification, accepted tokens, rollback, actual bytes and discarded work.
 
-Confrontare D1/D2 contro migliore B0/B1/B2 sul medesimo workload. Accettazione non costante: varia per task, contesto e posizione. Non ottimizzare solo su un prompt numerico ripetitivo. Il rapporto tra velocità draft e target è necessario ma non sufficiente.
+Compare D1/D2 against the strongest B0/B1/B2 on the same workload. Acceptance varies with task, context and position. Do not tune exclusively on a repetitive numerical prompt. Draft-to-target speed ratio is necessary but insufficient.
 
-**Stop anticipato di fattibilità:** se già il limite ottimistico, dichiarando quali costi trascura, non può battere la baseline, non costruire il plugin per quella combinazione. Se lo supera, serve comunque la prova end-to-end. Per il sampling non greedy, misurare il costo del protocollo esatto e verificarne l'algoritmo di acceptance/rejection e residual sampling; nessuna equivalenza presunta per l'invio dei soli ID.
+**Early feasibility stop:** if even an optimistic bound cannot beat the baseline, explicitly listing omitted costs, do not build the plugin for that combination. Beating the bound still requires an end-to-end trial. For non-greedy sampling, measure the exact protocol and verify acceptance/rejection and residual sampling; sending only token IDs does not establish equivalence.
 
-### E2 — capacità senza ricaricare pesi per token
+### E2 — capacity without reloading weights every token
 
-Selezionare un target/contesto che effettivamente supera la memoria disponibile all'host. Confrontare C0/C1 a identità modello invariata, registrando paging, SSD I/O, caricamento, TTFT e decode. Non scegliere una quantizzazione peggiore o meno esperti solo per il cluster.
+Select a target/context that actually exceeds host-available memory. Compare C0/C1 without changing model identity; record paging, SSD I/O, loading, TTFT and decode. Do not use poorer quantization or fewer experts only for the cluster.
 
-**Stop:** memoria mobile o KV insufficiente, riavvii frequenti, costo remoto maggiore del percorso out-of-core misurato. Se C0 non è avviabile, dichiarare nuova capacità e tempi assoluti di C1, senza un rapporto di speedup inventato.
+**Stop:** insufficient mobile/KV memory, frequent restarts, or remote cost exceeding the measured out-of-core path. If C0 cannot start, report new capacity and absolute C1 times without an invented speedup ratio.
 
-### E3 — controllo dei trasporti e della policy
+### E3 — transport and policy controls
 
-Ripetere la migliore D/P sullo stesso set di nodi cambiando soltanto trasporto. Confrontare tutti i nodi contro sottoinsieme scelto dal planner e host solo. Introdurre contesa di rete, throttling osservato e uscita di un nodo. Contare il tempo speso a rilevare, riplanificare e ricostruire il contesto.
+Repeat the strongest D/P configuration on the same nodes, changing only transport. Compare all nodes, planner-selected subsets and host alone. Introduce network contention, observed throttling and node departure. Count detection, replanning and context-reconstruction time.
 
-**Stop:** il guadagno esiste solo nel primo minuto, sparisce a regime o richiede esclusioni manuali che il planner non sa riprodurre. Un routing sbagliato non va nascosto eliminando quel run.
+**Stop:** benefit exists only in the first minute, disappears at steady state, or requires manual exclusions the planner cannot reproduce. Do not hide poor routing by deleting the run.
 
-## Fase 2: benchmark end-to-end
+## Phase 2: end-to-end benchmark
 
-- Prompt corti/medi/lunghi, inizialmente circa 512/2048/8192 token se supportati; misurare i token reali dopo il template. Output fisso 128/512 token per il benchmark di velocità e output naturale separato per qualità/EOS.
-- Task almeno di coding, ragionamento, testo italiano/inglese e riassunto lungo; dati fissati con hash. Il set prestazionale non sostituisce una suite qualità ampia con casi limite e risultati analizzabili.
-- Due tracce: conversazione singola, senza concorrenza; carico multiutente/coda separato. Il secondo non può far passare il criterio primario.
-- Cache fredda e calda dichiarate; prompt-cache hit/miss separati. Niente riutilizzo involontario del prompt per favorire una configurazione.
-- Ordine delle configurazioni randomizzato e confronti appaiati per prompt; sessioni in blocchi temporali con condizioni iniziali comparabili. Run di almeno 30 minuti per stato termico sostenuto.
-- Piano iniziale: almeno 30 prompt di test e 5 ripetizioni appaiate per la configurazione finalista, distribuite su più sessioni; pilot per stimare varianza e adeguare numerosità **prima** della prova finale. Non trattare migliaia di token correlati come migliaia di osservazioni indipendenti.
-- Mediana, p95 e intervalli bootstrap al 95% raggruppando per prompt/sessione; pubblicare anche singoli casi, timeout, fallimenti ed eventuali esclusioni motivate. Un risultato inconcludente richiede più dati, non un claim favorevole.
+- Short/medium/long prompts, initially about 512/2048/8192 tokens where supported; measure actual tokens after templating. Fixed 128/512-token outputs for speed, natural output separately for quality/EOS.
+- Include coding, reasoning, Italian/English text and long summarization; freeze data with hashes. A performance set does not replace a broad quality suite with edge cases and inspectable outputs.
+- Separate single-conversation/no-concurrency and multi-user/queue tracks. The second cannot satisfy the primary criterion.
+- Declare cold/warm caches and separate prompt-cache hits/misses. Prevent accidental prompt reuse from favoring a configuration.
+- Randomize configuration order and pair comparisons by prompt. Block sessions over time with comparable initial conditions. Run at least 30 minutes for sustained thermal state.
+- Initial plan: at least 30 test prompts and 5 paired repetitions for the finalist, across multiple sessions. Use a pilot to estimate variance and adjust sample size **before** the final test. Thousands of correlated tokens are not thousands of independent observations.
+- Report medians, p95 and 95% bootstrap intervals clustered by prompt/session, plus individual cases, timeouts, failures and justified exclusions. Inconclusive results need more evidence, not a favorable claim.
 
-## Metriche e gate proposti
+## Proposed metrics and gates
 
-| Dimensione | Definizione | Criterio proposto |
+| Dimension | Definition | Proposed criterion |
 |---|---|---|
-| Velocità primaria | Token generati/tempo decode a output controllato; confronto appaiato con migliore baseline locale | Mediana dello speedup almeno 1,30× e limite inferiore CI95% oltre 1,10× |
-| Esperienza complessiva | Tempo dal submit all'ultimo token utile, cold/warm separati | Riduzione mediana almeno 20% nella traccia principale preregistrata |
-| Coda della latenza | p95 inter-token/tempo risposta, incluse attese tra burst | Nessun peggioramento >5% rispetto alla baseline; incertezza dichiarata |
-| Avvio | TTFT visto dal client, inclusi rete e scheduling | Nessuna regressione >10% warm nella traccia principale; cold pubblicato separatamente |
-| Sostenibilità | Stesse metriche nell'ultimo terzo del run ≥30 minuti | I gate di velocità continuano a passare |
-| Qualità | Greedy e tolleranze numeriche predefinite; sampling esatto e suite task | Nessuna modifica nascosta a target/esperti/contesto; regressioni spiegate e criterio preregistrato |
-| Energia | Energia totale host+nodi+rete misurabile per risposta/token utile | Pubblicare anche se peggiora; soglia energetica di prodotto da concordare |
-| Affidabilità | Completamenti corretti, timeout, replay, cancellazione, disconnessioni | Nessuna risposta corrotta o token non verificato committato; costi di recupero espliciti |
+| Primary speed | Generated tokens / decode time at controlled output; paired comparison with strongest local baseline | Median speedup at least 1.30×; lower 95% CI above 1.10× |
+| Overall experience | Submit to last useful token, cold/warm separate | At least 20% median reduction on the preregistered primary track |
+| Latency tail | p95 inter-token/response time, including waits between bursts | No regression above 5% against baseline; uncertainty reported |
+| Startup | Client-observed TTFT, including networking and scheduling | No warm regression above 10% on primary track; cold reported separately |
+| Sustained behavior | Same metrics in final third of a run ≥30 minutes | Speed gates continue to pass |
+| Quality | Greedy and predefined numerical tolerances; exact sampling and task suite | No hidden target/expert/context changes; explain regressions and preregister criterion |
+| Energy | Measurable total host + node + network energy per response/useful token | Publish even if worse; product energy threshold remains to be agreed |
+| Reliability | Correct completions, timeout, replay, cancellation, disconnections | No corrupt response or unverified committed token; explicit recovery costs |
 
-1,30× in velocità corrisponde a circa 23,1% di riduzione del tempo di quella fase, non al 30%. Le diverse metriche possono divergere: risposte in burst possono aumentare token/s ma peggiorare la fluidità. Il sistema non passa se vince solo una media nascondendo il resto.
+A 1.30× speedup corresponds to about a 23.1% reduction in that phase's duration, not 30%. Metrics can diverge: bursts may improve tokens/s while harming smoothness. Winning one mean while hiding the rest is not a pass.
 
-Per il claim «supera DistAI», riprodurre una configurazione comparabile sullo stesso hardware con build accelerata e tuning equo; distinguere guadagni dovuti al backend aggiornato da quelli del runtime. Se DistAI non supporta un dispositivo, riportare copertura aggiunta, non uno speedup contro una baseline inesistente. Non usare direttamente 3,9 token/s su vecchio PC come avversario del M3 Max.
+To claim “outperforms DistAI,” reproduce a comparable configuration on the same hardware with an accelerated build and fair tuning. Separate backend-update gains from runtime gains. If DistAI does not support a device, report additional coverage, not speedup against a nonexistent baseline. Do not use 3.9 tokens/s on an older PC as the M3 Max comparator.
 
-## Evidenze minime da conservare
+## Minimum retained evidence
 
-Manifest immutabile del run; JSONL per richiesta e per blocco; timestamp monotoni; numero token e bytes; output e hash (solo prompt non sensibili); metriche host/mobile; condizioni rete; errori; intervalli di confidenza e script di analisi. Per coding, eseguire risposte in una sandbox vera: `python -I` da solo non basta.
+Immutable run manifest; per-request and per-block JSONL; monotonic timestamps; token/byte counts; outputs/hashes for nonsensitive prompts only; host/mobile metrics; network conditions; errors; confidence intervals and analysis scripts. Execute generated coding outputs in an actual sandbox: `python -I` alone is insufficient.
 
-Pubblicare insieme risultati favorevoli e negativi. Non chiamare benchmark una simulazione, una stima da banda teorica o la revisione di un modello esterno.
+Publish favorable and negative results together. A simulation, theoretical-bandwidth estimate or external model review is not a hardware benchmark.

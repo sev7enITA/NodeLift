@@ -1,40 +1,7 @@
-# NodeLift — 简体中文
+# NodeLift documentation
 
-**让已有硬件在本地 AI 中继续发挥作用。**
+Repository documentation is maintained in English. This compatibility page preserves existing links; use the [main README](../../README.md), [documentation hub](../README.md) and [changelog](../../CHANGELOG.md).
 
-[![MIT 许可证](https://img.shields.io/badge/License-MIT-lightgrey.svg)](../../LICENSE)
-[![项目展示](https://img.shields.io/badge/Showcase-Live-146c6a.svg)](https://www.fabriziodegni.com/NodeLift/)
-[![配套应用 0.2.4 预发布版](https://img.shields.io/badge/Companion-0.2.4%20prerelease-b45309.svg)](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.4)
-[![主机 0.3.0 预览版](https://img.shields.io/badge/Host-0.3.0%20preview-b45309.svg)](../../docs/INTEGRATIONS.md)
+The application and public showcase still support Simplified Chinese, alongside default English and the other supported UI language. Select a language in the app or visit the [localized showcase](https://www.fabriziodegni.com/NodeLift/?lang=zh-Hans).
 
-[![源码检查](https://github.com/sev7enITA/NodeLift/actions/workflows/checks.yml/badge.svg?branch=main)](https://github.com/sev7enITA/NodeLift/actions/workflows/checks.yml)
-[![文档检查](https://github.com/sev7enITA/NodeLift/actions/workflows/documentation.yml/badge.svg?branch=main)](https://github.com/sev7enITA/NodeLift/actions/workflows/documentation.yml)
-[![原生构建检查](https://github.com/sev7enITA/NodeLift/actions/workflows/native-build.yml/badge.svg?branch=main)](https://github.com/sev7enITA/NodeLift/actions/workflows/native-build.yml)
-[![发布文件验证](https://github.com/sev7enITA/NodeLift/actions/workflows/release-verification.yml/badge.svg?branch=main)](https://github.com/sev7enITA/NodeLift/actions/workflows/release-verification.yml)
-
-[![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-3776ab.svg)](../../docs/wiki/Quickstart.md)
-[![C++17](https://img.shields.io/badge/C%2B%2B-17-00599c.svg)](../../native/CMakeLists.txt)
-[![固定版本的 llama.cpp](https://img.shields.io/badge/llama.cpp-pinned-146c6a.svg)](../../native/llama.lock)
-[![界面：英语、简体中文、意大利语](https://img.shields.io/badge/UI-EN%20%7C%20zh--Hans%20%7C%20IT-146c6a.svg)](../../docs/LOCALIZATION.md)
-
-源码和文档徽章跟踪 `main`；原生构建和发布文件验证徽章显示最近一次手动运行。
-
-NodeLift 是由 **Fabrizio Degni** 发起和开发的实验性项目，目标是让日常使用的 AI 界面能够利用现有本地设备的内存和算力。共享执行服务是产品核心；桌面界面负责资源管理，适配器连接各类应用。[产品方向与路线图](../ROADMAP.md)。
-
-当前实现允许手机上的小型草稿模型提出候选词元，由电脑上的主模型验证。通过分布式模型分区扩大可执行内存容量仍需开发，实体手机加速也尚未得到验证。
-
-应用默认使用英语。通过 **Language** 选择 **简体中文** 或 **Italiano**，选择会保存在本地，翻译无需联网。当前配套应用版本为 **0.2.4 / build 6**；主机源码包含 0.3.0 集成预览。
-
-- [实验性下载](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.4)：Android 实验室 APK；iOS 为未签名构建，安装前需要 Apple 签名和配置。
-- 先完成[电脑端入门](../wiki/Quickstart.md)，再连接 [Android](../wiki/Android.md) 或 [iPhone/iPad](../wiki/iOS-and-iPadOS.md)。详细技术指南目前以英语为主。
-- [模型与提供商](../wiki/Models-and-providers.md)、[本地化和验证](../LOCALIZATION.md)、[基准测试](../wiki/Benchmarking.md)。
-- [Wiki](https://github.com/sev7enITA/NodeLift/wiki)、[图片](../GALLERY.md)、[项目展示](https://www.fabriziodegni.com/NodeLift/)。
-- [设备关系图与贡献说明](../DEVICE-GRAPH.md)：硬件、历史遥测和已接受的移动端提案占比；该占比不代表计算利用率或加速比。
-
-Hugging Face 下载和直接导入支持完整的单文件 GGUF。OpenRouter 是可选的云端路径，会发送提示词且可能产生费用。LM Studio/oMLX 本地 API 路径与手机草稿推理分开，不会自动获得手机加速。
-
-在最初的小型控制模型测试中，本地草稿比仅运行目标模型更慢。项目保留并公开负面结果。编译成功或 CI 通过并不等于实体设备性能已经得到验证。
-
-[English](../../README.md) · [Italiano](README_it.md) · [参与贡献](../../CONTRIBUTING.md)
-
-**关于与参考资料：** 控制室与配套应用内提供作者信息、已安装版本、官方网站、技术资料和手动查看发布版本的入口。[指南](../ABOUT_AND_UPDATES.md)。
+[Localization scope and validation](../LOCALIZATION.md) · [Mobile installation](../MOBILE_DOWNLOADS.md)

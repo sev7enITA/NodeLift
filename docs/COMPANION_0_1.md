@@ -1,57 +1,57 @@
-# NodeLift 0.1 — companion di qualificazione
+# NodeLift 0.1 — qualification companions
 
-31 ottobre 2026. Il nome **NodeLift** è stato scelto dall'utente. La directory storica del progetto rimane ExpandMyHW per preservare percorsi e ricerca. Questa è la prima implementazione del sistema di associazione e misura, **non un motore di inferenza distribuita**.
+Historical checkpoint, 31 October 2026. The owner selected **NodeLift** as the name; the original ExpandMyHW directory preserves paths and research. This first pairing/measurement implementation was **not a distributed inference engine**. For the current release, use the [engine guide](ENGINE_0_2.md), [QR pairing guide](QR_PAIRING.md) and [changelog](../CHANGELOG.md). Implementation gaps below describe version 0.1, not all later versions.
 
-## Cosa è implementato
+## Implemented at this checkpoint
 
-- Host Python senza dipendenze PyPI: server HTTPS per i nodi, dashboard web su loopback, inviti monouso di cinque minuti, registrazione e revoca, job limitati a test noti, risultati esportabili.
-- Android Kotlin: UI nativa, servizio `connectedDevice`, rilevamento del modello, RAM fisica e memoria disponibile al sistema, termica, trasporto, battery indicator; sessione cifrata con Android Keystore.
-- iOS SwiftUI: UI nativa, TLS con certificato host esplicitamente verificato, credenziali Keychain, termica e margine memoria del processo; pausa in background. Nessuna pretesa di daemon permanente.
-- HarmonyOS ArkTS: **sorgente candidato**, UI, associazione, pinning SPKI e test rete in primo piano. Token solo in memoria; CPU, lettura RAM e inferenza non abilitati. Richiede SDK API 23+ per disabilitare redirect. Non è stato compilato né installato: DevEco/SDK e firma Huawei non sono disponibili nell'ambiente esaminato.
-- Test rapidi di rete: 32 RTT applicativi con risposta da 64 byte, quattro download e upload per ciascuna dimensione 16 KiB/1 MiB. Un warmup escluso. Sono diagnostici: il p95 di 32 campioni è esplorativo, non una stima stabile della coda di latenza.
-- Android/iOS: test rete con 600 RTT, divisi in tre gruppi da 200 con pause richieste 0/30/60 ms. La dashboard presenta i gruppi separatamente. L'ID di connessione assegnato dal server permette di osservare il riuso TCP/TLS. I ritardi effettivi del sistema operativo possono eccedere le pause richieste.
-- Android/iOS: test CPU sintetico FP32 matvec 256×256, circa 1,5 secondi, un thread. Misura quel kernel e quel runtime, principalmente in cache; **non predice banda DRAM, GPU, NPU o token/s**.
+- Host Python without PyPI dependencies: HTTPS node server, loopback web dashboard, five-minute single-use invitations, registration/revocation, jobs restricted to known tests and exportable results.
+- Android Kotlin: native UI, `connectedDevice` service, model detection, physical/system-available RAM, thermal state, transport and battery indicator; session encrypted with Android Keystore.
+- iOS SwiftUI: native UI, explicitly verified host TLS certificate, Keychain credentials, thermal status and process memory headroom; background pause, with no permanent-daemon claim.
+- HarmonyOS ArkTS: **source candidate** with UI, pairing, SPKI pinning and foreground network tests. In-memory tokens only; CPU tests, RAM readings and inference disabled. Requires SDK API 23+ to disable redirects. Not compiled or installed: DevEco/SDK and Huawei signing were unavailable in the inspected environment.
+- Quick network test: 32 application RTTs with a 64-byte response and four downloads/uploads per 16 KiB/1 MiB size; one warmup excluded. Diagnostic only: p95 from 32 samples is exploratory, not a stable tail estimate.
+- Android/iOS paced network test: 600 RTTs in three 200-sample groups with requested pauses of 0/30/60 ms. Dashboard shows groups separately. Server-assigned connection IDs expose TCP/TLS reuse. Actual OS delays may exceed requested pauses.
+- Android/iOS synthetic FP32 256×256 matvec CPU test, approximately 1.5 seconds, one thread. Measures that kernel/runtime, mostly in cache; **does not predict DRAM bandwidth, GPU, NPU or tokens/s**.
 
-Non sono implementati: caricamento GGUF sui telefoni, KV cache distribuita, draft/verify remoto, sharding dei layer, backend Harmony GPU/NPU, generator LM Studio o integrazione Ollama. Non è ancora dimostrato un vantaggio rispetto al Mac.
+Not implemented in 0.1: phone GGUF loading, distributed KV cache, remote draft/verify, layer sharding, Harmony GPU/NPU backend, LM Studio generator or Ollama integration. No advantage over the Mac had been demonstrated.
 
-## Avvio sul computer
+## Starting the computer host
 
-Prerequisiti host: Python 3.11+ con SQLite 3.35+ e OpenSSL disponibile nel PATH. Non installare certificati nell'archivio globale del computer o del telefono: la companion usa l'identità ricevuta nell'invito solo per NodeLift.
+Historical host prerequisites: Python 3.11+ with SQLite 3.35+ and OpenSSL on PATH. Do not install certificates in the computer/phone's global trust store: the companion uses the invitation identity only for NodeLift.
 
 ```sh
 cd host
-python3 -m nodelift.host --address IP_LOCALE_DEL_MAC
+python3 -m nodelift.host --address YOUR_PRIVATE_LAN_IPV4
 ```
 
-Sostituire `IP_LOCALE_DEL_MAC` con l'IPv4 privato del Mac sulla stessa rete/hotspot dei dispositivi. Il valore predefinito 127.0.0.1 è utilizzabile solo per prove sul computer. Il processo stampa il link privato della dashboard su `s`; aprire quel link sul Mac. Il token nel frammento è un segreto locale: non pubblicarlo.
+Use the Mac's private IPv4 on the same network/hotspot as the devices. Default 127.0.0.1 works only for same-computer tests. Open the private dashboard link printed by the process. Its fragment token is a local secret; never publish it.
 
-1. Nella dashboard scegliere **Aggiungi dispositivo**.
-2. Trasferire e incollare l'invito nella companion del telefono; vale cinque minuti e si usa una volta. Non inoltrarlo a soggetti estranei. Il pairing è manuale in questa build; non c'è ancora scansione QR o discovery mobile.
-3. Scegliere **Associa e attiva nodo**. La companion fa solo connessioni in uscita al computer; non espone un server sul telefono.
-4. Avviare dalla dashboard **Rete rapida**, **Rete con pause** oppure **Test CPU**, quando supportati dal client.
-5. Esportare il JSON, che contiene i campioni e non le credenziali. **Pausa** sul telefono interrompe la disponibilità; **Revoca** sul computer invalida il token. **Dimentica computer** sul telefono elimina solo le credenziali locali: per invalidare anche il token sul server usare Revoca.
+1. Select **Add device** in the dashboard.
+2. Transfer and paste the invitation into the phone companion. It lasts five minutes and can be used once; do not forward it to outsiders. Pairing was manual in 0.1, without QR scanning or mobile discovery.
+3. Select **Pair and enable node**. The companion only makes outgoing connections to the computer; it exposes no phone server.
+4. Start **Quick network**, **Paced network** or **CPU test** from the dashboard where supported.
+5. Export JSON samples without credentials. **Pause** on the phone stops availability; **Revoke** on the computer invalidates the token. **Forget computer** removes only local credentials; use Revoke to invalidate the server token too.
 
-Il server ascolta soltanto sull'indirizzo scelto, non su tutte le interfacce. Il sistema operativo deve consentire le connessioni locali in entrata al processo Python. Non sono stati cambiati firewall, hotspot, autorizzazioni di sistema o impostazioni del router. `--bonjour` annuncia facoltativamente il servizio con `dns-sd`, dove disponibile; non sostituisce l'associazione e non abilita discovery nelle companion 0.1.
+The server listens only on the selected address. The OS must allow incoming local connections to Python. Firewall, hotspot, system permissions and router settings were not changed. Optional `--bonjour` announces the service through `dns-sd` where available; it does not replace pairing or enable discovery in 0.1 companions.
 
-### Se «Aggiungi dispositivo» non risponde
+### If Add device does not respond
 
-Aprire il solo `http://127.0.0.1:9868` in una nuova scheda non trasferisce la sessione privata della scheda originale. La dashboard ora mostra un avviso in italiano e disabilita le azioni finché l'accesso non è valido. Riaprire il collegamento completo stampato dal server; se si usa la sessione avviata dall'assistente, con log privato in `~/.local/share/nodelift/host-session.log`, fare doppio clic su `scripts/open-dashboard.command`. Il comando verifica che la sessione sia ancora attiva e apre il browser senza stampare il segreto. Non serve reinstallare la companion.
+Opening only `http://127.0.0.1:9868` in a new tab does not transfer the original tab's private session. The corrected 0.1 dashboard displayed an Italian warning and disabled actions until authentication was valid. Reopen the complete server-printed link. For an assistant-started session with private log `~/.local/share/nodelift/host-session.log`, double-click `scripts/open-dashboard.command`: it verifies the session and opens the browser without printing the secret. Reinstallation is unnecessary.
 
-Correzione verificata nel browser il 31 ottobre 2026: scheda senza sessione con avviso e pulsanti disabilitati; ripristino della sessione; clic su «Aggiungi dispositivo» con invito effettivamente generato. Un collegamento con sessione aperto nella stessa scheda viene ricaricato anche se cambia soltanto il frammento dell'URL. Nessuna modifica al protocollo mobile o alle autorizzazioni.
+Browser verification on 31 October covered the unauthenticated warning/disabled controls, restored authentication and successful invitation creation. Opening a session link in the same tab also reloads when only the URL fragment changes. No mobile protocol or permission changes were needed.
 
-Certificato iniziale valido 30 giorni. Cambio di IP richiede un nuovo `--state` e nuova associazione, perché l'identità contiene il SAN IP. Rotazione guidata, DNS stabile e UX QR sono lavoro successivo. Lo stato predefinito è `~/.local/share/nodelift` con directory privata e token salvati solo come hash; i certificati e la chiave privata sono locali al computer.
+The initial certificate lasts 30 days. An IP change requires a new `--state` and pairing because the identity contains the IP SAN. Guided rotation, stable DNS and QR UX were future work at this checkpoint. Default state is private `~/.local/share/nodelift`; server tokens are stored only as hashes, while certificates/private keys remain on the computer.
 
-## Compilazione e installazione
+## Compilation and installation
 
 ### Android
 
-JDK 21, SDK Android 36 e Gradle wrapper 8.13. Build verificata con Android Gradle Plugin 8.12.0 e Kotlin 2.1.20.
+JDK 21, Android SDK 36 and Gradle wrapper 8.13. Build checked with Android Gradle Plugin 8.12.0 and Kotlin 2.1.20.
 
 ```sh
 ./scripts/build-android.sh
 ```
 
-APK: `apps/android/app/build/outputs/apk/debug/app-debug.apk`; copia consegnabile in `artifacts/NodeLift-0.1.0-android-debug.apk`. È una **build debug**, non una release Play Store. L'installazione su telefono e i test OEM HyperOS/ColorOS restano da fare. Non installare questo APK sul Huawei dichiarato HarmonyOS NEXT come se fosse la companion nativa.
+APK: `apps/android/app/build/outputs/apk/debug/app-debug.apk`; deliverable copy: `artifacts/NodeLift-0.1.0-android-debug.apk`. This was a **debug build**, not a Play Store release. Initial checks did not include physical installation or OEM HyperOS/ColorOS tests; the later Xiaomi session is recorded below. Do not treat this APK as a native Huawei NEXT companion.
 
 ### iOS
 
@@ -59,35 +59,35 @@ APK: `apps/android/app/build/outputs/apk/debug/app-debug.apk`; copia consegnabil
 ./scripts/build-ios.sh
 ```
 
-Il progetto Xcode è `apps/ios/NodeLift.xcodeproj`, rigenerabile da `project.yml` con XcodeGen. Sono riuscite compilazioni Release per simulatore e device, con firma disabilitata. **Un'app non firmata non è installabile sull'iPhone**: aprire il progetto in Xcode, scegliere il team di sviluppo e il dispositivo, quindi eseguire la firma/installazione prevista dall'account. Nessun certificato/account Apple è stato creato o alterato e nessun invio a TestFlight/App Store è stato effettuato.
+`apps/ios/NodeLift.xcodeproj` is regenerated from `project.yml` with XcodeGen. Release simulator/device builds succeeded with signing disabled. **An unsigned app cannot be installed directly on an iPhone**: select a development team and device in Xcode, then sign/install through the account's supported process. No Apple certificate/account was created or altered; nothing was submitted to TestFlight/App Store.
 
-La companion iOS non disabilita automaticamente il blocco schermo. Per una misura mantenere l'app attiva; il blocco/background la mette in pausa. Misurare separatamente eventuali prove con schermo tenuto acceso, perché influiscono sulla termica.
+The iOS companion does not automatically disable screen locking. Keep it active during measurement; locking/backgrounding pauses it. Report screen-on trials separately because they affect thermals.
 
 ### HarmonyOS NEXT
 
-Aprire `apps/harmony` in DevEco Studio con SDK compatibile API 23+; configurare la firma per il dispositivo e risolvere eventuali differenze del toolchain rispetto al candidato. Questa è una **fase ancora da eseguire**, non una procedura verificata. Il nome/versione OS “HarmonyOS NEXT 7” proviene dall'utente; API level e build effettivi vanno letti sul telefono. Non attribuire a un HAP non prodotto compatibilità verificata.
+Open `apps/harmony` in DevEco Studio with a compatible API 23+ SDK, configure device signing and resolve toolchain differences. This is **an unperformed step**, not a verified procedure. “HarmonyOS NEXT 7” is the owner's reported OS name/version; read actual API level/build on the phone. No unbuilt HAP has verified compatibility.
 
-## Protocollo e confini
+## Protocol and boundaries
 
-`POST /v1/pair` consuma l'invito; tutte le altre API del nodo richiedono un bearer revocabile. `/v1/heartbeat` aggiorna telemetria e consegna un job una sola volta. `/v1/probe` e `/v1/upload` limitano il payload a 1 MiB. `/v1/result` accetta soltanto il proprietario del job in esecuzione, entro 120 secondi; replay, token revocati e risultati tardivi vengono rifiutati. I client interrompono il test dopo circa 90 secondi e controllano lo stato termico tra richieste/iterazioni. Il timeout di rete di una singola operazione può aggiungersi al limite tra operazioni.
+`POST /v1/pair` consumes the invitation; other node APIs require a revocable bearer. `/v1/heartbeat` updates telemetry and delivers a job once. `/v1/probe` and `/v1/upload` cap payloads at 1 MiB. `/v1/result` accepts only the running job's owner within 120 seconds; replays, revoked tokens and late results are rejected. Clients stop tests after approximately 90 seconds and check thermals between requests/iterations. One operation's network timeout may extend the between-operation limit.
 
-Se il client viene chiuso durante una prova, il job può restare visibile in esecuzione fino al timeout: non è ripreso automaticamente e non riceve un risultato inventato. Le credenziali non autorizzano esecuzione shell, download di codice o allocazioni di memoria richieste dal server. Il protocollo di inferenza futuro richiederà un progetto separato.
+If a client closes during a test, the job can remain running until timeout; it is not automatically resumed and receives no fabricated result. Credentials do not authorize shell execution, code downloads or server-requested arbitrary allocations. Inference required a separate protocol design.
 
-Memoria Android “disponibile” e margine iOS `os_proc_available_memory()` hanno **significati diversi**: il primo è un dato del sistema, il secondo un margine per processo. Non sommarli e non usarli come budget allocabile già validato. La dashboard mostra la piattaforma e il dato osservato, non una promessa di RAM recuperata.
+Android “available memory” and iOS `os_proc_available_memory()` have **different meanings**: system-level availability versus process headroom. Do not add them or treat them as validated allocatable budgets. The dashboard reports observed platform data, not promised reclaimed RAM.
 
-I test HTTPS includono stack applicativo, code, TLS e copie. Non sono iperf, banda PHY o latenza di un futuro protocollo tensoriale. Nessun p99 affidabile viene dedotto dal test rapido; i trasferimenti grandi sono ancora pochi. Servono campioni aggiuntivi, ordine randomizzato, più sessioni, carico concorrente e test fisici sostenuti secondo `BENCHMARK_PROTOCOL.md`.
+HTTPS tests include application stack, queueing, TLS and copies. They are not iperf, PHY bandwidth or a future tensor protocol's latency. The quick test does not establish reliable p99; large-transfer samples remain few. More samples, randomized order, sessions, concurrent load and sustained physical tests are required by `BENCHMARK_PROTOCOL.md`.
 
-## Stato delle verifiche
+## Verification status
 
-**Aggiornamento fisico successivo, 31 ottobre:** l'utente ha installato la companion sullo Xiaomi 17 Ultra e confermato che il telefono fornisce l'hotspot al Mac. Associazione, heartbeat, due prove con pause, una prova rapida e CPU sintetica sono stati completati sul dispositivo. [Campioni e report](../research/measurements/2026-10-31-xiaomi-hotspot/REPORT.md). Questo supera il limite di assenza di un primo test fisico Android descritto nei controlli iniziali sotto; restano aperti gli altri dispositivi, i test termici sostenuti e l'inferenza LLM. Il riepilogo Android 0.1 della prova con pause mostra soltanto i primi 32 RTT: usare la dashboard o il report per i gruppi completi; correzione mobile da distribuire.
+**Later physical update, 31 October:** the owner installed the companion on the Xiaomi 17 Ultra and confirmed its hotspot served the Mac. Pairing, heartbeat, two paced tests, one quick test and synthetic CPU work completed on the device. [Samples and report](../research/measurements/2026-10-31-xiaomi-hotspot/REPORT.md). This supersedes the initial absence of a physical Android test below; other devices, sustained thermal tests and LLM inference remained open. The Android 0.1 paced-test summary displays only the first 32 RTTs: use the dashboard/report for full groups; a mobile correction had not yet shipped at this checkpoint.
 
-Controlli iniziali della build, precedenti alla sessione Xiaomi:
+Initial build checks, before the Xiaomi session:
 
-- 14 test automatici host passati: TLS non fidato, invito scaduto/riutilizzato, autenticazione/revoca, limiti payload, proprietà/lease job, replay, timeout, origine dashboard e segreti assenti dall'export.
-- Client Swift reale provato contro HTTPS locale su **macOS**: pairing, download/upload autenticati, heartbeat e rifiuto fingerprint alterato. Non equivale a test iPhone.
-- Test strumentale Android scritto e APK test compilato. L'emulatore dedicato non ha completato l'avvio (`mprotect ... Permission denied`, ADB offline); nessun pass strumentale Android dichiarato.
-- Dashboard verificata via browser: caricamento, stato vuoto, creazione/chiusura invito. Screenshot non ottenuto per timeout del browser; nessuna validazione visiva completa dichiarata.
-- Nessun telefono fisico collegato agli strumenti durante il controllo. Nessun benchmark hotspot, termico prolungato o LLM eseguito.
-- Gemini 4 High ha completato il riesame del **disegno**, con contributi e correzioni documentati; GLM 5.3 Max è ancora indisponibile per capacità. Nessun audit del codice attribuito ai due modelli.
+- 14 host tests passed: untrusted TLS, expired/reused invitations, authentication/revocation, payload limits, job ownership/lease, replay, timeout, dashboard origin and secret-free exports.
+- Actual Swift client tested against local HTTPS on **macOS**: pairing, authenticated download/upload, heartbeat and rejection of an altered fingerprint. Not an iPhone test.
+- Android instrumented test written and test APK compiled. The dedicated emulator failed to finish startup (`mprotect ... Permission denied`, ADB offline); no instrumented Android pass was claimed.
+- Dashboard browser checks covered loading, empty state and invitation creation/closure. Screenshot capture timed out; no full visual qualification was claimed.
+- No physical phone was connected to the tools during those initial checks. No hotspot, sustained thermal or LLM benchmark was performed in that initial phase.
+- Gemini 4 High completed a **design** review with documented adjudication; GLM 5.3 Max was still capacity-limited. Neither was credited with a source audit at that checkpoint.
 
-I log si trovano in `artifacts/`. I dettagli della ricerca rimangono nel dossier DistAI e nell'assessment iniziale.
+Logs are in `artifacts/`. Research details remain in the DistAI dossier and initial assessment.

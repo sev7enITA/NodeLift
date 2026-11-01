@@ -21,9 +21,9 @@
 
 Source and documentation badges follow `main`; native build and release verification show the latest manual run.
 
-English · [简体中文](docs/readme/README_zh-Hans.md) · [Italiano](docs/readme/README_it.md)
+Repository documentation is in English. The app and [showcase](https://www.fabriziodegni.com/NodeLift/) support English (default), Simplified Chinese and Italian.
 
-[Quickstart](docs/wiki/Quickstart.md) · [Wiki](https://github.com/sev7enITA/NodeLift/wiki) · [How-to guides](docs/README.md) · [Gallery](docs/GALLERY.md) · [Troubleshooting](docs/wiki/Troubleshooting.md)
+[Quickstart](docs/wiki/Quickstart.md) · [Wiki](https://github.com/sev7enITA/NodeLift/wiki) · [How-to guides](docs/README.md) · [Changelog](CHANGELOG.md) · [Gallery](docs/GALLERY.md) · [Troubleshooting](docs/wiki/Troubleshooting.md)
 
 **NodeLift's objective is to make RAM and compute from existing local devices available to the AI interfaces you already use.** Its shared execution service is the core; the desktop control room manages resources, and adapters connect everyday clients. [Product direction and engineering roadmap](docs/ROADMAP.md).
 

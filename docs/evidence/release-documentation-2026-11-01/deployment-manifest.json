@@ -1,0 +1,73 @@
+{
+  "base_url": "https://www.fabriziodegni.com/NodeLift/",
+  "files": {
+    "assets/nodelift-emblem.png": {
+      "bytes": 1077866,
+      "sha256": "377278075d7b2718ea72d9d74d20455ae2a90cad0d772807ee59c2c9afafb46d"
+    },
+    "assets/nodelift-mark.svg": {
+      "bytes": 349,
+      "sha256": "882967df9afbd509ac5633c8cf2d1d693d6fd73c2b2f85a49da845fda93404ca"
+    },
+    "assets/showcase.css": {
+      "bytes": 65604,
+      "sha256": "ffb867bcb45b9f347ad926f61bffc1c6d374da48b4a8188bad56ece8041f4183"
+    },
+    "assets/showcase.js": {
+      "bytes": 22683,
+      "sha256": "5ca9fbfc45154660d33676eb60a2264b40575d399949af4a8ccea709ccb5dfda"
+    },
+    "data/assessment.md": {
+      "bytes": 8587,
+      "sha256": "f8993e9767fbe8ceadd1b84eb60d9561331ef907cd04e21cc3217a405e4370cd"
+    },
+    "data/comparison.csv": {
+      "bytes": 62238,
+      "sha256": "e268b281659dfb73715e611c931205d93e2655e38e8429069b7a6c01a983af7d"
+    },
+    "data/comparison.json": {
+      "bytes": 95698,
+      "sha256": "d3f3d69319b5947e91aaddd8c32b7b81a131073a6337457ed8b037c7172d769e"
+    },
+    "data/comparison.md": {
+      "bytes": 90946,
+      "sha256": "23e6fb931ac1cc53132702c5d85b43ed03aa40898a5683577e45a64e7bbec573"
+    },
+    "data/manifest.json": {
+      "bytes": 925,
+      "sha256": "89d01678c6bade4c6a29ed316c716d1234dbfd7cf875f5856d6056338daa3dea"
+    },
+    "data/methodology.md": {
+      "bytes": 5663,
+      "sha256": "044a92362b1ff092e53b2527b9d2b49da4ee361d18f02dc51843a2657ece5c78"
+    },
+    "data/mobile-downloads.json": {
+      "bytes": 3068,
+      "sha256": "daeb157e5a7e96004706a0073427309ddc9e8b2d3698a85b194fa69e2d0a746b"
+    },
+    "data/mobile-installation.md": {
+      "bytes": 7019,
+      "sha256": "9dc4e80723fc84d40eb9931d57973f1452fab3216a4fe977a4930b02b333ae1a"
+    },
+    "data/source-inventory.json": {
+      "bytes": 14950,
+      "sha256": "d8fd90027152f1ff1af89fc975230440419566d38f1dc8f63ebbddb9a8647067"
+    },
+    "index.html": {
+      "bytes": 75475,
+      "sha256": "908b4a70b91db01e43e9a580b930c64323fc1192b39733d24c5a0a4e8f5eb54a"
+    },
+    "assets/site-locales.js": {
+      "bytes": 29960,
+      "sha256": "ee0ae12d36ab41dcf630ded7b87707cefd896af176280736bddf064bac8b47c1"
+    },
+    "data/changelog.md": {
+      "bytes": 7044,
+      "sha256": "b6dac50424334a0d7fed6a139b72781839734fb6def14c46ee34934b883ebfd1"
+    },
+    "data/changelog.json": {
+      "bytes": 7586,
+      "sha256": "8f2021e6cf7e586aa1acc7c0addf7439a4f2b0c216e74d67b36cb397cfbad798"
+    }
+  }
+}

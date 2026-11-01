@@ -1,159 +1,159 @@
-# DistAI: evidenze, limiti e lezioni per ExpandMyHW
+# DistAI — evidence, limits and lessons for ExpandMyHW
 
-Assessment del 31 ottobre 2026. **Nessun benchmark hardware di ExpandMyHW è stato eseguito.** Questo documento distingue codice ispezionato, risultati pubblicati dall'autore, ricalcoli nostri e ipotesi da verificare. Non è una certificazione del repository né una replica indipendente delle sue prestazioni.
+Assessment dated 31 October 2026, before ExpandMyHW hardware benchmarks. This document distinguishes inspected code, author-published results, our recalculations and hypotheses requiring tests. It is neither repository certification nor an independent performance replication. ExpandMyHW was subsequently named NodeLift; [later NodeLift results](../measurements/ENGINE_RESULTS.md) are reported separately.
 
-## Verdetto
+## Verdict
 
-DistAI dimostra un prototipo concreto di inferenza distribuita Android/PC: discovery, caricamento, suddivisione dei layer, esecuzione e API compatibile OpenAI. Il suo risultato più istruttivo è negativo: **sommare memoria mediante una pipeline di layer non somma la velocità della singola conversazione**. Il progetto lo dichiara apertamente. Il nostro obiettivo prioritario, accelerare una chat rispetto al computer ottimizzato, richiede quindi un esperimento diverso e una baseline più esigente.
+DistAI demonstrates a concrete Android/PC distributed inference prototype: discovery, loading, layer partitioning, execution and an OpenAI-style API. Its most instructive result is negative: **adding memory through a layer pipeline does not add speed to one conversation**. The project states this openly. Our priority, accelerating one chat against an optimized computer, therefore needs a different experiment and a stronger baseline.
 
-La lezione non è «Wi-Fi impossibile» o «telefoni inutili». È che la scelta deve dipendere dal lavoro realmente delegato, dal percorso critico, dall'hardware e dalla rete misurati. Uno scheduler deve poter lasciare tutti i telefoni inattivi quando non aiutano.
+The lesson is not “Wi-Fi is impossible” or “phones are useless.” Decisions must depend on actual delegated work, the critical path, and measured hardware/network behavior. A scheduler must be able to leave every phone idle when none helps.
 
-## Perimetro e riproducibilità dell'analisi
+## Scope and reproducibility
 
 - Repository: [alex8819/DistAi](https://github.com/alex8819/DistAi).
-- Snapshot: [b1c17109498e87b3db99f8f23648d84483b68bb9](https://github.com/alex8819/DistAi/tree/b1c17109498e87b3db99f8f23648d84483b68bb9), ultimo commit osservato del 16 ottobre 2026. La cronologia acquisita contiene quattro commit, tutti di quel giorno: non prova una lunga storia di manutenzione.
-- Acquisiti 37 file testuali mirati, licenza MIT inclusa. Non è un clone integrale, né un audit completo di sicurezza. Nessun APK, binario o script di inferenza upstream è stato eseguito.
-- Ogni file acquisito corrisponde al blob Git nello snapshot. [provenance.json](provenance.json) registra albero e commit; [source-manifest.json](source-manifest.json) contiene gli SHA-256 dei file.
-- Letti tre JSONL: 17 righe di qualità, 89 di ottimizzazione, 27 di prefill. Queste **133 righe non equivalgono a 133 repliche controllate**: configurazioni differenti, errori e misure annidate. Quattordici righe di ottimizzazione riportano un campo errore non vuoto.
-- [verify_evidence.py](verify_evidence.py) legge dati e definizioni letterali via AST senza eseguire codice upstream. Rigenera [evidence-checks.json](evidence-checks.json), non misura un LLM.
+- Snapshot: [b1c17109498e87b3db99f8f23648d84483b68bb9](https://github.com/alex8819/DistAi/tree/b1c17109498e87b3db99f8f23648d84483b68bb9), latest observed commit dated 16 October 2026. Retrieved history contains four commits, all that day; it does not establish a long maintenance history.
+- Retrieved 37 targeted text files, including the MIT license. Not a full clone or comprehensive security audit. No upstream APK, binary or inference script was executed.
+- Every retrieved file matches its Git blob in the snapshot. [provenance.json](provenance.json) records tree/commit; [source-manifest.json](source-manifest.json) contains SHA-256 hashes.
+- Read three JSONL files: 17 quality rows, 89 optimization rows and 27 prefill rows. These **133 rows are not 133 controlled repetitions**: configurations differ and include errors/nested measurements. Fourteen optimization rows have a nonempty error field.
+- [verify_evidence.py](verify_evidence.py) reads data and literal definitions through AST without executing upstream code. It regenerates [evidence-checks.json](evidence-checks.json); it does not benchmark an LLM.
 
-Ripetere dalla radice del progetto:
+Run from the project root:
 
 ```sh
 python3 research/distai/verify_evidence.py
 ```
 
-## 1. Il risultato di capacità è reale nel prototipo, il guadagno single-user non c'è
+## 1. The prototype expands capacity; it does not improve single-user speed
 
-L'architettura usa `llama-server` coordinatore e worker `ggml-rpc-server` che mantengono gruppi di layer. I pesi vengono trasferiti al caricamento; i layer remoti eseguono il calcolo e scambiano attivazioni. Non è RAM remota coerente che diventa memoria del Mac. Il README riporta un 30B a **7,0 token/s sul PC contro 3,9 distribuito**, e circa 2 token/s per un 7B PC+telefono. Sono risultati dell'autore, non misure nostre.
+The architecture uses a `llama-server` coordinator and `ggml-rpc-server` workers holding layer groups. Weights transfer at loading; remote layers compute and exchange activations. This is not coherent remote RAM that becomes Mac memory. The README reports a 30B at **7.0 tokens/s on PC versus 3.9 distributed**, and approximately 2 tokens/s for a 7B on PC + phone. These are the author's results, not ours.
 
-Per una pipeline senza sovrapposizione utile sul singolo token:
+For a pipeline without useful overlap within one token:
 
-`T_token ≈ somma(T_stadio_i) + somma(T_trasferimento_i + T_sincronizzazione_i)`.
+`T_token ≈ sum(T_stage_i) + sum(T_transfer_i + T_synchronization_i)`.
 
-Se tutti i layer stanno sull'host e ciascuno è più veloce lì, trasferirne alcuni a nodi più lenti non migliora il decode. Questa conclusione riguarda quelle ipotesi; non dimostra l'impossibilità di ogni forma di inferenza distribuita, speculation o parallelismo intra-layer.
+If all layers fit the host and each is faster there, moving some to slower nodes cannot improve decode under those assumptions. This does not prove every form of distributed inference, speculation or intra-layer parallelism impossible.
 
-**Da superare:** il primo risultato di ExpandMyHW deve confrontare la stessa chat con lo stesso target e una configurazione host ottimizzata. «Modello più grande caricabile» e «più utenti serviti» sono risultati separati.
+**Required improvement:** compare the same chat and target against an optimized host. “Larger model fits” and “more users served” are separate outcomes.
 
-Fonte: [README fissato](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/README.md).
+Source: [pinned README](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/README.md).
 
-## 2. Il 3× è throughput di una coda, e dipende dalla baseline
+## 2. The 3× result is queue throughput and depends on the baseline
 
-Le ultime tre righe di `results-codeeval.jsonl` riportano:
+The final three rows of `results-codeeval.jsonl` report:
 
-| Configurazione pubblicata | Tempo di 22 task | Task superati |
+| Published configuration | Time for 22 tasks | Tasks passed |
 |---|---:|---:|
-| PC sequenziale | 202,7 s | 20/22 |
-| PC con 4 slot | 106,4 s | 20/22 |
-| PC 4 + Xiaomi 4 + Huawei 1 slot | 67,7 s | 20/22 |
+| Sequential PC | 202.7 s | 20/22 |
+| PC with 4 slots | 106.4 s | 20/22 |
+| PC 4 + Xiaomi 4 + Huawei 1 slot | 67.7 s | 20/22 |
 
-Ricalcolo: `202,7 / 67,7 = 2,994×`, ma `106,4 / 67,7 = 1,572×`. Il cluster riduce del **36,37%** il tempo della coda rispetto al PC con batching. È un risultato interessante; **non è 3× sulla stessa baseline ottimizzata e non è 3× per una singola chat**. È pubblicato un batch per configurazione, senza intervallo di confidenza.
+Recalculation: `202.7 / 67.7 = 2.994×`, but `106.4 / 67.7 = 1.572×`. The cluster reduces queue completion time by **36.37%** against the batched PC. Interesting, but **not 3× against the optimized baseline and not 3× for one chat**. One batch per configuration is published, without a confidence interval.
 
-Il campo `tok_s` dello script è una media aritmetica delle velocità delle richieste, non il totale dei token emessi diviso il tempo della coda. Non va etichettato throughput aggregato del sistema.
+The script's `tok_s` field is an arithmetic mean of request speeds, not total emitted tokens divided by queue completion time. It must not be labelled aggregate system throughput.
 
-**Da superare:** baseline host con batching e speculation ottimizzati; latenza individuale distinta dalla capacità aggregata; token totali/secondi di parete; distribuzioni e repliche, non un solo numero favorevole.
+**Required improvement:** tuned batching/speculation baselines; individual latency separated from aggregate capacity; total tokens/wall-clock seconds; distributions and repetitions, not one favorable number.
 
-Fonti: [dati](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/tools/results-codeeval.jsonl), [script](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/tools/codeeval.py).
+Sources: [data](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/tools/results-codeeval.jsonl), [script](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/tools/codeeval.py).
 
-## 3. Prefill migliorato: misure utili, turno completo estrapolato
+## 3. Improved prefill: useful measurements, extrapolated full turn
 
-Per il 7B Q4_K_M con 14 layer sul PC e 14 sul Samsung, patch spenta/accesa:
+For 7B Q4_K_M with 14 PC layers and 14 Samsung layers, patch off/on:
 
-- Prefill di 2048 token: **312,093 → 169,411 secondi** nei dati pubblicati.
-- Decode al contesto lungo: **1,91 → 1,89 token/s**, quindi nessun miglioramento del decode in quel confronto.
-- Le generazioni osservate sono da **64 token**.
-- Il riepilogo **445 → 305 secondi** proietta un turno da 300 token, usando la media del decode a contesto corto e lungo. Il nostro ricalcolo replica 445,438 e 304,696 secondi.
-- Usando invece il decode del contesto lungo si ottengono circa 469,161 e 328,141 secondi: **anche questi sono stime**, non nuove misure.
+- 2048-token prefill: **312.093 → 169.411 seconds** in published data.
+- Long-context decode: **1.91 → 1.89 tokens/s**, so no decode improvement in that comparison.
+- Observed generations contain **64 tokens**.
+- The **445 → 305 second** summary projects a 300-token turn using the mean of short-/long-context decode. Our recalculation reproduces 445.438 and 304.696 seconds.
+- Using long-context decode instead yields about 469.161 and 328.141 seconds: **also estimates**, not new measurements.
 
-Il miglioramento del prefill resta consistente nel dato pubblicato. L'errore da evitare è presentare la proiezione come una conversazione interamente misurata, oppure trasferire il guadagno di prefill ai token/s di decode.
+The published prefill improvement remains substantial. Avoid presenting a projection as a fully measured conversation or transferring the prefill gain to decode tokens/s.
 
-Fonti: [prefillbench.py, righe 44–50](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/tools/prefillbench.py#L44), [JSONL](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/tools/results-prefill.jsonl).
+Sources: [prefillbench.py, lines 44–50](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/tools/prefillbench.py#L44), [JSONL](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/tools/results-prefill.jsonl).
 
-## 4. Wi-Fi, USB e risparmio energetico: misurare il percorso completo
+## 4. Wi-Fi, USB and power saving: measure the complete path
 
-Le note riportano su quelle configurazioni Wi-Fi 5 GHz circa 1,4–2 MB/s, ADB fino a 237 MB/s in una direzione e circa 35 nell'altra, tethering USB circa 29,7/40,4 MB/s con 1,2–1,6 ms di RTT. Sono dispositivi e stack specifici, non limiti universali di Wi-Fi o USB. ADB forwarding, rete USB e una copia di file non sono lo stesso test.
+Notes report about 1.4–2 MB/s over 5 GHz Wi-Fi on those configurations; ADB up to 237 MB/s in one direction and approximately 35 in the other; USB tethering about 29.7/40.4 MB/s with 1.2–1.6 ms RTT. These describe specific devices/stacks, not universal Wi-Fi/USB limits. ADB forwarding, USB networking and file copying are different tests.
 
-Un'osservazione particolarmente utile: a radio inattiva la latenza riportata sale a media 205 ms/massimo 539 ms; con traffico bidirezionale periodico scende a circa 5,6/7 ms. `Keepalive.kt` invia un byte ogni 100 ms e usa una scadenza dei peer di 30 secondi. Tenere radio e CPU svegli costa energia e può aumentare la temperatura; il miglioramento deve essere misurato a regime con quel costo incluso.
+A useful observation: with idle radio, reported mean/maximum latency rises to 205/539 ms; periodic bidirectional traffic reduces it to about 5.6/7 ms. `Keepalive.kt` sends one byte every 100 ms and expires peers after 30 seconds. Keeping radio/CPU awake costs energy and can raise temperature; measure sustained benefit with those costs included.
 
-**Da superare:** confronto Wi-Fi/USB/Ethernet sul medesimo telefono, dimensioni reali dei messaggi, due direzioni, rete sotto carico e a riposo, p50/p95/p99, termica e joule per risposta. Un buon Wi-Fi può battere una porta USB 2.0 in banda; il cavo può vincere in latenza e prevedibilità. Il connettore USB-C non garantisce USB 3, Thunderbolt o networking supportato dall'OS.
+**Required improvement:** compare Wi-Fi/USB/Ethernet on the same phone with actual message sizes, both directions, idle/loaded network, p50/p95/p99, thermals and joules per response. Good Wi-Fi can beat a USB 2.0 port in bandwidth; cable may win on latency/predictability. USB-C does not guarantee USB 3, Thunderbolt or OS-supported networking.
 
-Fonti: [NOTES](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/NOTES.md), [Keepalive.kt](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/app/src/main/java/com/distai/app/Keepalive.kt).
+Sources: [NOTES](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/NOTES.md), [Keepalive.kt](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/app/src/main/java/com/distai/app/Keepalive.kt).
 
-## 5. Lo scheduler è già selettivo, ma il modello di costo è fragile
+## 5. Node selection already exists; the cost model is fragile
 
-`SplitPlan.kt` seleziona sottoinsiemi di nodi, privilegia quelli veloci e può escluderne alcuni. Non possiamo presentare questa idea come nuova. Tuttavia:
+`SplitPlan.kt` selects node subsets, favors faster nodes and can exclude some. This idea is not new. However:
 
-- RAM Android disponibile moltiplicata per 0,5 sui worker e 0,6 sul coordinatore; riserve fisse di 400 MiB e 200 MiB per calcolo. Sono euristiche empiriche, non contratti di memoria dei sistemi operativi.
-- Se mancano le velocità, fallback proporzionale alla memoria: utile per far entrare un modello, insufficiente per promettere accelerazione.
-- Costo stimato da byte medi dei layer/banda effettiva e RTT, più **10 ms fissi per nodo remoto**. Le dimensioni archiviate non descrivono da sole i byte attivi di un MoE, operatori e kernel, KV, contesto, trasferimenti e stato termico.
-- `RpcBench.kt` usa matvec Q4_0 sintetici e seleziona minimi: minimo di cinque RTT e migliori tempi del grafo. È una calibrazione di picco, non un predittore della latenza sostenuta p95.
-- La variabile di banda esprime banda effettiva di calcolo/memoria del benchmark; non è la banda Wi-Fi.
+- Android available RAM is multiplied by 0.5 on workers and 0.6 on the coordinator, with fixed 400 MiB/200 MiB compute reserves. These are empirical heuristics, not OS memory contracts.
+- Missing speed data falls back to memory-proportional assignment: useful for fitting a model, insufficient for promising acceleration.
+- Estimated cost uses average layer bytes / effective bandwidth and RTT, plus **10 fixed milliseconds per remote node**. Stored size alone does not describe MoE active bytes, operators/kernels, KV, context, transfers or thermal state.
+- `RpcBench.kt` uses synthetic Q4_0 matvecs and selects minima: the minimum of five RTTs and best graph times. This calibrates peak performance, not sustained p95 latency.
+- Its bandwidth variable represents effective compute/memory bandwidth in the benchmark, not Wi-Fi bandwidth.
 
-**Da superare:** profili per modello/backend/fase/contesto, tempi reali dei blocchi, pressione memoria, riserva adattiva e pressione termica. Validare errore di previsione fuori dal campione; margine di sicurezza e isteresi per non migrare continuamente. In modalità velocità, profilo mancante significa «calibrare o restare locale», non allocare alla cieca.
+**Required improvement:** profiles by model/backend/phase/context, actual block durations, memory pressure, adaptive reserve and thermal pressure. Validate prediction error out of sample; use safety margins/hysteresis to avoid repeated migrations. In speed mode, a missing profile means “calibrate or stay local,” not blind allocation.
 
-Fonti: [SplitPlan.kt](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/app/src/main/java/com/distai/app/SplitPlan.kt), [RpcBench.kt](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/app/src/main/java/com/distai/app/RpcBench.kt).
+Sources: [SplitPlan.kt](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/app/src/main/java/com/distai/app/SplitPlan.kt), [RpcBench.kt](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/app/src/main/java/com/distai/app/RpcBench.kt).
 
-## 6. Le ottimizzazioni già fatte e quelle che cambiano il problema
+## 6. Existing optimizations and changes that alter the problem
 
-DistAI mantiene embedding/output sul coordinatore, evitando il ritorno di un intero vocabolario di logits per token; documenta repacking, threadpool persistente, affinità ai core veloci e binari ARM differenziati. Sono lezioni da riusare, verificando prima ciò che il backend upstream offre già.
+DistAI keeps embedding/output on the coordinator, avoiding a full vocabulary of logits returned each token. It documents repacking, persistent thread pools, fast-core affinity and differentiated ARM binaries. Reuse the lessons after checking what upstream backends already provide.
 
-La build PC predefinita disabilita Metal, ma **`--gpu` abilita Metal su macOS**. Un confronto tra il nostro Metal e il suo default CPU non dimostrerebbe un vantaggio della nuova architettura. Anche il verdetto sulle vecchie GPU integrate Intel non si trasferisce alla memoria unificata Apple Silicon.
+The default PC build disables Metal, but **`--gpu` enables Metal on macOS**. Comparing our Metal path against its default CPU path would not establish a new architectural advantage. Conclusions about older Intel integrated GPUs do not transfer directly to Apple Silicon unified memory.
 
-La riduzione di `expert_used_count` da 8 a 6 modifica il calcolo del modello. Il punteggio uguale 21/22 di due configurazioni non dimostra qualità invariata. Con 4 esperti i dati riportano 14/22 e con 5, 19/22: lo stesso repository mostra sensibilità a questa modifica. Dobbiamo tenere invariati routing/numero di esperti nel confronto principale; varianti approssimate meritano un esperimento qualità/prestazioni distinto.
+Reducing `expert_used_count` from 8 to 6 changes model computation. Equal 21/22 scores for two configurations do not prove unchanged quality. Four experts score 14/22; five score 19/22: the repository itself shows sensitivity. Keep expert routing/count unchanged in the primary comparison; approximate variants need a separate quality/performance experiment.
 
-Fonti: [NodeService.kt](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/app/src/main/java/com/distai/app/NodeService.kt), [build-pc.py](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/native/build-pc.py), [patch](https://github.com/alex8819/DistAi/tree/b1c17109498e87b3db99f8f23648d84483b68bb9/native/patches).
+Sources: [NodeService.kt](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/app/src/main/java/com/distai/app/NodeService.kt), [build-pc.py](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/native/build-pc.py), [patches](https://github.com/alex8819/DistAi/tree/b1c17109498e87b3db99f8f23648d84483b68bb9/native/patches).
 
-## 7. Speculation: non ripetere la delega per singolo token
+## 7. Speculation: avoid per-token remote delegation
 
-Il commento in `NodeService.kt` riporta draft su Huawei via RPC a 2,24 token/s contro 4,5 senza draft: ogni token proposto paga il percorso remoto. Il codice sceglie quindi un draft locale. `Speculative.kt` calibra e può disattivarlo se non aiuta: anche l'abilitazione condizionata esiste già.
+A `NodeService.kt` comment reports Huawei RPC drafting at 2.24 tokens/s versus 4.5 without drafting: each proposed token pays the remote path. The implementation therefore chooses a local draft. `Speculative.kt` calibrates it and can disable it when unhelpful: conditional activation already exists too.
 
-Questo esperimento negativo **non è equivalente** a un telefono che mantiene un piccolo modello completo, genera autonomamente un blocco e lo propone al target sul Mac. Questa seconda architettura è una candidata da testare, non una soluzione dimostrata e non una novità assoluta: esistono PipeInfer, PipeSpec e altra ricerca su speculation asincrona/distribuita.
+This negative experiment **is not equivalent** to a phone retaining a complete small model, generating a block autonomously and proposing it to the Mac target. That second architecture is a candidate, not a demonstrated solution or absolute novelty: PipeInfer, PipeSpec and other asynchronous/distributed speculation research already exist.
 
-Per un ciclo sequenziale, una prima condizione è:
+For a sequential cycle, an initial condition is:
 
-`(T_draft_blocco + T_rete + T_verifica + T_rollback) / E[token_accettati_e_committati] < T_token_baseline`.
+`(T_draft_block + T_network + T_verify + T_rollback) / E[accepted_and_committed_tokens] < T_baseline_token`.
 
-Con sovrapposizione, il numeratore deve venire dalla linea temporale reale del percorso critico, includendo code, calcolo scartato e riallineamenti. Non basta sostituire arbitrariamente una somma con un massimo. La baseline è **il migliore draft locale**, anche asincrono, oltre al target solo. Non assumere un tempo di verifica costante: dipende da k, contesto e GPU.
+With overlap, derive the numerator from the actual critical-path timeline, including queues, discarded work and resynchronization. Do not arbitrarily replace a sum with a maximum. Compare with **the strongest local draft**, including asynchronous execution, as well as target-only. Verification time is not constant: it depends on k, context and GPU.
 
-Prima prova greedy con equivalenza dei token; poi sampling esatto. Per preservare la distribuzione del target non basta inviare gli ID dei token: servono acceptance/rejection corretti e la distribuzione draft necessaria al campionamento residuo, o un protocollo equivalente dimostrato. Quel traffico può cancellare parte del vantaggio.
+Start with greedy token equivalence, then exact sampling. Preserving the target distribution requires correct acceptance/rejection and the draft distribution needed for residual sampling, or a proven equivalent protocol. Token IDs alone are insufficient; that traffic may erase some benefit.
 
-La selezione draft in DistAI confronta famiglia tokenizer e conteggio vocabolario con tolleranza 128, non l'identità completa token-ID/normalizzazione/special token. Non è una prova di incompatibilità osservata, ma non basta come certificazione preventiva. Il nostro manifest deve verificarla e gestire esplicitamente le incompatibilità.
+DistAI's draft selection checks tokenizer family and vocabulary size with a tolerance of 128, not complete token-ID/normalization/special-token identity. This is not an observed incompatibility, but it is insufficient preventive certification. Our manifest must verify identity and handle incompatibility explicitly.
 
-Fonti: [Speculative.kt](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/app/src/main/java/com/distai/app/Speculative.kt), [Gguf.kt](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/app/src/main/java/com/distai/app/Gguf.kt), [PipeInfer](https://arxiv.org/abs/2407.11798), [PipeSpec](https://aclanthology.org/2025.findings-acl.669/).
+Sources: [Speculative.kt](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/app/src/main/java/com/distai/app/Speculative.kt), [Gguf.kt](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/app/src/main/java/com/distai/app/Gguf.kt), [PipeInfer](https://arxiv.org/abs/2407.11798), [PipeSpec](https://aclanthology.org/2025.findings-acl.669/).
 
-## 8. Diffusione: ramo sperimentale, non scorciatoia universale
+## 8. Diffusion is an experimental branch, not a universal shortcut
 
-Le patch BD3LM sono separate e non applicate alla build standard. Il driver `d3_rpc.py` usa per default **Stable-DiffCoder-8B-Instruct.Q4_K_M.gguf**: non è corretto accusarlo, senza ulteriori prove, di applicare semplicemente attenzione non causale a normali pesi autoregressivi.
+BD3LM patches are separate and not applied to the standard build. `d3_rpc.py` defaults to **Stable-DiffCoder-8B-Instruct.Q4_K_M.gguf**: without further evidence, it is incorrect to accuse it of simply applying noncausal attention to ordinary autoregressive weights.
 
-Restano verifiche decisive: revisione/hash del modello e obiettivo di training compatibile, semantica dei mask token e generazione completa. Lo script `bd3eval.py` prevede `results-dllm.jsonl`, ma questo file non compare nell'albero pubblicato acquisito. I numeri riassunti nelle note non sono accompagnati lì da quella traccia dettagliata. Un microbenchmark `llama-bench` di prefill a blocchi non dimostra token utili corretti al secondo di una risposta completa.
+Decisive checks remain: model revision/hash, compatible training objective, mask-token semantics and complete generation. `bd3eval.py` expects `results-dllm.jsonl`, but that file is absent from the retrieved published tree. Summary numbers in the notes lack that detailed trace there. A `llama-bench` block-prefill microbenchmark does not establish correct useful tokens/s for a complete response.
 
-**Da superare:** benchmark separato per modelli nativamente diffusion, qualità comparabile e output conservati. Nessuna promessa di rendere parallelo un LLM causale arbitrario cambiando la maschera.
+**Required improvement:** a separate benchmark for natively diffusion-trained models, comparable quality and retained outputs. No promise to parallelize an arbitrary causal LLM by changing its mask.
 
-Fonti: [patch sperimentali](https://github.com/alex8819/DistAi/tree/b1c17109498e87b3db99f8f23648d84483b68bb9/native/patches-sperimentali), [d3_rpc.py](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/tools/d3_rpc.py), [bd3eval.py](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/tools/bd3eval.py).
+Sources: [experimental patches](https://github.com/alex8819/DistAi/tree/b1c17109498e87b3db99f8f23648d84483b68bb9/native/patches-sperimentali), [d3_rpc.py](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/tools/d3_rpc.py), [bd3eval.py](https://github.com/alex8819/DistAi/blob/b1c17109498e87b3db99f8f23648d84483b68bb9/tools/bd3eval.py).
 
-## 9. Qualità, affidabilità e confini operativi
+## 9. Quality, reliability and operational boundaries
 
-I 22 task di coding sono utili come smoke test, non come valutazione generale. Assert ridotti, un campione di generazione e nessun corpus esteso o intervallo statistico non giustificano «nessuna perdita di qualità». I JSONL conservano esiti, non tutte le risposte: non è possibile riesaminarne retroattivamente ogni errore. Un iniziale sospetto sul test `group_anagrams` è stato verificato e **ritirato: l'oracolo è corretto**, come registra il nostro controllo.
+The 22 coding tasks are useful smoke tests, not a general evaluation. Limited assertions, one generation sample and no broad corpus/statistical interval do not justify “no quality loss.” JSONL files retain outcomes, not all responses, so every error cannot be reexamined retrospectively. An initial suspicion about `group_anagrams` was checked and **withdrawn: its oracle is correct**, as recorded by our verifier.
 
-Il test esegue Python generato con `python3 -I` e timeout: isolamento dell'import non equivale a una sandbox di sicurezza. Un nostro benchmark di codice dovrà eseguire gli output in un ambiente realmente isolato, con limiti di rete, filesystem e risorse.
+Generated Python is executed with `python3 -I` and a timeout: import isolation is not a security sandbox. Our coding benchmark must run outputs in a genuinely isolated environment with network, filesystem and resource limits.
 
-RPC senza autenticazione/cifratura e server di gestione su interfacce di rete richiedono un confine di fiducia esplicito. Per il prodotto: pairing, identità nodo, autorizzazione dei job, trasporto protetto, limiti di allocazione, modelli verificati e nessuna esposizione Internet automatica. Non è stato eseguito un penetration test.
+Unauthenticated/unencrypted RPC and management servers on network interfaces require an explicit trust boundary. Product requirements include pairing, node identity, job authorization, protected transport, allocation limits, verified models and no automatic Internet exposure. No penetration test was performed.
 
-Le istruzioni DistAI indicano riavvio del job in caso di cavo scollegato; caching dei pesi non equivale a ripresa della KV/sessione. Il nostro runtime deve definire cosa succede quando un telefono viene bloccato, risponde a una chiamata, va in pressione termica o sparisce. Il fallback può richiedere replay del contesto; costo e perdita di lavoro vanno conteggiati.
+DistAI instructions call for restarting a job after cable disconnection. Weight caching is not KV/session resumption. Our runtime must define behavior when a phone locks, handles a call, experiences thermal pressure or disappears. Fallback may require context replay; count its duration and discarded work.
 
-Il pin documentato di llama.cpp è `69f201a`; protocollo e patch devono combaciare. Una futura build deve bloccare commit completo e hash delle patch/modelli, non dipendere dal checkout eventualmente presente o da un URL `main` mutevole.
+The documented llama.cpp pin is `69f201a`; protocol and patches must match. A future build should lock the full commit and patch/model hashes, rather than relying on an incidental checkout or mutable `main` URL.
 
-## 10. Matrice delle lezioni e prova richiesta
+## 10. Lessons and required proof
 
-| Lezione DistAI | Scelta proposta ExpandMyHW | Prova per dire «superato» |
+| DistAI lesson | Proposed ExpandMyHW choice | Evidence needed to claim improvement |
 |---|---|---|
-| Layer seriali rallentano la chat | Separare modalità velocità e capacità | Speedup stesso target contro host ottimizzato, oppure claim solo capacità |
-| Draft RPC per-token troppo costoso | Draft autonomo a blocchi; overlap misurato | Battere draft locale ottimizzato, con equivalenza e costo di rete incluso |
-| Vecchia rete/risparmio energetico domina | Selezione trasporto basata sul job | p95 e tempo risposta sostenuti migliori; costo energia pubblicato |
-| Modello costo sintetico e fisso | Profili per fase/modello e stato reale | Predizioni validate fuori campione; nodi inutili esclusi |
-| 3× dipende dal riferimento | Baseline forti e dati grezzi completi | Risultati con intervalli di confidenza e definizioni pubbliche |
-| Test qualità piccolo | Equivalenza + suite ampia separata | Nessuna modifica nascosta del target; margini qualità preregistrati |
-| Solo Android mobile verificato nel repo | Worker nativi Android/iOS con capacità dichiarate | Test fisici su entrambi gli OS, memoria/termica/lifecycle inclusi |
-| Crash/disconnessione richiede ripartenza | Drain, cancellazione, fallback e replay espliciti | Fault injection con tempi di recupero e nessuna risposta corrotta |
+| Serial layers slow a chat | Separate speed and capacity modes | Same-target speedup against optimized host, or capacity-only claim |
+| Per-token RPC draft is too expensive | Autonomous block draft; measured overlap | Beat optimized local drafting with equivalence and networking cost included |
+| Older network/power saving dominates | Job-aware transport selection | Better sustained p95/response time; energy cost published |
+| Synthetic/fixed cost model | Phase/model profiles and actual state | Out-of-sample prediction validation; unhelpful nodes excluded |
+| 3× depends on comparator | Strong baselines and complete raw evidence | Confidence intervals and public metric definitions |
+| Small quality test | Equivalence plus separate broad suite | No hidden target change; preregistered quality margins |
+| Only Android mobile in inspected repository | Native Android/iOS workers with explicit capabilities | Physical tests on both OSes, including memory/thermals/lifecycle |
+| Crash/disconnection requires restart | Explicit drain, cancellation, fallback and replay | Fault injection with recovery timing and no corrupt response |
 
-**Decisione:** procedere solo con microesperimenti discriminanti e benchmark preregistrati, prima del plugin completo. Non è ancora dimostrato che telefoni non identificati possano accelerare il M3 Max 64 GiB osservato. È un'ipotesi da falsificare rapidamente, non un risultato da promettere.
+**Decision at this checkpoint:** run discriminating microexperiments and preregistered benchmarks before building the full plugin. Unidentified phones had not been shown to accelerate the observed 64 GiB M3 Max. That was a hypothesis to falsify quickly, not a promised outcome.

@@ -1,5 +1,6 @@
 #!/bin/sh
 set -eu
+python3 "$(dirname "$0")/release-history.py" --check-build
 "$(dirname "$0")/build-native-ios.sh" iphoneos
 cd "$(dirname "$0")/../apps/ios"
 xcodegen generate --spec project.yml

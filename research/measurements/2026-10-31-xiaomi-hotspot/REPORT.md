@@ -1,58 +1,58 @@
-# NodeLift — prima prova fisica Xiaomi/hotspot
+# NodeLift — first physical Xiaomi/hotspot trial
 
-31 ottobre 2026. Diagnostica esplorativa del protocollo: nessuna inferenza LLM eseguita.
+31 October 2026. Exploratory protocol diagnostics; no LLM inference was performed. This report preserves the conditions and limitations of that historical session.
 
-## Configurazione osservata
+## Observed configuration
 
-L'utente conferma che lo Xiaomi 17 Ultra fornisce l'hotspot al Mac M3 Max. La companion si è associata, ha inviato heartbeat e ha eseguito i job richiesti dal Mac.
+The owner confirmed that the Xiaomi 17 Ultra provided the hotspot to the M3 Max Mac. The companion paired, sent heartbeats and completed jobs requested by the Mac.
 
-Telemetria dichiarata dall'app: **Xiaomi 25128PNA1C**, **Android 17 / API 37**, 14.76 GiB di RAM fisica e 4.87 GiB disponibili al sistema nella lettura iniziale. Non è un budget di memoria allocabile verificato per un LLM. Stato termico nominale nelle letture conservate; nessuna prova termica prolungata. Identità commerciale e hash dell'APK installato non attestati indipendentemente.
+App-reported telemetry: **Xiaomi 25128PNA1C**, **Android 17 / API 37**, 14.76 GiB physical RAM and 4.87 GiB system-available memory at the initial reading. This is not a verified allocatable LLM memory budget. Retained readings showed nominal thermal status; no prolonged thermal test was performed. Commercial device identity and the installed APK hash were not independently attested.
 
-Il campo trasporto dell'app riporta «altro / non rilevato»: legge la rete predefinita del telefono, che non identifica necessariamente l'interfaccia hotspot usata verso il Mac. La topologia deriva quindi dalla conferma dell'utente, non da quel campo.
+The app's transport field reported “other / not detected”: it reads the phone's default network, which does not necessarily identify the hotspot interface used toward the Mac. The topology therefore comes from the owner's confirmation, not that field.
 
-## Latenza HTTPS applicativa
+## Application HTTPS latency
 
-RTT misurato sul telefono con orologio monotono, risposta da 64 byte, warmup escluso. Le pause richieste sono esterne al tempo RTT. Percentili empirici nearest-rank; non sono ping, latenza unidirezionale o tempi per token.
+RTT measured on the phone with a monotonic clock and a 64-byte response; warmup excluded. Requested pauses are outside RTT timing. Empirical nearest-rank percentiles; these are not ping, one-way latency or per-token times.
 
-| Prova | Pausa richiesta | Campioni | p50 ms | p95 ms | Massimo ms | Oltre 20 ms | Connessioni |
+| Trial | Requested pause | Samples | p50 ms | p95 ms | Maximum ms | Over 20 ms | Connections |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| Rapida | 0 ms | 32 | 6.28 | 8.25 | 8.79 | 0 | 1 |
-| Con pause | 0 ms | 200 | 7.68 | 11.30 | 90.55 | 1 | 1 |
-| Con pause | 30 ms | 200 | 8.30 | 14.24 | 95.03 | 8 | 1 |
-| Con pause | 60 ms | 200 | 8.91 | 79.88 | 89.19 | 15 | 1 |
-| Replica con pause | 0 ms | 200 | 6.21 | 8.27 | 94.70 | 2 | 1 |
-| Replica con pause | 30 ms | 200 | 7.80 | 11.77 | 98.56 | 8 | 1 |
-| Replica con pause | 60 ms | 200 | 8.80 | 68.37 | 97.96 | 14 | 1 |
+| Quick | 0 ms | 32 | 6.28 | 8.25 | 8.79 | 0 | 1 |
+| Paced | 0 ms | 200 | 7.68 | 11.30 | 90.55 | 1 | 1 |
+| Paced | 30 ms | 200 | 8.30 | 14.24 | 95.03 | 8 | 1 |
+| Paced | 60 ms | 200 | 8.91 | 79.88 | 89.19 | 15 | 1 |
+| Paced repeat | 0 ms | 200 | 6.21 | 8.27 | 94.70 | 2 | 1 |
+| Paced repeat | 30 ms | 200 | 7.80 | 11.77 | 98.56 | 8 | 1 |
+| Paced repeat | 60 ms | 200 | 8.80 | 68.37 | 97.96 | 14 | 1 |
 
-## Trasferimenti
+## Transfers
 
-Goodput = byte utili / somma dei tempi applicativi. MB decimali; 1 MiB = 1.048.576 byte. Quattro richieste per dimensione e direzione: diagnostica breve, non banda sostenuta o PHY.
+Goodput = useful bytes / sum of application times. Decimal MB; 1 MiB = 1,048,576 bytes. Four requests per size and direction: brief diagnostics, not sustained bandwidth or PHY rate.
 
-| Prova | Direzione | Payload | MB/s |
+| Trial | Direction | Payload | MB/s |
 |---|---|---:|---:|
-| Rapida | Mac → Xiaomi | 16 KiB | 2.33 |
-| Rapida | Mac → Xiaomi | 1024 KiB | 36.11 |
-| Rapida | Xiaomi → Mac | 16 KiB | 1.19 |
-| Rapida | Xiaomi → Mac | 1024 KiB | 19.89 |
-| Con pause | Mac → Xiaomi | 16 KiB | 2.37 |
-| Con pause | Mac → Xiaomi | 1024 KiB | 42.97 |
-| Con pause | Xiaomi → Mac | 16 KiB | 1.14 |
-| Con pause | Xiaomi → Mac | 1024 KiB | 37.12 |
-| Replica con pause | Mac → Xiaomi | 16 KiB | 2.34 |
-| Replica con pause | Mac → Xiaomi | 1024 KiB | 42.15 |
-| Replica con pause | Xiaomi → Mac | 16 KiB | 1.08 |
-| Replica con pause | Xiaomi → Mac | 1024 KiB | 36.74 |
+| Quick | Mac → Xiaomi | 16 KiB | 2.33 |
+| Quick | Mac → Xiaomi | 1024 KiB | 36.11 |
+| Quick | Xiaomi → Mac | 16 KiB | 1.19 |
+| Quick | Xiaomi → Mac | 1024 KiB | 19.89 |
+| Paced | Mac → Xiaomi | 16 KiB | 2.37 |
+| Paced | Mac → Xiaomi | 1024 KiB | 42.97 |
+| Paced | Xiaomi → Mac | 16 KiB | 1.14 |
+| Paced | Xiaomi → Mac | 1024 KiB | 37.12 |
+| Paced repeat | Mac → Xiaomi | 16 KiB | 2.34 |
+| Paced repeat | Mac → Xiaomi | 1024 KiB | 42.15 |
+| Paced repeat | Xiaomi → Mac | 16 KiB | 1.08 |
+| Paced repeat | Xiaomi → Mac | 1024 KiB | 36.74 |
 
-## CPU e limiti
+## CPU and limitations
 
-La prova CPU ha completato **14115 iterazioni in 1500.05 ms**. È un matvec FP32 256×256 Kotlin/JVM a singolo thread, principalmente in cache. Non misura GPU/NPU, banda DRAM o token/s e non viene confrontato con un kernel host differente.
+The CPU trial completed **14115 iterations in 1500.05 ms**. It is a single-threaded Kotlin/JVM FP32 256×256 matvec, mostly in cache. It does not measure GPU/NPU, DRAM bandwidth or tokens/s and is not compared with a different host kernel.
 
-Le prove hanno un ordine fisso 0/30/60 ms. La replica è stata aggiunta dopo aver osservato la coda della latenza nella prima prova: è esplorativa, nella stessa sessione, e non costituisce una conferma indipendente preregistrata. Non attribuire causalmente le differenze alle pause o al risparmio energetico senza controllare ordine, interferenze e carico concorrente. Il riuso della connessione è osservabile dagli ID del server; non esclude altri costi di scheduling, radio, TLS e copie.
+Trials used a fixed 0/30/60 ms order. The repeat was added after observing the first trial's latency tail: it is exploratory, in the same session, and not an independent preregistered confirmation. Do not causally attribute differences to pauses or power saving without controlling order, interference and concurrent load. Server connection IDs expose connection reuse; they do not rule out scheduling, radio, TLS and copy costs.
 
-La mediana da sola non basta a dimensionare il protocollo. Servono altre sessioni, ordine delle pause randomizzato, trasporti alternativi, misure sostenute e soprattutto un workload LLM reale contro il Mac ottimizzato. Nessun gate di speedup è stato superato o fallito da questa diagnostica. Non derivare uno speedup dalla somma della RAM.
+The median alone cannot size the protocol. More sessions, randomized pause order, alternative transports, sustained measurements and a real LLM workload against the optimized Mac are needed. These diagnostics neither passed nor failed an inference-speedup gate. Do not derive a speedup from total physical RAM.
 
-Nella companion Android 0.1 il riepilogo «Ultima misura» della prova con pause usa solo i primi 32 RTT: per confrontare i gruppi usare questa analisi o la dashboard, che usa tutti i campioni separati per pausa. Correzione del riepilogo mobile ancora da distribuire.
+In Android companion 0.1, the paced test's “Last measurement” summary uses only the first 32 RTTs. Use this analysis or the dashboard, which separates all samples by pause. At this checkpoint, the mobile summary correction had not yet been distributed.
 
-## Riproducibilità
+## Reproduction
 
-Eseguire `python3 analyze.py` in questa directory. I JSON originali contengono i campioni; `conditions.json` registra condizioni e aspetti ignoti; `jobs.json` identifica le prove. `summary.json` è derivato. `evidence-manifest.json` conserva hash dei file e dei sorgenti del protocollo. Non contiene credenziali o inviti di associazione.
+Run `python3 analyze.py` in this directory. Original JSON files contain the samples; `conditions.json` records conditions and unknowns; `jobs.json` identifies trials. `summary.json` is derived. `evidence-manifest.json` retains hashes of data and protocol sources. It contains no credentials or pairing invitations. English documentation does not change the original measurement files or their hashes.

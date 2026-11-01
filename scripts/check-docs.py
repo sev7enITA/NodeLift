@@ -2,6 +2,7 @@
 """Validate authored local documentation/image links and current release entry points."""
 import json
 import re
+import subprocess
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
@@ -11,10 +12,15 @@ PUBLIC = 'https://github.com/sev7enITA/NodeLift/'
 
 def check():
     errors = []
-    pages = list(ROOT.glob('*.md')) + list((ROOT/'docs').rglob('*.md'))
+    tracked = subprocess.check_output(['git', 'ls-files', '-z'], cwd=ROOT).decode().split('\0')
+    authored = [ROOT/name for name in tracked if name.endswith('.md') and not name.startswith('research/distai/source/')]
+    pages = sorted(set(authored + list(ROOT.glob('*.md')) + list((ROOT/'docs').rglob('*.md'))))
     checked = 0
     for page in pages:
         source = re.sub(r'^```.*?^```[^\n]*', '', page.read_text(), flags=re.M | re.S)
+        # Catch known prose regressions, not a general-purpose language classifier.
+        if re.search(r'(?i)\b(?:guida del laboratorio|stato delle verifiche|prima dell.implementazione|nessun risultato|sono stati|non è ancora|cosa è implementato|fonti consultate il|compilazione e installazione|sorgente candidato|la possibilità di|dai un nuovo ruolo)\b', source):
+            errors.append(f'{page.relative_to(ROOT)}: authored documentation must be English')
         targets = re.findall(r'!?\[[^\]\n]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)', source)
         targets += re.findall(r'<img\b[^>]*\bsrc="([^"]+)"', source)
         for raw in targets:

@@ -58,3 +58,22 @@ html:lang(zh-Hans) .eyebrow, html:lang(zh-Hans) .status, html:lang(zh-Hans) .sec
 }
 #downloads > .boundary-note { margin: 0 0 20px; }
 #downloads em { overflow-wrap: anywhere; }
+
+/* Release history: generated content, readable without JavaScript. */
+.release-section { content-visibility: auto; }
+.release-links { margin: 1.6rem 0 2.4rem; line-height: 2; }
+.release-history { display: grid; gap: 1rem; max-width: 1040px; }
+.release-entry { border: 1px solid rgba(104,220,218,.25); background: rgba(8,25,33,.6); border-radius: 12px; padding: 0 1.5rem; }
+.release-entry summary { cursor: pointer; padding: 1.4rem 0; line-height: 1.6; }
+.release-entry summary:focus-visible { outline: 2px solid #8de5de; outline-offset: 5px; }
+.release-entry summary strong { color: #96eee6; font-size: 1.15rem; }
+.release-meta { color: #aabec6; font-size: .85rem; display: block; padding-left: 1.1rem; }
+.release-body { padding: 0 0 1.5rem; line-height: 1.75; max-width: 88ch; }
+.release-body ul { padding-left: 1.3rem; }
+.release-body li + li { margin-top: .65rem; }
+.release-body p { margin-top: 1rem; }
+.release-body a { color: #96eee6; text-decoration: underline; text-underline-offset: .2em; }
+@media(max-width:600px) { .release-entry { padding: 0 1rem; } .release-links a { display: inline-block; } }
+@media print { .release-section { content-visibility: visible; } .release-entry { break-inside: avoid; color: #152b33; background: none; } .release-entry::details-content { display: block; } .release-entry .release-body { display: block; } }
+
+@media(max-width:850px) { .primary-nav { min-width: 0; max-width: 100%; overflow-x: auto; justify-content: flex-start; } .primary-nav a { flex-shrink: 0; } }

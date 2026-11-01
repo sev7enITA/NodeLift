@@ -1,60 +1,59 @@
-> Archived 0.1 review history. Both requested models later completed engine design and source reviews; the current adjudicated results are in [ENGINE_REVIEW.md](ENGINE_REVIEW.md). Claims of unavailability below describe earlier attempts only.
+# External reviews — status and critical assessment
 
+> Archived 0.1 review history, 31 October 2026. Both requested models later completed engine design and source reviews; adjudicated outcomes are in [ENGINE_REVIEW.md](ENGINE_REVIEW.md). Unavailability below describes earlier attempts only.
 
-# Revisioni esterne: stato ed esame critico
+**Later update within the 0.1 phase:** Gemini 4 High completed a new NodeLift design review; GLM 5.3 Max again reported capacity limits. The first table preserves the initial session; later outcomes appear below. No external source review or hardware validation had been obtained at this checkpoint.
 
-**Aggiornamento successivo del 31 ottobre:** Gemini 4 High ha completato un nuovo riesame del disegno NodeLift; GLM 5.3 Max ha nuovamente risposto che il servizio è a capacità. La tabella sotto conserva lo stato della prima sessione; gli esiti aggiornati sono descritti in fondo. Nessuna revisione esterna del codice o convalida hardware è stata ottenuta.
+The owner requested GLM 5.3 Max and Gemini 4 High through the browser. The specified services were used with UI selectors verified; no model substitution was accepted. Technical questions and public sources were sent, without private AudioEnhancer code or credentials.
 
-31 ottobre 2026. L'utente ha richiesto GLM 5.3 Max e Gemini 4 High via browser. Sono stati usati i servizi indicati con i selettori verificati nell'interfaccia; nessuna sostituzione con altri modelli è stata accettata. Sono stati trasmessi quesiti tecnici e fonti pubbliche, non codice privato AudioEnhancer né credenziali.
+## Initial observed status
 
-## Stato effettivo
-
-| Revisore richiesto | Osservazione | Esito |
+| Requested reviewer | Observation | Outcome |
 |---|---|---|
-| GLM 5.3, effort Max | Prima richiesta generale ha prodotto appunti di ricerca senza conclusione; interrotta per concentrare il lavoro su DistAI. Secondo prompt specifico ha ricevuto «Model is currently at capacity»/«Currently in peak hours» | **Revisione finale non disponibile**; non accettato il suggerimento di passare a Flash |
-| Gemini 4, ragionamento Alta (selettore 4 Argon / Alta) | Prima richiesta interrotta, seconda risposta parziale; poi limite d'uso con reset indicato alle 17:45 e interfaccia passata a Flash-Lite | **Revisione parziale**, non copre l'intero dossier DistAI e non è un'approvazione |
+| GLM 5.3, Max effort | First general request produced research notes without a conclusion; interrupted to focus on DistAI. A second targeted prompt received “Model is currently at capacity” / “Currently in peak hours” | **Final review unavailable**; suggestion to switch to Flash was declined |
+| Gemini 4, High reasoning (4 Argon / High selector) | First request interrupted, second answer partial; then usage limit with reset shown as 17:45 and UI switched to Flash-Lite | **Partial review**, not coverage of the full DistAI dossier or approval |
 
-Trascrizioni: [Gemini parziale](gemini-4-high-partial.txt), [GLM indisponibile e prompt](glm-5.3-max-unavailable.txt). Il testo Gemini è conservato come evidenza di quanto affermato dal revisore, **non come fonte verificata dei fatti**. La cattura screenshot del browser GLM ha restituito timeout; lo stato di capacità è stato letto nell'albero accessibile. Nessuna attestazione visiva completa allegata.
+Original transcripts: [partial Gemini](gemini-4-high-partial.txt), [unavailable GLM and prompt](glm-5.3-max-unavailable.txt). These are verbatim source evidence, including their original language. Gemini's text records what the reviewer said, **not verified facts**. GLM browser screenshot capture timed out; capacity status was read from the accessibility tree. No complete visual attestation is attached.
 
-## Come sono stati trattati i suggerimenti Gemini
+## Adjudication of Gemini suggestions
 
-| Affermazione | Decisione | Motivo |
+| Claim | Decision | Reason |
 |---|---|---|
-| Pipeline di layer su nodi più lenti peggiora la singola sequenza quando il target risiede sull'host | Accolta con ipotesi esplicite | Somma dei tempi sul percorso critico, coerente con risultati DistAI |
-| Confrontare draft remoto con draft locale | Accolta e rafforzata | Serve anche baseline locale asincrona dove supportata |
-| NO-GO universale per ogni distribuzione se il modello entra sul Mac | **Non accolta come teorema generale** | Le ipotesi della pipeline seriale non coprono ogni parallelismo/speculation/contesa hardware |
-| Draft remoto perde sempre, salvo RAM locale satura | **Non accolta come conclusione dimostrata** | Assume velocità relative, stesso costo verifica e nessun beneficio di overlap o minore contesa; va misurato |
-| Wi-Fi ha sempre specifici range di banda/latenza e cavo sempre un ordine di grandezza migliore | Non usata per dimensionamento | Mancano misure sui nostri telefoni/router; valori generici non sono evidenza |
-| exo supporta attivamente macOS e Linux | Corretta | PLATFORMS.md consultato riporta Apple Silicon macOS Tier 1 e Linux Planned |
-| distributed-llama passa il 90% in busy-wait con questi nodi | Scartata | Nessun benchmark della configurazione fornito a supporto |
-| iOS offre sempre circa 4–6 GB per app | Scartata come regola | Dipende da modello, OS, entitlement e pressione memoria; non è un budget universale |
-| BGContinuedProcessingTask non è un daemon permanente | Accolta con documentazione Apple | Disponibilità risorse e lifecycle vanno gestiti, senza negare a priori GPU background supportata |
+| Layer pipelines on slower nodes harm one sequence when the target fits the host | Accepted with explicit assumptions | Sum of critical-path durations, consistent with DistAI results |
+| Compare remote drafting with local drafting | Accepted and strengthened | Include an asynchronous local baseline where supported |
+| Universal NO-GO for all distribution when the model fits the Mac | **Not accepted as a general theorem** | Serial-pipeline assumptions do not cover all parallelism, speculation or hardware contention |
+| Remote draft always loses unless local RAM is full | **Not accepted as demonstrated** | Assumes relative speed, equal verification cost and no overlap/contention benefit; requires measurement |
+| Wi-Fi always has specific latency/bandwidth ranges and cable is always an order of magnitude better | Not used for sizing | No measurements from our phones/router; generic values are not evidence |
+| exo actively supports macOS and Linux | Corrected | Consulted PLATFORMS.md listed Apple Silicon macOS Tier 1 and Linux Planned |
+| distributed-llama spends 90% in busy-wait on these nodes | Rejected | No supporting benchmark of this configuration |
+| iOS always offers approximately 4–6 GB per app | Rejected as a rule | Depends on model, OS, entitlement and memory pressure; no universal budget |
+| BGContinuedProcessingTask is not a permanent daemon | Accepted with Apple documentation | Manage resources/lifecycle without categorically denying supported background GPU use |
 
-La revisione generale GLM aveva riconosciuto correttamente alcuni limiti di piattaforma e RPC, ma non ha restituito una valutazione completa: non attribuiamo al modello le conclusioni del dossier. I rilievi DistAI provengono dalla nostra ispezione del codice e dai ricalcoli riproducibili.
+GLM's general attempt correctly recognized some platform/RPC limitations but did not deliver a complete evaluation. The dossier's conclusions are not attributed to that model; DistAI findings come from our source inspection and reproducible recalculations.
 
-## Chiusura ancora necessaria prima del progetto definitivo
+## Closure needed at that checkpoint
 
-Riproponibile a entrambi i modelli il prompt mirato conservato nel file GLM e i tre documenti di assessment, chiedendo: verificare causalità e baseline; contestare gli esperimenti E1/E2/E3; controllare sampling esatto e lifecycle iOS; identificare precedenti che riducono la novità. La risposta dovrà essere esaminata criticamente e le eventuali correzioni registrate. Nessun consenso fra modelli può sostituire prove sui dispositivi.
+The targeted prompt in the GLM file and three assessment documents could be resubmitted to both models: check causality/baselines, challenge E1/E2/E3, inspect exact sampling and iOS lifecycle, and identify prior work limiting novelty. Critically adjudicate responses and record corrections. Model agreement cannot replace device tests.
 
-## Riesame NodeLift dopo l'inventario dei dispositivi
+## NodeLift follow-up after device inventory
 
-Selettori verificati: Gemini **4 Argon / Alta** e GLM **5.3 / Effort Max**. Il quesito descriveva i risultati DistAI, i dispositivi dichiarati, la rete hotspot e il disegno delle companion di qualificazione. Non conteneva credenziali, indirizzi privati o codice AudioEnhancer.
+Verified selectors: Gemini **4 Argon / High** and GLM **5.3 / Effort Max**. The prompt described DistAI findings, owner-reported devices, hotspot topology and qualification-companion design. It included no credentials, private addresses or AudioEnhancer code.
 
-- [Gemini: prompt e risposta completa](gemini-4-high-nodelift-followup.txt).
-- [GLM: prompt e nuova indisponibilità](glm-5.3-max-nodelift-retry.txt). Non sostituito con Flash.
+- [Gemini original prompt and completed answer](gemini-4-high-nodelift-followup.txt).
+- [GLM original prompt and renewed unavailability](glm-5.3-max-nodelift-retry.txt); no Flash substitution.
 
-Gemini ha rivisto la conclusione assoluta precedente: riconosce ora il draft autonomo asincrono come ipotesi da confrontare con il migliore draft locale. Corregge anche exo/Linux e riconosce il generator plugin LM Studio. Questo è un riesame del disegno descritto, non un audit dei file implementati.
+Gemini revised its earlier absolute conclusion, recognizing autonomous asynchronous drafting as a hypothesis to compare with the strongest local draft. It also corrected exo/Linux and recognized LM Studio generator plugins. This reviewed the described design, not implemented source files.
 
-| Rilievo nuovo | Trattamento |
+| New finding | Treatment |
 |---|---|
-| Misure tutte ravvicinate nascondono il risveglio radio | Accolto: aggiunto job `network_paced` su Android/iOS, 200 RTT per ciascuna pausa richiesta 0/30/60 ms; risultati separati per gruppo |
-| N=32 rende debole il p95 | Accolto il limite statistico; non l'affermazione letterale «non permette di calcolarlo». Il percentile empirico si può calcolare ma ha alta incertezza. Test rapido etichettato diagnostico |
-| Connessioni/TLS/stack diversi falsano confronti | Accolto: ID di connessione server registrato nei campioni RTT; rimosso disconnect esplicito Android dopo risposta completa. Non presunto identico riuso degli stack |
-| Matvec 256×256 non misura banda DRAM o performance LLM | Accolto e dichiarato in UI/documentazione; nessun predittore token/s basato su quel test |
-| Host asyncio, Android OkHttp | Corretto: implementazione effettiva usa ThreadingHTTPServer e HttpsURLConnection; il revisore non aveva il codice e non ha verificato questi dettagli |
-| connectedDevice richiede necessariamente USB/Bluetooth | Non accolto: la documentazione Android comprende connessioni di rete con prerequisiti di permission. Resta da verificare il comportamento OEM in esecuzione |
-| Hotspot escluso universalmente sopra 4 ms / jitter 3× | Non adottato come gate universale: il break-even dipende dal job, dal target e dalla baseline. Nessuna misura dei dispositivi supporta quella soglia assoluta |
-| Soglie rigide 48/54 GiB sul Mac e tempi di wake radio precisi | Non usate come dati osservati; memoria allocabile e tempi devono essere misurati |
-| Harmony non qualificabile senza SDK/device | Accolto: sorgente candidato, nessun HAP o compatibilità dichiarata come verificata |
+| Closely spaced measurements hide radio wake effects | Accepted: Android/iOS `network_paced` job, 200 RTTs per requested 0/30/60 ms pause; separate groups |
+| N=32 weakens p95 | Statistical limitation accepted; literal “cannot calculate it” rejected. Empirical percentile is calculable but uncertain; quick test labelled diagnostic |
+| Different connections/TLS/stacks confound comparisons | Accepted: server connection IDs recorded in RTT samples; explicit Android disconnect after full response removed. Identical stack reuse not assumed |
+| 256×256 matvec does not measure DRAM bandwidth or LLM speed | Accepted and disclosed in UI/docs; no tokens/s predictor based on this test |
+| Host asyncio, Android OkHttp | Corrected: implementation used ThreadingHTTPServer and HttpsURLConnection; reviewer had no source and did not verify these details |
+| connectedDevice necessarily requires USB/Bluetooth | Rejected: Android documentation includes network connections with permission prerequisites. Runtime OEM behavior remains to be checked |
+| Universally exclude hotspot above 4 ms / 3× jitter | Not adopted: break-even depends on job, target and baseline; no device evidence supports the absolute threshold |
+| Fixed 48/54 GiB Mac limits and precise radio wake times | Not treated as observations; measure allocatable memory and timing |
+| Harmony cannot be qualified without SDK/device | Accepted: source candidate only; no HAP or verified compatibility claim |
 
-Restano mancanti la revisione finale GLM Max, un controllo indipendente del codice, l'installazione/firma fisica iOS/Harmony e le misure sui cinque telefoni. La compilazione e i test di protocollo non chiudono questi punti.
+At the end of this historical phase, the final GLM Max review, independent source inspection, physical iOS/Harmony installation/signing and measurements across all five phones remained open. Compilation and protocol tests did not close them. Later engine-review progress is recorded separately at the top of this page.

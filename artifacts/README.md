@@ -1,6 +1,6 @@
 # Current packages and historical evidence
 
-Current companion: **0.2.3 / build 5**, [published assets and hash manifest](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.3). Android is a debug-signed laboratory build; iOS is unsigned and needs provisioning. See [localization validation](../docs/LOCALIZATION.md) and [host integration validation](../research/integrations-2026-11-01/VALIDATION.md).
+Current companion: **0.2.5 / build 7**, [published assets and hash manifest](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.5). Android is a debug-signed laboratory build; iOS is unsigned and needs provisioning. See [localization validation](../docs/LOCALIZATION.md) and [host integration validation](../research/integrations-2026-11-01/VALIDATION.md).
 
 The dated sections below retain historical results; they are not the latest release index.
 
@@ -29,30 +29,30 @@ The observed Xiaomi test still refers to the 0.1 qualification companion. The ne
 
 The section below records earlier evidence only; current status is above.
 
-# NodeLift 0.1.0 — build e verifiche
+# NodeLift 0.1.0 — build and checks
 
-31 ottobre 2026. **Companion di qualificazione: motore LLM distribuito non implementato.**
+31 October 2026. **Qualification companion: no distributed LLM engine implemented at this checkpoint.**
 
-Aggiornamento dashboard dello stesso giorno: ripristino accesso verificato nella scheda dell'utente, avviso esplicito per sessione mancante, azioni disabilitate senza autenticazione e comando locale `scripts/open-dashboard.command`. Archivio sorgenti e manifest aggiornati; APK Android invariato.
+Same-day dashboard update: access restoration verified in the owner's tab, explicit missing-session warning, unauthenticated actions disabled and local `scripts/open-dashboard.command` launcher. Source archive/manifest updated; Android APK unchanged.
 
-Aggiornamento fisico successivo: companion Android installata dall'utente sullo Xiaomi 17 Ultra; pairing/heartbeat e quattro job reali completati (rete rapida, rete con pause, CPU e replica rete con pause). [Report e dati](../research/measurements/2026-10-31-xiaomi-hotspot/REPORT.md). Nessun benchmark LLM o controllo termico sostenuto. La tabella sotto conserva i controlli iniziali della build, prima di questa prova.
+Later physical update: the owner installed the Android companion on Xiaomi 17 Ultra; pairing/heartbeat and four real jobs completed (quick network, paced network, CPU and a paced repeat). [Report and data](../research/measurements/2026-10-31-xiaomi-hotspot/REPORT.md). No LLM benchmark or sustained thermal test. The table preserves initial build checks before that session.
 
-| Componente | Risultato osservato | Limite |
+| Component | Observed result | Boundary |
 |---|---|---|
-| Host HTTPS + dashboard | 14 test automatici passati; flusso invito verificato nel browser | Nessun telefono fisico associato durante la verifica |
-| Android | `NodeLift-0.1.0-android-debug.apk` compilato; anche APK strumentale compilato | Test strumentale non eseguito: emulatore ADB offline e errore mprotect; HyperOS/ColorOS da provare |
-| iOS | Build Release device e simulator riuscite | Firma disabilitata; non installato su iPhone |
-| Client Swift | Pairing, trasferimenti, heartbeat e rifiuto certificato errato verificati su HTTPS locale | Esecuzione su macOS, non iOS |
-| HarmonyOS | Progetto ArkTS candidato presente nei sorgenti | DevEco/SDK/firma assenti; nessun HAP prodotto |
-| Revisione Gemini 4 High | Riesame del disegno completato e rilievi esaminati | Non audit del codice, non misura hardware |
-| Revisione GLM 5.3 Max | Tentativo effettuato con effort Max | Servizio a capacità; nessuna revisione completata |
+| Host HTTPS + dashboard | 14 automated tests passed; invitation flow checked in browser | No physical phone paired during initial verification |
+| Android | `NodeLift-0.1.0-android-debug.apk` and instrumented test APK compiled | Instrumented test did not run: ADB emulator offline/mprotect error; HyperOS/ColorOS still to test |
+| iOS | Release device and simulator builds succeeded | Signing disabled; not installed on iPhone |
+| Swift client | Pairing, transfers, heartbeat and wrong-certificate rejection checked over local HTTPS | Execution on macOS, not iOS |
+| HarmonyOS | ArkTS candidate included in sources | DevEco/SDK/signing absent; no HAP produced |
+| Gemini 4 High review | Design review completed and findings adjudicated | Not a source audit or hardware measurement |
+| GLM 5.3 Max review | Attempted with Max effort | Service at capacity; no completed review |
 
-Distribuibili locali:
+Local historical deliverables:
 
-- `NodeLift-0.1.0-android-debug.apk`: build debug per test Android; non è la companion Huawei NEXT.
-- `NodeLift-0.1.0-source.zip`: host, app, script, test, documentazione e ricerca con attribuzioni. Non contiene credenziali di pairing, database del laboratorio o chiavi di firma.
-- `build-manifest.json`: hash SHA-256 e inventario dei sorgenti. I binari e i log sono esclusi dal tracking Git tramite `.gitignore`; questo README resta tracciabile.
+- `NodeLift-0.1.0-android-debug.apk`: Android debug test build, not the Huawei NEXT companion.
+- `NodeLift-0.1.0-source.zip`: host, apps, scripts, tests, documentation and attributed research. No pairing credentials, laboratory database or signing keys.
+- `build-manifest.json`: SHA-256 hashes and source inventory. Binaries/logs are excluded from Git through `.gitignore`; this README remains tracked.
 
-Log: `host-tests.log`, `swift-protocol-check.log`, `android-build.log`, `android-test-build.log`, `ios-build.log`, `ios-device-build.log`, `android-emulator.log`.
+Logs: `host-tests.log`, `swift-protocol-check.log`, `android-build.log`, `android-test-build.log`, `ios-build.log`, `ios-device-build.log`, `android-emulator.log`.
 
-Nessun risultato di questi controlli dimostra speedup LLM o prestazioni della rete hotspot. Per l'uso vedere [guida companion](../docs/COMPANION_0_1.md).
+These initial checks establish neither LLM speedup nor hotspot performance. See the [historical companion guide](../docs/COMPANION_0_1.md), [current changelog](../CHANGELOG.md) and [current downloads](../docs/MOBILE_DOWNLOADS.md).

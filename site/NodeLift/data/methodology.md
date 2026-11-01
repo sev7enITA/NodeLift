@@ -1,45 +1,48 @@
-# NodeLift — metodo del confronto / comparison methodology
+# NodeLift — comparison methodology
 
-Data di congelamento delle fonti: **31 ottobre 2026**. Versione del dataset: **1**. Curatore: Fabrizio Degni / progetto NodeLift.
+Source freeze: **31 October 2026**. Dataset version: **1**. Curator: Fabrizio Degni / NodeLift project. The evidence snapshot remains unchanged by later documentation translations or companion releases.
 
-## Ambito
-55 schede selezionate: 16 sistemi distribuiti, 17 runtime, 6 piattaforme di serving, 5 applicazioni mobili, 2 riferimenti locali e 9 lavori di ricerca. La matrice usa criteri assoluti e uniformi, non un punteggio competitivo arbitrario. È un censimento ampio, non la promessa di includere ogni progetto esistente o di certificare un vincitore universale.
+## Scope
 
-La ricerca parte da DistAI e dalla bibliografia già verificata di NodeLift, estende i collegamenti ai progetti correlati e ricerca implementazioni mobili/distribuite, runtime nativi e ricerca recente. Sono inclusi progetti occidentali, asiatici e internazionali. Sono esclusi frontend di sola chat duplicativi, cataloghi generici di modelli, reti di solo training e semplici fork senza differenze rilevanti per il problema. Una fonte accessibile e un legame tecnico pertinente sono requisiti minimi.
+55 selected entries: 16 distributed systems, 17 runtimes, 6 serving platforms, 5 mobile apps, 2 local references and 9 research works. The matrix applies uniform descriptive criteria rather than arbitrary competitive scores. It is a broad inventory, not a promise to include every project or certify a universal winner.
 
-**Non tutte le righe sono alternative dirette.** Un kernel, una app, un paper e una piattaforma server non sono intercambiabili. La categoria resta visibile nei filtri. Gli abstract o README sono dichiarazioni degli autori: non dimostrano, da soli, che un percorso sia riproducibile sui nostri telefoni.
+Research started from DistAI and NodeLift's checked bibliography, expanded related-project links, and searched mobile/distributed implementations, native runtimes and recent research. Western, Asian and international projects are included. Duplicative chat-only frontends, generic model catalogs, training-only networks and forks without relevant differences are excluded. An accessible source and relevant technical connection are minimum requirements.
 
-## Geografia senza supposizioni
-Il campo ecosystem indica la provenienza documentata dell'organizzazione o collaborazione: western, asia, international, unverified. Non deduciamo nazionalità o etnia da nomi, alfabeti o pseudonimi. Un progetto multinazionale non è forzato in una classificazione binaria. La provenienza non assegna alcun vantaggio tecnico.
+**Not every row is a direct alternative.** A kernel, app, paper and server platform are not interchangeable; category stays visible in filters. Abstracts/READMEs are authors' statements and do not by themselves establish reproducibility on our phones.
 
-## Dimensioni del confronto
-Ogni scheda riporta nome, categoria, provenienza, stato, licenza, architettura, host, Android, iOS, effettivo ruolo di calcolo mobile, capacità oltre la memoria di un singolo dispositivo, effetto sulla singola chat, trasporto, API/integrazioni, sicurezza, livello di evidenza, limiti, lezione per NodeLift, revisione, data di verifica e fonti.
+## Geography without assumptions
 
-- **Mobile compute:** inferenza sul dispositivo, diversa da un telefono che visualizza risposte remote. Un SDK disponibile non equivale a una companion qualificata.
-- **Capacity:** pesi divisi tra dispositivi, diversa dall'uso di disco/RAM locale, dal routing di intere richieste e dall'esecuzione di un piccolo draft remoto.
-- **Single chat:** latenza totale e inter-token di una sola generazione. Non si ricava dal throughput aggregato, dal prefill, da un kernel isolato o dalla dimensione del modello che entra in memoria.
-- **Android/iOS:** distingue codice, build, applicazione distribuita, dimostrazione fisica e qualificazione svolta da NodeLift. Un tag di filtro indica pertinenza documentata, non una certificazione.
-- **Transport:** percorso effettivo documentato. Wi-Fi, cavo USB, USB networking, Ethernet e RDMA non sono sinonimi; un connettore non garantisce una velocità IP.
-- **API:** compatibilità osservata o documentata, distinta da un plugin interno ufficiale. NodeLift 0.2.1 non è un backend interno di Ollama; il suo handler SDK LM Studio è stato provato, il runtime completo del plugin no.
-- **Security:** meccanismi dichiarati o limiti espliciti. Non abbiamo eseguito un penetration test dei concorrenti. “Locale” non significa automaticamente cifrato o sicuro contro un peer.
-- **License:** identificazione informativa della licenza alla revisione esaminata; dipendenze, pesi e distribuzioni possono avere termini diversi. Nessuna valutazione legale di compatibilità. NOASSERTION di GitHub non è prova di assenza di licenza.
+The ecosystem field records documented organization/collaboration provenance: western, asia, international or unverified. Nationality/ethnicity is not inferred from names, alphabets or pseudonyms. Multinational work is not forced into a binary category. Provenance assigns no technical advantage.
 
-## Evidenza e numeri
-Le prestazioni esterne sono attribuite agli autori; non sono state riprodotte sul testbed NodeLift. È esplicita la differenza tra hardware fisico, emulazione, simulazione, analisi teorica, build e ispezione documentale.
+## Comparison dimensions
 
-Non confrontiamo direttamente token/s ottenuti con modelli, prompt, quantizzazioni, hardware o metriche diversi. Non convertiamo “fino a” in prestazione tipica. Non consideriamo stelle GitHub, download o marketing come prova di correttezza o maturità.
+Each entry includes name, category, provenance, status, license, architecture, hosts, Android/iOS, actual mobile-compute role, capacity beyond one device, single-chat effect, transport, APIs/integrations, security, evidence level, limitations, NodeLift lesson, revision, check date and sources.
 
-Per NodeLift il riferimento pubblico è la release sperimentale 0.2.1. I 60 run congelati sono locali su M3 Max, Qwen2.5 1.5B target/0.5B draft, massimo 64 token, sei prompt e due ripetizioni per braccio. I 48 confronti appaiati concordano nei token, ma le mediane di speedup restano 0.425–0.719×: **nessuna accelerazione dimostrata**. Il test TLS con un nodo emulato e il pilot rete sullo Xiaomi sono evidenze separate. Nessuna velocità di inferenza distribuita su telefono fisico è ancora qualificata.
+- **Mobile compute:** on-device inference, distinct from displaying remote answers. An available SDK is not a qualified companion.
+- **Capacity:** partitioned weights across devices, distinct from local RAM/disk use, whole-request routing or a small remote draft.
+- **Single chat:** total/inter-token latency of one generation. Not inferred from aggregate throughput, prefill, an isolated kernel or model size fitting memory.
+- **Android/iOS:** distinguishes source, build, distributed app, physical demonstration and NodeLift qualification. Filter tags indicate documented relevance, not certification.
+- **Transport:** documented actual path. Wi-Fi, USB cable, USB networking, Ethernet and RDMA are not synonyms; a connector does not guarantee an IP rate.
+- **API:** observed/documented compatibility, distinct from an official internal plugin. NodeLift 0.2.1 is not an internal Ollama backend; its LM Studio SDK handler was tested, the complete plugin runtime was not.
+- **Security:** stated mechanisms or explicit limits. No competitor penetration testing was performed. Local does not automatically mean encrypted or safe against peers.
+- **License:** informational identification at the examined revision. Dependencies, weights and distributions may have different terms. No legal compatibility determination. GitHub NOASSERTION does not prove absence of a license.
 
-## Revisioni e alias
-45 repository sono registrati in source-inventory.json con commit Git immutabile; 44 sono schede autonome. Pooled è il progetto già denominato SwarmLLM: il fork Pendia/SwarmLLM-P2P-AI è una fonte storica della stessa famiglia, non un concorrente aggiuntivo. Nakshatra ha genealogia Git Petals ma documenta una propria architettura attuale e viene descritto separatamente. L'Ollama Cluster fork è distinto dall'upstream. PowerInfer-2 è una ricerca diversa dal codice desktop PowerInfer. LiteRT-LM/Gallery e MLC/WebLLM condividono famiglie ma coprono livelli differenti.
+## Evidence and numbers
 
-Le revisioni documentali dei paper sono esplicite; pagine web senza versione restano soggette a cambiamenti. Licenze custom o incongruenze documentali sono segnalate, non risolte per supposizione. Dati mancanti significano **non documentato nelle fonti esaminate**, non impossibile o certamente assente.
+External performance is attributed to its authors, not reproduced on NodeLift's testbed. Physical hardware, emulation, simulation, theoretical analysis, compilation and document inspection are explicitly distinguished.
 
-## Riproducibilità e correzioni
-JSON è la fonte canonica delle 55 schede; CSV e Markdown sono esportazioni degli stessi campi. Le descrizioni tecniche restano in inglese in entrambe le modalità della pagina per evitare due inventari divergenti. La narrazione, le etichette e i filtri sono bilingui. Fonti e commit sono in ogni scheda. Il repository contiene l'inventario e il generatore degli export.
+Do not directly compare tokens/s from different models, prompts, quantization, hardware or metrics. “Up to” is not typical performance. GitHub stars, downloads and marketing do not establish correctness or maturity.
 
-Segnalare correzioni con fonte primaria, revisione, dispositivo e percorso esatto tramite [GitHub Issues](https://github.com/sev7enITA/NodeLift/issues). Una correzione documentale non sostituisce un benchmark.
+For this snapshot, NodeLift's public reference is experimental 0.2.1. The 60 frozen runs are local on M3 Max, Qwen2.5 1.5B target/0.5B draft, maximum 64 tokens, six prompts and two repetitions per arm. All 48 paired token comparisons agree, but median speedups remain 0.425–0.719×: **no acceleration demonstrated**. The emulated TLS node and physical Xiaomi network pilot are separate evidence. Distributed inference speed on a physical phone remains unqualified.
 
-## English summary
-This is a dated, broad, non-exhaustive comparison of 55 selected entries, including adjacent runtimes and research, not 55 interchangeable competitors. Uniform descriptive criteria replace a fabricated winner score. Organization/collaboration provenance is not inferred from personal names. “Not established” means missing evidence in reviewed sources, not impossible support. Upstream claims, physical hardware, simulations, builds and NodeLift-replicated measurements are kept separate. Different models/hardware/timing paths cannot form a fair tokens-per-second league table. NodeLift's current controls show slower local drafting and no demonstrated physical-phone speedup. Canonical English entries are exported identically to JSON, CSV and Markdown; page narrative and controls are bilingual.
+## Revisions and aliases
+
+45 repositories are recorded in source-inventory.json with immutable Git commits; 44 are standalone entries. Pooled was previously SwarmLLM: Pendia/SwarmLLM-P2P-AI is a historical source for that family, not another competitor. Nakshatra has Petals Git ancestry but documents its own current architecture and is described separately. The Ollama Cluster fork is separate from upstream. PowerInfer-2 research differs from desktop PowerInfer code. LiteRT-LM/Gallery and MLC/WebLLM share families but cover different layers.
+
+Paper revisions are explicit; unversioned webpages remain mutable. Custom licenses/documentation inconsistencies are flagged, not resolved by assumption. Missing data means **not documented in examined sources**, not impossible or certainly absent.
+
+## Reproduction and corrections
+
+JSON is canonical for the 55 entries; CSV and Markdown export identical fields. Technical descriptions remain English across the showcase languages to prevent divergent inventories. The current site's narrative/controls support default English, Simplified Chinese and Italian. Sources and commits appear in each entry; the repository contains the inventory/export generator.
+
+Report corrections through [GitHub Issues](https://github.com/sev7enITA/NodeLift/issues), with a primary source, revision, device and exact execution path. A documentation correction does not replace a benchmark.

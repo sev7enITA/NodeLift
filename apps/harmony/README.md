@@ -1,16 +1,16 @@
-# NodeLift HarmonyOS — candidato nativo
+# NodeLift HarmonyOS — native candidate
 
-Sorgenti ArkTS/ArkUI per Huawei Pura 70 Ultra dichiarato dall'utente con HarmonyOS NEXT 7. **Non compilati, non firmati, non verificati su device.** Nell'ambiente di sviluppo esaminato non è disponibile DevEco Studio/SDK HarmonyOS.
+ArkTS/ArkUI sources for the Huawei Pura 70 Ultra reported by the owner as running HarmonyOS NEXT 7. **Not compiled, signed or tested on a device.** DevEco Studio/HarmonyOS SDK was unavailable in the inspected development environment; native compilation remains deferred due to limited disk space.
 
-Il candidato implementa associazione HTTPS con CA dedicata e pin SPKI, heartbeat, test rete, pausa in background e revoca lato host. Le credenziali sono solo in memoria. Dichiara `supported_jobs: ["network"]`: il server impedisce di assegnargli test CPU. Non riporta RAM che non abbia misurato. Non carica LLM.
+The candidate implements HTTPS pairing with a dedicated CA and SPKI pin, heartbeat, network tests, background pause and host-side revocation. Credentials remain in memory only. It declares `supported_jobs: ["network"]`: the server prevents CPU-test assignments. It does not report unmeasured RAM and does not load an LLM.
 
-Richiede API 23+ per `HttpRequestOptions.maxRedirects=0`; usa anche `caData` e `certificatePinning`. Il progetto deve essere importato e qualificato con il toolchain Huawei installato, compresa verifica del formato pin, certificate hostname validation, errori di trust e cancellazione. Il codice non disabilita la verifica TLS e non segue redirect.
+API 23+ is required for `HttpRequestOptions.maxRedirects=0`; the code also uses `caData` and `certificatePinning`. Import and qualify the project with the Huawei toolchain, including pin format, certificate hostname validation, trust failures and cancellation. The code does not disable TLS verification or follow redirects.
 
-Fonti primarie consultate:
+Primary references consulted:
 
-- [HTTP Network Kit e pinning](https://github.com/openharmony/docs/blob/master/en/application-dev/reference/apis-network-kit/js-apis-http.md)
-- [Clock monotono systemDateTime](https://github.com/openharmony/interface_sdk-js/blob/master/api/@ohos.systemDateTime.d.ts)
+- [HTTP Network Kit and pinning](https://github.com/openharmony/docs/blob/master/en/application-dev/reference/apis-network-kit/js-apis-http.md)
+- [Monotonic systemDateTime clock](https://github.com/openharmony/interface_sdk-js/blob/master/api/@ohos.systemDateTime.d.ts)
 - [Thermal API](https://github.com/openharmony/docs/blob/master/en/application-dev/reference/apis-basic-services-kit/js-apis-thermal.md)
-- [Ambiente ufficiale HarmonyOS](https://developer.huawei.com/consumer/en/harmonyos/develop/)
+- [Official HarmonyOS development environment](https://developer.huawei.com/consumer/en/harmonyos/develop/)
 
-Questi riferimenti non sostituiscono la compilazione e la prova dell'API level effettivo del telefono. Non è stato prodotto alcun HAP installabile.
+These references do not replace compilation and testing against the phone's actual API level. No installable HAP has been produced.

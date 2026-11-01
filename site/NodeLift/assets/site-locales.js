@@ -3,6 +3,13 @@
 (function (root) {
   'use strict';
   const chinese = Object.freeze({
+  "Changelog": "更新日志",
+  "RELEASE HISTORY": "版本历史",
+  "Every build. Every change.": "每次构建，每项变更。",
+  "Version, build, changes and verification limits. Release notes are maintained in English from the same source as GitHub.": "版本、构建编号、变更内容与验证范围。发布说明以英文维护，与 GitHub 使用同一数据源。",
+  "GitHub changelog ↗": "GitHub 更新日志 ↗",
+  "Download release notes ↓": "下载发布说明 ↓",
+
   "Skip to content": "跳转到正文",
   "Chapters": "章节",
   "Vision": "愿景",
