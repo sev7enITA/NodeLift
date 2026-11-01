@@ -53,8 +53,8 @@ class MainActivity : Activity() {
         root.addView(text("Language",12f,muted))
         root.addView(Spinner(this).apply {
             contentDescription=t("Language")
-            val languages=listOf("en","zh-Hans")
-            adapter=ArrayAdapter(this@MainActivity,android.R.layout.simple_spinner_dropdown_item,listOf("English","简体中文"))
+            val languages=listOf("en","zh-Hans","it")
+            adapter=ArrayAdapter(this@MainActivity,android.R.layout.simple_spinner_dropdown_item,listOf("English","简体中文","Italiano"))
             setSelection(languages.indexOf(L10n.language(this@MainActivity)))
             onItemSelectedListener=object:AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent:AdapterView<*>?,view:View?,position:Int,id:Long) {
@@ -107,7 +107,7 @@ class MainActivity : Activity() {
         engine.addView(text("Select the draft in the Mac dashboard first. Local downloads support up to 1 GiB with SHA-256 verification. Proposals pause when battery is low or thermal status is moderate. CPU and context settings apply on the next load.",13f,muted));root.addView(engine)
         val control=card(); control.addView(text("You stay in control",20f)); control.addView(text("Your paired computer can start measurements. LLM proposals require enabling the engine above. RAM is not shared automatically.",14f,muted));control.addView(button("Pause node") { stopService(Intent(this,NodeService::class.java)); NodeService.status=ui("Paused · no delegated work") });control.addView(button("Forget computer") { stopService(Intent(this,NodeService::class.java)); Vault.clear(this); NodeService.status=ui("Computer forgotten") });root.addView(control)
         val measurement=card();measurement.addView(text("Last measurement",20f));result=text(NodeService.lastResult.render(this),15f,mint);measurement.addView(result);measurement.addView(text("Available RAM is a system indicator, not memory already shared. Synthetic tests do not indicate tokens/s.",13f,muted));root.addView(measurement)
-        root.addView(text("0.2.2 · Experimental companion\nEverything on your local network",12f,muted));scroll.addView(root);setContentView(scroll); updateState()
+        root.addView(text("0.2.3 · Experimental companion\nEverything on your local network",12f,muted));scroll.addView(root);setContentView(scroll); updateState()
     }
     private fun start(value: String?) {
         if(Build.VERSION.SDK_INT>=33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED) requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS),42)

@@ -70,11 +70,12 @@ struct ContentView: View {
                 Text("NodeLift").font(.system(size: 27, weight: .semibold)).tracking(-1)
                 Text("/").font(.system(size: 27, weight: .light)).foregroundStyle(aquaColor).padding(.leading, -8)
                 Spacer()
-                Text("0.2.2").font(.system(size: 11, design: .monospaced)).foregroundStyle(.secondary)
+                Text("0.2.3").font(.system(size: 11, design: .monospaced)).foregroundStyle(.secondary)
             }
             Picker(T("Language"), selection: $model.language) {
                 Text("English").tag("en")
                 Text("简体中文").tag("zh-Hans")
+                Text("Italiano").tag("it")
             }.tint(aquaColor).accessibilityIdentifier("language-picker")
             eyebrow(T("LOCAL INTELLIGENCE NETWORK"))
             Text(T("Your device.\nA new role."))
@@ -253,7 +254,7 @@ struct ContentView: View {
                 HStack(alignment: .top, spacing: 11) {
                     Image(systemName: "testtube.2").foregroundStyle(amberColor)
                     VStack(alignment: .leading, spacing: 6) {
-                        Text(T("Experimental build · 0.2.2")).font(.footnote.weight(.semibold)).foregroundStyle(amberColor)
+                        Text(T("Experimental build · 0.2.3")).font(.footnote.weight(.semibold)).foregroundStyle(amberColor)
                         Text(T("This iOS build has not been verified on a physical iPhone. Phone-assisted LLM acceleration has not been demonstrated."))
                             .font(.footnote).foregroundStyle(.secondary)
                     }

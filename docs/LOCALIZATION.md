@@ -1,19 +1,19 @@
 # NodeLift localization
 
-The control room and Android/iOS companions use **English by default**, independent of browser or system language. Choose **Language → 简体中文** for Simplified Chinese. The explicit choice is saved locally per browser/device. No account or translation service is needed. Traditional Chinese is not included in this release.
+The control room and Android/iOS companions use **English by default**, independent of browser or system language. Choose **Language → 简体中文** for Simplified Chinese or **Language → Italiano** for Italian. The explicit choice is saved locally per browser/device. No account or translation service is needed. Traditional Chinese is not included in this release.
 
-Mobile version: **0.2.2, build 4**. Update the Android APK over the existing same-key installation to retain pairing. The unsigned iOS app requires Apple signing and provisioning before installation. The HarmonyOS candidate has the same language selection in source; it remains uncompiled and unqualified on a physical device. LM Studio's SDK-owned configuration schema, developer CLI diagnostics and the public showcase are separate surfaces and remain in their existing languages.
+Mobile version: **0.2.3, build 5**. Update the Android APK over the existing same-key installation to retain pairing. The unsigned iOS app requires Apple signing and provisioning before installation. The HarmonyOS candidate has the same language selection in source; it remains uncompiled and unqualified on a physical device. LM Studio's SDK-owned configuration schema, developer CLI diagnostics and the public showcase are separate surfaces and remain in their existing languages.
 
 ## Behavior
 
 - Dashboard labels, controls, validation messages, run states, measurements, pairing instructions, dates and accessibility labels follow the selected language. The API key panel closes and clears its in-memory access data on a language change.
 - Android includes the active-node notification and channel name. Changing language rebuilds the screen while retaining its invitation in memory; it does not start, stop or reconnect a worker. Engine preferences retain their values.
-- iOS resolves stored messages and their arguments when rendering. The picker does not pause the active session or alter consent. Local network permission descriptions have English and Simplified Chinese resources; OS-owned permission dialogs follow OS policy.
+- iOS resolves stored messages and their arguments when rendering. The picker does not pause the active session or alter consent. Local network permission descriptions have English, Simplified Chinese and Italian resources; OS-owned permission dialogs follow OS policy.
 - Prompt text, model output, model/device names, API fields and protocol identifiers remain unchanged. Unknown external/native diagnostics remain verbatim. A small explicit alias table renders known messages from older Italian companions without modifying stored/exported records.
 
 ## Catalogs and contribution
 
-`localization/en.json` is the canonical English message catalog, with English source text as the message ID. `localization/zh-Hans.json` has the same 440 keys. Numbered placeholders (`{0}`, `{1}`, ...) support Chinese argument ordering. Nested mobile messages localize telemetry labels while retaining raw numeric/device values. Parameters are substituted once and never treated as markup or translated content.
+`localization/en.json` is the canonical English message catalog, with English source text as the message ID. `localization/zh-Hans.json` and `localization/it.json` each have the same 557 keys, including model-library and external-provider messages. Numbered placeholders (`{0}`, `{1}`, ...) support Chinese argument ordering. Nested mobile messages localize telemetry labels while retaining raw numeric/device values. Parameters are substituted once and never treated as markup or translated content.
 
 Edit the canonical catalogs, then run:
 
@@ -21,7 +21,7 @@ Edit the canonical catalogs, then run:
 python3 scripts/generate-localization.py
 python3 scripts/generate-localization.py --check
 node scripts/check-localization.cjs
-swiftc apps/ios/NodeLift/Localization.swift apps/ios/NodeLift/ChineseMessages.swift scripts/check-localization.swift -o /tmp/nodelift-localization-check
+swiftc apps/ios/NodeLift/Localization.swift apps/ios/NodeLift/ChineseMessages.swift apps/ios/NodeLift/ItalianMessages.swift scripts/check-localization.swift -o /tmp/nodelift-localization-check
 /tmp/nodelift-localization-check
 ```
 
@@ -39,7 +39,15 @@ adb shell am instrument -w dev.nodelift.companion.test/dev.nodelift.companion.Lo
 
 The test restores its language preference and process locale. It does not pair with a host, request inference or establish phone performance.
 
-## Verification, 1 November 2026
+## Italian addition — 0.2.3, 1 November 2026
+
+- Added Italian for all 557 shared message IDs across the control room, Android, iOS and HarmonyOS candidate. English remains the new-install default; existing English/Chinese choices remain valid. Unknown preferences fall back to English.
+- Catalog key parity, placeholders and generated-file freshness pass for both translations. JavaScript and Swift formatter checks pass for all three languages, including Italian nested telemetry, literal arguments, fallback and preference validation.
+- Live Chrome checks passed: all three picker choices, Italian model-library and pairing labels, persisted Italian after reload, no horizontal overflow at the observed desktop width. Switching Chinese/Italian preserved a multilingual prompt containing template-like characters, the output-token setting, selected model, paired-device count and prior generated output. The original prompt/settings and English choice were restored. No new inference was requested.
+- Android debug and instrumentation APKs and the unsigned iOS device app compiled as 0.2.3/build 5. Packaged native engine binaries are reused from the existing build and are verified against the 0.2.2 manifest. This is not a native-engine rebuild or a performance qualification.
+- No Android device/emulator is currently listed by ADB; instrumentation execution and physical Android/iPhone UI checks remain unverified. No new GLM/Gemini review is claimed for this Italian addition. HarmonyOS remains source-only without an SDK build or HAP.
+
+## Original 0.2.2 verification, 1 November 2026
 
 - All 40 host tests passed. Catalog generation/freshness and JavaScript formatter checks passed, including English default with a Chinese browser locale, persisted selection, blocked storage, unknown messages, reordered placeholders and literal parameter isolation.
 - Swift formatter checks passed on macOS: English/Chinese, nested telemetry, fallback, Unicode and parameter isolation. This is not a physical iPhone UI test.

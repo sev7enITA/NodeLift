@@ -1,7 +1,7 @@
 name: NodeLift
 options:
   developmentLanguage: en
-  knownRegions: [en, zh-Hans]
+  knownRegions: [en, zh-Hans, it]
   bundleIdPrefix: dev.nodelift
   deploymentTarget:
     iOS: '17.0'
@@ -21,8 +21,8 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.nodelift.companion
-        MARKETING_VERSION: 0.2.2
-        CURRENT_PROJECT_VERSION: 4
+        MARKETING_VERSION: 0.2.3
+        CURRENT_PROJECT_VERSION: 5
         SWIFT_OBJC_BRIDGING_HEADER: NodeLift/Bridge.h
         TARGETED_DEVICE_FAMILY: '1,2'
         GENERATE_INFOPLIST_FILE: YES

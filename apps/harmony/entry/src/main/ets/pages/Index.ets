@@ -19,10 +19,10 @@ struct Index {
       Column({ space: 18 }) {
         Text('◈ NodeLift').fontSize(30).fontWeight(FontWeight.Bold).fontColor('#EDF5F8').width('100%')
         Text(this.t('Language')).fontSize(14).fontColor('#9EB1BD').width('100%')
-        Select([{ value: 'English' }, { value: '简体中文' }])
-          .selected(this.language === 'zh-Hans' ? 1 : 0)
-          .value(this.language === 'zh-Hans' ? '简体中文' : 'English')
-          .onSelect((index: number) => { this.language = index === 1 ? 'zh-Hans' : 'en'; })
+        Select([{ value: 'English' }, { value: '简体中文' }, { value: 'Italiano' }])
+          .selected(this.language === 'zh-Hans' ? 1 : this.language === 'it' ? 2 : 0)
+          .value(this.language === 'zh-Hans' ? '简体中文' : this.language === 'it' ? 'Italiano' : 'English')
+          .onSelect((index: number) => { this.language = index === 1 ? 'zh-Hans' : index === 2 ? 'it' : 'en'; })
         Text(this.t('YOUR DEVICE. A NEW NODE.')).fontSize(10).fontColor('#91F3CE').width('100%')
         Text(this.t('Connect. Measure.\nChoose when to participate.')).fontSize(30).fontWeight(FontWeight.Medium).fontColor('#EDF5F8').width('100%').margin({ top: 18, bottom: 16 })
         Column({ space: 12 }) {

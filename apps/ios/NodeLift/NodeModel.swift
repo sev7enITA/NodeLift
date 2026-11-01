@@ -5,8 +5,8 @@ import os
 import CryptoKit
 
 @MainActor final class NodeModel: ObservableObject {
-    @Published var language = UserDefaults.standard.string(forKey: "nodelift-language") == "zh-Hans" ? "zh-Hans" : "en" {
-        didSet { UserDefaults.standard.set(language == "zh-Hans" ? "zh-Hans" : "en", forKey: "nodelift-language") }
+    @Published var language = AppLanguage.normalize(UserDefaults.standard.string(forKey: "nodelift-language")) {
+        didSet { UserDefaults.standard.set(AppLanguage.normalize(language), forKey: "nodelift-language") }
     }
     @Published var status: Message = "Ready to pair"
     @Published var running = false
@@ -62,7 +62,7 @@ import CryptoKit
         telemetry = Message("{0}\n{1}\n{2}", machine,
             Message("Physical RAM: {0} GiB · process headroom: {1} GiB", String(format:"%.1f",Double(info.physicalMemory)/1073741824),String(format:"%.1f",Double(available)/1073741824)),
             Message("{0} · thermal: {1}",Message(transport),Message(thermal)))
-        var value:[String:Any] = ["model":machine,"os":osName,"app_version":"0.2.2","physical_memory_bytes":info.physicalMemory,"available_memory_bytes":available,"cpu_cores":info.activeProcessorCount,"battery_percent":max(0,Int(UIDevice.current.batteryLevel*100)),"thermal":thermal,"transport":transport,"lifecycle":"foreground-only","supported_jobs":["network","network_paced","cpu"]]
+        var value:[String:Any] = ["model":machine,"os":osName,"app_version":"0.2.3","physical_memory_bytes":info.physicalMemory,"available_memory_bytes":available,"cpu_cores":info.activeProcessorCount,"battery_percent":max(0,Int(UIDevice.current.batteryLevel*100)),"thermal":thermal,"transport":transport,"lifecycle":"foreground-only","supported_jobs":["network","network_paced","cpu"]]
         if draft != nil {
             value["draft_sha256"]=draftSHA;value["tokenizer_fingerprint"]=draftFingerprint
             value["engine_ready"]=engineEnabled && permitsDraft

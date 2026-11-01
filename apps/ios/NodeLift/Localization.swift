@@ -1,12 +1,20 @@
 import Foundation
 
+enum AppLanguage {
+    static func normalize(_ value: String?) -> String {
+        guard let value, ["en", "zh-Hans", "it"].contains(value) else { return "en" }
+        return value
+    }
+}
+
 struct Message: ExpressibleByStringLiteral {
     let key: String
     let args: [Any]
     init(_ key: String, _ args: Any...) { self.key = key; self.args = args }
     init(stringLiteral value: String) { key = value; args = [] }
     func resolve(_ language: String) -> String {
-        let template = language == "zh-Hans" ? chineseMessages[key] ?? key : key
+        let catalog = language == "zh-Hans" ? chineseMessages : language == "it" ? italianMessages : [:]
+        let template = catalog[key] ?? key
         // Replace in a single pass. Parameter contents are never interpreted as templates.
         let regex = try! NSRegularExpression(pattern: "\\{(\\d+)\\}")
         let source = template as NSString

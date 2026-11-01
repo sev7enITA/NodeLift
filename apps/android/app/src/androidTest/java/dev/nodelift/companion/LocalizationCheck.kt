@@ -26,12 +26,20 @@ class LocalizationCheck : Instrumentation() {
             check(ui("Measurement interrupted: {0}","<script>{1}$&你好</script>").render(targetContext)=="测量已中断：<script>{1}$&你好</script>")
             check(ui("{0} · thermal: {1}",ui("Wi-Fi / hotspot"),ui("nominal")).render(targetContext)=="Wi-Fi / 热点 · 温度状态：正常")
             check(ui("External diagnostic E123").render(targetContext)=="External diagnostic E123")
+            L10n.select(targetContext,"it")
+            check(L10n.language(targetContext)=="it")
+            check(prefs.getString("selected",null)=="it")
+            check(message.render(targetContext)=="CPU · 9 iterazioni in 123 ms")
+            check(ui("Add device").render(targetContext)=="Aggiungi dispositivo")
+            check(ui("Measurement interrupted: {0}","<script>{1}$&你好</script>").render(targetContext)=="Misura interrotta: <script>{1}$&你好</script>")
+            check(ui("{0} · thermal: {1}",ui("Wi-Fi / hotspot"),ui("nominal")).render(targetContext)=="Wi-Fi / hotspot · stato termico: normale")
+            check(ui("External diagnostic E123").render(targetContext)=="External diagnostic E123")
             L10n.select(targetContext,"en")
             check(message.render(targetContext)=="CPU · 9 iterations in 123 ms")
             prefs.edit().putString("selected","invalid").commit()
             check(L10n.language(targetContext)=="en")
             success=true
-            result.putString("stream","PASS: English default with Chinese process locale, persisted selection, live message translation, nested telemetry, argument isolation, fallback. Emulator only.\n")
+            result.putString("stream","PASS: EN / zh-Hans / IT, English default with Chinese process locale, persisted selection, live message translation, nested telemetry, argument isolation, fallback. Emulator only.\n")
         } catch(error:Exception) {
             result.putString("stream","FAIL: ${error.javaClass.simpleName}: ${error.message}\n")
         } finally {

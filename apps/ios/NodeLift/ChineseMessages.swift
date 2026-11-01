@@ -2,7 +2,7 @@
 let chineseMessages: [String: String] = [
     "0 layers uses CPU. 999 requests the maximum GPU offload supported by the backend. Compatibility depends on the model.": "0 层表示使用 CPU。999 表示请求后端支持的最大 GPU 卸载量。兼容性取决于模型。",
     "0.1 · HarmonyOS candidate: build and device qualification required": "0.1 · HarmonyOS 候选版本：需编译并在设备上验证",
-    "0.2.2 · Experimental companion\nEverything on your local network": "0.2.2 · 实验性配套应用\n一切都在你的本地网络中",
+    "0.2.3 · Experimental companion\nEverything on your local network": "0.2.3 · 实验性配套应用\n一切都在你的本地网络中",
     "01 / DEVICES": "01 / 设备",
     "01 / DRAFT ENGINE": "01 / 草稿模型引擎",
     "02 / LLM ENGINE": "02 / LLM 引擎",
@@ -132,7 +132,7 @@ let chineseMessages: [String: String] = [
     "Ethernet": "以太网",
     "Ethernet / USB": "以太网 / USB",
     "Every gain": "每一项性能提升",
-    "Experimental build · 0.2.2": "实验版本 · 0.2.2",
+    "Experimental build · 0.2.3": "实验版本 · 0.2.3",
     "Experimental engine. Select local models and compare strategies using the same prompt. Engine availability does not demonstrate acceleration.": "实验性引擎。请选择本地模型，并使用相同提示词比较各项策略。引擎可用并不代表已实现加速。",
     "Expired": "已过期",
     "Expires at {0}": "到期时间：{0}",

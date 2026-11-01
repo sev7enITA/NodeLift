@@ -1,7 +1,7 @@
 {
   "0 layers uses CPU. 999 requests the maximum GPU offload supported by the backend. Compatibility depends on the model.": "0 layers uses CPU. 999 requests the maximum GPU offload supported by the backend. Compatibility depends on the model.",
   "0.1 · HarmonyOS candidate: build and device qualification required": "0.1 · HarmonyOS candidate: build and device qualification required",
-  "0.2.2 · Experimental companion\nEverything on your local network": "0.2.2 · Experimental companion\nEverything on your local network",
+  "0.2.3 · Experimental companion\nEverything on your local network": "0.2.3 · Experimental companion\nEverything on your local network",
   "01 / DEVICES": "01 / DEVICES",
   "01 / DRAFT ENGINE": "01 / DRAFT ENGINE",
   "02 / LLM ENGINE": "02 / LLM ENGINE",
@@ -131,7 +131,7 @@
   "Ethernet": "Ethernet",
   "Ethernet / USB": "Ethernet / USB",
   "Every gain": "Every gain",
-  "Experimental build · 0.2.2": "Experimental build · 0.2.2",
+  "Experimental build · 0.2.3": "Experimental build · 0.2.3",
   "Experimental engine. Select local models and compare strategies using the same prompt. Engine availability does not demonstrate acceleration.": "Experimental engine. Select local models and compare strategies using the same prompt. Engine availability does not demonstrate acceleration.",
   "Expired": "Expired",
   "Expires at {0}": "Expires at {0}",

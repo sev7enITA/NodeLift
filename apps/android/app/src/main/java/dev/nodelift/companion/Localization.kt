@@ -10,16 +10,18 @@ data class UiText(val key: String, val args: List<Any> = emptyList()) {
 fun ui(key: String, vararg args: Any) = UiText(key, args.toList())
 
 object L10n {
-    private var chinese: JSONObject? = null
+    private val catalogs = mutableMapOf<String, JSONObject>()
+    private fun normalize(language: String?) = if (language in listOf("en", "zh-Hans", "it")) language!! else "en"
     fun language(context: Context): String =
-        if (context.getSharedPreferences("language", 0).getString("selected", "en") == "zh-Hans") "zh-Hans" else "en"
+        normalize(context.getSharedPreferences("language", 0).getString("selected", "en"))
     fun select(context: Context, language: String) {
-        context.getSharedPreferences("language", 0).edit().putString("selected", if (language == "zh-Hans") language else "en").apply()
+        context.getSharedPreferences("language", 0).edit().putString("selected", normalize(language)).apply()
     }
     fun text(context: Context, key: String, vararg args: Any): String {
-        val template = if (language(context) == "zh-Hans") {
-            val catalog = chinese ?: synchronized(this) {
-                chinese ?: context.assets.open("zh-Hans.json").bufferedReader().use { JSONObject(it.readText()) }.also { chinese = it }
+        val selected = language(context)
+        val template = if (selected != "en") {
+            val catalog = synchronized(this) {
+                catalogs.getOrPut(selected) { context.assets.open("$selected.json").bufferedReader().use { JSONObject(it.readText()) } }
             }
             catalog.optString(key, key)
         } else key

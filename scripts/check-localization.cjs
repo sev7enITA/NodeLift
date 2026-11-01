@@ -23,7 +23,19 @@ assert.equal(fresh.i18n.t('Measurement interrupted: {0}','<script>{1}$&你好</s
 assert.equal(fresh.i18n.t('unknown external diagnostic'), 'unknown external diagnostic');
 assert.equal(fresh.i18n.t('toString'),'toString');
 assert.equal(session(fresh.values.get('nodelift-language')).i18n.language,'zh-Hans');
+fresh.i18n.setLanguage('it');assert.equal(fresh.document.documentElement.lang,'it');
+assert.equal(fresh.i18n.locale,'it-IT');
+assert.equal(fresh.i18n.t('Add device'),'Aggiungi dispositivo');
+assert.equal(fresh.i18n.t('CPU · {0} iterations in {1} ms',9,123),'CPU · 9 iterazioni in 123 ms');
+assert.equal(fresh.i18n.t('Measurement interrupted: {0}','<script>{1}$&你好</script>'),'Misura interrotta: <script>{1}$&你好</script>');
+assert.equal(fresh.i18n.t('Model library'),'Libreria modelli');
+assert.equal(fresh.i18n.t('Provider request failed (HTTP {0})',429),'Richiesta al provider non riuscita (HTTP 429)');
+assert.equal(fresh.i18n.t('External diagnostic E123'),'External diagnostic E123');
+assert.equal(fresh.i18n.t('toString'),'toString');
+assert.equal(session(fresh.values.get('nodelift-language')).i18n.language,'it');
 fresh.i18n.setLanguage('en');assert.equal(fresh.i18n.t('Add device'),'Add device');
 assert.equal(fresh.i18n.t('Completata'),'Completata'); // arbitrary payloads are not translated by guessing
 const blocked=session(undefined,true);blocked.i18n.setLanguage('zh-Hans');assert.equal(blocked.i18n.t('Add device'),'添加设备');
-console.log('Localization runtime: default, persistence, switching, fallback, parameter isolation and blocked storage passed.');
+blocked.i18n.setLanguage('it');assert.equal(blocked.i18n.t('Add device'),'Aggiungi dispositivo');
+blocked.i18n.setLanguage('unsupported');assert.equal(blocked.i18n.language,'en');
+console.log('EN / zh-Hans / IT runtime: default, persistence, switching, fallback, parameter isolation and blocked storage passed.');
