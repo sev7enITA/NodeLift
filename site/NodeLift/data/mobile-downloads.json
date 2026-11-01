@@ -1,33 +1,33 @@
 {
   "updated": "2026-11-01",
-  "version": "0.2.6",
-  "build": 8,
-  "source_commit": "d8368acd77e0283005da4eb5a8fe7e2771cb7a87",
+  "version": "0.2.7",
+  "build": 9,
+  "source_commit": "5d8241f501ee4060f1186a5c75b6c15bf0283479",
   "languages": [
     "en",
     "zh-Hans",
     "it"
   ],
   "assets": {
-    "NodeLift-0.2.6-android-debug.apk": {
-      "bytes": 21959191,
-      "sha256": "dedeef4c1780c3b9fb375b6031c4e8d89e1a6a31dd185e649f6e0d034a9285a8",
-      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.6/NodeLift-0.2.6-android-debug.apk"
+    "NodeLift-0.2.7-android-debug.apk": {
+      "bytes": 22230995,
+      "sha256": "7929633d9655c769fe716d78e6bfbd223dd25ef805fe4a59bb2b52875d35db92",
+      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.7/NodeLift-0.2.7-android-debug.apk"
     },
-    "NodeLift-0.2.6-ios-unsigned.zip": {
-      "bytes": 3382150,
-      "sha256": "47f59ac510c21d3cb6964d7237269e9ae0d30b02e2b82963c31523ded5c44eb3",
-      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.6/NodeLift-0.2.6-ios-unsigned.zip"
+    "NodeLift-0.2.7-ios-unsigned.zip": {
+      "bytes": 5301136,
+      "sha256": "02ac4324b8bb3e5fb6bb01ccde33489da50bb3e0abf789e4e68ecb71c6bed698",
+      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.7/NodeLift-0.2.7-ios-unsigned.zip"
     },
-    "NodeLift-0.2.6-ios-unsigned.ipa": {
-      "bytes": 3382374,
-      "sha256": "1afc4242337870473f23ecd7e2ab95f305615288d28b2913b4fbd6ce86fd66f7",
-      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.6/NodeLift-0.2.6-ios-unsigned.ipa"
+    "NodeLift-0.2.7-ios-unsigned.ipa": {
+      "bytes": 5301360,
+      "sha256": "dee6bef822a6652f625a43e95cbbfac0751844af3529e408dbf2448164c75626",
+      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.7/NodeLift-0.2.7-ios-unsigned.ipa"
     }
   },
   "platforms": {
     "android": {
-      "artifact": "NodeLift-0.2.6-android-debug.apk",
+      "artifact": "NodeLift-0.2.7-android-debug.apk",
       "status": "compiled-debug-signed",
       "minimum_api": 26,
       "architecture": "arm64-v8a",
@@ -35,8 +35,8 @@
     },
     "ios": {
       "artifacts": [
-        "NodeLift-0.2.6-ios-unsigned.ipa",
-        "NodeLift-0.2.6-ios-unsigned.zip"
+        "NodeLift-0.2.7-ios-unsigned.ipa",
+        "NodeLift-0.2.7-ios-unsigned.zip"
       ],
       "status": "compiled-unsigned",
       "minimum_os": "17.0",
@@ -46,7 +46,7 @@
       "physical_installation_tested": false
     },
     "harmonyos_apk_compatibility_trial": {
-      "artifact": "NodeLift-0.2.6-android-debug.apk",
+      "artifact": "NodeLift-0.2.7-android-debug.apk",
       "status": "unverified-compatibility-trial",
       "requires": [
         "APK support",
@@ -68,8 +68,8 @@
     }
   },
   "verification_scope": "Package identity and IPA payload equivalence; no physical-device installation or performance qualification",
-  "original_build_manifest": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.6/NodeLift-0.2.6-build-manifest.json",
-  "ipa_packaging_manifest": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.6/NodeLift-0.2.6-ios-ipa-manifest.json",
+  "original_build_manifest": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.7/NodeLift-0.2.7-build-manifest.json",
+  "ipa_packaging_manifest": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.7/NodeLift-0.2.7-ios-ipa-manifest.json",
   "about_and_references": true,
   "update_discovery": "Automatic metadata check at launch and weekly while running; overdue check on return from suspension; explicit manual installation",
   "qr_pairing": {
@@ -78,7 +78,7 @@
     "ios": "native AVFoundation scanner; personal signing required",
     "physical_camera_tested": false
   },
-  "published_at": "2026-11-01T16:54:03Z",
+  "published_at": "2026-11-01T20:11:37Z",
   "local_diagnostics": {
     "platforms": [
       "android",
@@ -89,5 +89,6 @@
     "journal_bytes_max": 393216,
     "retention_days": 7,
     "capture_all_crashes": false
-  }
+  },
+  "brand_identity": "approved blue three-dimensional showcase emblem"
 }

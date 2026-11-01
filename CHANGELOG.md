@@ -4,6 +4,20 @@
 
 Every published companion build has an entry below. Android packages are laboratory builds; iOS packages require Apple signing and provisioning. Historical validation belongs to the named version and does not establish current physical-device performance.
 
+## [0.2.7](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.7): build 9 · 2026-11-01
+
+**Current-network QR pairing and the approved 3D emblem** · experimental-prerelease
+
+- Use the approved blue three-dimensional showcase emblem in Android/iOS launcher icons and native headers, the GitHub README and HarmonyOS source assets. Keep the simplified mark for small monochrome system surfaces.
+- The host follows its current private IPv4 route when creating a pairing QR, validates the local bind and retires stale invitations after a network move. Per-address TLS identities preserve certificate and hostname verification; companions scan a fresh QR after an address change. Enrollment and measurement history remain available.
+- Android routes paired-host requests through a matching connected Wi-Fi/Ethernet network when available, retaining system routing for tethering. Network timeouts and TLS identity failures have distinct localized guidance. Exported diagnostics include only allowlisted route events and available transport categories.
+- Desktop graph links use color and width for measured accepted draft token share. Selected running draft routes animate; completed, offline, unknown and fallback routes stay still. A motion toggle, background pause and reduced-motion support are included.
+- Publish a pinned Locally Uncensored source assessment with attribution and clear boundaries between independently implemented diagnostics and future planner/cancellation requirements.
+
+**Validation:** Android compilation, 13 JVM tests and lint (0 errors, 19 warnings), unsigned iOS ARM64 device build, 24 host protocol/network tests, localization and graph accounting checks passed. Browser fixture verified weighted animation and the motion toggle using explicitly synthetic data. Android signer continuity, packaged artwork, unchanged native LLM libraries and identical ZIP/IPA app payloads were verified. Physical-device reconnection and installation remain unconfirmed.
+
+**Limits:** No physical Oppo/Xiaomi installation or camera qualification in this build. Token share is not compute utilization or a speedup. iOS packages require Apple signing. HarmonyOS/NEXT source artwork is updated but native builds remain deferred. Native LLM libraries are reused; no engine performance claim.
+
 ## [0.2.6](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.6): build 8 · 2026-11-01
 
 **Reliable controls, local diagnostics and automatic update checks** · experimental-prerelease
@@ -82,6 +96,11 @@ Every published companion build has an entry below. Android packages are laborat
 **Limits:** The remote test node was emulated. Physical-phone inference/speedup, sustained thermals, capacity sharding, hybrid speculative checkpoints, HarmonyOS native worker and installed LM Studio GUI qualification remained open. The 27B upstream kernel result is not NodeLift hybrid-model support.
 
 ## Documentation and tooling updates
+
+### 2026-11-01: Network recovery guides and unused legacy icon fallback
+
+- Update installation/QR support guides for automatic current-network invitations without resetting state.
+- Replace the unused pre-API-26 legacy drawable in source after 0.2.7 publication. Supported Android versions (API 26+) use the approved 3D adaptive launcher in the published APK. Original 0.2.7 binaries and source tag remain unchanged.
 
 ### 2026-11-01: Project acknowledgements and editorial consistency
 

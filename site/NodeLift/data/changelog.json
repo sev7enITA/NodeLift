@@ -3,6 +3,23 @@
   "documentation_language": "en",
   "releases": [
     {
+      "version": "0.2.7",
+      "build": 9,
+      "published_at": "2026-11-01T20:11:37Z",
+      "status": "experimental-prerelease",
+      "title": "Current-network QR pairing and the approved 3D emblem",
+      "url": "https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.7",
+      "changes": [
+        "Use the approved blue three-dimensional showcase emblem in Android/iOS launcher icons and native headers, the GitHub README and HarmonyOS source assets. Keep the simplified mark for small monochrome system surfaces.",
+        "The host follows its current private IPv4 route when creating a pairing QR, validates the local bind and retires stale invitations after a network move. Per-address TLS identities preserve certificate and hostname verification; companions scan a fresh QR after an address change. Enrollment and measurement history remain available.",
+        "Android routes paired-host requests through a matching connected Wi-Fi/Ethernet network when available, retaining system routing for tethering. Network timeouts and TLS identity failures have distinct localized guidance. Exported diagnostics include only allowlisted route events and available transport categories.",
+        "Desktop graph links use color and width for measured accepted draft token share. Selected running draft routes animate; completed, offline, unknown and fallback routes stay still. A motion toggle, background pause and reduced-motion support are included.",
+        "Publish a pinned Locally Uncensored source assessment with attribution and clear boundaries between independently implemented diagnostics and future planner/cancellation requirements."
+      ],
+      "validation": "Android compilation, 13 JVM tests and lint (0 errors, 19 warnings), unsigned iOS ARM64 device build, 24 host protocol/network tests, localization and graph accounting checks passed. Browser fixture verified weighted animation and the motion toggle using explicitly synthetic data. Android signer continuity, packaged artwork, unchanged native LLM libraries and identical ZIP/IPA app payloads were verified. Physical-device reconnection and installation remain unconfirmed.",
+      "limitations": "No physical Oppo/Xiaomi installation or camera qualification in this build. Token share is not compute utilization or a speedup. iOS packages require Apple signing. HarmonyOS/NEXT source artwork is updated but native builds remain deferred. Native LLM libraries are reused; no engine performance claim."
+    },
+    {
       "version": "0.2.6",
       "build": 8,
       "published_at": "2026-11-01T16:54:03Z",
@@ -99,6 +116,14 @@
     }
   ],
   "documentation_updates": [
+    {
+      "date": "2026-11-01",
+      "title": "Network recovery guides and unused legacy icon fallback",
+      "changes": [
+        "Update installation/QR support guides for automatic current-network invitations without resetting state.",
+        "Replace the unused pre-API-26 legacy drawable in source after 0.2.7 publication. Supported Android versions (API 26+) use the approved 3D adaptive launcher in the published APK. Original 0.2.7 binaries and source tag remain unchanged."
+      ]
+    },
     {
       "date": "2026-11-01",
       "title": "Project acknowledgements and editorial consistency",

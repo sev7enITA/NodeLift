@@ -5,7 +5,7 @@
     {
       "version": "0.2.7",
       "build": 9,
-      "published_at": null,
+      "published_at": "2026-11-01T20:11:37Z",
       "status": "experimental-prerelease",
       "title": "Current-network QR pairing and the approved 3D emblem",
       "url": "https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.7",
@@ -116,6 +116,14 @@
     }
   ],
   "documentation_updates": [
+    {
+      "date": "2026-11-01",
+      "title": "Network recovery guides and unused legacy icon fallback",
+      "changes": [
+        "Update installation/QR support guides for automatic current-network invitations without resetting state.",
+        "Replace the unused pre-API-26 legacy drawable in source after 0.2.7 publication. Supported Android versions (API 26+) use the approved 3D adaptive launcher in the published APK. Original 0.2.7 binaries and source tag remain unchanged."
+      ]
+    },
     {
       "date": "2026-11-01",
       "title": "Project acknowledgements and editorial consistency",
