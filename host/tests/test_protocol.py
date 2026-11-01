@@ -86,6 +86,27 @@ class ProtocolTests(unittest.TestCase):
             c.request('GET',path);response=c.getresponse();data=response.read();c.close()
             self.assertEqual(response.status,200);self.assertTrue(content in data)
 
+    def test_concurrent_consume_and_close_have_one_consistent_winner(self):
+        from concurrent.futures import ThreadPoolExecutor
+        for _ in range(24):
+            code, _ = self.state.invite()
+            barrier=threading.Barrier(2)
+            def consume():
+                barrier.wait()
+                try:return self.state.pair(code,'Concurrent QR test',{})
+                except PermissionError:return None
+            def close():
+                barrier.wait();return self.state.invitation(code,revoke=True)
+            with ThreadPoolExecutor(max_workers=2) as pool:
+                paired, closed = pool.submit(consume), pool.submit(close)
+                result=paired.result();self.assertFalse(closed.result()['pending'])
+            self.assertFalse(self.state.invitation(code)['pending'])
+            with self.assertRaises(PermissionError):self.state.pair(code,'Replay',{})
+            if result:
+                # Close only cancels unused invitations; completed sessions need explicit revocation.
+                self.assertEqual(self.state.authenticate(result['token']),result['node_id'])
+                self.state.revoke(result['node_id'])
+
     def test_authentication_and_revocation(self):
         p = self.pair()
         self.assertEqual(self.request("/v1/probe?size=64")[0], 401)

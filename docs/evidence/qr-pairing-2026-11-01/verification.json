@@ -5,17 +5,29 @@
   "android_arm64_build": "passed; debug-signed; signer unchanged from 0.2.4",
   "ios_arm64_device_build": "passed; unsigned; camera usage description and custom URL scheme present",
   "native_engine": "existing cached 0.2.4 libraries; no native engine change or model weights bundled",
-  "host_protocol_tests": {"passed": 18, "scope": "local HTTP/TLS invitation lifecycle, authentication, revocation, replay, static QR assets and existing protocol cases"},
-  "working_tree_host_suite": {"passed": 84, "note": "includes one pending benchmark-timing test outside this QR release"},
+  "host_protocol_tests": {
+    "passed": 19,
+    "scope": "local HTTP/TLS invitation lifecycle, authentication, revocation, replay, static QR assets and existing protocol cases"
+  },
+  "working_tree_host_suite": {
+    "passed": 84,
+    "note": "includes one pending benchmark-timing test outside this QR release"
+  },
   "desktop_lifecycle": "passed: expiry/use clears QR and ticket; close revokes; stale response cannot reopen panel; revocation failure reported",
   "swift_protocol": "passed on macOS: compact QR roundtrip, malformed/version/public-address/expiry/size rejection and real loopback TLS enrollment/wrong-cert rejection",
   "qr_decoder": "ZXing core 3.5.3 independently recovered exact payload from synthetic PNG and actual 460px dashboard QR screenshot",
-  "desktop_languages": ["en", "zh-Hans", "it"],
+  "desktop_languages": [
+    "en",
+    "zh-Hans",
+    "it"
+  ],
   "desktop_overflow": false,
   "screenshot": "desktop-qr-en.png uses an isolated disposable invitation, never a production credential",
   "physical_android_camera_scan_tested": false,
   "physical_ios_camera_scan_tested": false,
   "physical_ios_installation_tested": false,
   "harmonyos_next_build": "deferred by owner; not part of QR release",
-  "performance_claim": "none"
+  "performance_claim": "none",
+  "additional_concurrency_trials": 24,
+  "external_design_review": "GLM-5.3; description-only, adjudication recorded; Gemini 4 High unavailable"
 }

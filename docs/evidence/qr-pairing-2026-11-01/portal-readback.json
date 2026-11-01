@@ -1,0 +1,96 @@
+{
+  "all_files_match": true,
+  "files": [
+    {
+      "file": "assets/nodelift-emblem.png",
+      "status": 200,
+      "sha256": "377278075d7b2718ea72d9d74d20455ae2a90cad0d772807ee59c2c9afafb46d",
+      "matches": true
+    },
+    {
+      "file": "assets/nodelift-mark.svg",
+      "status": 200,
+      "sha256": "882967df9afbd509ac5633c8cf2d1d693d6fd73c2b2f85a49da845fda93404ca",
+      "matches": true
+    },
+    {
+      "file": "assets/showcase.css",
+      "status": 200,
+      "sha256": "7a0bd07a08a32248d886cc9cb52f1b6030e24524bebf3d86049b0e3bafc27e39",
+      "matches": true
+    },
+    {
+      "file": "assets/showcase.js",
+      "status": 200,
+      "sha256": "5ca9fbfc45154660d33676eb60a2264b40575d399949af4a8ccea709ccb5dfda",
+      "matches": true
+    },
+    {
+      "file": "data/assessment.md",
+      "status": 200,
+      "sha256": "c7314ea2464d6f1e3a9eca77cfaf456bc3ffaa627bd40e68699307e9284e852b",
+      "matches": true
+    },
+    {
+      "file": "data/comparison.csv",
+      "status": 200,
+      "sha256": "e268b281659dfb73715e611c931205d93e2655e38e8429069b7a6c01a983af7d",
+      "matches": true
+    },
+    {
+      "file": "data/comparison.json",
+      "status": 200,
+      "sha256": "d3f3d69319b5947e91aaddd8c32b7b81a131073a6337457ed8b037c7172d769e",
+      "matches": true
+    },
+    {
+      "file": "data/comparison.md",
+      "status": 200,
+      "sha256": "23e6fb931ac1cc53132702c5d85b43ed03aa40898a5683577e45a64e7bbec573",
+      "matches": true
+    },
+    {
+      "file": "data/manifest.json",
+      "status": 200,
+      "sha256": "49217b1ae7f61edc0a0d3afad47c7e061a9bfc4c6a5090eb672557763467cad7",
+      "matches": true
+    },
+    {
+      "file": "data/methodology.md",
+      "status": 200,
+      "sha256": "0b6c07ca733f81f3f7c4f1ff458eb161b822d789ba4de7d8b3ce467ef1335a62",
+      "matches": true
+    },
+    {
+      "file": "data/mobile-downloads.json",
+      "status": 200,
+      "sha256": "daeb157e5a7e96004706a0073427309ddc9e8b2d3698a85b194fa69e2d0a746b",
+      "matches": true
+    },
+    {
+      "file": "data/mobile-installation.md",
+      "status": 200,
+      "sha256": "9dc4e80723fc84d40eb9931d57973f1452fab3216a4fe977a4930b02b333ae1a",
+      "matches": true
+    },
+    {
+      "file": "data/source-inventory.json",
+      "status": 200,
+      "sha256": "d8fd90027152f1ff1af89fc975230440419566d38f1dc8f63ebbddb9a8647067",
+      "matches": true
+    },
+    {
+      "file": "index.html",
+      "status": 200,
+      "sha256": "ddc944744fcb8afea57742a00728f19af4d11db8966b1ca3a2ff6469eed30c82",
+      "matches": true
+    },
+    {
+      "file": "assets/site-locales.js",
+      "status": 200,
+      "sha256": "4bc8959fb2b7a9ce3b0d5b0a0b56d49f1f0fa94037ebd0dfc6400612d160e6a5",
+      "matches": true
+    }
+  ],
+  "base_url": "https://www.fabriziodegni.com/NodeLift/"
+}

@@ -1,0 +1,26 @@
+Thought Process
+Review verdict (P0 correctness only)
+
+Observed defects: none. Every test you list passes, and I make no claim about device behavior. Everything below is either an [inference] from design gaps in the description or a [gap] in the tested surface. The pending physical camera test is your largest untested axis — two of the top risks live exactly there.
+
+1. QR density vs. physical camera [gap — highest]. A DER X509 is ~0.8–1.2 KB (EC) to ~2 KB (RSA-4096); plus IP/port/expiry/invite this plausibly forces QR version ≥25 or ECC-L. ZXing decoding a desktop screenshot exercises neither moiré, glare, focus hunting, nor module size on a physical screen — the classic failure mode for dense on-screen QRs. Freeze and record QR version/EC level and cert key type now. Check: first-scan success rate at 25/50/100 cm from the actual display under normal lighting; if v40/ECC-L is required, treat as a P0 availability defect and shrink the payload (e.g. fingerprint + fetch, if a no-download constraint allows none, then shorter keys).
+
+2. Positive-path TLS acceptance unobserved [gap]. You tested wrong-cert rejection in Swift; right-cert acceptance over the real socket is not evidenced (camera test pending). IP-literal hostname validation requires the desktop cert to carry SAN iPAddress; generators that mint only dNSName/CN produce a cert that strict validators (notably AVFoundation) reject even though it is the correct cert. Check: on-device successful handshake to the actual private IPv4; dump SANs of the generated cert.
+
+3. Expiry clock domain and unit [inference]. Phone-side expiry > now uses the phone wall clock — harmless only if the server enforces expiry against its own stored issuance time, never against the expiry value re-presented by the client. Also pin s-vs-ms once, cross-checked between generator and parser; shared-constant tests cannot catch a unit bug, and a desktop NTP step mid-window shifts validity.
+
+4. Consume-vs-revoke race and state divergence [inference]. Atomicity was tested isolated. The concurrent consume-vs-Close race needs a defined winner. Separately: if the generation counter rejects a response after the server consumed the invite, the desktop believes "paired" while the phone discarded it — the counter must be checked before consume, and a rejected generation must tear down any established session; desktop status/revoke must reconcile. Check: concurrent hammer of consume+revoke; injected late response.
+
+5. Self-chosen trust anchor + unilateral confirmation [inference — sharpest security-correctness point]. Cert and invite travel in the same QR, so exact-cert pinning validates against a cert the URI itself supplies. A cold deep link (any app firing nodelift://… with its own self-signed cert, IP, and invite) passes every stated check with valid TLS. Two controls make the confirmation real rather than theatrical: (a) the desktop must display the same host/fingerprint alongside the QR so the phone-side dialog is comparable; (b) the desktop must require user acknowledgment of the newly paired device before trusting it as a worker. Note (b) is also the only bound on the QR-photo-within-300-s attack — the attacker's phone passes TLS with the real cert and happily confirms your dialog; without desktop-side ack, victim prompt traffic flows to the attacker's device until revocation.
+
+6. Post-pairing credential lifetime [inference]. Confirm the invite is burned at consume and replaced by a channel-derived session token. If the 192-bit invite persists as the worker credential, the 300-s window does not bound the credential's lifetime.
+
+7. Loopback endpoint scope [inference]. "Authenticated" is unstated mechanism; any local process reaches loopback. Revoke-DoS is cosmetic, but if the status endpoint echoes the invite, the QR's physical-locality assumption fails locally.
+
+8. Manual JSON fallback [inference]. Must route through the same strict validator — a second parser is the classic divergence defect — with the same private-IP rule, and note the invite then sits in copyable text/clipboard, extending exposure beyond QR visibility.
+
+9. IP selection consistency [inference]. Multi-interface hosts (VPN, container bridges) can embed an unreachable IP; assert QR IP == cert SAN IP == bound interface at generation time. DHCP change mid-window fails safe (hostname mismatch) but requires regeneration.
+
+Minor: confirm privateIPv4 deliberately excludes 169.254/16 link-local (it will, correctly, break link-local-only LANs); the 8192 bound is safely above QR maximum for scanned input.
+
+Pre-camera gate: freeze QR version/EC and cert key type, mint the cert with SAN iPAddress, and land items 4–6 before the physical test — that test should be the last unknown, not the first discovery of a density or SAN defect.
