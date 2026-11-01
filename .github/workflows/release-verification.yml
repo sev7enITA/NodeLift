@@ -3,9 +3,9 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: Published companion tag (for example v0.2.3)
+        description: Published companion tag (for example v0.2.4)
         required: true
-        default: v0.2.3
+        default: v0.2.4
 permissions:
   contents: read
 jobs:

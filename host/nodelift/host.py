@@ -17,6 +17,7 @@ from urllib.parse import parse_qs, urlsplit
 
 from .state import State
 from .telemetry import host_inventory
+from . import __version__
 
 MAX_BODY = 1024 * 1024
 PAYLOAD = os.urandom(MAX_BODY)
@@ -217,6 +218,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
             return self.send(405,{'error':'method not allowed'})
         if not secrets.compare_digest(self.bearer(), self.server.admin_token):
             raise PermissionError("open the dashboard link printed by NodeLift")
+        if method == "GET" and path == "/admin/about":
+            return self.send(200, {"version": __version__, "component": "host", "release_channel": "source-preview"})
         if self.server.engine:
             if method == 'GET' and path == '/admin/client-access':return self.send(200,{'base_url':'http://127.0.0.1:'+str(self.server.server_port)+'/v1','api_key':self.server.client_token,'model':'nodelift'})
             library = self.server.engine.library

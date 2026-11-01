@@ -1,6 +1,6 @@
 # Add an Android phone
 
-[Download the 0.2.3 ARM64 laboratory APK](https://github.com/sev7enITA/NodeLift/releases/download/v0.2.3/NodeLift-0.2.3-android-debug.apk). It is debug-signed, not a Play Store release. Update an existing same-key installation without uninstalling to retain pairing. If the OS reports a signature conflict, stop and report it; do not erase the app’s data as a first workaround.
+[Download the 0.2.4 ARM64 laboratory APK](https://github.com/sev7enITA/NodeLift/releases/download/v0.2.4/NodeLift-0.2.4-android-debug.apk). It is debug-signed, not a Play Store release. Update an existing same-key installation without uninstalling to retain pairing. If the OS reports a signature conflict, stop and report it; do not erase the app’s data as a first workaround.
 
 1. Keep the computer and phone on the same private network. The phone may provide the hotspot, but this topology must be measured rather than assumed fastest.
 2. In the authenticated host dashboard, choose **Add device**. Paste the entire invitation into the companion. Invitations are single-use and expire after five minutes.

@@ -2,9 +2,9 @@
 
 The control room and Android/iOS companions use **English by default**, independent of browser or system language. Choose **Language → 简体中文** for Simplified Chinese or **Language → Italiano** for Italian. The explicit choice is saved locally per browser/device. No account or translation service is needed. Traditional Chinese is not included in this release.
 
-Mobile version: **0.2.3, build 5**. Update the Android APK over the existing same-key installation to retain pairing. The unsigned iOS app requires Apple signing and provisioning before installation. The HarmonyOS candidate has the same language selection in source; it remains uncompiled and unqualified on a physical device. LM Studio's SDK-owned configuration schema, developer CLI diagnostics and the public showcase are separate surfaces and remain in their existing languages.
+Mobile version: **0.2.4, build 6**. Update the Android APK over the existing same-key installation to retain pairing. The unsigned iOS app requires Apple signing and provisioning before installation. The HarmonyOS candidate has the same language selection in source; it remains uncompiled and unqualified on a physical device. LM Studio's SDK-owned configuration schema, developer CLI diagnostics and the public showcase are separate surfaces and remain in their existing languages.
 
-The device-graph source update adds 105 shared messages. Generated mobile dictionaries are synchronized in source; this desktop update does not rebuild or replace the published 0.2.3 companion binaries.
+The 0.2.4 companion build includes the device-graph catalog additions and 55 new shared messages for About, References and manual update discovery. Version and build values come from installed package metadata.
 
 ## Behavior
 
@@ -15,7 +15,7 @@ The device-graph source update adds 105 shared messages. Generated mobile dictio
 
 ## Catalogs and contribution
 
-`localization/en.json` is the canonical English message catalog, with English source text as the message ID. `localization/zh-Hans.json` and `localization/it.json` each have the same 662 keys, including device-graph, model-library and external-provider messages. Numbered placeholders (`{0}`, `{1}`, ...) support Chinese argument ordering. Nested mobile messages localize telemetry labels while retaining raw numeric/device values. Parameters are substituted once and never treated as markup or translated content.
+`localization/en.json` is the canonical English message catalog, with English source text as the message ID. `localization/zh-Hans.json` and `localization/it.json` each have the same 717 keys, including device-graph, model-library and external-provider messages. Numbered placeholders (`{0}`, `{1}`, ...) support Chinese argument ordering. Nested mobile messages localize telemetry labels while retaining raw numeric/device values. Parameters are substituted once and never treated as markup or translated content.
 
 Edit the canonical catalogs, then run:
 

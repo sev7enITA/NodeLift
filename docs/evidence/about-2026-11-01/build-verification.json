@@ -1,0 +1,44 @@
+{
+  "version": "0.2.4",
+  "build": 6,
+  "android": {
+    "signing": "debug; same certificate as v0.2.3",
+    "certificate_sha256": "80322431dee7cbce87601a4ef232706ea0717e0890721823ad15a8272b6e9a46",
+    "native_libraries_sha256": {
+      "lib/arm64-v8a/libnodelift.so": "f7c3d82d32884a569aecd53d4f0c66cbb58cd14fbb93acfee7e8441917120b79"
+    },
+    "native_rebuilt": false
+  },
+  "ios": {
+    "signing": "unsigned; provisioning required",
+    "native_framework_rebuilt": false,
+    "native_framework_binary_sha256": "8291c7addae661f09932c9a1cf758a237cf42fd7c645baccc37b3c206646fc85"
+  },
+  "assets": {
+    "NodeLift-0.2.4-android-debug.apk": {
+      "bytes": 16027352,
+      "sha256": "802bfe324200809d7931a2038d8c18cb6044015ea3fab37b5be663bcbeef1aa1"
+    },
+    "NodeLift-0.2.4-ios-unsigned.zip": {
+      "bytes": 3254508,
+      "sha256": "ad9ab358f8373d08a64c55bc690c82316ee5d0578ac735ae411f32f30c9d3d64"
+    }
+  },
+  "validation": {
+    "android_build": "assembleDebug and assembleDebugAndroidTest passed",
+    "ios_build": "Release iphoneos build passed; unsigned",
+    "catalog_entries": 717,
+    "languages": [
+      "en",
+      "zh-Hans",
+      "it"
+    ],
+    "host_protocol_tests": 16,
+    "graph_contract_checks": "passed",
+    "javascript_formatter": "passed",
+    "swift_formatter": "passed on macOS",
+    "physical_android_or_ios_ui_tested": false,
+    "harmonyos_compiled": false,
+    "scope": "Companion UI rebuild; native engine binaries reused and SHA-256 matched to 0.2.3"
+  }
+}

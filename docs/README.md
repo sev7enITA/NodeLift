@@ -17,8 +17,9 @@
 | Understand execution | [Architecture](wiki/Architecture.md) |
 | Inspect devices and their contribution | [Device graph and product shape](DEVICE-GRAPH.md) |
 | Change language | [Localization](LOCALIZATION.md) |
+| Find app information and updates | [About, references and updates](ABOUT_AND_UPDATES.md) |
 | Identify authorship and dependencies | [Credits](wiki/About-and-credits.md) |
 
-The current companions are 0.2.3/build 5. Host sources include the 0.3.0 integration preview. Historical reports are dated evidence, not automatically current support claims.
+The current companions are 0.2.4/build 6. Host sources include the 0.3.0 integration preview. Historical reports are dated evidence, not automatically current support claims.
 
 [Italiano](readme/README_it.md) · [简体中文](readme/README_zh-Hans.md)

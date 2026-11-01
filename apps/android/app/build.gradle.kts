@@ -7,8 +7,8 @@ android {
         applicationId = "dev.nodelift.companion"
         minSdk = 26
         targetSdk = 36
-        versionCode = 5
-        versionName = "0.2.3"
+        versionCode = 6
+        versionName = "0.2.4"
         ndk { abiFilters += "arm64-v8a" }
         externalNativeBuild { cmake { arguments += listOf("-DGGML_METAL=OFF","-DGGML_VULKAN=OFF","-DGGML_CPU_ARM_ARCH=armv8-a","-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON") } }
         testInstrumentationRunner = providers.gradleProperty("nodeliftTestRunner").getOrElse("dev.nodelift.companion.ProtocolCheck")

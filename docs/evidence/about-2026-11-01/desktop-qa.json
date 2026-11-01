@@ -1,0 +1,40 @@
+{
+  "scope": "Desktop About UI and local version metadata; no mobile-device qualification",
+  "viewports": [
+    {
+      "width": 1280,
+      "height": 720,
+      "document_width": 1280,
+      "language": "en",
+      "host_version": "0.3.0"
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "document_width": 390,
+      "languages": [
+        "it",
+        "zh-Hans"
+      ],
+      "host_version": "0.3.0",
+      "heading_top": 237.375,
+      "nav_bottom": 170
+    }
+  ],
+  "authenticated_metadata": "pass",
+  "unauthenticated_static_links": "pass",
+  "external_links": {
+    "count": 11,
+    "min_height_px": 44,
+    "all_noopener_noreferrer": true,
+    "all_referrerpolicy_no_referrer": true
+  },
+  "version_scope": "Host source preview; separate mobile release versions",
+  "update_action": "Manual official GitHub releases page; no automatic check or install",
+  "screenshots": [
+    "desktop-about-en.png",
+    "desktop-about-it.png",
+    "mobile-about-it.png",
+    "mobile-about-zh-Hans.png"
+  ]
+}

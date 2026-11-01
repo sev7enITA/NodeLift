@@ -1,6 +1,6 @@
 # iPhone and iPad
 
-The [public download section](https://www.fabriziodegni.com/NodeLift/#downloads) offers a **compiled, unsigned device build** as an IPA or `.app` ZIP. Both contain the same 0.2.3 app. It cannot be installed as-is: Apple signing and provisioning are required. There is no TestFlight or App Store release.
+The [public download section](https://www.fabriziodegni.com/NodeLift/#downloads) offers a **compiled, unsigned device build** as an IPA or `.app` ZIP. Both contain the same 0.2.4 app. It cannot be installed as-is: Apple signing and provisioning are required. There is no TestFlight or App Store release.
 
 See the [download and signing guide](https://github.com/sev7enITA/NodeLift/blob/main/docs/MOBILE_DOWNLOADS.md) for package hashes and platform requirements.
 

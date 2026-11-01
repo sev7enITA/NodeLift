@@ -4,7 +4,7 @@
 
 [![MIT 许可证](https://img.shields.io/badge/License-MIT-lightgrey.svg)](../../LICENSE)
 [![项目展示](https://img.shields.io/badge/Showcase-Live-146c6a.svg)](https://www.fabriziodegni.com/NodeLift/)
-[![配套应用 0.2.3 预发布版](https://img.shields.io/badge/Companion-0.2.3%20prerelease-b45309.svg)](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.3)
+[![配套应用 0.2.4 预发布版](https://img.shields.io/badge/Companion-0.2.4%20prerelease-b45309.svg)](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.4)
 [![主机 0.3.0 预览版](https://img.shields.io/badge/Host-0.3.0%20preview-b45309.svg)](../../docs/INTEGRATIONS.md)
 
 [![源码检查](https://github.com/sev7enITA/NodeLift/actions/workflows/checks.yml/badge.svg?branch=main)](https://github.com/sev7enITA/NodeLift/actions/workflows/checks.yml)
@@ -23,9 +23,9 @@ NodeLift 是由 **Fabrizio Degni** 发起和开发的实验性项目，目标是
 
 当前实现允许手机上的小型草稿模型提出候选词元，由电脑上的主模型验证。通过分布式模型分区扩大可执行内存容量仍需开发，实体手机加速也尚未得到验证。
 
-应用默认使用英语。通过 **Language** 选择 **简体中文** 或 **Italiano**，选择会保存在本地，翻译无需联网。当前配套应用版本为 **0.2.3 / build 5**；主机源码包含 0.3.0 集成预览。
+应用默认使用英语。通过 **Language** 选择 **简体中文** 或 **Italiano**，选择会保存在本地，翻译无需联网。当前配套应用版本为 **0.2.4 / build 6**；主机源码包含 0.3.0 集成预览。
 
-- [实验性下载](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.3)：Android 实验室 APK；iOS 为未签名构建，安装前需要 Apple 签名和配置。
+- [实验性下载](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.4)：Android 实验室 APK；iOS 为未签名构建，安装前需要 Apple 签名和配置。
 - 先完成[电脑端入门](../wiki/Quickstart.md)，再连接 [Android](../wiki/Android.md) 或 [iPhone/iPad](../wiki/iOS-and-iPadOS.md)。详细技术指南目前以英语为主。
 - [模型与提供商](../wiki/Models-and-providers.md)、[本地化和验证](../LOCALIZATION.md)、[基准测试](../wiki/Benchmarking.md)。
 - [Wiki](https://github.com/sev7enITA/NodeLift/wiki)、[图片](../GALLERY.md)、[项目展示](https://www.fabriziodegni.com/NodeLift/)。
@@ -36,3 +36,5 @@ Hugging Face 下载和直接导入支持完整的单文件 GGUF。OpenRouter 是
 在最初的小型控制模型测试中，本地草稿比仅运行目标模型更慢。项目保留并公开负面结果。编译成功或 CI 通过并不等于实体设备性能已经得到验证。
 
 [English](../../README.md) · [Italiano](README_it.md) · [参与贡献](../../CONTRIBUTING.md)
+
+**关于与参考资料：** 控制室与配套应用内提供作者信息、已安装版本、官方网站、技术资料和手动查看发布版本的入口。[指南](../ABOUT_AND_UPDATES.md)。

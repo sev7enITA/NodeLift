@@ -9,6 +9,7 @@ import unittest
 
 from nodelift.host import Server, make_identity, public_key_pin
 from nodelift.state import State, digest
+from nodelift import __version__
 
 
 class ProtocolTests(unittest.TestCase):
@@ -123,6 +124,20 @@ class ProtocolTests(unittest.TestCase):
         p=self.pair();snapshot=json.dumps(self.state.snapshot())
         self.assertNotIn(p["token"],snapshot)
         self.assertNotIn("token_hash",snapshot)
+
+    def test_about_reports_installed_host_not_protocol_snapshot_version(self):
+        for token, expected_status in (("", 401), ("test-admin", 200)):
+            connection = http.client.HTTPConnection("127.0.0.1", self.admin.server_port, timeout=3)
+            try:
+                connection.request("GET", "/admin/about", headers={"Authorization": "Bearer " + token})
+                response = connection.getresponse()
+                data = json.loads(response.read())
+                self.assertEqual(response.status, expected_status)
+                if expected_status == 200:
+                    self.assertEqual(data, {"version": __version__, "component": "host", "release_channel": "source-preview"})
+                    self.assertNotEqual(data["version"], self.state.snapshot()["version"])
+            finally:
+                connection.close()
         self.assertFalse(self.state.snapshot()["inference_available"])
 
     def test_host_inventory_is_only_returned_to_dashboard_admin(self):

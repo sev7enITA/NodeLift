@@ -11,6 +11,10 @@ if(isSessionFragment(location.hash.slice(1)))history.replaceState(null, '', '/')
 window.addEventListener('hashchange', () => { if (isSessionFragment(location.hash.slice(1))) location.reload(); });
 let snapshot = null;
 let engineSnapshot = null;
+let aboutMetadata = null;
+let aboutVersionRequested = false;
+let aboutVersionLoading = false;
+let aboutVersionEpoch = 0;
 let authenticated = false;
 let refreshing = false;
 let configurationDirty = false;
@@ -48,6 +52,7 @@ function sessionReady(ready) {
   $('session-label').textContent=ready?t("Local session active"):t("Access required");
   if(!ready){
     hideClientAccess();
+    aboutMetadata=null;aboutVersionRequested=false;aboutVersionLoading=false;aboutVersionEpoch++;
     $('pairing').hidden=true;$('ticket').value='';snapshot=null;engineSnapshot=null;
     $('online').textContent='—';$('registered-label').textContent=t("Session unavailable");
     $('engine-summary').textContent=t("Access required");$('engine-backend').textContent=t("Local session required");
@@ -60,6 +65,7 @@ function sessionReady(ready) {
     $('completed-count').textContent='—';$('nav-count').textContent='—';
     nodeSignature='';jobSignature='';engineSignature='';
   }
+  renderAboutVersion();
   updateEngineControls();
 }
 async function api(path, body) {
@@ -255,9 +261,31 @@ async function refreshEngine() {
     updateEngineControls();if(authenticated&&snapshot)NodeLiftGraph.update(snapshot,null);
   }
 }
+function renderAboutVersion() {
+  const value=$('about-host-version'),note=$('about-version-note');
+  if(aboutMetadata){
+    value.textContent=aboutMetadata.version;value.dataset.state='loaded';
+    note.textContent=t("Version reported by this running host.");
+  }else{
+    value.textContent=t(aboutVersionLoading?"Reading installed version…":"Version unavailable");
+    value.dataset.state=aboutVersionLoading?'loading':'unavailable';
+    note.textContent=t(!authenticated?"Open a local session to read the installed host version.":aboutVersionLoading?"Reading from your local NodeLift service.":"This host did not return version metadata. The release links remain available.");
+  }
+}
+async function refreshAboutVersion() {
+  if(aboutVersionRequested||!authenticated)return;
+  aboutVersionRequested=true;aboutVersionLoading=true;const epoch=++aboutVersionEpoch;renderAboutVersion();
+  try{
+    const metadata=await api('about');
+    if(epoch!==aboutVersionEpoch||!authenticated)return;
+    if(metadata.component!=='host'||typeof metadata.version!=='string'||!/^[0-9A-Za-z.+-]{1,64}$/.test(metadata.version))throw Error('Invalid host version metadata');
+    aboutMetadata={version:metadata.version};
+  }catch(_){if(epoch===aboutVersionEpoch)aboutMetadata=null;}
+  finally{if(epoch===aboutVersionEpoch){aboutVersionLoading=false;renderAboutVersion();}}
+}
 async function refresh() {
   if(refreshing)return;refreshing=true;
-  try{snapshot=await api('status');sessionReady(true);renderNodes();renderJobs();NodeLiftGraph.update(snapshot,engineSnapshot,true);$('updated-at').textContent=new Date().toLocaleTimeString(NodeLiftI18n.locale,{hour:'2-digit',minute:'2-digit',second:'2-digit'});await refreshEngine();}
+  try{snapshot=await api('status');sessionReady(true);refreshAboutVersion();renderNodes();renderJobs();NodeLiftGraph.update(snapshot,engineSnapshot,true);$('updated-at').textContent=new Date().toLocaleTimeString(NodeLiftI18n.locale,{hour:'2-digit',minute:'2-digit',second:'2-digit'});await refreshEngine();}
   catch(e){if(authenticated)NodeLiftGraph.disconnected();$('session-label').textContent=authenticated?t("Connection needs checking"):t("Access required");$('session-dot').className='status-dot error';showError(e);}
   finally{refreshing=false;}
 }

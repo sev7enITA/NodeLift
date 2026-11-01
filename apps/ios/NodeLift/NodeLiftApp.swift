@@ -40,6 +40,7 @@ struct ContentView: View {
     @State private var showModelImporter = false
     @State private var importError: String?
     @State private var pairingExpanded = true
+    @State private var showAbout = false
 
     private func T(_ key: String) -> String { Message(key).resolve(model.language) }
 
@@ -70,8 +71,12 @@ struct ContentView: View {
                 Text("NodeLift").font(.system(size: 27, weight: .semibold)).tracking(-1)
                 Text("/").font(.system(size: 27, weight: .light)).foregroundStyle(aquaColor).padding(.leading, -8)
                 Spacer()
-                Text("0.2.3").font(.system(size: 11, design: .monospaced)).foregroundStyle(.secondary)
+                Text(CompanionBuild.version).font(.system(size: 11, design: .monospaced)).foregroundStyle(.secondary)
             }
+            Button { showAbout = true } label: {
+                Label(T("About & References"), systemImage: "info.circle")
+                    .font(.subheadline).frame(minHeight: 44)
+            }.tint(aquaColor).accessibilityIdentifier("open-about")
             Picker(T("Language"), selection: $model.language) {
                 Text("English").tag("en")
                 Text("简体中文").tag("zh-Hans")
@@ -254,7 +259,8 @@ struct ContentView: View {
                 HStack(alignment: .top, spacing: 11) {
                     Image(systemName: "testtube.2").foregroundStyle(amberColor)
                     VStack(alignment: .leading, spacing: 6) {
-                        Text(T("Experimental build · 0.2.3")).font(.footnote.weight(.semibold)).foregroundStyle(amberColor)
+                        Text(T("Experimental companion")).font(.footnote.weight(.semibold)).foregroundStyle(amberColor)
+                        Text(CompanionBuild.description(model.language)).font(.caption).foregroundStyle(.secondary)
                         Text(T("This iOS build has not been verified on a physical iPhone. Phone-assisted LLM acceleration has not been demonstrated."))
                             .font(.footnote).foregroundStyle(.secondary)
                     }
@@ -265,6 +271,7 @@ struct ContentView: View {
         }
         .frame(maxWidth: .infinity).background(canvasColor)
         .onAppear { pairingExpanded = !model.hasSavedSession }
+        .sheet(isPresented: $showAbout) { AboutView(language: model.language) }
         .fileImporter(isPresented: $showModelImporter, allowedContentTypes: [.data], allowsMultipleSelection: false) { result in
             switch result {
             case .success(let urls):
@@ -283,5 +290,101 @@ struct ContentView: View {
                 importError = error.localizedDescription
             }
         }
+    }
+}
+
+
+private enum CompanionBuild {
+    static var version: String { Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—" }
+    static var build: String { Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "—" }
+    static func description(_ language: String) -> String {
+        Message("Version {0} · build {1}", version, build).resolve(language)
+    }
+}
+
+private struct AboutView: View {
+    let language: String
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
+    @State private var linkError = false
+    private func T(_ key: String) -> String { Message(key).resolve(language) }
+
+    private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(T(title)).font(.headline).foregroundStyle(.primary)
+            content()
+        }
+        .frame(maxWidth: .infinity, alignment: .leading).padding(20)
+        .background(panelColor, in: RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).stroke(lineColor, lineWidth: 1))
+    }
+
+    private func note(_ key: String) -> some View {
+        Text(T(key)).font(.footnote).foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private func link(_ label: String, _ value: String) -> some View {
+        Button {
+            guard let url = URL(string: value) else { linkError = true; return }
+            linkError = false
+            openURL(url) { accepted in linkError = !accepted }
+        } label: {
+            HStack(alignment: .firstTextBaseline, spacing: 12) {
+                Text(T(label)).multilineTextAlignment(.leading).fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 0)
+                Image(systemName: "arrow.up.right").accessibilityHidden(true)
+            }.font(.subheadline).frame(minHeight: 44)
+                .frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
+        }.buttonStyle(.plain).foregroundStyle(aquaColor)
+    }
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    HStack(spacing: 12) {
+                        NodeLiftMark().stroke(aquaColor, style: StrokeStyle(lineWidth: 3, lineCap: .square, lineJoin: .bevel))
+                            .frame(width: 38, height: 38).accessibilityHidden(true)
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("NodeLift").font(.largeTitle.weight(.semibold))
+                            Text(CompanionBuild.description(language)).font(.caption.monospaced()).foregroundStyle(aquaColor)
+                        }
+                    }.padding(.vertical, 8)
+                    note("Experimental companion")
+                    section("Created by Fabrizio Degni") {
+                        note("Original concept, research direction and development.")
+                        link("Author website", "https://www.fabriziodegni.com/")
+                        link("LinkedIn", "https://www.linkedin.com/in/fdegni/")
+                    }
+                    section("Updates") {
+                        note("Open the official releases page and compare your installed version with the release notes. This is a manual check; no update is installed automatically.")
+                        link("Check releases on GitHub", "https://github.com/sev7enITA/NodeLift/releases")
+                        link("Official downloads & installation", "https://www.fabriziodegni.com/NodeLift/#downloads")
+                    }
+                    section("Project & author") {
+                        link("Source repository", "https://github.com/sev7enITA/NodeLift")
+                        link("Project website", "https://www.fabriziodegni.com/NodeLift/")
+                    }
+                    section("References & licenses") {
+                        link("Architecture & technical documentation", "https://github.com/sev7enITA/NodeLift/blob/main/docs/ARCHITECTURE.md")
+                        link("Research & comparison atlas", "https://github.com/sev7enITA/NodeLift/blob/main/research/comparison-2026-10-31/README.md")
+                        link("Third-party acknowledgements", "https://github.com/sev7enITA/NodeLift/blob/main/THIRD_PARTY_NOTICES.md")
+                        link("MIT license · original NodeLift code", "https://github.com/sev7enITA/NodeLift/blob/main/LICENSE")
+                        note("Dependencies and model weights retain their own licenses and authorship.")
+                    }
+                    if linkError {
+                        Text(T("Unable to open this link. Open the official website in your browser."))
+                            .font(.footnote).foregroundStyle(amberColor).accessibilityIdentifier("about-link-error")
+                    }
+                    note("Capacity sharding is not implemented. Physical-phone inference speedup remains unproven.")
+                    note("Links open in your browser. NodeLift does not attach pairing keys, model data or diagnostics.")
+                    note("Opening a browser may pause this node. Return to NodeLift and resume when ready.")
+                    Text("© 2026 Fabrizio Degni").font(.caption).foregroundStyle(.secondary)
+                }.padding(22).frame(maxWidth: 700)
+            }.frame(maxWidth: .infinity).background(canvasColor)
+                .navigationTitle(T("About & References")).navigationBarTitleDisplayMode(.inline)
+                .toolbar { ToolbarItem(placement: .confirmationAction) { Button(T("Close")) { dismiss() }.tint(aquaColor) } }
+        }.preferredColorScheme(.dark)
     }
 }
