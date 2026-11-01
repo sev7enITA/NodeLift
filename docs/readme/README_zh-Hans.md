@@ -2,6 +2,23 @@
 
 **让已有硬件在本地 AI 中继续发挥作用。**
 
+[![MIT 许可证](https://img.shields.io/badge/License-MIT-lightgrey.svg)](../../LICENSE)
+[![项目展示](https://img.shields.io/badge/Showcase-Live-146c6a.svg)](https://www.fabriziodegni.com/NodeLift/)
+[![配套应用 0.2.3 预发布版](https://img.shields.io/badge/Companion-0.2.3%20prerelease-b45309.svg)](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.3)
+[![主机 0.3.0 预览版](https://img.shields.io/badge/Host-0.3.0%20preview-b45309.svg)](../../docs/INTEGRATIONS.md)
+
+[![源码检查](https://github.com/sev7enITA/NodeLift/actions/workflows/checks.yml/badge.svg?branch=main)](https://github.com/sev7enITA/NodeLift/actions/workflows/checks.yml)
+[![文档检查](https://github.com/sev7enITA/NodeLift/actions/workflows/documentation.yml/badge.svg?branch=main)](https://github.com/sev7enITA/NodeLift/actions/workflows/documentation.yml)
+[![原生构建检查](https://github.com/sev7enITA/NodeLift/actions/workflows/native-build.yml/badge.svg?branch=main)](https://github.com/sev7enITA/NodeLift/actions/workflows/native-build.yml)
+[![发布文件验证](https://github.com/sev7enITA/NodeLift/actions/workflows/release-verification.yml/badge.svg?branch=main)](https://github.com/sev7enITA/NodeLift/actions/workflows/release-verification.yml)
+
+[![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-3776ab.svg)](../../docs/wiki/Quickstart.md)
+[![C++17](https://img.shields.io/badge/C%2B%2B-17-00599c.svg)](../../native/CMakeLists.txt)
+[![固定版本的 llama.cpp](https://img.shields.io/badge/llama.cpp-pinned-146c6a.svg)](../../native/llama.lock)
+[![界面：英语、简体中文、意大利语](https://img.shields.io/badge/UI-EN%20%7C%20zh--Hans%20%7C%20IT-146c6a.svg)](../../docs/LOCALIZATION.md)
+
+源码和文档徽章跟踪 `main`；原生构建和发布文件验证徽章显示最近一次手动运行。
+
 NodeLift 是由 **Fabrizio Degni** 发起和开发的实验性项目。手机上的小型草稿模型可以提出候选词元，电脑上的主模型随后进行验证。目前不会将手机内存合并到目标模型的可用内存中，也尚未证明实体手机能加速单次推理。
 
 应用默认使用英语。通过 **Language** 选择 **简体中文** 或 **Italiano**，选择会保存在本地，翻译无需联网。当前配套应用版本为 **0.2.3 / build 5**；主机源码包含 0.3.0 集成预览。

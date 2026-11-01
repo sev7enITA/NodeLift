@@ -2,6 +2,23 @@
 
 **Dai un nuovo ruolo nell’AI locale all’hardware che già possiedi.**
 
+[![Licenza MIT](https://img.shields.io/badge/License-MIT-lightgrey.svg)](../../LICENSE)
+[![Vetrina del progetto](https://img.shields.io/badge/Showcase-Live-146c6a.svg)](https://www.fabriziodegni.com/NodeLift/)
+[![Companion 0.2.3 prerelease](https://img.shields.io/badge/Companion-0.2.3%20prerelease-b45309.svg)](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.3)
+[![Host 0.3.0 anteprima](https://img.shields.io/badge/Host-0.3.0%20preview-b45309.svg)](../../docs/INTEGRATIONS.md)
+
+[![Controlli del codice](https://github.com/sev7enITA/NodeLift/actions/workflows/checks.yml/badge.svg?branch=main)](https://github.com/sev7enITA/NodeLift/actions/workflows/checks.yml)
+[![Controlli della documentazione](https://github.com/sev7enITA/NodeLift/actions/workflows/documentation.yml/badge.svg?branch=main)](https://github.com/sev7enITA/NodeLift/actions/workflows/documentation.yml)
+[![Compilazione nativa](https://github.com/sev7enITA/NodeLift/actions/workflows/native-build.yml/badge.svg?branch=main)](https://github.com/sev7enITA/NodeLift/actions/workflows/native-build.yml)
+[![Verifica della release](https://github.com/sev7enITA/NodeLift/actions/workflows/release-verification.yml/badge.svg?branch=main)](https://github.com/sev7enITA/NodeLift/actions/workflows/release-verification.yml)
+
+[![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-3776ab.svg)](../../docs/wiki/Quickstart.md)
+[![C++17](https://img.shields.io/badge/C%2B%2B-17-00599c.svg)](../../native/CMakeLists.txt)
+[![llama.cpp a revisione fissata](https://img.shields.io/badge/llama.cpp-pinned-146c6a.svg)](../../native/llama.lock)
+[![UI: inglese, cinese semplificato, italiano](https://img.shields.io/badge/UI-EN%20%7C%20zh--Hans%20%7C%20IT-146c6a.svg)](../../docs/LOCALIZATION.md)
+
+I badge di codice e documentazione seguono `main`; compilazione nativa e verifica della release mostrano l’ultima esecuzione manuale.
+
 NodeLift è un progetto sperimentale ideato e sviluppato da **Fabrizio Degni**. Un piccolo modello sul telefono può proporre token; il modello principale sul computer li verifica. La RAM dei telefoni non viene ancora sommata a quella del target e non è stato dimostrato uno speedup su telefoni fisici.
 
 L’app usa l’inglese come lingua predefinita. Dal selettore **Language** puoi scegliere **Italiano** o **简体中文**; la scelta viene salvata localmente. Le companion attuali sono **0.2.3 / build 5**; l’host include l’anteprima delle integrazioni 0.3.0.

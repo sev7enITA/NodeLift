@@ -2,13 +2,28 @@
 
 # NodeLift
 
+**Give the hardware you already own another useful role in local AI.**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-lightgrey.svg)](LICENSE)
+[![Live project showcase](https://img.shields.io/badge/Showcase-Live-146c6a.svg)](https://www.fabriziodegni.com/NodeLift/)
+[![Companion 0.2.3 prerelease](https://img.shields.io/badge/Companion-0.2.3%20prerelease-b45309.svg)](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.3)
+[![Host 0.3.0 preview](https://img.shields.io/badge/Host-0.3.0%20preview-b45309.svg)](docs/INTEGRATIONS.md)
+
+[![Source checks](https://github.com/sev7enITA/NodeLift/actions/workflows/checks.yml/badge.svg?branch=main)](https://github.com/sev7enITA/NodeLift/actions/workflows/checks.yml)
+[![Documentation checks](https://github.com/sev7enITA/NodeLift/actions/workflows/documentation.yml/badge.svg?branch=main)](https://github.com/sev7enITA/NodeLift/actions/workflows/documentation.yml)
+[![Native build check](https://github.com/sev7enITA/NodeLift/actions/workflows/native-build.yml/badge.svg?branch=main)](https://github.com/sev7enITA/NodeLift/actions/workflows/native-build.yml)
+[![Release verification](https://github.com/sev7enITA/NodeLift/actions/workflows/release-verification.yml/badge.svg?branch=main)](https://github.com/sev7enITA/NodeLift/actions/workflows/release-verification.yml)
+
+[![Python 3.12+](https://img.shields.io/badge/Python-3.12%2B-3776ab.svg)](docs/wiki/Quickstart.md)
+[![C++17](https://img.shields.io/badge/C%2B%2B-17-00599c.svg)](native/CMakeLists.txt)
+[![Pinned llama.cpp](https://img.shields.io/badge/llama.cpp-pinned-146c6a.svg)](native/llama.lock)
+[![UI: English, Simplified Chinese, Italian](https://img.shields.io/badge/UI-EN%20%7C%20zh--Hans%20%7C%20IT-146c6a.svg)](docs/LOCALIZATION.md)
+
+Source and documentation badges follow `main`; native build and release verification show the latest manual run.
+
 English · [简体中文](docs/readme/README_zh-Hans.md) · [Italiano](docs/readme/README_it.md)
 
-[![Source checks](https://github.com/sev7enITA/NodeLift/actions/workflows/checks.yml/badge.svg)](https://github.com/sev7enITA/NodeLift/actions/workflows/checks.yml)
-
 [Quickstart](docs/wiki/Quickstart.md) · [Wiki](https://github.com/sev7enITA/NodeLift/wiki) · [How-to guides](docs/README.md) · [Gallery](docs/GALLERY.md) · [Troubleshooting](docs/wiki/Troubleshooting.md)
-
-**Give the hardware you already own another useful role in local AI.**
 
 NodeLift is an experimental local inference workbench and mobile companion system. A small model on a phone proposes tokens; a larger model on the computer verifies them before anything reaches the user. The project measures when delegation helps and when the computer alone is faster.
 
