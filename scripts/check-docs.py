@@ -50,6 +50,9 @@ def check():
         errors.append('README does not link to the current companion release')
     if f'releases/download/v{version}/NodeLift-{version}-android-debug.apk' not in readme:
         errors.append('README does not link to the current Android asset')
+    downloads = (ROOT/'docs/MOBILE_DOWNLOADS.md').read_text()
+    if f'Companion version **{version}**' not in downloads or f'releases/tag/v{version}' not in downloads:
+        errors.append('Mobile installation guide does not identify the current companion release')
     for name in ('Home', 'Quickstart', 'Android', 'iOS-and-iPadOS', 'Models-and-providers', 'Benchmarking', 'Troubleshooting', 'Development-and-workflows', 'Architecture', 'About-and-credits', 'Acknowledgements', '_Sidebar', '_Footer'):
         if not (ROOT/'docs/wiki'/f'{name}.md').exists():
             errors.append('Missing Wiki source: '+name)
