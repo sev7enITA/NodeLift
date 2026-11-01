@@ -19,7 +19,9 @@
 
 I badge di codice e documentazione seguono `main`; compilazione nativa e verifica della release mostrano l’ultima esecuzione manuale.
 
-NodeLift è un progetto sperimentale ideato e sviluppato da **Fabrizio Degni**. Un piccolo modello sul telefono può proporre token; il modello principale sul computer li verifica. La RAM dei telefoni non viene ancora sommata a quella del target e non è stato dimostrato uno speedup su telefoni fisici.
+NodeLift è un progetto sperimentale ideato e sviluppato da **Fabrizio Degni**, con l’obiettivo di rendere RAM e calcolo dei dispositivi locali disponibili alle interfacce AI utilizzate ogni giorno. Il servizio di esecuzione condiviso è il cuore del prodotto; la GUI gestisce le risorse e gli adattatori collegano le applicazioni. [Direzione e roadmap](../ROADMAP.md).
+
+Oggi un piccolo modello sul telefono può proporre token che il modello principale sul computer verifica. La distribuzione di parti del modello per aumentare la capacità di memoria resta da implementare; lo speedup su telefoni fisici deve ancora essere dimostrato.
 
 L’app usa l’inglese come lingua predefinita. Dal selettore **Language** puoi scegliere **Italiano** o **简体中文**; la scelta viene salvata localmente. Le companion attuali sono **0.2.3 / build 5**; l’host include l’anteprima delle integrazioni 0.3.0.
 

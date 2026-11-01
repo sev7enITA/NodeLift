@@ -1,5 +1,7 @@
 # Engine architecture
 
+NodeLift's target architecture is a shared local execution service that brings device RAM and compute to existing AI interfaces. The desktop application manages that service. Memory-capacity execution and compute acceleration are core workstreams; the diagram below describes the current implemented drafting path. See the [product roadmap](ROADMAP.md) for the intended architecture, interface routes and capacity milestones.
+
 ```mermaid
 flowchart LR
   C[Desktop or LM Studio client] --> G[Loopback gateway]
@@ -40,6 +42,6 @@ See the [optimization assessment](../research/optimization-2026-10-31/REPORT.md)
 3. Strongest applicable local baseline: target-only, local draft, n-gram, MTP/EAGLE/DFlash and async where supported.
 4. Validate the opt-in measured host/draft gate on physical devices and held-out workloads; node selection and block size remain manual.
 5. Asynchronous drafting with wasted-work accounting, then multi-user batching. Neither automatically proves single-chat acceleration.
-6. Capacity sharding as a separate path; phone memory is not coherent host RAM.
+6. Implement and qualify capacity sharding as a core execution path in parallel with the compute work; phone memory is not coherent host RAM. This requires resident partition/state accounting and a recovery plan for targets that cannot fit on the host alone.
 
 The sought contribution is usable heterogeneous-device orchestration with reproducible evidence and lifecycle control. Remote speculation, adaptive blocks and pipelining are prior art. No unique algorithm, patentability or universal superiority is established.

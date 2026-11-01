@@ -25,7 +25,9 @@ English · [简体中文](docs/readme/README_zh-Hans.md) · [Italiano](docs/read
 
 [Quickstart](docs/wiki/Quickstart.md) · [Wiki](https://github.com/sev7enITA/NodeLift/wiki) · [How-to guides](docs/README.md) · [Gallery](docs/GALLERY.md) · [Troubleshooting](docs/wiki/Troubleshooting.md)
 
-NodeLift is an experimental local inference workbench and mobile companion system. A small model on a phone proposes tokens; a larger model on the computer verifies them before anything reaches the user. The project measures when delegation helps and when the computer alone is faster.
+**NodeLift's objective is to make RAM and compute from existing local devices available to the AI interfaces you already use.** Its shared execution service is the core; the desktop control room manages resources, and adapters connect everyday clients. [Product direction and engineering roadmap](docs/ROADMAP.md).
+
+The current experimental implementation supports phone-assisted drafting: a small model on a phone proposes tokens and the computer's target verifies them. This is one compute path. Distributing model partitions to expand executable memory capacity remains a core development workstream, alongside measuring when delegation is faster than the best local baseline.
 
 **[Live project showcase and interactive atlas](https://www.fabriziodegni.com/NodeLift/)** · [55-entry detailed matrix](site/NodeLift/data/comparison.md) · [Assessment and engineering lessons](research/comparison-2026-10-31/ASSESSMENT.md) · [Publication verification](docs/SHOWCASE_DEPLOYMENT.md). The dated atlas distinguishes applications, runtimes, serving systems and research; it is not an exhaustive inventory or a universal performance ranking.
 
@@ -78,7 +80,7 @@ The optional control-model download is approximately 1.61 GB, with fixed [revisi
 
 ## Evidence before acceleration claims
 
-The primary objective is lower single-chat latency than the best applicable local baseline at the same target, sampling rules and actual output length. Capacity expansion and multi-user throughput are separate experiments. Reported physical RAM is not memory already shared with the host.
+The speed workstream targets lower single-chat latency than the best applicable local baseline at the same target, sampling rules and actual output length. The capacity workstream targets model/context workloads that exceed the declared host memory budget. Both support the shared local execution service; capacity, speed and multi-user throughput require separate experiments. Reported physical RAM is not memory already shared with the host.
 
 - [DistAI source study and lessons](research/distai/LESSONS_LEARNED.md)
 - [October 2026 research update](research/RESEARCH_2026_10_31.md)

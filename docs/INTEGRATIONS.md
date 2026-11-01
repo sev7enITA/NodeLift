@@ -1,5 +1,7 @@
 # Local client integrations
 
+The integration objective is to make NodeLift's shared local RAM/compute execution available through the interfaces the user already uses. The local gateway and adapters are the access paths; the control room manages resources. Cloud-provider forwarding is an optional, separate route. See the [product roadmap and candidate interface matrix](ROADMAP.md) for current limits and unimplemented capacity work.
+
 This is an authenticated OpenAI-style **text chat subset**, not full OpenAI/Ollama API compatibility.
 
 | Setting | Value |
@@ -38,7 +40,7 @@ Clients with a configurable OpenAI-style text endpoint can point directly to Nod
 
 ## Z.ai and Xiaomi MiMo
 
-These are hosted web environments, distinct from local runtimes and from Xiaomi phone hardware. Both publish developer APIs: [Z.ai](https://docs.z.ai/guides/overview/quick-start) and [MiMo](https://mimo.mi.com/docs/en-US/quick-start/summary/first-api-call). NodeLift does not currently include direct adapters for either API, and no connection from their hosted GUI to a custom NodeLift endpoint has been qualified. Browser access alone is not API access. Planned direct integration should use their documented APIs with explicit cloud selection; it will not contribute local phone RAM or native drafting. See [product shape and device attribution](DEVICE-GRAPH.md).
+These are hosted web environments, distinct from local runtimes and from Xiaomi phone hardware. Both publish developer APIs: [Z.ai](https://docs.z.ai/guides/overview/quick-start) and [MiMo](https://mimo.mi.com/docs/en-US/quick-start/summary/first-api-call). NodeLift does not currently include direct adapters for either API, and no connection from their hosted GUI to a custom NodeLift endpoint has been qualified. Browser access alone is not API access. A cloud-provider adapter would use their backend, not expand local resources. For the local-resource objective, assess supported extension/tool points or an explicit browser companion route to NodeLift; neither is implemented or proven here, and neither adds RAM to a remote proprietary model. See [product shape and device attribution](DEVICE-GRAPH.md).
 
 ## Model sources and external engines (host 0.3.0 preview)
 

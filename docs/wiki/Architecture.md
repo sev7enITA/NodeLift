@@ -1,5 +1,7 @@
 # Execution paths
 
+The product objective is a shared local execution service that makes device RAM and compute available to everyday AI interfaces. The desktop UI is its control room. Memory-capacity execution and compute acceleration are core workstreams; the diagram below shows current execution paths. The [product roadmap](https://github.com/sev7enITA/NodeLift/blob/main/docs/ROADMAP.md) identifies unimplemented capacity work, candidate adapters and acceptance evidence.
+
 ```mermaid
 flowchart LR
     U[Local client / control room] --> H[NodeLift host]

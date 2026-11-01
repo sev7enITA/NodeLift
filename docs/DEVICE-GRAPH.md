@@ -40,7 +40,7 @@ An external provider run has no native per-phone attribution. A missing measurem
 
 ## Product shape
 
-NodeLift is a **desktop application plus a local inference service and mobile companions**. Today the desktop interface is served by the Python host in a browser. A signed native desktop installer and OS-integrated lifecycle remain packaging work. The local service, gateway and native inference core already exist; the relationship graph is part of this control room, not a separate service.
+NodeLift's core product is a **shared local execution service that aims to supply device RAM and compute to everyday AI interfaces**. Its desktop application is the control room; mobile companions provide resources and adapters connect clients. Today the desktop interface is served by the Python host in a browser. A signed native desktop installer and OS-integrated lifecycle remain packaging work. The local service, gateway and drafting core exist; capacity sharding remains to be implemented. The [product roadmap](ROADMAP.md) separates these milestones.
 
 | Environment | Relationship to NodeLift | Current status |
 |---|---|---|
