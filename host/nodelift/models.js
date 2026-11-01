@@ -34,6 +34,8 @@ function renderModelLibrary(){
     if(transfer.status==='completed')$('transfer-status').textContent+=' · '+t('Model imported. Select it as target or draft, then apply configuration.');
     $('transfer-progress').value=transfer.bytes?transfer.received/transfer.bytes:0;
   }else $('transfer-status').textContent=t(libraryMessage||'No model transfer active.');
+  if(transfer?.cleanup_pending)$('transfer-status').textContent+=' · '+t('A temporary model file could not be removed; check available disk space');
+  if(engineSnapshot.library?.warning)$('transfer-status').textContent+=' · '+t(engineSnapshot.library.warning);
   const providers=engineSnapshot.providers||{},backend=$('run-backend').value;
   if(!$('local-provider-url').dataset.initialized&&providers.local_url){$('local-provider-url').value=providers.local_url;$('local-provider-url').dataset.initialized='true';}
   optionsForModels($('provider-model'),providers.models?.[backend]||[],t('Refresh provider models first'));

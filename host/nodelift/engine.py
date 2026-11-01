@@ -1,6 +1,7 @@
 """Experimental greedy inference controller and leased outbound mobile drafting."""
 import copy
 import codecs
+from contextlib import closing
 import hashlib
 import json
 import secrets
@@ -220,16 +221,17 @@ class Controller:
         try:
             run['status']='running';self._publish(run)
             messages=run.get('messages') or [{'role':'user','content':run['prompt']}]
-            for event in self.providers.stream(run['backend'],run['provider_model'],messages,run['max_tokens'],self.cancelled):
-                if self.cancelled.is_set():raise ValueError('Provider run cancelled')
-                if event['text'] and first is None:
-                    first=time.perf_counter();run['metrics']['ttft_ms']=(first-started)*1000
-                run['text']+=event['text']
-                if len(run['text'].encode())>1024**2:raise ValueError('Provider text exceeds supported limits')
-                if event['finish_reason']:run['finish_reason']=event['finish_reason']
-                if event['usage'] is not None:run['usage']=event['usage']
-                run['metrics']['elapsed_seconds']=time.perf_counter()-started
-                self._publish(run)
+            with closing(self.providers.stream(run['backend'],run['provider_model'],messages,run['max_tokens'],self.cancelled)) as events:
+                for event in events:
+                    if self.cancelled.is_set():raise ValueError('Provider run cancelled')
+                    if event['text'] and first is None:
+                        first=time.perf_counter();run['metrics']['ttft_ms']=(first-started)*1000
+                    if len((run['text']+event['text']).encode())>1024**2:raise ValueError('Provider text exceeds supported limits')
+                    run['text']+=event['text']
+                    if event['finish_reason']:run['finish_reason']=event['finish_reason']
+                    if event['usage'] is not None:run['usage']=event['usage']
+                    run['metrics']['elapsed_seconds']=time.perf_counter()-started
+                    self._publish(run)
             if self.cancelled.is_set():raise ValueError('Provider run cancelled')
             run['status']='completed'
         except Exception as error:

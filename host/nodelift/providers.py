@@ -71,9 +71,12 @@ class Providers:
             if response.status != 200: raise ValueError('Model catalog request failed (HTTP %d)' % response.status)
             raw = response.read(8 * 1024**2 + 1)
             if len(raw) > 8 * 1024**2: raise ValueError('Provider catalog too large')
-            rows = json.loads(raw)['data']
+            document=json.loads(raw)
+            if not isinstance(document,dict) or not isinstance(document.get('data'),list): raise ValueError('Invalid provider model catalog')
+            rows=document['data']
             models = []
             for row in rows[:5000]:
+                if not isinstance(row,dict) or not isinstance(row.get('architecture') or {},dict) or not isinstance(row.get('pricing') or {},dict): raise ValueError('Invalid provider model catalog')
                 identity = row.get('id')
                 if not valid_model(identity): continue
                 outputs = (row.get('architecture') or {}).get('output_modalities', ['text'])
@@ -104,6 +107,7 @@ class Providers:
 
     def stream(self, backend, model, messages, max_tokens, cancelled):
         with self.lock:
+            if self.active is not None: raise ValueError('Provider is already running')
             self.validate(backend, model)
             connection, prefix = self._connection(backend)
             headers = self._headers(backend)
@@ -133,14 +137,18 @@ class Providers:
                         if not finished: raise ValueError('Provider omitted the completion reason')
                         return
                     value = json.loads(data)
+                    if not isinstance(value,dict): raise ValueError('Invalid provider event')
                     if value.get('error'): raise ValueError('Provider reported a generation error')
                     delta = ''; reason = None
                     choices = value.get('choices') or []
+                    if not isinstance(choices,list): raise ValueError('Invalid provider event')
                     if choices:
                         if len(choices) != 1: raise ValueError('Multiple provider choices are not supported')
                         choice = choices[0]
+                        if not isinstance(choice,dict): raise ValueError('Invalid provider event')
                         if choice.get('index', 0) != 0: raise ValueError('Multiple provider choices are not supported')
                         change = choice.get('delta') or {}
+                        if not isinstance(change,dict): raise ValueError('Invalid provider event')
                         if change.get('tool_calls') or change.get('function_call'): raise ValueError('Only provider text completions are supported')
                         delta = change.get('content') or ''
                         if not isinstance(delta, str): raise ValueError('Only provider text completions are supported')
@@ -151,6 +159,7 @@ class Providers:
                             finished = True
                     usage = value.get('usage')
                     if usage is not None:
+                        if not isinstance(usage,dict): raise ValueError('Invalid provider event')
                         names = ('prompt_tokens', 'completion_tokens', 'total_tokens')
                         usage = {k: usage[k] for k in names} if all(type(usage.get(k)) is int and usage[k] >= 0 for k in names) else None
                     yield {'text': delta, 'finish_reason': reason, 'usage': usage}

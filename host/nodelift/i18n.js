@@ -548,7 +548,16 @@ const NodeLiftChinese = {
   "Provider response could not be processed": "无法处理服务商响应",
   "Provider request failed (HTTP {0})": "服务商请求失败（HTTP {0}）",
   "Completed without visible text. Try a larger output budget or a text model.": "已完成但没有可见文本。请增加输出预算或选择文本模型。",
-  "Imported file": "已导入文件"
+  "Imported file": "已导入文件",
+  "Model registry could not be read; import existing files to recover missing entries": "无法读取模型索引；请导入现有文件以恢复缺失条目",
+  "Model registry recovered from its previous backup; the last import may need repeating": "模型索引已从上一份备份恢复；可能需要重新导入最后一个模型",
+  "A temporary model file could not be removed; check available disk space": "无法删除临时模型文件；请检查可用磁盘空间",
+  "Hugging Face returned invalid model metadata": "Hugging Face 返回的模型元数据无效",
+  "Model transfer could not be started": "无法启动模型传输",
+  "Model transfer worker could not be started": "无法启动模型传输工作线程",
+  "Invalid provider model catalog": "服务商模型目录无效",
+  "Invalid provider event": "服务商事件无效",
+  "Provider is already running": "服务商正在运行"
 };
 'use strict';
 // Explicit preference only: a new session always starts in English.

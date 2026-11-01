@@ -546,5 +546,14 @@
   "Provider response could not be processed": "Provider response could not be processed",
   "Provider request failed (HTTP {0})": "Provider request failed (HTTP {0})",
   "Completed without visible text. Try a larger output budget or a text model.": "Completed without visible text. Try a larger output budget or a text model.",
-  "Imported file": "Imported file"
+  "Imported file": "Imported file",
+  "Model registry could not be read; import existing files to recover missing entries": "Model registry could not be read; import existing files to recover missing entries",
+  "Model registry recovered from its previous backup; the last import may need repeating": "Model registry recovered from its previous backup; the last import may need repeating",
+  "A temporary model file could not be removed; check available disk space": "A temporary model file could not be removed; check available disk space",
+  "Hugging Face returned invalid model metadata": "Hugging Face returned invalid model metadata",
+  "Model transfer could not be started": "Model transfer could not be started",
+  "Model transfer worker could not be started": "Model transfer worker could not be started",
+  "Invalid provider model catalog": "Invalid provider model catalog",
+  "Invalid provider event": "Invalid provider event",
+  "Provider is already running": "Provider is already running"
 }

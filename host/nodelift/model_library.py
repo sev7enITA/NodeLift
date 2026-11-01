@@ -76,14 +76,21 @@ class ModelLibrary:
         self.records = {}
         self.transfer = None
         self.cancelled = threading.Event()
-        try:
-            data = json.loads(self.registry_path.read_text())
-            if isinstance(data, dict): self.records = data
-        except (OSError, ValueError): pass
+        self.warning = None
+        if self.registry_path.exists():
+            try: self.records = self._read_registry(self.registry_path)
+            except (OSError, ValueError):
+                self.warning = 'Model registry could not be read; import existing files to recover missing entries'
+                try:
+                    self.records = self._read_registry(self.registry_path.with_suffix('.bak'))
+                    self.warning = 'Model registry recovered from its previous backup; the last import may need repeating'
+                except (OSError, ValueError): pass
         # Reap only old owned crash leftovers, never a recent/live transfer or user file.
         for path in self.folder.glob('.nodelift-*.part'):
-            if re.fullmatch(r'\.nodelift-[a-f0-9]{32}\.part', path.name) and time.time()-path.stat().st_mtime>86400:
-                path.unlink(missing_ok=True)
+            try:
+                if re.fullmatch(r'\.nodelift-[a-f0-9]{32}\.part', path.name) and time.time()-path.stat().st_mtime>86400:
+                    path.unlink(missing_ok=True)
+            except OSError: self.warning = 'A temporary model file could not be removed; check available disk space'
 
     def paths(self):
         with self.lock: return [Path(p) for p in self.records]
@@ -91,14 +98,29 @@ class ModelLibrary:
     def source(self, path):
         with self.lock: return dict(self.records.get(str(path), {}))
 
+    @staticmethod
+    def _read_registry(path):
+        data=json.loads(path.read_text())
+        if not isinstance(data,dict) or any(not isinstance(k,str) or not isinstance(v,dict) for k,v in data.items()):
+            raise ValueError('Invalid model registry')
+        return data
+
+    @staticmethod
+    def _save_registry(path, records):
+        temporary=path.with_suffix(path.suffix+'.tmp')
+        with open(temporary,'w',opener=lambda p,f:os.open(p,f,0o600)) as stream:
+            json.dump(records,stream);stream.flush();os.fsync(stream.fileno())
+        temporary.replace(path)
+        if os.name != 'nt':
+            descriptor=os.open(path.parent,os.O_RDONLY)
+            try:os.fsync(descriptor)
+            finally:os.close(descriptor)
+
     def _register(self, path, source):
         with self.lock:
             records = {**self.records, str(path): source}
-            temporary = self.registry_path.with_suffix('.tmp')
-            with temporary.open('w') as stream:
-                os.chmod(temporary, 0o600)
-                json.dump(records, stream)
-            temporary.replace(self.registry_path)
+            self._save_registry(self.registry_path.with_suffix('.bak'),self.records)
+            self._save_registry(self.registry_path,records)
             self.records = records
         return {'path': str(path), 'source': source}
 
@@ -116,21 +138,24 @@ class ModelLibrary:
     def search(self, query):
         if not isinstance(query, str) or not 1 <= len(query.strip()) <= 160: raise ValueError('Enter a model search')
         rows = hub_json('https://huggingface.co/api/models?' + urlencode({'search': query.strip(), 'filter': 'gguf', 'limit': 12, 'sort': 'downloads', 'direction': -1}))
+        if not isinstance(rows,list) or any(not isinstance(r,dict) for r in rows): raise ValueError('Hugging Face returned invalid model metadata')
         return {'models': [{'id': r['id'], 'downloads': r.get('downloads', 0)} for r in rows if isinstance(r.get('id'), str)]}
 
     def inspect(self, repo, revision='main'):
         repo = repo_id(repo)
-        if not isinstance(revision, str) or not re.fullmatch(r'[A-Za-z0-9_.-]{1,120}', revision): raise ValueError('Invalid model revision')
+        if not isinstance(revision, str) or revision in ('.','..') or not re.fullmatch(r'[A-Za-z0-9_.-]{1,120}', revision): raise ValueError('Invalid model revision')
         data = hub_json('https://huggingface.co/api/models/' + repo + '/revision/' + quote(revision, safe='') + '?blobs=true')
+        if not isinstance(data,dict) or not isinstance(data.get('siblings',[]),list) or not isinstance(data.get('cardData') or {},dict): raise ValueError('Hugging Face returned invalid model metadata')
         sha = data.get('sha', '')
-        if not re.fullmatch(r'[a-f0-9]{40}', sha): raise ValueError('Hugging Face did not return an immutable revision')
+        if not isinstance(sha,str) or not re.fullmatch(r'[a-f0-9]{40}', sha): raise ValueError('Hugging Face did not return an immutable revision')
         files = []
         for row in data.get('siblings', []):
+            if not isinstance(row,dict) or not isinstance(row.get('lfs') or {},dict): raise ValueError('Hugging Face returned invalid model metadata')
             name = row.get('rfilename', '')
             if not single_gguf(name): continue
             digest = (row.get('lfs') or {}).get('sha256', '')
             size = row.get('size')
-            if not re.fullmatch(r'[a-f0-9]{64}', digest) or type(size) is not int or not 24 <= size <= MAX_MODEL: continue
+            if not isinstance(digest,str) or not re.fullmatch(r'[a-f0-9]{64}', digest) or type(size) is not int or not 24 <= size <= MAX_MODEL: continue
             files.append({'name': name, 'bytes': size, 'sha256': digest})
         return {'repo': repo, 'revision': sha, 'license': (data.get('cardData') or {}).get('license', 'See model card'),
                 'model_card': 'https://huggingface.co/' + repo, 'gated': bool(data.get('gated')), 'files': files}
@@ -138,11 +163,11 @@ class ModelLibrary:
     def status(self):
         with self.lock:
             self._expire()
-            return {'transfer': copy.deepcopy(self.transfer)}
+            return {'transfer': copy.deepcopy(self.transfer), 'warning': self.warning}
 
     def _expire(self):
         if self.transfer and self.transfer['kind'] == 'upload' and self.transfer['status'] == 'transferring' and time.monotonic() - self.transfer['touched'] > 900:
-            self._part().unlink(missing_ok=True)
+            self._discard_part()
             self.transfer['status'] = 'expired'
 
     def _part(self):
@@ -159,7 +184,11 @@ class ModelLibrary:
             self.transfer = {'id': secrets.token_hex(16), 'name': name, 'bytes': size, 'received': 0, 'kind': kind,
                              'status': 'transferring', 'source': source, 'touched': time.monotonic()}
             self.cancelled.clear()
-            with self._part().open('xb') as stream: os.chmod(stream.name, 0o600)
+            try:
+                with open(self._part(),'xb',opener=lambda p,f:os.open(p,f,0o600)): pass
+            except OSError as error:
+                self._fail(self.transfer['id'],'Model transfer could not be started')
+                raise ValueError('Model transfer could not be started') from error
             return copy.deepcopy(self.transfer)
 
     def upload_start(self, values):
@@ -176,7 +205,14 @@ class ModelLibrary:
             if self.transfer['kind'] != 'upload': raise ValueError('Not a browser upload')
             if type(offset) is not int or offset != self.transfer['received']: raise ValueError('Model upload offset mismatch')
             if not data or len(data) > CHUNK or offset + len(data) > self.transfer['bytes']: raise ValueError('Invalid model upload chunk')
-            with self._part().open('ab') as stream: stream.write(data)
+            try:
+                if self._part().stat().st_size != offset: raise OSError('partial write')
+                with self._part().open('ab') as stream:
+                    stream.write(data);stream.flush();os.fsync(stream.fileno())
+                if self._part().stat().st_size != offset+len(data): raise OSError('partial write')
+            except OSError as error:
+                self._fail(identity,'Model upload failed.')
+                raise ValueError('Model upload failed.') from error
             self.transfer['received'] += len(data)
             self.transfer['touched'] = time.monotonic()
             return {'received': self.transfer['received']}
@@ -187,7 +223,7 @@ class ModelLibrary:
             if self.transfer['kind'] != 'upload': raise ValueError('Not a browser upload')
             if self.transfer['received'] != self.transfer['bytes']: raise ValueError('Model transfer is incomplete')
             self.transfer['status'] = 'verifying'
-        threading.Thread(target=self._finalize, args=(identity,), daemon=True).start()
+        self._launch(self._finalize,identity)
         return {'verifying': True}
 
     def cancel(self, identity):
@@ -196,7 +232,7 @@ class ModelLibrary:
             if self.transfer['status'] not in ('transferring', 'verifying'): return {'cancelled': False}
             self.cancelled.set()
             if self.transfer['kind'] == 'upload' and self.transfer['status'] == 'transferring':
-                self._part().unlink(missing_ok=True)
+                self._discard_part()
                 self.transfer['status'] = 'cancelled'
             return {'cancelled': True}
 
@@ -211,8 +247,20 @@ class ModelLibrary:
         source = {'kind': 'huggingface', 'repo': info['repo'], 'revision': revision, 'file': row['name'], 'sha256': row['sha256']}
         transfer = self._begin(Path(row['name']).name, row['bytes'], 'huggingface', source)
         url = 'https://huggingface.co/' + info['repo'] + '/resolve/' + revision + '/' + quote(row['name'], safe='/')
-        threading.Thread(target=self._download, args=(transfer['id'], url), daemon=True).start()
+        self._launch(self._download,transfer['id'],url)
         return transfer
+
+    def _launch(self, target, identity, *args):
+        try:threading.Thread(target=target,args=(identity,*args),daemon=True).start()
+        except Exception as error:
+            self._fail(identity,'Model transfer worker could not be started')
+            raise ValueError('Model transfer worker could not be started') from error
+
+    def _discard_part(self):
+        try:
+            self._part().unlink(missing_ok=True)
+            self.transfer.pop('cleanup_pending',None)
+        except OSError:self.transfer['cleanup_pending']=True
 
     def _download(self, identity, url):
         try:
@@ -235,7 +283,7 @@ class ModelLibrary:
     def _fail(self, identity, message):
         with self.lock:
             if not self.transfer or self.transfer['id'] != identity: return
-            self._part().unlink(missing_ok=True)
+            self._discard_part()
             self.transfer['status'] = 'cancelled' if self.cancelled.is_set() else 'failed'
             self.transfer['error'] = message
 

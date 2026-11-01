@@ -109,3 +109,34 @@ class SlowStreamTests(unittest.TestCase):
             def shutdown(self,how):self.stopped=True
         transport=Transport();p.active=Connection(b'');p.active_socket=transport;p.cancel()
         self.assertTrue(transport.stopped)
+
+class ProviderShapeTests(unittest.TestCase):
+    def test_network_event_shapes_are_sanitized_and_release_connection(self):
+        for payload in ([],1,{'choices':{'x':'y'}},{'choices':[1]},{'choices':[{'delta':[1]}]},{'choices':[],'usage':[1]}):
+            p=ProviderTests().configured();connection=Connection(event(payload))
+            with patch.object(p,'_connection',return_value=(connection,'/api/v1')):
+                with self.assertRaisesRegex(ValueError,'Invalid provider event'):list(p.stream('openrouter','owner/model',[],16,threading.Event()))
+            self.assertTrue(connection.closed);self.assertIsNone(p.active)
+    def test_second_stream_cannot_replace_active_connection(self):
+        p=ProviderTests().configured();connection=Connection(completion())
+        with patch.object(p,'_connection',return_value=(connection,'/api/v1')):
+            stream=p.stream('openrouter','owner/model',[],16,threading.Event());next(stream)
+            with self.assertRaisesRegex(ValueError,'already running'):next(p.stream('openrouter','owner/model',[],16,threading.Event()))
+            stream.close()
+        self.assertIsNone(p.active);self.assertTrue(connection.closed)
+    def test_bad_catalog_shapes_do_not_replace_valid_catalog(self):
+        for payload in ([],{'data':{}},{'data':[1]},{'data':[{'id':'x','architecture':[1]}]}):
+            p=ProviderTests().configured();connection=Connection(json.dumps(payload).encode())
+            with patch.object(p,'_connection',return_value=(connection,'/api/v1')),self.assertRaises(ValueError):p.models('openrouter')
+            self.assertEqual(p.catalogs['openrouter'],[{'id':'owner/model'}])
+
+    def test_controller_closes_generator_when_its_output_limit_fails(self):
+        closed=[]
+        def events(*args):
+            try:yield {'text':'x'*(1024**2+1),'usage':None,'finish_reason':None}
+            finally:closed.append(True)
+        with tempfile.TemporaryDirectory() as directory:
+            engine=Controller(State(Path(directory)))
+            run={'id':'oversize','backend':'local_api','provider_model':'owner/model','prompt':'test','max_tokens':1,'text':'','metrics':{}}
+            with patch.object(engine.providers,'stream',side_effect=events):engine._execute_provider(run,{})
+            self.assertEqual(run['status'],'failed');self.assertEqual(run['text'],'');self.assertEqual(closed,[True])

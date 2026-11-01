@@ -96,3 +96,46 @@ class LibraryTests(unittest.TestCase):
         identity=self.start();self.library.upload_chunk(identity,0,GGUF)
         with self.library._part().open('ab') as stream:stream.write(b'unaccounted bytes')
         self.library.finish(identity);self.assertEqual(self.wait()['status'],'failed');self.assertEqual(self.library.paths(),[])
+
+    def test_thread_start_failure_releases_transfer(self):
+        identity=self.start();self.library.upload_chunk(identity,0,GGUF)
+        with patch('nodelift.model_library.threading.Thread.start',side_effect=RuntimeError('no threads')):
+            with self.assertRaisesRegex(ValueError,'worker'):self.library.finish(identity)
+        self.assertEqual(self.library.status()['transfer']['status'],'failed');self.assertEqual(self.library.paths(),[])
+        self.assertNotEqual(self.start(),identity)
+
+    def test_cleanup_failure_is_terminal_and_does_not_wedge_next_transfer(self):
+        identity=self.start()
+        with patch.object(Path,'unlink',side_effect=PermissionError('test filesystem fault')):
+            self.library._fail(identity,'transfer failed')
+        row=self.library.status()['transfer'];self.assertEqual(row['status'],'failed');self.assertTrue(row['cleanup_pending'])
+        self.assertNotEqual(self.start(),identity)
+
+    def test_partial_write_fails_closed_and_cannot_be_retried_as_an_append(self):
+        identity=self.start();original=Path.open
+        class BrokenWriter:
+            def __init__(self,stream):self.stream=stream
+            def __enter__(self):return self
+            def __exit__(self,*args):self.stream.close()
+            def write(self,data):self.stream.write(data[:10]);self.stream.flush();raise OSError('disk full after partial write')
+        def broken(path,mode='r',*args,**kwargs):
+            stream=original(path,mode,*args,**kwargs)
+            return BrokenWriter(stream) if mode=='ab' else stream
+        with patch.object(Path,'open',new=broken):
+            with self.assertRaisesRegex(ValueError,'upload failed'):self.library.upload_chunk(identity,0,GGUF)
+        self.assertEqual(self.library.status()['transfer']['status'],'failed')
+        with self.assertRaises(ValueError):self.library.upload_chunk(identity,0,GGUF)
+        self.assertEqual(self.library.paths(),[])
+
+    def test_corrupt_registry_recovers_previous_backup_with_visible_warning(self):
+        one=self.root/'one.gguf';two=self.root/'two.gguf';one.write_bytes(GGUF);two.write_bytes(GGUF)
+        self.library.import_path(str(one));self.library.import_path(str(two));self.library.registry_path.write_text('{corrupt')
+        recovered=ModelLibrary(self.root);self.assertEqual(recovered.paths(),[one.resolve()]);self.assertIn('backup',recovered.status()['warning'])
+        self.library.registry_path.with_suffix('.bak').write_text('[]')
+        self.assertIn('could not be read',ModelLibrary(self.root).status()['warning'])
+
+    def test_unexpected_hub_shapes_fail_as_value_errors(self):
+        for payload in ({'unexpected':'shape'},[1],None):
+            with patch('nodelift.model_library.hub_json',return_value=payload),self.assertRaises(ValueError):self.library.search('model')
+        for payload in ([],{'sha':None},{'sha':'a'*40,'siblings':[1]},{'sha':'a'*40,'siblings':[{'lfs':1}]}):
+            with patch('nodelift.model_library.hub_json',return_value=payload),self.assertRaises(ValueError):self.library.inspect('owner/repo')

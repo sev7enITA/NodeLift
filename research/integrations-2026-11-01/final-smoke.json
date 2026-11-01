@@ -1,0 +1,15 @@
+{
+  "source_commit": "32b2c66c67701e29b3537c380ccc912978d25412",
+  "kind": "final-source live host/gateway smoke checks; no cloud generation",
+  "gateway_local_model": "qwen3.8-27b",
+  "gateway_text": "HELLO",
+  "gateway_usage": {
+    "prompt_tokens": 62,
+    "completion_tokens": 30,
+    "total_tokens": 92
+  },
+  "native_status": "completed",
+  "native_text": "HELLO",
+  "public_openrouter_text_catalog_count": 433,
+  "local_catalog_count": 4
+}
