@@ -200,6 +200,17 @@ class Handler(http.server.BaseHTTPRequestHandler):
         expected = "127.0.0.1:" + str(self.server.server_port)
         if host != expected or self.headers.get("Origin", "http://" + expected) != "http://" + expected:
             raise PermissionError("loopback origin required")
+        if path == "/admin/session/restore":
+            # Bootstrap only from the first-party loopback page. No CORS.
+            if (method != "POST" or self.client_address[0] != "127.0.0.1"
+                    or self.headers.get("Origin") != "http://" + expected
+                    or self.headers.get("Sec-Fetch-Site") != "same-origin"
+                    or self.headers.get("X-NodeLift-Session") != "restore"
+                    or self.headers.get("Content-Type") != "application/json"):
+                raise PermissionError("local dashboard recovery required")
+            if self.body() != {}:
+                raise ValueError("empty recovery request required")
+            return self.send(200, {"token": self.server.admin_token})
         assets = {"/qr.js": ("vendor/qrcodegen.js", "text/javascript"), "/pairing.js": ("pairing.js", "text/javascript"), "/": ("dashboard.html", "text/html; charset=utf-8"), "/app.js": ("dashboard.js", "text/javascript"), "/graph.js": ("graph.js", "text/javascript"), "/models.js": ("models.js", "text/javascript"), "/i18n.js": ("i18n.js", "text/javascript"), "/style.css": ("dashboard.css", "text/css")}
         if method == "GET" and path in assets:
             name, kind = assets[path]

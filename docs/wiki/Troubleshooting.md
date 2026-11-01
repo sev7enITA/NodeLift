@@ -4,7 +4,7 @@ Run `python3 scripts/doctor.py` for a read-only setup report. `--json` emits mac
 
 | Symptom | Check / next action |
 |---|---|
-| Add device or engine controls unavailable | Open the private session link printed by the current host. On the Mac, `scripts/open-dashboard.command` reopens it. Do not share that link. |
+| Add device or engine controls unavailable | Open the local dashboard on the Mac and select **Restore local session**. This also handles a key expired by a host restart. If an older page is still open, reload it first. `scripts/open-dashboard.command` remains available as a fallback. Phone installation and enrollment are separate. |
 | Invitation rejected | Generate a new complete invitation. It expires after five minutes and is single-use. |
 | Node paired but offline | Keep the companion running, resume it and confirm both devices use the intended private network. Check lifecycle and battery/thermal status. |
 | Paired but no LLM node ready | Pairing is separate from inference. Import/download the exact configured draft and wait for the engine-ready status. |

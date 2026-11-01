@@ -79,5 +79,17 @@ function ready(){
   const announcement=node('device-action-announcement');assert.match(announcement.textContent,/Test requested/);run("snapshot.jobs[0].state='completed';renderNodes()");assert.equal(run('nodeActionFeedback.size'),0,'finished backend job clears stale acknowledgment');assert.equal(announcement.textContent,'');assert.equal(findAction('network').disabled,false);
   const lostNode=findAction('network').onclick();run('sessionReady(false)');resolveNode();await lostNode;assert.equal(node('nodes').querySelectorAll('button').length,0,'session loss removes busy node controls');assert.equal(run('pendingNodeActions.size'),0);assert.equal(announcement.textContent,'');ready();
   run("clientAccess={api_key:'synthetic'}");node('reveal-client-key').onclick();assert.equal(node('reveal-client-key').getAttribute('aria-pressed'),'true');node('reveal-client-key').onclick();assert.equal(node('reveal-client-key').getAttribute('aria-pressed'),'false');
-  console.log('PASS: QR/engine/node duplicate guards, polling-safe busy labels, backend disabling, failure retry, session loss, localized label recovery, key visibility state, and navigation after scroll jumps, explicit links, hash changes and compact-header resize.');
+  let resolveRecovery,recoveryCalls=0,reloads=0,savedSession=null;
+  sandbox.fetch=async(url,options)=>{assert.equal(url,'/admin/session/restore');assert.equal(options.headers['X-NodeLift-Session'],'restore');recoveryCalls++;return new Promise(resolve=>resolveRecovery=resolve);};
+  sandbox.location.reload=()=>reloads++;
+  sandbox.sessionStorage.setItem=(name,value)=>{savedSession=[name,value];};
+  run('sessionReady(false)');assert.equal(node('session-recovery').hidden,false);
+  const recovery=run('restoreSession()');await run('restoreSession()');assert.equal(recoveryCalls,1);assert.equal(node('restore-session').disabled,true);
+  resolveRecovery({ok:false});await recovery;assert.equal(reloads,0);assert.equal(node('restore-session').disabled,false);assert.match(node('session-recovery-status').textContent,/could not be restored/);
+  const recovered=run('restoreSession()');resolveRecovery({ok:true,json:async()=>({token:'synthetic_session_token_123456789012345'})});await recovered;
+  assert.equal(reloads,1);assert.equal(savedSession[0],'nodelift-admin');
+  sandbox.sessionStorage.setItem=()=>{throw Error('storage blocked');};let fragmentFallback='';sandbox.location.replace=url=>fragmentFallback=url;
+  const noStorage=run('restoreSession()');resolveRecovery({ok:true,json:async()=>({token:'synthetic_session_token_123456789012345'})});await noStorage;assert.match(fragmentFallback,/^\/#synthetic_/);assert.equal(reloads,2);
+  run('sessionReady(true)');assert.equal(node('session-recovery').hidden,true);
+  console.log('PASS: session recovery retry/duplicate guard/storage fallback, QR/engine/node duplicate guards, polling-safe busy labels, backend disabling, failure retry, session loss, localized label recovery, key visibility state, and navigation after scroll jumps, explicit links, hash changes and compact-header resize.');
 })().catch(error=>{console.error(error);process.exitCode=1;});

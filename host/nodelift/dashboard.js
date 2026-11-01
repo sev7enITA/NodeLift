@@ -58,7 +58,31 @@ let clientAccessTimer;
 let clientRevealTimer;
 let clientKeyVisible = false;
 const configFields = [['target-model','target_model'],['draft-model','draft_model'],['context-size','n_ctx'],['threads','threads'],['gpu-layers','gpu_layers']];
-const sessionMessage = () => ("This tab has no valid NodeLift session. On your Mac, open scripts/open-dashboard.command in the project folder to reopen the dashboard with access. There is no need to reinstall the phone app.");
+const sessionMessage = () => "This tab needs a new local session. Select Restore local session to reconnect.";
+let restoringSession = false;
+async function restoreSession() {
+  if(restoringSession)return;
+  restoringSession=true;
+  const button=$('restore-session'),status=$('session-recovery-status');
+  button.disabled=true;button.setAttribute('aria-busy','true');
+  setButtonLabel(button,"Restoring session…");status.textContent='';
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),10000);
+  try {
+    const response=await fetch('/admin/session/restore',{method:'POST',headers:{'Content-Type':'application/json','X-NodeLift-Session':'restore'},body:'{}',signal:controller.signal,credentials:'omit',cache:'no-store',redirect:'error'});
+    if(!response.ok)throw Error('recovery failed');
+    const value=await response.json();
+    if(typeof value.token!=='string'||!isSessionFragment(value.token))throw Error('invalid session');
+    // Reload discards requests that still use an expired key.
+    try {sessionStorage.setItem('nodelift-admin',value.token);location.reload();}
+    catch (_) {location.replace('/#'+value.token);location.reload();}
+  } catch (_) {
+    status.textContent=t("Session could not be restored. Check that NodeLift is running on this Mac, then try again.");
+  } finally {
+    clearTimeout(timer);restoringSession=false;button.disabled=false;
+    button.removeAttribute('aria-busy');setButtonLabel(button,"Restore local session");
+  }
+}
+$('restore-session').addEventListener('click',restoreSession);
 const modeNames = {host: "Computer only", local_draft: "Local proposals", remote_draft: "Phone proposals", lookup: "Context reuse"};
 const draftReasons = {no_measured_gain:"no measured gain",probe_cost_exceeded:"probe cost exceeded",remote_probe_timeout:"remote probe timed out: speed unknown",remote_failure:"remote draft unavailable",local_draft_failure:"draft model unavailable"};
 const stateNames = {completed:"Completed", running:"Running", queued:"Queued", failed:"Failed", cancelled:"Stopped", timed_out:"Timed out", expired:"Expired", thermal_pause:"Thermal pause", loading:"Loading", stopped:"Stopped"};
@@ -112,6 +136,7 @@ function updateSessionControls(){
 }
 function sessionReady(ready) {
   authenticated=ready;
+  $('session-recovery').hidden=ready;
   updateSessionControls();
   $('session-dot').className='status-dot '+(ready?'ready':'error');
   $('session-label').textContent=ready?t("Local session active"):t("Access required");

@@ -72,7 +72,7 @@ python3 scripts/fetch-control-models.py
 PYTHONPATH=host python3 -m nodelift.host --address YOUR_PRIVATE_LAN_IPV4
 ```
 
-The optional control-model download is approximately 1.61 GB, with fixed [revisions and hashes](profiles/control-models.json). Open the **private dashboard link printed by the host**, select target/draft, apply the configuration and begin with Host only. Keep invitations and client keys private.
+The optional control-model download is approximately 1.61 GB, with fixed [revisions and hashes](profiles/control-models.json). Open the dashboard at `http://127.0.0.1:9868` on the Mac. If access is required, select **Restore local session**. Then select target/draft, apply the configuration and begin with Host only. Keep invitations and client keys private.
 
 - [QR pairing guide](docs/QR_PAIRING.md)
 - [Engine and companion guide](docs/ENGINE_0_2.md)

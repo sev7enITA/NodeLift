@@ -91,3 +91,10 @@ button[aria-busy="true"]>[aria-hidden="true"],#start-run[data-state="running"]>[
 .graph-weight-key>span{display:inline-block;border-left:3px solid currentColor;padding-left:7px;margin:0 15px 5px 0}
 .graph-weight-key .weight-low{color:#57b6ff}.graph-weight-key .weight-medium{color:#70f0ce}.graph-weight-key .weight-high{color:#ba98ff}
 @media(prefers-reduced-motion:reduce){.graph-edge{animation:none!important;transition:none!important}}
+
+.session-recovery{display:flex;align-items:center;gap:18px;flex-wrap:wrap;border:1px solid var(--accent,#7de5ee)}
+.session-recovery[hidden]{display:none}
+.session-recovery>div{flex:1;min-width:220px}
+.session-recovery p{margin:8px 0 0}
+#session-recovery-status:empty{display:none}
+#session-recovery-status{flex-basis:100%}
