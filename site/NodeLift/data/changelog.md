@@ -4,6 +4,18 @@
 
 Every published companion build has an entry below. Android packages are laboratory builds; iOS packages require Apple signing and provisioning. Historical validation belongs to the named version and does not establish current physical-device performance.
 
+## [0.2.10](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.10): build 12 · 2026-11-01
+
+**Backend selection fixes and synchronized companion builds** · experimental-prerelease
+
+- Publish fresh Android and iOS companion builds from the current source and shared English, Simplified Chinese and Italian catalogs. Retain the Home, Activity and Settings interface, assessment visibility and session-generation guards from 0.2.9.
+- Include the desktop backend catalog-loading controls, matching provider configuration, inline errors and native main/draft explanations in the release source. Verify local LM Studio text generation and public OpenRouter catalog selection separately.
+- Update current download links and installation documentation. Native inference libraries are unchanged; no new phone acceleration capability is claimed.
+
+**Validation:** Android build, 18 JVM tests and lint (0 errors, 17 warnings), plus unsigned iOS ARM64 build passed. Verified existing Android signer, current localization catalogs, unchanged native libraries, source parity and identical ZIP/IPA app payloads. Desktop backend controls have separate live LM Studio and public OpenRouter catalog evidence. No physical-device qualification.
+
+**Limits:** Android remains debug-signed with the existing laboratory signer. iOS packages are unsigned and require Apple signing and provisioning. Physical installation, accessibility and mobile LLM speedup are not qualified. HarmonyOS/NEXT native builds remain deferred.
+
 ## [0.2.9](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.9): build 11 · 2026-11-01
 
 **Device assessment, session visibility and simpler companions** · experimental-prerelease

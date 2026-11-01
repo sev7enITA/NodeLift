@@ -1,33 +1,33 @@
 {
   "updated": "2026-11-01",
-  "version": "0.2.9",
-  "build": 11,
-  "source_commit": "0f286475fa2d98b61cc38e0bd502740b3f3a090c",
+  "version": "0.2.10",
+  "build": 12,
+  "source_commit": "7fb6bd41dd63ec32ea41bc11f5664556abf521a6",
   "languages": [
     "en",
     "zh-Hans",
     "it"
   ],
   "assets": {
-    "NodeLift-0.2.9-android-debug.apk": {
-      "bytes": 22342036,
-      "sha256": "aca7d49054ac36c1196ab4a80894f44edf0cc4f8df48e9e2a4e46865ba4245ce",
-      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.9/NodeLift-0.2.9-android-debug.apk"
+    "NodeLift-0.2.10-android-debug.apk": {
+      "bytes": 22242975,
+      "sha256": "f88d7f6d436f6e1e84b1285812d509939a0989846d52561279c22897e5d5abd3",
+      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.10/NodeLift-0.2.10-android-debug.apk"
     },
-    "NodeLift-0.2.9-ios-unsigned.ipa": {
-      "bytes": 5375253,
-      "sha256": "e6b6001e6686eee55bff91b232200f4ed1f6a1f694227d729c7bc262243bed2a",
-      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.9/NodeLift-0.2.9-ios-unsigned.ipa"
+    "NodeLift-0.2.10-ios-unsigned.ipa": {
+      "bytes": 5378286,
+      "sha256": "aabd2e487cea8070d7e438e240a2cf4be11b36e23c9c40b72943110aab749b48",
+      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.10/NodeLift-0.2.10-ios-unsigned.ipa"
     },
-    "NodeLift-0.2.9-ios-unsigned.zip": {
-      "bytes": 5375029,
-      "sha256": "7e51baa82e11877261c0912c8fccb3660f9a0e02e48d5f334a348aac269340ec",
-      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.9/NodeLift-0.2.9-ios-unsigned.zip"
+    "NodeLift-0.2.10-ios-unsigned.zip": {
+      "bytes": 5378062,
+      "sha256": "0aec1374c542cbc29661be6e25785862c2c495a7d29d22e8c75f6ec4b6f5f94b",
+      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.10/NodeLift-0.2.10-ios-unsigned.zip"
     }
   },
   "platforms": {
     "android": {
-      "artifact": "NodeLift-0.2.9-android-debug.apk",
+      "artifact": "NodeLift-0.2.10-android-debug.apk",
       "status": "compiled-debug-signed",
       "minimum_api": 26,
       "architecture": "arm64-v8a",
@@ -35,8 +35,8 @@
     },
     "ios": {
       "artifacts": [
-        "NodeLift-0.2.9-ios-unsigned.ipa",
-        "NodeLift-0.2.9-ios-unsigned.zip"
+        "NodeLift-0.2.10-ios-unsigned.ipa",
+        "NodeLift-0.2.10-ios-unsigned.zip"
       ],
       "status": "compiled-unsigned",
       "minimum_os": "17.0",
@@ -46,7 +46,7 @@
       "physical_installation_tested": false
     },
     "harmonyos_apk_compatibility_trial": {
-      "artifact": "NodeLift-0.2.9-android-debug.apk",
+      "artifact": "NodeLift-0.2.10-android-debug.apk",
       "status": "unverified-compatibility-trial",
       "requires": [
         "APK support",
@@ -68,8 +68,8 @@
     }
   },
   "verification_scope": "Package identity and IPA payload equivalence; no physical-device installation or performance qualification",
-  "original_build_manifest": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.9/NodeLift-0.2.9-build-manifest.json",
-  "ipa_packaging_manifest": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.9/NodeLift-0.2.9-ios-ipa-manifest.json",
+  "original_build_manifest": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.10/NodeLift-0.2.10-build-manifest.json",
+  "ipa_packaging_manifest": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.10/NodeLift-0.2.10-ios-ipa-manifest.json",
   "about_and_references": true,
   "update_discovery": "Automatic metadata check at launch and weekly while running; overdue check on return from suspension; explicit manual installation",
   "qr_pairing": {
@@ -78,7 +78,7 @@
     "ios": "native AVFoundation scanner; personal signing required",
     "physical_camera_tested": false
   },
-  "published_at": "2026-11-01T23:01:56Z",
+  "published_at": "2026-11-01T23:18:55Z",
   "local_diagnostics": {
     "platforms": [
       "android",
