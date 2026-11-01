@@ -38,3 +38,5 @@ Repository documentation is maintained in English. Application and showcase lang
 
 - [Locally Uncensored source study](../research/locally-uncensored-2026-11-01/ASSESSMENT.md)
 - [Apple MLX comparison and proposed execution architecture](../research/apple-mlx-2026-11-01/ASSESSMENT.md)
+
+- [Model library functional audit and tested limits](evidence/model-library-2026-11-01/REPORT.md)

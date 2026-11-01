@@ -1,0 +1,9 @@
+{
+  "anonymous_http_readback": true,
+  "files": [
+    "index.html",
+    "data/changelog.md",
+    "data/changelog.json"
+  ],
+  "mobile_binaries_changed": false
+}

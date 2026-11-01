@@ -823,7 +823,14 @@ const NodeLiftChinese = {
   "● Session active": "● 会话已启用",
   "✓ Draft ready": "✓ 草稿模型已就绪",
   "✓ Session active": "✓ 会话已启用",
-  "Update NodeLift on your computer before pairing.": "配对前请更新电脑上的 NodeLift。"
+  "Update NodeLift on your computer before pairing.": "配对前请更新电脑上的 NodeLift。",
+  "Inspecting model files…": "正在检查模型文件…",
+  "Model files loaded.": "模型文件已加载。",
+  "Model inspection failed. Check the repository and try again.": "模型检查失败。请检查仓库后重试。",
+  "Searching Hugging Face…": "正在搜索 Hugging Face…",
+  "Select a repository to inspect its GGUF files.": "选择一个仓库以检查其 GGUF 文件。",
+  "No matching public GGUF repositories found.": "未找到匹配的公开 GGUF 仓库。",
+  "Search failed. Check the connection and try again.": "搜索失败。请检查连接后重试。"
 };
 const NodeLiftItalian = {
   "0 layers uses CPU. 999 requests the maximum GPU offload supported by the backend. Compatibility depends on the model.": "0 livelli usa la CPU. 999 richiede il massimo numero di livelli sulla GPU supportato dal backend. La compatibilità dipende dal modello.",
@@ -1648,7 +1655,14 @@ const NodeLiftItalian = {
   "● Session active": "● Sessione attiva",
   "✓ Draft ready": "✓ Draft pronto",
   "✓ Session active": "✓ Sessione attiva",
-  "Update NodeLift on your computer before pairing.": "Aggiorna NodeLift sul computer prima dell’abbinamento."
+  "Update NodeLift on your computer before pairing.": "Aggiorna NodeLift sul computer prima dell’abbinamento.",
+  "Inspecting model files…": "Ispezione dei file del modello…",
+  "Model files loaded.": "File del modello caricati.",
+  "Model inspection failed. Check the repository and try again.": "Ispezione non riuscita. Controlla il repository e riprova.",
+  "Searching Hugging Face…": "Ricerca su Hugging Face…",
+  "Select a repository to inspect its GGUF files.": "Seleziona un repository per consultarne i file GGUF.",
+  "No matching public GGUF repositories found.": "Nessun repository GGUF pubblico corrispondente.",
+  "Search failed. Check the connection and try again.": "Ricerca non riuscita. Controlla la connessione e riprova."
 };
 const NodeLiftCatalogs = {"zh-Hans": NodeLiftChinese, it: NodeLiftItalian};
 'use strict';

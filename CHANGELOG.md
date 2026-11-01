@@ -107,7 +107,13 @@ Every published companion build has an entry below. Android packages are laborat
 
 **Limits:** The remote test node was emulated. Physical-phone inference/speedup, sustained thermals, capacity sharding, hybrid speculative checkpoints, HarmonyOS native worker and installed LM Studio GUI qualification remained open. The 27B upstream kernel result is not NodeLift hybrid-model support.
 
-## Documentation and tooling updates
+## Host, documentation and tooling updates
+
+### 2026-11-01: Host dashboard: Model library rendering fix and functional audit
+
+- Fix Hugging Face result buttons that incorrectly reused device-action state and raised an undefined-message error. Add independent model-operation busy states, explicit search/inspection feedback, upload cancellation and session-aware controls.
+- Verify real Hugging Face search, inspection, a 19 MB download with SHA-256, cancellation, path import and chunked HTTP upload. Verify a 16-token native Qwen run and the live public OpenRouter catalog. Provider configuration uses an explicit local test fixture; no cloud-generation or installed third-party GUI qualification is claimed.
+- Add combined dashboard/model-library UI regression checks to CI and publish docs/evidence/model-library-2026-11-01/REPORT.md. Companion binaries remain 0.2.8.
 
 ### 2026-11-01: Network recovery guides and unused legacy icon fallback
 

@@ -87,7 +87,7 @@ const modeNames = {host: "Computer only", local_draft: "Local proposals", remote
 const draftReasons = {no_measured_gain:"no measured gain",probe_cost_exceeded:"probe cost exceeded",remote_probe_timeout:"remote probe timed out: speed unknown",remote_failure:"remote draft unavailable",local_draft_failure:"draft model unavailable"};
 const stateNames = {completed:"Completed", running:"Running", queued:"Queued", failed:"Failed", cancelled:"Stopped", timed_out:"Timed out", expired:"Expired", thermal_pause:"Thermal pause", loading:"Loading", stopped:"Stopped"};
 function el(tag, text, cls) { const n = document.createElement(tag); if (text !== undefined) n.textContent = text; if (cls) n.className = cls; return n; }
-function showError(error, id='error') { $(id).dataset.message=error.message || String(error); $(id).textContent = t($(id).dataset.message); $(id).hidden = false; }
+function showError(error, id='error') { $(id).dataset.message=error?.message || String(error ?? 'Request failed'); $(id).textContent = t($(id).dataset.message); $(id).hidden = false; }
 function clearError(id='error') { $(id).hidden = true; $(id).textContent = ''; delete $(id).dataset.message; }
 function number(value, digits=2) { return typeof value === 'number' && Number.isFinite(value) ? value.toLocaleString(NodeLiftI18n.locale,{minimumFractionDigits:digits,maximumFractionDigits:digits}) : '-'; }
 function gib(value) { return typeof value === 'number' ? number(value / 1073741824,1) + ' GiB' : t("Not detected"); }
@@ -101,12 +101,13 @@ function announceNodeAction(nodeId,message){
   $('device-action-announcement').textContent=message?(name?name+': ':'')+t(message):'';
 }
 function action(label,fn,{quiet=false,disabled=false,danger=false,nodeId,kind,busyLabel}={}) {
-  const pending=pendingNodeActions.get(nodeId);
-  const b=el('button',t(pending?.kind===kind?pending.message:label),quiet?'quiet':'');
-  b.type='button';b.dataset.node=nodeId;b.dataset.action=kind;b.dataset.idleLabel=label;b.dataset.i18n=pending?.kind===kind?pending.message:label;
+  const pending=nodeId ? pendingNodeActions.get(nodeId) : null;
+  const matchesPending=!!pending&&pending.kind===kind;
+  const b=el('button',t(matchesPending?pending.message:label),quiet?'quiet':'');
+  b.type='button';b.dataset.node=nodeId;b.dataset.action=kind;b.dataset.idleLabel=label;b.dataset.i18n=matchesPending?pending.message:label;
   if(danger)b.classList.add('danger');
   b.disabled=disabled||!authenticated||!!pending;
-  if(pending?.kind===kind)b.setAttribute('aria-busy','true');
+  if(matchesPending)b.setAttribute('aria-busy','true');
   b.onclick=async()=>{
     if(b.disabled||!authenticated||pendingNodeActions.has(nodeId))return;
     const requestedAt=Date.now()/1000,priorJobs=(snapshot?.jobs||[]).filter(job=>job.node===nodeId&&job.kind===kind).map(job=>job.id??job.created);
@@ -157,6 +158,7 @@ function sessionReady(ready) {
   }
   renderAboutVersion();
   updateEngineControls();
+  if(typeof updateLibraryControls==='function')updateLibraryControls();
 }
 async function api(path, body) {
   if(!key){sessionReady(false);throw Error(sessionMessage());}

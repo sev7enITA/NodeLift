@@ -77,7 +77,7 @@ def render_markdown(data):
         lines += ['- '+change for change in item['changes']]
         lines += ['', '**Validation:** '+item['validation'], '', '**Limits:** '+item['limitations'], '']
     if data.get('documentation_updates'):
-        lines += ['## Documentation and tooling updates', '']
+        lines += ['## Host, documentation and tooling updates', '']
         for update in data['documentation_updates']:
             lines += [f"### {update['date']}: {update['title']}", '']
             lines += ['- '+change for change in update['changes']]
@@ -97,6 +97,13 @@ def render_html(data):
         lines += ['</ul><p><strong>Validation:</strong> '+escape(item['validation'])+'</p>',
                   '<p><strong>Limits:</strong> '+escape(item['limitations'])+'</p>',
                   f'<p><a href="{escape(item["url"], quote=True)}" target="_blank" rel="noopener noreferrer">Release assets and original notes ↗</a></p></div></details>']
+    if data.get('documentation_updates'):
+        lines += ['<details class="release-entry"><summary><strong>Host, documentation and tooling updates</strong></summary><div class="release-body">']
+        for update in data['documentation_updates']:
+            lines += ['<h3>'+escape(update['date']+': '+update['title'])+'</h3><ul>']
+            lines += ['<li>'+escape(change)+'</li>' for change in update['changes']]
+            lines += ['</ul>']
+        lines += ['</div></details>']
     lines += ['</div>']
     return '\n'.join(lines)
 

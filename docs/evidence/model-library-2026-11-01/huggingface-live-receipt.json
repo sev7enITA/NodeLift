@@ -1,0 +1,18 @@
+{
+  "status": "completed",
+  "bytes": 18901824,
+  "sha256": "18c65e5d40d793bf1bd6a5eccfece9e5913a2463f6e6f9624fc41f4a2ff1a937",
+  "source": {
+    "kind": "huggingface",
+    "repo": "mradermacher/llama2.c-stories15M-GGUF",
+    "revision": "7f13cd6df2c1e9c3ddf84d7ac09753d458a3b750",
+    "file": "llama2.c-stories15M.Q2_K.gguf",
+    "sha256": "18c65e5d40d793bf1bd6a5eccfece9e5913a2463f6e6f9624fc41f4a2ff1a937"
+  },
+  "browser_search_verified": true,
+  "browser_repository_inspection_verified": true,
+  "browser_path_import_verified": true,
+  "browser_download_completion_verified": true,
+  "browser_native_file_picker_automated": false,
+  "browser_download_registered_sha256_verified": true
+}

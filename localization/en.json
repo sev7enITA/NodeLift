@@ -821,5 +821,12 @@
   "● Session active": "● Session active",
   "✓ Draft ready": "✓ Draft ready",
   "✓ Session active": "✓ Session active",
-  "Update NodeLift on your computer before pairing.": "Update NodeLift on your computer before pairing."
+  "Update NodeLift on your computer before pairing.": "Update NodeLift on your computer before pairing.",
+  "Inspecting model files…": "Inspecting model files…",
+  "Model files loaded.": "Model files loaded.",
+  "Model inspection failed. Check the repository and try again.": "Model inspection failed. Check the repository and try again.",
+  "Searching Hugging Face…": "Searching Hugging Face…",
+  "Select a repository to inspect its GGUF files.": "Select a repository to inspect its GGUF files.",
+  "No matching public GGUF repositories found.": "No matching public GGUF repositories found.",
+  "Search failed. Check the connection and try again.": "Search failed. Check the connection and try again."
 }

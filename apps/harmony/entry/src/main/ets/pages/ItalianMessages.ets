@@ -822,5 +822,12 @@ export const italianMessages: Record<string, string> = {
   "● Session active": "● Sessione attiva",
   "✓ Draft ready": "✓ Draft pronto",
   "✓ Session active": "✓ Sessione attiva",
-  "Update NodeLift on your computer before pairing.": "Aggiorna NodeLift sul computer prima dell’abbinamento."
+  "Update NodeLift on your computer before pairing.": "Aggiorna NodeLift sul computer prima dell’abbinamento.",
+  "Inspecting model files…": "Ispezione dei file del modello…",
+  "Model files loaded.": "File del modello caricati.",
+  "Model inspection failed. Check the repository and try again.": "Ispezione non riuscita. Controlla il repository e riprova.",
+  "Searching Hugging Face…": "Ricerca su Hugging Face…",
+  "Select a repository to inspect its GGUF files.": "Seleziona un repository per consultarne i file GGUF.",
+  "No matching public GGUF repositories found.": "Nessun repository GGUF pubblico corrispondente.",
+  "Search failed. Check the connection and try again.": "Ricerca non riuscita. Controlla la connessione e riprova."
 };

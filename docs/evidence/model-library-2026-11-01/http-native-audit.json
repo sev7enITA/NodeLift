@@ -1,0 +1,19 @@
+{
+  "scope": "Real loopback HTTP and supplied-model inference; synthetic local provider catalog; no cloud generation",
+  "checks": {
+    "direct_path_and_missing_file": "passed",
+    "real_gguf_chunked_upload_hash_and_publication": "passed",
+    "upload_cancellation_and_partial_cleanup": "passed",
+    "local_api_configure_catalog_clear_key_fixture": "passed",
+    "openrouter_live_public_catalog": {
+      "count": 433,
+      "cloud_generation": false
+    },
+    "native_load_and_16_token_run": {
+      "status": "completed",
+      "text_nonempty": true,
+      "backend": "native"
+    }
+  },
+  "all_passed": true
+}
