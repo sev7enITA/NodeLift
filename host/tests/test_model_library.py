@@ -85,6 +85,39 @@ class LibraryTests(unittest.TestCase):
         for data in (GGUF[:-1],GGUF+b'x'):
             with patch.object(self.library,'inspect',return_value=info),patch('nodelift.model_library.hub_open',return_value=Response(data)):
                 self.library.download({'revision':'a'*40,'file':'x.gguf'});self.assertEqual(self.wait()['status'],'failed')
+
+    def test_cancelled_download_is_not_reported_as_a_failure(self):
+        # Cancel while the worker is opening the HTTP response, before its read loop.
+        info={'repo':'owner/repo','revision':'a'*40,'gated':False,'files':[{'name':'x.gguf','bytes':len(GGUF),'sha256':hashlib.sha256(GGUF).hexdigest()}]}
+        def opened(_url):
+            self.library.cancel(self.library.transfer['id'])
+            return Response(GGUF)
+        with patch.object(self.library,'inspect',return_value=info),patch('nodelift.model_library.hub_open',side_effect=opened):
+            self.library.download({'repo':'owner/repo','revision':'a'*40,'file':'x.gguf'})
+            row=self.wait()
+        self.assertEqual(row['status'],'cancelled')
+        self.assertNotIn('error',row)
+        self.assertFalse(list(self.library.folder.glob('.nodelift-*.part')))
+        self.assertEqual(self.library.paths(),[])
+        identity=self.start();self.library.upload_chunk(identity,0,GGUF);self.library.finish(identity)
+        self.assertEqual(self.wait()['status'],'completed')
+
+    def test_symlinked_library_preserves_uploaded_provenance_after_reload(self):
+        real=self.root/'real';real.mkdir();alias=self.root/'alias'
+        try:alias.symlink_to(real,target_is_directory=True)
+        except OSError:self.skipTest('directory symlinks unavailable')
+        self.library=ModelLibrary(alias)
+        identity=self.start();self.library.upload_chunk(identity,0,GGUF);self.library.finish(identity)
+        row=self.wait();path=Path(row['path']);canonical=path.resolve()
+        self.assertEqual(row['status'],'completed')
+        self.assertEqual(self.library.source(canonical)['kind'],'upload')
+        self.assertEqual(self.library.source(path)['sha256'],hashlib.sha256(GGUF).hexdigest())
+        # Also read old registries that stored the alias before canonicalization.
+        source=self.library.source(canonical)
+        self.library.registry_path.write_text(json.dumps({str(path):source}))
+        restored=ModelLibrary(real)
+        self.assertEqual(restored.paths(),[canonical])
+        self.assertEqual(restored.source(canonical),source)
     def test_redirect_allowlist(self):
         redirect=HubRedirect();req=Request('https://huggingface.co/owner/repo/resolve/revision/x.gguf')
         for url in ('http://huggingface.co/file','https://evil.test/file','https://huggingface.co.evil.test/file','https://127.0.0.1/file'):

@@ -39,6 +39,8 @@ let handler=async()=>({});
 sandbox.testApi=async(route,body)=>{calls.push({route,body});return handler(route,body);};
 run('api=testApi;refreshEngine=async()=>{renderModelLibrary();};authenticated=true;engineSnapshot={available:true,library:{transfer:null},providers:{models:{}},models:[]};updateLibraryControls();');
 (async()=>{
+  run("optionsForModels($('target-model'),[{path:'/fixture/small.gguf',name:'small',bytes:18901824,source:'upload'}],'Choose')");
+  assert.match(node('target-model').children[1].textContent,/18\.0 MiB/,'small imported model must not appear as zero GiB');
   assert.equal(run("action('Generic result',async()=>{}).textContent"),'Generic result','generic buttons must not dereference undefined pending actions');
   run('showError(undefined,"model-error")');assert.equal(node('model-error').textContent,'Request failed');
   let finish;handler=()=>new Promise(resolve=>finish=resolve);node('hf-query').value='real-query';

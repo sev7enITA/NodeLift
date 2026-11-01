@@ -1,6 +1,6 @@
 # Add an Android phone
 
-[Download the 0.2.6 ARM64 laboratory APK](https://github.com/sev7enITA/NodeLift/releases/download/v0.2.6/NodeLift-0.2.6-android-debug.apk). It is debug-signed, not a Play Store release. Update an existing same-key installation without uninstalling to retain pairing. If the OS reports a signature conflict, stop and report it; do not erase the app’s data as a first workaround.
+[Download the 0.2.8 ARM64 laboratory APK](https://github.com/sev7enITA/NodeLift/releases/download/v0.2.8/NodeLift-0.2.8-android-debug.apk). It is debug-signed, not a Play Store release. Update an existing same-key installation without uninstalling to retain pairing. If the OS reports a signature conflict, stop and report it; do not erase the app’s data as a first workaround.
 
 1. Keep the computer and phone on the same private network. The phone may provide the hotspot, but this topology must be measured rather than assumed fastest.
 2. In the authenticated host dashboard, choose **Add device**. In the companion choose **Scan QR**, scan the desktop code and confirm the computer. Invitations are single-use and expire after five minutes.
@@ -18,3 +18,5 @@ The current worker uses ARM64 CPU. GPU/NPU acceleration is not enabled. The mobi
 See the [QR pairing guide](https://github.com/sev7enITA/NodeLift/blob/main/docs/QR_PAIRING.md) for camera permissions, manual fallback and invitation lifecycle.
 
 Version 0.2.6 replaces the legacy QR scanner with CameraX, adds retry/cancel feedback, and distinguishes disabled, pressed and busy controls. Its Xiaomi scan repair still needs an on-device trial. See [validation scope](https://github.com/sev7enITA/NodeLift/blob/main/docs/evidence/companion-0.2.6/README.md).
+
+Version 0.2.8 adds installation-scoped enrollment identity and local dashboard session recovery. In the November 1 exploratory test, a Xiaomi completed the draft download and CPU calibration, but two network jobs timed out and stable remote inference could not be qualified. A draft-ready label is not proof of a working inference route. See the [exploratory QA report](https://github.com/sev7enITA/NodeLift/blob/main/docs/EXPLORATORY_QA_2026_11_01.md).

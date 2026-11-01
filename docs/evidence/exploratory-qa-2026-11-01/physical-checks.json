@@ -1,0 +1,66 @@
+{
+  "scope": "Physical functional checks, not a performance comparison",
+  "companion_version": "0.2.8",
+  "draft_ready_observed": true,
+  "diagnostics": [
+    {
+      "kind": "cpu",
+      "state": "completed",
+      "created": 1793570786.751564,
+      "started": 1793570791.391121,
+      "finished": 1793570792.9353962,
+      "result": {
+        "status": "completed",
+        "samples": [
+          {
+            "kind": "cpu",
+            "iterations": 5227,
+            "ms": 1500.001979,
+            "checksum": 5.199524879455566
+          }
+        ],
+        "note": "FP32 matvec 256\u00d7256, Kotlin/JVM, single thread. No tokens/s prediction.",
+        "measurement": "application-level qualification; not LLM performance"
+      }
+    },
+    {
+      "kind": "network",
+      "state": "timed_out",
+      "created": 1793570523.229902,
+      "started": 1793570527.960465,
+      "finished": 1793570649.3498151,
+      "result": null
+    },
+    {
+      "kind": "network",
+      "state": "timed_out",
+      "created": 1793570348.01247,
+      "started": 1793570349.8703759,
+      "finished": 1793570471.6668448,
+      "result": null
+    }
+  ],
+  "remote_inference": {
+    "status": "blocked",
+    "reason": "No stable online-ready node during 90-second eligibility wait; no remote generation dispatched"
+  },
+  "identity_migration": "Legacy offline enrollment coexists with newer enrollment; no name-based consolidation performed",
+  "host_functional_control": {
+    "mode": "host",
+    "status": "completed",
+    "metrics": {
+      "load_ms": 1020.6847910303622,
+      "prefill_ms": 34.61333300219849,
+      "ttft_ms": 40.83508299663663,
+      "generated_tokens": 20,
+      "accepted_tokens": 0,
+      "proposed_tokens": 0,
+      "elapsed_seconds": 0.15052341599948704,
+      "tokens_per_second": 172.54754274024506,
+      "fallbacks": 0,
+      "remote_wait_ms": 0,
+      "request_total_ms": 1172.5387500482611
+    },
+    "text": "Latency is the delay or time it takes for data to travel from one place to another."
+  }
+}

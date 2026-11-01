@@ -133,6 +133,15 @@
   "documentation_updates": [
     {
       "date": "2026-11-01",
+      "title": "Host functional QA with GLM and Gemini, fixes and physical-device limits",
+      "changes": [
+        "Fix cancelled-download error feedback, canonical model provenance and small-model size labels. Localize additional native/validation errors and expose the recorded reason when a run falls back to the computer.",
+        "Execute real browser model upload, cancellation, native run/stop/reconfiguration, gateway and localization checks with GLM 5.3 Max and Gemini 4 High providing mediated test plans and reviews. Publish a scoped audit and sanitized receipts; external models did not operate localhost.",
+        "A physical Xiaomi completed draft loading and CPU calibration, but two network jobs timed out and no stable remote inference route was qualified. Preserve these failures and the unresolved legacy enrollment duplication. No mobile speedup or pooled RAM claim; companion binaries remain 0.2.8."
+      ]
+    },
+    {
+      "date": "2026-11-01",
       "title": "Host dashboard: Model library rendering fix and functional audit",
       "changes": [
         "Fix Hugging Face result buttons that incorrectly reused device-action state and raised an undefined-message error. Add independent model-operation busy states, explicit search/inspection feedback, upload cancellation and session-aware controls.",

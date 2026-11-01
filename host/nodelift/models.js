@@ -26,7 +26,6 @@ async function modelTask(fn,group='general'){
   finally{libraryBusy.delete(group);updateLibraryControls();}
 }
 const transferNames={transferring:'Transferring',verifying:'Verifying',completed:'Completed',cancelled:'Stopped',failed:'Failed',expired:'Expired'};
-function modelSize(bytes){return typeof bytes==='number'&&bytes>=0&&bytes<1073741824?number(bytes/1048576,1)+' MiB':gib(bytes);}
 function modelMessage(message){libraryMessage=message;$('transfer-status').textContent=t(message);}
 function renderProviderInfo(){
   const backend=$('run-backend').value,model=(engineSnapshot?.providers?.models?.[backend]||[]).find(m=>m.id===$('provider-model').value);

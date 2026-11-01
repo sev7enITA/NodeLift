@@ -96,14 +96,14 @@ class ModelLibrary:
         with self.lock: return [Path(p) for p in self.records]
 
     def source(self, path):
-        with self.lock: return dict(self.records.get(str(path), {}))
+        with self.lock: return dict(self.records.get(str(Path(path).resolve()), {}))
 
     @staticmethod
     def _read_registry(path):
         data=json.loads(path.read_text())
         if not isinstance(data,dict) or any(not isinstance(k,str) or not isinstance(v,dict) for k,v in data.items()):
             raise ValueError('Invalid model registry')
-        return data
+        return {str(Path(key).resolve()): value for key, value in data.items()}
 
     @staticmethod
     def _save_registry(path, records):
@@ -117,6 +117,7 @@ class ModelLibrary:
             finally:os.close(descriptor)
 
     def _register(self, path, source):
+        path = Path(path).resolve()
         with self.lock:
             records = {**self.records, str(path): source}
             self._save_registry(self.registry_path.with_suffix('.bak'),self.records)
@@ -285,7 +286,10 @@ class ModelLibrary:
             if not self.transfer or self.transfer['id'] != identity: return
             self._discard_part()
             self.transfer['status'] = 'cancelled' if self.cancelled.is_set() else 'failed'
-            self.transfer['error'] = message
+            if self.cancelled.is_set():
+                self.transfer.pop('error', None)
+            else:
+                self.transfer['error'] = message
 
     def _finalize(self, identity):
         try:

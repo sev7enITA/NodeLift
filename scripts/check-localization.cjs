@@ -18,6 +18,8 @@ const fresh=session();assert.equal(fresh.i18n.language,'en');assert.equal(fresh.
 assert.equal(session('invalid').i18n.language,'en');assert.equal(session(undefined,true).i18n.language,'en');
 fresh.i18n.setLanguage('zh-Hans');assert.equal(fresh.document.documentElement.lang,'zh-Hans');
 assert.equal(fresh.i18n.t('Add device'),'添加设备');
+assert.equal(fresh.i18n.t('prompt and output exceed context budget'),'提示词与输出上限超过可用上下文容量');
+assert.equal(fresh.i18n.t('model has no chat template'),'模型不包含聊天模板');
 assert.equal(fresh.i18n.t('CPU · {0} iterations in {1} ms',9,123),'CPU · 123 毫秒内完成 9 次迭代');
 assert.equal(fresh.i18n.t('Measurement interrupted: {0}','<script>{1}$&你好</script>'),'测量已中断：<script>{1}$&你好</script>');
 assert.equal(fresh.i18n.t('unknown external diagnostic'), 'unknown external diagnostic');
@@ -26,6 +28,8 @@ assert.equal(session(fresh.values.get('nodelift-language')).i18n.language,'zh-Ha
 fresh.i18n.setLanguage('it');assert.equal(fresh.document.documentElement.lang,'it');
 assert.equal(fresh.i18n.locale,'it-IT');
 assert.equal(fresh.i18n.t('Add device'),'Aggiungi dispositivo');
+assert.equal(fresh.i18n.t('prompt and output exceed context budget'),'Il prompt e il limite di output superano il contesto disponibile');
+assert.equal(fresh.i18n.t('model has no chat template'),'Il modello non contiene un template di chat');
 assert.equal(fresh.i18n.t('CPU · {0} iterations in {1} ms',9,123),'CPU · 9 iterazioni in 123 ms');
 assert.equal(fresh.i18n.t('Measurement interrupted: {0}','<script>{1}$&你好</script>'),'Misura interrotta: <script>{1}$&你好</script>');
 assert.equal(fresh.i18n.t('Model library'),'Libreria modelli');

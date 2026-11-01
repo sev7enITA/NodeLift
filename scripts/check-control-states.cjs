@@ -44,6 +44,10 @@ function ready(){
   setSectionTops([-1500,194,1800,3400,5000,6600]);dispatchWindow('hashchange');assert.equal(navLinks[1].getAttribute('aria-current'),'location');assert.equal(navLinks.filter(link=>link.getAttribute('aria-current')==='location').length,1);
   assert.equal(run("navigationSectionAt([{id:'engine',top:-300,height:1200},{id:'hidden',top:0,height:0},{id:'measurements',top:900,height:400}],120)"),'engine');
   ready();
+  run("renderRuns([{mode:'remote_draft',status:'completed',fallback_reason:'remote draft deadline exceeded',text:'Host output',metrics:{}}])");
+  assert.match(node('engine-runs').textContent,/Returned to computer: remote draft deadline exceeded/,'completed fallback must disclose its cause');
+  run("renderRuns([{mode:'host',status:'completed',text:'Host output',metrics:{}}])");
+  assert.doesNotMatch(node('engine-runs').textContent,/Returned to computer/,'ordinary host execution is not a fallback');
   const opening=run('openPairing()');await run('openPairing()');assert.equal(pairingCalls,1,'duplicate QR creation blocked');
   run('sessionReady(true)');assert.equal(node('invite').disabled,true);assert.equal(labelText('invite'),'Creating QR code…');assert.equal(node('invite').getAttribute('aria-busy'),'true');
   resolvePairing();await opening;assert.equal(node('invite').disabled,false);assert.equal(node('invite').getAttribute('aria-busy'),null);assert.equal(inviteLabel.dataset.i18n,'Add device','idle label still localizes after busy rendering');assert.equal(node('invite').children[0],inviteIcon,'pairing retains the icon node');assert.equal(node('invite').children[1],inviteLabel,'pairing retains the label node');

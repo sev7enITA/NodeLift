@@ -91,6 +91,7 @@ function showError(error, id='error') { $(id).dataset.message=error?.message || 
 function clearError(id='error') { $(id).hidden = true; $(id).textContent = ''; delete $(id).dataset.message; }
 function number(value, digits=2) { return typeof value === 'number' && Number.isFinite(value) ? value.toLocaleString(NodeLiftI18n.locale,{minimumFractionDigits:digits,maximumFractionDigits:digits}) : '-'; }
 function gib(value) { return typeof value === 'number' ? number(value / 1073741824,1) + ' GiB' : t("Not detected"); }
+function modelSize(bytes){return typeof bytes==='number'&&bytes>=0&&bytes<1073741824?number(bytes/1048576,1)+' MiB':gib(bytes);}
 function quantile(values,q) { const a=[...values].filter(Number.isFinite).sort((x,y)=>x-y); return a.length ? a[Math.ceil(q*a.length)-1] : null; }
 function when(epoch) { const d=new Date(epoch*1000); return Number.isFinite(d.getTime()) ? d.toLocaleString(NodeLiftI18n.locale,{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}) : '-'; }
 function empty(title, detail) { const box=el('div',undefined,'empty'); box.append(el('span','⌁','empty-symbol'),el('h3',title),el('p',detail)); return box; }
@@ -255,7 +256,7 @@ function optionsForModels(select,models,placeholder) {
   const signature=NodeLiftI18n.language+JSON.stringify(models.map(m=>[m.path||m.id,m.name,m.bytes,m.source]));
   if(select.dataset.models===signature)return;
   select.dataset.models=signature;select.replaceChildren();const blank=el('option',placeholder);blank.value='';select.append(blank);
-  for(const m of models){const option=el('option',(m.name||m.id)+(m.source==='huggingface'?' · Hugging Face':m.source==='upload'?' · '+t('Imported file'):'')+(typeof m.bytes==='number'?' · '+gib(m.bytes):''));option.value=m.path||m.id;select.append(option);}
+  for(const m of models){const option=el('option',(m.name||m.id)+(m.source==='huggingface'?' · Hugging Face':m.source==='upload'?' · '+t('Imported file'):'')+(typeof m.bytes==='number'?' · '+modelSize(m.bytes):''));option.value=m.path||m.id;select.append(option);}
   if(models.some(m=>(m.path||m.id)===selected))select.value=selected;
 }
 function firstNumber(object,keys){for(const key of keys)if(typeof object[key]==='number'&&Number.isFinite(object[key]))return object[key];return null;}
@@ -277,6 +278,7 @@ function renderRuns(runs) {
     if(accepted!==null&&proposed!==null){const item=el('span',undefined,'run-metric');item.append(el('strong',number(accepted,0)+' / '+number(proposed,0)),document.createTextNode(t("accepted proposals")));metrics.append(item);}
     if(metrics.children.length)card.append(metrics);
     if(r.error)card.append(el('p',t(r.error),'run-error'));
+    if(r.fallback_reason)card.append(el('p',t('Returned to computer: {0}',t(r.fallback_reason)),'run-error'));
     if(r.text)card.append(el('pre',r.text,'output-text'));else if(['queued','running','loading'].includes(r.status))card.append(el('p',t("Processing…"),'muted'));
     if(r.status==='completed'&&!r.text&&r.backend&&r.backend!=='native')card.append(el('p',t('Completed without visible text. Try a larger output budget or a text model.'),'muted'));
     if(r.prompt&&(!r.backend||r.backend==='native')){
