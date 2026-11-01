@@ -1,5 +1,5 @@
 {
-  "source_commit": "32b2c66c67701e29b3537c380ccc912978d25412",
+  "source_commit": "72bf2659e35982d7af9ec0361db4f68e3bc1ad78",
   "kind": "final-source live host/gateway smoke checks; no cloud generation",
   "gateway_local_model": "qwen3.8-27b",
   "gateway_text": "HELLO",
