@@ -1,6 +1,6 @@
-# NodeLift laboratory guide (companion 0.2.5)
+# NodeLift laboratory guide (companion 0.2.6)
 
-The native engine was introduced in 0.2.1. The current companion is **0.2.5 / build 7**, with desktop QR pairing, default English, Simplified Chinese and Italian. **No inference speedup on a physical phone has been demonstrated.** See the [changelog](../CHANGELOG.md) and [installation requirements](MOBILE_DOWNLOADS.md).
+The native engine was introduced in 0.2.1. The current companion is **0.2.6 / build 8**, with desktop QR pairing, local diagnostic export, automatic update discovery, default English, Simplified Chinese and Italian. **No inference speedup on a physical phone has been demonstrated.** See the [changelog](../CHANGELOG.md) and [installation requirements](MOBILE_DOWNLOADS.md).
 
 ## Computer
 
@@ -15,7 +15,7 @@ Configuration stays in the private state directory. The dashboard token rotates 
 
 ## Android ARM64
 
-Version 0.2.5 retains the existing laboratory debug signing identity. Updating an installation requires the same signing key. Install over the existing app to preserve saved pairings; do not uninstall first. This is a laboratory build, not a Play Store release.
+Version 0.2.6 retains the existing laboratory debug signing identity. Updating an installation requires the same signing key. Install over the existing app to preserve saved pairings; do not uninstall first. This is a laboratory build, not a Play Store release.
 
 1. Install the updated APK and open NodeLift. For an existing pairing, choose Resume session. For a new pairing, choose **Add device** on the desktop and **Scan QR** on the phone, then confirm the computer address and fingerprint. See [QR pairing](QR_PAIRING.md).
 2. On the Mac, select `qwen2.5-1.5b-instruct-q4_k_m.gguf` as target and `qwen2.5-0.5b-instruct-q4_k_m.gguf` as draft; apply the configuration.

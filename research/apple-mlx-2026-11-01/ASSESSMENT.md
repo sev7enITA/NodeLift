@@ -8,11 +8,15 @@ Apple's [15 October research article](https://machinelearning.apple.com/research
 
 [MLX distributed documentation](https://ml-explore.github.io/mlx/build/html/usage/distributed.html) supplies the backend/collective interface and deployment details. A NodeLift backend adapter could use these primitives on compatible Macs; it would not make Thunderbolt RDMA available to ordinary Android/iOS hotspot nodes.
 
+The distinction is between Apple's published Mac experiment and the whole MLX framework: current communication documentation also lists MPI, TCP RING and NCCL for CUDA. MLX must not be described as exclusively a Mac-to-Mac runtime. JACCL currently requires a fully connected supported Thunderbolt topology. The owner's [M3 Max MacBook Pro has Thunderbolt 4](https://support.apple.com/en-us/117737); it is not the Thunderbolt 5 RDMA hardware demonstrated in the article.
+
+There is also a configuration issue to qualify: the article enables `MLX_METAL_FAST_SYNCH=1`, while the current documentation recommends leaving it unset because of a possible GPU deadlock, referencing [upstream issue 3142](https://github.com/ml-explore/mlx/issues/3142). Record versions and flags and test the actual configuration. This warning is not evidence that every MLX backend or the published benchmark is invalid.
+
 | Dimension | Apple MLX comparison point | NodeLift implemented/observed state |
 | --- | --- | --- |
 | Capacity | Target model can be partitioned across Macs | Target-model capacity sharding is not implemented; phone draft weights do not extend target-model memory |
 | Acceleration | Published homogeneous-cluster inference measurements | Small-pair local drafting was slower; no phone LLM speedup demonstrated |
-| Hardware | Mac/Apple-silicon distributed execution | M3 Max host; Android ARM64 CPU and iOS Metal/CPU companion code; physical inference qualification open |
+| Hardware | Published multi-Mac test; MLX also documents CUDA/NCCL and other communication backends | M3 Max host; Android ARM64 CPU and iOS Metal/CPU companion code; physical inference qualification open |
 | Network | Low-latency wired collectives | Hotspot application HTTPS p50 around 6–9 ms, with substantial tails; no sustained under-load link qualification |
 | Reliability and control | Framework/runtime capability, separate from a consumer companion lifecycle | Pairing, identity checks, consent, thermal/battery limits and bounded fallback exist; effect on long real sessions remains unqualified |
 | Evidence | Vendor benchmark configuration is published | Raw local results, failures and limits are published; model reviews are advisory |
@@ -23,6 +27,8 @@ NodeLift evidence: [engine results and numerical divergence](../measurements/ENG
 ## Proposed execution architecture
 
 These are proposed lanes, not newly shipped backend capabilities:
+
+The concrete [distributed execution RFC](../../docs/RFC_DISTRIBUTED_EXECUTION.md) now specifies admission, context synchronization, cancellation, shard recovery, evidence contracts and acceptance gates. It preserves capacity and acceleration as separate core workstreams.
 
 1. **Fast wired compute.** Keep a single public local gateway and backend adapters. Use the selected optimized host backend as baseline. Add optional MLX multi-Mac execution only after capability discovery, pinned runtime configuration and repeatable deployment checks. Distinguish model capacity from speed.
 2. **Heterogeneous wireless assistance.** Retain host-only default. Admit remote drafting only from observed complete round timings, accepted-prefix results, failure rate and thermal headroom. Separately investigate coarse independent jobs such as embedding batches or document preprocessing; they can amortize one network exchange without serial per-layer synchronization. These job types are not current worker capabilities.
@@ -52,9 +58,15 @@ The existing 96-token experiment found a greedy batch/single mismatch beyond the
 
 An actual Gemini 4 Argon High browser request reviewed this comparison on 1 November. Accepted: distinguish capacity/acceleration, separate wired and wireless execution, measure complete cost, retain failure evidence and avoid governance-superiority claims. Rejected or qualified: invented phone/host token timings, a claimed causal explanation for the local 0.719× result, a confirmed numerical root cause, an arbitrary epsilon-exact threshold, universal capacity-mode slowdown, and description of current pairing as mutual TLS client-certificate authentication. No such measurements or guarantees are adopted.
 
-The requested GLM 5.3 Max request was submitted with Max selected. The service returned a peak-hours capacity message offering GLM-5.3-Flash instead. No substitution was accepted and no completed GLM architecture review is claimed. Earlier GLM reviews of other NodeLift work do not count as this review.
+The first requested GLM 5.3 Max attempt was rejected by the service's peak-hours capacity limit. A subsequent browser request on the same date, with GLM-5.3 and Max selected, completed an independent architecture review. No Flash substitution was accepted. It agreed that superiority is unproved and recommended measured profiles, context deltas, cancellation accounting and explicit shard-loss behavior. These are advisory recommendations, not execution evidence.
 
-No large model was downloaded or executed for this assessment. The suggested uncensored model is not necessary to establish transport limits or correctness. A model label is not evidence of engineering accuracy; a future test must first verify its license, architecture, tokenizer, quantization and actual memory fit.
+A fresh Gemini request with the UI's Argon High setting also completed. Its first response in the earlier mixed-purpose conversation was a generic refusal; the isolated technical conversation produced the assessment. The substantive answer still contained unsupported conclusions. The requested corrective follow-up returned another generic refusal; no second-round Gemini approval is claimed.
+
+The [review adjudication](REVIEW_ADJUDICATION.md) records both models' contributions and rejected claims. In particular, neither a local slowdown nor a sequential pipeline dependency proves universal failure of remote execution. An epsilon in logits does not establish exact token equivalence, a missing mTLS client certificate is not automatically a security defect, and measured request intervals must not have TLS overhead added twice. Reviewer agreement is not a benchmark or security audit.
+
+No large model was downloaded or executed for this assessment. The suggested model's [actual README](https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF/blob/main/README.md), rather than the hosting site's generic usage widgets, states a Strata-specific execution path and a separate 110 GB Engram table. It lists roughly 231–266 GB total across quantization choices and says this split architecture is not yet supported by llama.cpp at the time of writing. The reported 12 GB GPU configuration also uses system RAM and SSD storage; it does not mean a 12 GB total-memory requirement.
+
+Repository metadata identifies revision `4f1d2f730cff977961db81789e81bfc0d3e6dd2e` and MIT licensing. The lowest listed four-shard set alone totals 120,721,120,256 bytes, before the separately hosted Engram table and execution state. This does not fit the current 64 GiB host as a resident model, and current NodeLift does not implement this backend or distributed architecture. The model is a possible later capacity experiment, not a reviewer we actually ran. The uncensored label is not evidence of better engineering reasoning; evaluate task accuracy, license, runtime and resource fit independently.
 
 ## Next engineering gate
 

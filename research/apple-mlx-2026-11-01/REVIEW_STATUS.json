@@ -1,0 +1,18 @@
+{
+  "date": "2026-11-01",
+  "scope": "architecture advice from public sources and a sanitized technical brief",
+  "physical_execution": false,
+  "glm": {
+    "selection": "GLM-5.3 / Effort Max",
+    "substantive_review": "completed",
+    "correction_follow_up": "peak capacity rejection; cancelled offered Flash substitution"
+  },
+  "gemini": {
+    "selection": "Argon High (requested Gemini 4 High Effort)",
+    "substantive_review": "completed in a fresh technical conversation",
+    "correction_follow_up": "generic refusal"
+  },
+  "model_identity_limit": "Browser selection, not independent attestation of backend model weights",
+  "adjudication": "REVIEW_ADJUDICATION.md",
+  "rfc": "../../docs/RFC_DISTRIBUTED_EXECUTION.md"
+}

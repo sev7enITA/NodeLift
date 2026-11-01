@@ -45,3 +45,5 @@ See the [optimization assessment](../research/optimization-2026-10-31/REPORT.md)
 6. Implement and qualify capacity sharding as a core execution path in parallel with the compute work; phone memory is not coherent host RAM. This requires resident partition/state accounting and a recovery plan for targets that cannot fit on the host alone.
 
 The sought contribution is usable heterogeneous-device orchestration with reproducible evidence and lifecycle control. Remote speculation, adaptive blocks and pipelining are prior art. No unique algorithm, patentability or universal superiority is established.
+
+The [next distributed execution RFC](RFC_DISTRIBUTED_EXECUTION.md) specifies proposed control, data and evidence boundaries, capacity recovery, context deltas and benchmark gates. It is a design contract, not a description of capabilities already shipped.
