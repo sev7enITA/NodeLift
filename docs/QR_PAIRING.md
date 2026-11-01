@@ -1,6 +1,6 @@
 # Pair a phone by scanning the desktop QR
 
-Companion **0.2.6 / build 8** updates the offline QR flow for Android and iOS. Update the host source as well as the companion: older host processes do not serve the QR assets and invitation-status endpoints.
+Companion **0.2.7 / build 9** updates the offline QR flow for Android and iOS. Update the host source as well as the companion: older host processes do not serve the QR assets and invitation-status endpoints.
 
 1. Connect the computer and phone to the same local network. A phone hotspot is supported: the phone can provide the hotspot to the Mac.
 2. Open the authenticated NodeLift desktop control room and choose **Add device**.
@@ -18,7 +18,7 @@ Existing sessions survive the APK update. You do not need to forget a working co
 - The QR disappears when its invitation is used, closed or expires. The device graph provides the actual connection status. Closing a browser tab makes a best-effort revocation request; browser termination cannot guarantee delivery.
 - **Manual pairing** retains the original JSON invitation path. Use this if the camera is unavailable or permission is denied.
 - If scanning fails, increase screen brightness, keep the entire white square visible, move the camera slightly farther away, and generate a fresh QR if it expired. Update to companion 0.2.6 or later. Android now offers **Retry camera** or **Cancel** if camera startup fails.
-- A successful scan cannot repair a network with client isolation, a stale host IP or a blocked listening port. The invitation uses the host address chosen at startup. The host refuses to reuse a certificate after its configured IP changes. After changing networks, start with the current LAN address and a new private `--state` directory, then pair devices again; do not delete the old state as a workaround.
+- A successful scan cannot repair hotspot client isolation or a blocked listening port. The host now defaults to `--address auto` and checks its current private IPv4 route when creating a QR. If the Mac changes networks, choose **New QR code** and pair again, confirming the new address and certificate identity. An explicitly configured address stays fixed; restart with `--address auto` if it is no longer assigned. The host preserves enrollment and measurement history and uses a separate certificate for each address; no new state directory or deletion is required. Existing saved phone endpoints do not migrate automatically.
 
 ## Control feedback in 0.2.6
 

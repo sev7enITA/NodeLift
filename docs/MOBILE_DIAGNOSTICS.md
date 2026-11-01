@@ -15,7 +15,7 @@ English, Simplified Chinese and Italian labels are available. Diagnostic event i
 ## Recorded information
 
 - App version/build, OS version/API and timestamped lifecycle, camera, connection, model-loading, job and update events.
-- The Android export includes current default-network transport, thermal status, session and engine readiness. That default route may differ from the hotspot interface used by the Mac. It never records SSIDs, IP addresses or host identities.
+- The Android export includes current default-network transport, thermal status, session and engine readiness. Version 0.2.7 also records available transport categories and `ROUTE_WIFI`, `ROUTE_ETHERNET` or `ROUTE_SYSTEM` when the request routing choice changes. These categories do not prove end-to-end reachability. That default route may differ from the hotspot interface used by the Mac. It never records SSIDs, IP addresses or host identities.
 - Android managed exceptions: exception class plus at most 12 NodeLift stack frames, reduced to method symbols and line numbers. Exception messages, thread names and file paths are excluded.
 - Android 11/API 30 and newer: historical process exit reason codes supplied by Android, including native crash and ANR reasons when available. Raw traces and OS descriptions are excluded.
 - iOS: stable event identifiers and numeric error codes. MetricKit crash signal and hang events are reduced locally; the original diagnostic payload is never included.

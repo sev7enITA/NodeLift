@@ -1,8 +1,8 @@
 # Mobile downloads and installation
 
-Updated 1 November 2026. Companion version **0.2.6**, build **8**.
+Updated 1 November 2026. Companion version **0.2.7**, build **9**.
 The [public download section](https://www.fabriziodegni.com/NodeLift/#downloads)
-links directly to the [GitHub prerelease assets](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.6).
+links directly to the [GitHub prerelease assets](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.7).
 The companions offer English (default), Simplified Chinese and Italian.
 
 | Platform | Download | Installation status |
@@ -15,7 +15,7 @@ The companions offer English (default), Simplified Chinese and Italian.
 ## Android and APK-compatible HarmonyOS
 
 1. Confirm the OS accepts Android APKs and meets the ARM64 / API 26 requirements. A HarmonyOS marketing version alone does not establish compatibility. The APK is **not a native HarmonyOS package and is not the NEXT installation path**.
-2. Download `NodeLift-0.2.6-android-debug.apk` from the release. Verify its SHA-256 against the public build manifest.
+2. Download `NodeLift-0.2.7-android-debug.apk` from the release. Verify its SHA-256 against the public build manifest.
 3. Install with Android's package installer, authorizing that source only as needed. The laboratory build uses the existing debug signing identity. Keep the earlier app's data unless you deliberately intend to reset it.
 4. Start NodeLift on the computer, open its dashboard and choose Add device. Tap **Scan QR** in the companion, scan the desktop code, confirm the computer, then keep the companion visible for the first test. See the [QR pairing guide](QR_PAIRING.md).
 
@@ -23,7 +23,7 @@ Huawei documents APK and native HAP as separate package paths for its older and 
 
 ## iOS and iPadOS
 
-`NodeLift-0.2.6-ios-unsigned.ipa` contains the same compiled device app as the ZIP under `Payload/NodeLift.app/`. All app file bytes are identical to `NodeLift-0.2.6-ios-unsigned.zip`; the IPA is a packaging convenience, not a new build. macOS ZIP metadata is excluded. The native Metal/CPU framework and third-party notices remain included.
+`NodeLift-0.2.7-ios-unsigned.ipa` contains the same compiled device app as the ZIP under `Payload/NodeLift.app/`. All app file bytes are identical to `NodeLift-0.2.7-ios-unsigned.zip`; the IPA is a packaging convenience, not a new build. macOS ZIP metadata is excluded. The native Metal/CPU framework and third-party notices remain included.
 
 **Neither archive installs by tapping its link in Safari.** There is no Apple distribution signature, embedded provisioning profile, TestFlight invitation or App Store release. The archives do not contain a developer's keys or device provisioning data.
 
@@ -31,7 +31,7 @@ For an existing developer signing workflow, use the unsigned IPA and sign the ap
 
 The reproducible Xcode route is:
 
-1. Check out the `v0.2.6` source tag, including the pinned native dependencies. Follow the repository's native build prerequisites.
+1. Check out the `v0.2.7` source tag, including the pinned native dependencies. Follow the repository's native build prerequisites.
 2. Run `./scripts/build-ios.sh` on a Mac with Xcode, CMake and XcodeGen. This compiles an unsigned device app.
 3. Open `apps/ios/NodeLift.xcodeproj`, select the NodeLift target and configure **Signing & Capabilities** with your own Apple development team and an app identifier that team can provision. Do not reuse another project's provisioning profile.
 4. Connect an iPhone or iPad, select it as the run destination, and let Xcode create the required development provisioning. Complete the device's trust / Developer Mode steps when required by Xcode and iOS.
@@ -55,10 +55,10 @@ Open **About & References** in the control-room navigation or from the companion
 
 ## Integrity and measured scope
 
-`NodeLift-0.2.6-build-manifest.json` inventories the APK, ZIP and IPA. `NodeLift-0.2.6-ios-ipa-manifest.json` also records the IPA input hash and byte-identical app payload. The portal's `data/mobile-downloads.json` records platform availability, sizes, SHA-256 values and download URLs.
+`NodeLift-0.2.7-build-manifest.json` inventories the APK, ZIP and IPA. `NodeLift-0.2.7-ios-ipa-manifest.json` also records the IPA input hash and byte-identical app payload. The portal's `data/mobile-downloads.json` records platform availability, sizes, SHA-256 values and download URLs.
 
 Hash verification establishes the identity of the downloaded file. Compilation and packaging establish neither successful installation nor device inference acceleration. Phone memory is not yet exposed as shared model capacity; capacity sharding remains planned.
 
 See the [iPhone distribution guide](https://github.com/sev7enITA/NodeLift/blob/main/docs/IOS_DISTRIBUTION.md) for development signing, ad hoc devices, TestFlight and the intended App Store companion. The current IPA is unsigned.
 
-Support logs can be exported without USB from **About & References → Diagnostics** in companion 0.2.6. [Diagnostic scope and limitations](https://github.com/sev7enITA/NodeLift/blob/main/docs/MOBILE_DIAGNOSTICS.md).
+Support logs can be exported without USB from **About & References → Diagnostics** in companion 0.2.7. [Diagnostic scope and limitations](https://github.com/sev7enITA/NodeLift/blob/main/docs/MOBILE_DIAGNOSTICS.md).
