@@ -803,5 +803,17 @@ export const italianMessages: Record<string, string> = {
   "Update available: {0} · build {1}": "Aggiornamento disponibile: {0} · build {1}",
   "No newer companion release was found.": "Non è stata trovata una versione più recente della companion.",
   "Update check unavailable. Check your connection or try again later.": "Verifica aggiornamenti non disponibile. Controlla la connessione o riprova più tardi.",
-  "Unable to clear diagnostics. Try again.": "Impossibile cancellare la diagnostica. Riprova."
+  "Unable to clear diagnostics. Try again.": "Impossibile cancellare la diagnostica. Riprova.",
+  "Connect the computer to Wi-Fi or Ethernet, then create a new QR code.": "Collega il computer al Wi-Fi o a Ethernet, poi crea un nuovo codice QR.",
+  "The computer's network address changed. Restart NodeLift with --address auto and create a new QR code.": "L'indirizzo di rete del computer è cambiato. Riavvia NodeLift con --address auto e crea un nuovo codice QR.",
+  "The local connection could not start. Check the computer's network and whether another NodeLift host is running.": "Impossibile avviare la connessione locale. Controlla la rete del computer e se è già in esecuzione un altro host NodeLift.",
+  "The computer changed networks. Choose New QR code and scan again.": "Il computer ha cambiato rete. Scegli Nuovo codice QR e ripeti la scansione.",
+  "Cannot reach your computer. Keep both devices on the same Wi-Fi or hotspot, then create a new QR code on the computer. Hotspot client isolation can also block the connection.": "Impossibile raggiungere il computer. Collega entrambi i dispositivi allo stesso Wi-Fi o hotspot, poi crea un nuovo codice QR sul computer. Anche l'isolamento dei client dell'hotspot può bloccare la connessione.",
+  "The computer's secure identity could not be verified. Create a new QR code and confirm its identity before pairing again.": "Impossibile verificare l'identità sicura del computer. Crea un nuovo codice QR e conferma l'identità prima di ripetere l'abbinamento.",
+  "Animate active links": "Anima i collegamenti attivi",
+  "Motion shows the selected running draft route, not packet traffic. Offline and historical links stay still.": "L'animazione indica il percorso draft in esecuzione selezionato, non il traffico dei pacchetti. I collegamenti offline e storici restano fermi.",
+  "Below 25%": "Meno del 25%",
+  "25% to below 60%": "Dal 25% a meno del 60%",
+  "60% and above": "60% e oltre",
+  "Color and width show accepted draft token share in the selected run, not compute utilization.": "Colore e spessore indicano la quota di token draft accettati nell'esecuzione selezionata, non l'utilizzo del calcolo."
 };

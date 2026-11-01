@@ -18,7 +18,7 @@ class NodeService : Service() {
             val manager = context.getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(NotificationChannel("session", L10n.text(context,"NodeLift session"), NotificationManager.IMPORTANCE_LOW))
             val open = PendingIntent.getActivity(context,0,Intent(context,MainActivity::class.java),PendingIntent.FLAG_IMMUTABLE)
-            return Notification.Builder(context,"session").setSmallIcon(R.drawable.ic_node)
+            return Notification.Builder(context,"session").setSmallIcon(R.drawable.ic_node_mark)
                 .setContentTitle(L10n.text(context,"NodeLift · active node"))
                 .setContentText(L10n.text(context,"Measurements authorized by your computer. Open to pause."))
                 .setContentIntent(open).setOngoing(true).build()
@@ -71,7 +71,7 @@ class NodeService : Service() {
                 status = ui("Connecting to your computer…")
                 val saved = if (ticketText == null) Vault.load(this) else null
                 val ticket = Pairing.parse(if (ticketText != null) JSONObject(ticketText) else saved?.getJSONObject("pairing") ?: error("Paste an invitation from your computer."))
-                val c = Client(ticket, saved?.optString("token") ?: ""); client = c
+                val c = Client(ticket, saved?.optString("token") ?: "", this); client = c
                 if (ticketText != null) {
                     val response = c.json("/v1/pair", JSONObject().put("invite", ticket.invite).put("name", "${Build.MANUFACTURER} ${Build.MODEL}").put("capabilities", capabilities()))
                     c.token = response.getString("token")
@@ -132,7 +132,7 @@ class NodeService : Service() {
                     }
                 }
             } catch (e: Exception) {
-                if (!stop.get()) {Diagnostics.record(DiagnosticEvent.SESSION_FAILED,e);status = ui(e.message ?: "Connection failed")}
+                if (!stop.get()) {Diagnostics.record(DiagnosticEvent.SESSION_FAILED,e);status = ui(connectionFailureMessage(e))}
             } finally {
                 mobileDraft?.close();mobileDraft=null;engineStatus=ui("Draft unloaded from memory")
                 if (generation.get() == runId) {running=false;connected=false;modelLoading=false;engineReady=false;downloadRequested.set(false)}

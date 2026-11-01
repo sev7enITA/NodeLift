@@ -42,6 +42,7 @@ struct Index {
   }
   @Builder aboutSection() {
     Column({ space: 12 }) {
+      Image($r('app.media.nodelift_emblem')).width(80).height(80).objectFit(ImageFit.Contain)
       Text('NodeLift').fontSize(27).fontWeight(FontWeight.Bold).fontColor('#EDF5F8').width('100%')
       Text(this.versionLabel()).fontSize(13).fontColor('#91F3CE').width('100%')
       Text(this.t('HarmonyOS candidate · build and device qualification pending')).fontSize(13).fontColor('#9EB1BD').width('100%')

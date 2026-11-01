@@ -30,7 +30,7 @@ const NodeLiftPairing = (() => {
       if(left<=0){erase();say('Invitation expired. Choose New QR code.');return;}
       say('Expires in {0}:{1}',Math.floor(left/60),String(left%60).padStart(2,'0'));
       if(polling)return;polling=true;
-      try{const state=await api('invite/status',{invite:current.invite});if(stamp===epoch && ticket===current && !state.pending){erase();say('Invitation used or closed. Check connected devices.');}}
+      try{const state=await api('invite/status',{invite:current.invite});if(stamp===epoch && ticket===current && !state.pending){erase();say(state.network_changed?'The computer changed networks. Choose New QR code and scan again.':'Invitation used or closed. Check connected devices.');}}
       catch(_){/* Keep the bounded invitation usable during a transient status failure. */}
       finally{polling=false;}
     }

@@ -124,7 +124,7 @@ class MainActivity : Activity() {
         root.addView(LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL; gravity = android.view.Gravity.CENTER_VERTICAL
             addView(ImageView(this@MainActivity).apply {
-                setImageResource(R.drawable.ic_node_mark); importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
+                setImageResource(R.drawable.nodelift_emblem); importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
             }, LinearLayout.LayoutParams(dp(48), dp(48)).apply { marginEnd = dp(12) })
             addView(text("NodeLift",30f).apply { setTypeface(null,Typeface.BOLD) })
         })

@@ -802,5 +802,17 @@
   "Update available: {0} · build {1}": "有可用更新：{0} · 构建 {1}",
   "No newer companion release was found.": "未发现更新版本的配套应用。",
   "Update check unavailable. Check your connection or try again later.": "无法检查更新。请检查网络连接或稍后重试。",
-  "Unable to clear diagnostics. Try again.": "无法清除诊断日志，请重试。"
+  "Unable to clear diagnostics. Try again.": "无法清除诊断日志，请重试。",
+  "Connect the computer to Wi-Fi or Ethernet, then create a new QR code.": "请将电脑连接到 Wi-Fi 或以太网，然后生成新的二维码。",
+  "The computer's network address changed. Restart NodeLift with --address auto and create a new QR code.": "电脑的网络地址已更改。请使用 --address auto 重启 NodeLift，然后生成新的二维码。",
+  "The local connection could not start. Check the computer's network and whether another NodeLift host is running.": "无法启动本地连接。请检查电脑网络，以及是否已有另一个 NodeLift 主机正在运行。",
+  "The computer changed networks. Choose New QR code and scan again.": "电脑已切换网络。请选择“新建二维码”并重新扫描。",
+  "Cannot reach your computer. Keep both devices on the same Wi-Fi or hotspot, then create a new QR code on the computer. Hotspot client isolation can also block the connection.": "无法连接电脑。请将两个设备连接到同一 Wi-Fi 或热点，然后在电脑上生成新的二维码。热点的客户端隔离也可能阻止连接。",
+  "The computer's secure identity could not be verified. Create a new QR code and confirm its identity before pairing again.": "无法验证电脑的安全身份。请生成新的二维码，确认身份后重新配对。",
+  "Animate active links": "显示活动连接动画",
+  "Motion shows the selected running draft route, not packet traffic. Offline and historical links stay still.": "动画表示所选正在运行的草稿路径，并非数据包流量。离线和历史连接保持静止。",
+  "Below 25%": "低于 25%",
+  "25% to below 60%": "25% 至低于 60%",
+  "60% and above": "60% 及以上",
+  "Color and width show accepted draft token share in the selected run, not compute utilization.": "颜色和粗细表示所选运行中被接受的草稿词元占比，并非计算资源利用率。"
 }

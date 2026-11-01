@@ -1,4 +1,4 @@
-<img src="assets/brand/nodelift-mark.svg" width="112" alt="NodeLift symbol">
+<img src="assets/brand/nodelift-emblem.png" width="192" alt="NodeLift blue three-dimensional orbital emblem">
 
 # NodeLift
 
@@ -6,7 +6,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-lightgrey.svg)](LICENSE)
 [![Live project showcase](https://img.shields.io/badge/Showcase-Live-146c6a.svg)](https://www.fabriziodegni.com/NodeLift/)
-[![Companion 0.2.6 prerelease](https://img.shields.io/badge/Companion-0.2.6%20prerelease-b45309.svg)](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.6)
+[![Companion 0.2.7 prerelease](https://img.shields.io/badge/Companion-0.2.7%20prerelease-b45309.svg)](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.7)
 [![Host 0.3.0 preview](https://img.shields.io/badge/Host-0.3.0%20preview-b45309.svg)](docs/INTEGRATIONS.md)
 
 [![Source checks](https://github.com/sev7enITA/NodeLift/actions/workflows/checks.yml/badge.svg?branch=main)](https://github.com/sev7enITA/NodeLift/actions/workflows/checks.yml)
@@ -31,11 +31,11 @@ The current experimental implementation supports phone-assisted drafting: a smal
 
 **[Live project showcase and interactive atlas](https://www.fabriziodegni.com/NodeLift/)** · [55-entry detailed matrix](site/NodeLift/data/comparison.md) · [Assessment and engineering lessons](research/comparison-2026-10-31/ASSESSMENT.md) · [Publication verification](docs/SHOWCASE_DEPLOYMENT.md). The dated atlas distinguishes applications, runtimes, serving systems and research; it is not an exhaustive inventory or a universal performance ranking.
 
-**[0.2.6 experimental prerelease](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.6), 1 November 2026.** Native inference, authenticated mobile work leases, an OpenAI-style text gateway, Android/iOS companion sources and an LM Studio generator adapter are implemented. **Phone inference speedup, pooled RAM, large hybrid-model speculation and sustained mobile operation are not yet qualified.** The first real-weight control experiments found local drafting slower than target-only inference on the small test pair. Negative results are published.
+**[0.2.7 experimental prerelease](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.7), 1 November 2026.** Native inference, authenticated mobile work leases, an OpenAI-style text gateway, Android/iOS companion sources and an LM Studio generator adapter are implemented. **Phone inference speedup, pooled RAM, large hybrid-model speculation and sustained mobile operation are not yet qualified.** The first real-weight control experiments found local drafting slower than target-only inference on the small test pair. Negative results are published.
 
-**Host 0.3.0 integration preview:** public Hugging Face GGUF search/download with SHA-256 verification, direct file/path import, opt-in OpenRouter, and a loopback text bridge for oMLX/LM Studio. English (default), Simplified Chinese and Italian UI. [Setup](docs/INTEGRATIONS.md#model-sources-and-external-engines-host-030-preview) · [Source review and qualification](research/integrations-2026-11-01/ASSESSMENT.md). Companion binaries are 0.2.6/build 8.
+**Host 0.3.0 integration preview:** public Hugging Face GGUF search/download with SHA-256 verification, direct file/path import, opt-in OpenRouter, and a loopback text bridge for oMLX/LM Studio. English (default), Simplified Chinese and Italian UI. [Setup](docs/INTEGRATIONS.md#model-sources-and-external-engines-host-030-preview) · [Source review and qualification](research/integrations-2026-11-01/ASSESSMENT.md). Companion binaries are 0.2.7/build 9.
 
-**Engine controls:** measured adaptive draft control, context lookup without a second model, and greedy argmax caching are available in source and the dashboard. [Optimization study and measured limits](research/optimization-2026-10-31/REPORT.md). The 0.2.6 companions support English (default), Simplified Chinese and Italian, with a saved in-app language choice. [Localization and validation](docs/LOCALIZATION.md).
+**Engine controls:** measured adaptive draft control, context lookup without a second model, and greedy argmax caching are available in source and the dashboard. [Optimization study and measured limits](research/optimization-2026-10-31/REPORT.md). The 0.2.7 companions support English (default), Simplified Chinese and Italian, with a saved in-app language choice. [Localization and validation](docs/LOCALIZATION.md).
 
 ![NodeLift public showcase, desktop capture from 31 October 2026](docs/evidence/showcase-2026-10-31/live-desktop.jpg)
 
@@ -57,7 +57,7 @@ This is **not an Ollama backend patch**. Clients with a custom OpenAI-style endp
 
 **About & References:** author attribution, installed component version, official project links, technical references and manual release checking are available inside the desktop and companion apps. [How to find them](docs/ABOUT_AND_UPDATES.md).
 
-[Download Android 0.2.6](https://github.com/sev7enITA/NodeLift/releases/download/v0.2.6/NodeLift-0.2.6-android-debug.apk) · [Source checks](https://github.com/sev7enITA/NodeLift/actions)
+[Download Android 0.2.7](https://github.com/sev7enITA/NodeLift/releases/download/v0.2.7/NodeLift-0.2.7-android-debug.apk) · [Source checks](https://github.com/sev7enITA/NodeLift/actions)
 
 ## Start on the host
 
@@ -114,3 +114,5 @@ Start with a [reproducible bug or device benchmark](https://github.com/sev7enITA
 ## Credits and thanks
 
 NodeLift is created by Fabrizio Degni and informed by an open community of researchers and maintainers. We thank DistAI, llama.cpp/GGML, oMLX, REA, LM Studio, Jev/TypeSafe, the prompt lookup decoding authors, and the wider distributed-inference and mobile ecosystem for sharing their work. [Acknowledgements and project links](docs/ACKNOWLEDGEMENTS.md) distinguish actual dependencies, studied prior art and integrations. [Third-party notices](THIRD_PARTY_NOTICES.md) preserve the applicable licenses and authorship.
+
+The full-color [NodeLift emblem and asset guide](assets/brand/README.md) is shared with the showcase and companions. [Locally Uncensored source lessons](research/locally-uncensored-2026-11-01/ASSESSMENT.md) credit its memory-planning, cancellation and diagnostics work.

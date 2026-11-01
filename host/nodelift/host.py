@@ -51,11 +51,12 @@ class Server(http.server.ThreadingHTTPServer):
     daemon_threads = True
     allow_reuse_address = True
 
-    def __init__(self, address, state, context=None, admin_token=None, ticket_factory=None, engine=None, client_token=None):
+    def __init__(self, address, state, context=None, admin_token=None, ticket_factory=None, engine=None, client_token=None, pairing_network=None):
         self.state = state
         self.context = context
         self.admin_token = admin_token
         self.ticket_factory = ticket_factory
+        self.pairing_network = pairing_network
         self.engine = engine
         self.client_token = client_token
         self.slots = threading.BoundedSemaphore(32)
@@ -247,7 +248,12 @@ class Handler(http.server.BaseHTTPRequestHandler):
             self.body()
             return self.send(200, self.server.ticket_factory())
         if method == "POST" and path in ("/admin/invite/status", "/admin/invite/revoke"):
-            return self.send(200, self.server.state.invitation(self.body().get("invite"), revoke=path.endswith("/revoke")))
+            value = self.body().get("invite")
+            changed = bool(self.server.pairing_network and not self.server.pairing_network())
+            result = self.server.state.invitation(value, revoke=changed or path.endswith("/revoke"))
+            if changed:
+                result["network_changed"] = True
+            return self.send(200, result)
         if method == "POST" and path == "/admin/job":
             v = self.body()
             return self.send(200, self.server.state.queue(v.get("node_id"), v.get("kind")))
@@ -257,38 +263,144 @@ class Handler(http.server.BaseHTTPRequestHandler):
         return self.send(404, {"error": "unknown endpoint"})
 
 
+
+def pairing_address_allowed(address):
+    try:
+        value = ipaddress.IPv4Address(address)
+        return any(value in ipaddress.IPv4Network(cidr) for cidr in ("10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "127.0.0.0/8"))
+    except ValueError:
+        return False
+
+
+def local_address_available(address):
+    """Check interface ownership without sending traffic or accepting a wildcard bind."""
+    try:
+        value = ipaddress.IPv4Address(address)
+        if not pairing_address_allowed(address):
+            return False
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as probe:
+            probe.bind((str(value), 0))
+        return True
+    except (OSError, ValueError):
+        return False
+
+
+def route_address():
+    """Ask the OS which local IPv4 it would route from; UDP connect sends no packet."""
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as probe:
+            probe.connect(("192.0.2.1", 9))
+            address = probe.getsockname()[0]
+    except OSError:
+        raise ValueError("Connect the computer to Wi-Fi or Ethernet, then create a new QR code.") from None
+    if not local_address_available(address) or ipaddress.ip_address(address).is_loopback:
+        raise ValueError("Connect the computer to Wi-Fi or Ethernet, then create a new QR code.")
+    return address
+
+
+class PairingEndpoint:
+    """Bind only the selected LAN interface. Preserve enrollment/history across DHCP changes.
+
+    A new address gets a separate pinned TLS identity. Existing companions must scan
+    a fresh invitation; never weaken hostname or certificate checks to hide a move.
+    """
+    def __init__(self, state, address="auto", port=9867, engine=None):
+        self.state, self.requested, self.port, self.engine = state, address, port, engine
+        self.api = None
+        self.address = None
+        self.identity = None
+        self.lock = threading.RLock()
+
+    def desired_address(self):
+        address = route_address() if self.requested == "auto" else self.requested
+        if not local_address_available(address):
+            raise ValueError("The computer's network address changed. Restart NodeLift with --address auto and create a new QR code.")
+        return address
+
+    def network_ready(self):
+        try:
+            return self.api is not None and self.address == self.desired_address()
+        except ValueError:
+            return False
+
+    def ensure(self):
+        with self.lock:
+            address = self.desired_address()
+            if self.api is not None and self.address == address:
+                return
+            # Reuse the legacy pin only at the address for which it was issued.
+            folder = self.state.folder
+            metadata = folder / "identity.json"
+            if metadata.exists() and json.loads(metadata.read_text()).get("address") != address:
+                folder = folder / "identities" / address
+                folder.mkdir(parents=True, exist_ok=True, mode=0o700)
+            cert, key, pem, fingerprint = make_identity(folder, address)
+            context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            context.minimum_version = ssl.TLSVersion.TLSv1_2
+            context.load_cert_chain(cert, key)
+            try:
+                candidate = Server((address, self.port), self.state, context=context, engine=self.engine)
+            except OSError:
+                raise ValueError("The local connection could not start. Check the computer's network and whether another NodeLift host is running.") from None
+            threading.Thread(target=candidate.serve_forever, daemon=True).start()
+            previous = self.api
+            self.api, self.address = candidate, address
+            self.identity = (pem, fingerprint, public_key_pin(cert))
+            if previous:
+                previous.shutdown()
+                previous.server_close()
+                # Old QR codes cannot establish a connection at their embedded address.
+                with self.state.db() as db:
+                    db.execute("DELETE FROM invites")
+
+    def ticket(self):
+        with self.lock:
+            self.ensure()  # A failed bind never produces an invitation.
+            invite, expires = self.state.invite()
+            pem, fingerprint, pin = self.identity
+            return {"protocol": 1, "url": f"https://{self.address}:{self.api.server_port}",
+                    "certificate": pem, "sha256": fingerprint, "public_key_pin": pin,
+                    "invite": invite, "expires_at": expires}
+
+    def close(self):
+        with self.lock:
+            if self.api:
+                self.api.shutdown()
+                self.api.server_close()
+                self.api = None
+
+
 def main():
     parser = argparse.ArgumentParser(description="NodeLift local host and experimental greedy inference engine.")
-    parser.add_argument("--address", default="127.0.0.1", help="Host LAN IPv4 address to put in the certificate and pairing ticket")
+    parser.add_argument("--address", default="auto", help="auto follows the current private IPv4 route when creating a QR; an explicit address stays fixed")
     parser.add_argument("--port", type=int, default=9867)
     parser.add_argument("--dashboard-port", type=int, default=9868)
     parser.add_argument("--state", type=Path, default=Path.home()/".local/share/nodelift")
     parser.add_argument("--bonjour", action="store_true", help="Advertise the host on the local network via dns-sd")
     args = parser.parse_args()
-    address = ipaddress.IPv4Address(args.address)
-    if not (address.is_private or address.is_loopback) or address.is_unspecified:
-        parser.error("use the private LAN IPv4 address of this computer")
+    if args.address != "auto":
+        try:
+            address = ipaddress.IPv4Address(args.address)
+            if not pairing_address_allowed(args.address):
+                raise ValueError()
+        except ValueError:
+            parser.error("use auto or the private LAN IPv4 address of this computer")
     state = State(args.state)
-    cert, key, pem, fingerprint = make_identity(state.folder, args.address)
-    pin = public_key_pin(cert)
-    ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-    ctx.minimum_version = ssl.TLSVersion.TLSv1_2
-    ctx.load_cert_chain(cert, key)
-    def ticket():
-        invite, expires = state.invite()
-        return {"protocol": 1, "url": f"https://{args.address}:{api.server_port}", "certificate": pem,
-                "sha256": fingerprint, "public_key_pin": pin, "invite": invite, "expires_at": expires}
     from .engine import Controller
     engine = Controller(state)
-    api = Server((args.address, args.port), state, context=ctx, engine=engine)
+    endpoint = PairingEndpoint(state, args.address, args.port, engine)
+    try:
+        endpoint.ensure()
+    except ValueError as error:
+        print(str(error), flush=True)  # Dashboard stays available to retry Add device.
     admin_token = secrets.token_urlsafe(32)
     client_file = state.folder/'client-api-key'
     if client_file.exists():client_token=client_file.read_text().strip()
     else:
         client_token=secrets.token_urlsafe(32)
         with open(client_file,'w',opener=lambda p,f:os.open(p,f,0o600)) as stream:stream.write(client_token)
-    admin = Server(("127.0.0.1", args.dashboard_port), state, admin_token=admin_token, ticket_factory=ticket, engine=engine,client_token=client_token)
-    threads = [threading.Thread(target=s.serve_forever, daemon=True) for s in (api, admin)]
+    admin = Server(("127.0.0.1", args.dashboard_port), state, admin_token=admin_token, ticket_factory=endpoint.ticket, engine=engine,client_token=client_token, pairing_network=endpoint.network_ready)
+    threads = [threading.Thread(target=s.serve_forever, daemon=True) for s in (admin,)]
     for t in threads:
         t.start()
     discovery = None
@@ -303,7 +415,8 @@ def main():
     signal.signal(signal.SIGTERM, lambda *_: stop.set())
     stop.wait()
     engine.stop()
-    for s in (api, admin):
+    endpoint.close()
+    for s in (admin,):
         s.shutdown()
         s.server_close()
     if discovery:

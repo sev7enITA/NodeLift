@@ -58,7 +58,17 @@
       transfer:[...transfer.values()].map(g=>({...g,mbps:g.totalBytes/g.totalMs/1000})),
       cpuIterationsPerSecond:cpuMs?cpuRows.reduce((a,s)=>a+s.iterations,0)/cpuMs*1000:null};
   }
-  const logic={contribution,memoryScope,measurements,connectionState,connectionAfterUpdate,edgePoints};
+  // A visual weight is token attribution, never estimated RAM pooling or CPU usage.
+  function edgeAppearance(node,run,c,connected=true) {
+    const status=connectionState(node,connected);
+    const participant=run?.mode==='remote_draft' && (!run.backend||run.backend==='native') && run.node_id===node.id;
+    const share=participant&&c.measured?c.share:null;
+    const band=share===null?'unmeasured':share<.25?'low':share<.6?'medium':'high';
+    const last=run?.blocks?.at(-1);
+    const flowing=status==='online'&&participant&&run.status==='running'&&last?.effective_mode==='remote_draft';
+    return {status,participant,share,band,width:share===null?1.5:2+5*share,flowing};
+  }
+  const logic={contribution,memoryScope,measurements,connectionState,connectionAfterUpdate,edgePoints,edgeAppearance};
   if (typeof module !== 'undefined' && module.exports) module.exports=logic;
   root.NodeLiftGraph=logic;
   if (typeof document === 'undefined')return;
@@ -113,22 +123,28 @@
   function drawEdges() {
     const svg=$('graph-edges'), canvas=$('graph-map');if(!svg||!state)return;
     const origin=canvas.getBoundingClientRect(),host=buttons.get('host');if(!host || !host.isConnected)return;
-    svg.setAttribute('viewBox',`0 0 ${origin.width} ${origin.height}`);svg.replaceChildren();
+    svg.setAttribute('viewBox',`0 0 ${origin.width} ${origin.height}`);
     const localRect=rect=>({left:rect.left-origin.left,top:rect.top-origin.top,width:rect.width,height:rect.height});
-    const h=localRect(host.getBoundingClientRect()),run=currentRun();
+    const h=localRect(host.getBoundingClientRect()),run=currentRun(),c=contribution(run);
     const remoteId=run?.mode==='remote_draft'&&(!run.backend||run.backend==='native')?run.node_id:null;
     const peers=[...buttons].filter(([id,button])=>id!=='host'&&button.isConnected)
       .map(([id,button])=>({id,button,rect:localRect(button.getBoundingClientRect())}));
     const trunkY=Math.min(h.top+h.height+30,...peers.map(peer=>peer.rect.top-10));
-    // Draw the chosen route last so shared trunk segments retain their highlighted color.
+    const visible=new Set(peers.map(p=>p.id));
+    for(const path of [...svg.children])if(!visible.has(path.dataset.device))path.remove();
     peers.sort((a,b)=>Number(a.id===remoteId)-Number(b.id===remoteId));
-    for(const {id,button,rect} of peers) {
-      const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+    for(const {id,rect} of peers) {
+      const node=state.nodes.find(n=>n.id===id),look=edgeAppearance(node,run,c,connected);
+      let path=[...svg.children].find(p=>p.dataset.device===id);
+      if(!path){path=document.createElementNS('http://www.w3.org/2000/svg','path');path.dataset.device=id;svg.append(path);}
       path.setAttribute('d',edgePoints(h,rect,trunkY).map(([x,y],i)=>(i?'L ':'M ')+x+' '+y).join(' '));
-      path.setAttribute('class','graph-edge'+(button.classList.contains('is-unknown')?' unknown':button.classList.contains('is-offline')?' offline':'')+(remoteId===id?' participant':''));
-      svg.append(path);
+      path.setAttribute('class','graph-edge '+look.status+' weight-'+look.band+(look.participant?' participant':'')+(look.flowing?' flowing':''));
+      path.setAttribute('stroke-width',String(look.width));
+      // Keep DOM nodes stable during polling so dash animation does not restart.
+      if(look.participant && path!==svg.lastElementChild)svg.append(path);
     }
   }
+
   function renderInspector(node,run,c) {
     const signature=JSON.stringify([node,run,c,state?.jobs,connected,NodeLiftI18n.language,telemetryAge(node)]);
     if(signature===detailSignature)return;detailSignature=signature;
@@ -246,5 +262,12 @@
   if(typeof ResizeObserver!=='undefined'){
     const observer=new ResizeObserver(drawEdges);
     for(const id of ['graph-map','graph-peer-slots','graph-host-slot'])observer.observe($(id));
+  }
+  const motionToggle=$('graph-motion');
+  if(motionToggle){
+    try{motionToggle.checked=localStorage.getItem('nodelift-graph-motion')!=='off';}catch(_){}
+    const applyMotion=()=>{$('graph-map').classList.toggle('motion-paused',!motionToggle.checked||document.hidden);};
+    motionToggle.addEventListener('change',()=>{try{localStorage.setItem('nodelift-graph-motion',motionToggle.checked?'on':'off');}catch(_){}applyMotion();});
+    document.addEventListener('visibilitychange',applyMotion);applyMotion();
   }
 })(typeof window !== 'undefined' ? window : globalThis);

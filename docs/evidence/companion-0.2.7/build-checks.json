@@ -1,0 +1,35 @@
+{
+  "version": "0.2.7",
+  "build": 9,
+  "android": {
+    "compiled": true,
+    "jvm_tests": 13,
+    "lint_errors": 0,
+    "lint_warnings": 19,
+    "signer_sha256": "80322431dee7cbce87601a4ef232706ea0717e0890721823ad15a8272b6e9a46",
+    "native_libraries_unchanged_from": "0.2.6"
+  },
+  "ios": {
+    "compiled": true,
+    "architecture": "arm64",
+    "signed": false,
+    "native_library_unchanged_from": "0.2.6",
+    "zip_ipa_payload_identical": true
+  },
+  "host_protocol_network_tests": 24,
+  "graph_accounting_checks": true,
+  "browser_fixture": {
+    "synthetic_data": true,
+    "weighted_line_color_width_verified": true,
+    "running_route_animation_verified": true,
+    "motion_toggle_verified": true
+  },
+  "localization": [
+    "en",
+    "zh-Hans",
+    "it"
+  ],
+  "physical_installation_tested": false,
+  "phone_reconnection_confirmed": false,
+  "additional_glm_gemini_review_for_this_patch": false
+}

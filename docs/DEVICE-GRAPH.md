@@ -58,3 +58,9 @@ NodeLift's core product is a **shared local execution service that aims to suppl
 Z.ai documents an [OpenAI SDK-compatible API](https://docs.z.ai/guides/overview/quick-start). Xiaomi documents its [API credentials and OpenAI-compatible endpoint](https://mimo.mi.com/docs/en-US/quick-start/summary/first-api-call), separately from the [web demo](https://mimo.xiaomi.com/). Those documented APIs are the intended integration surface. There is no demonstrated custom-local-endpoint route from their hosted GUIs to NodeLift; browser login is not an API credential. Future provider adapters must remain explicitly cloud-routed and must not appear as local hardware contribution.
 
 See [integration details](INTEGRATIONS.md), [engine architecture](ARCHITECTURE.md) and [benchmark methodology](wiki/Benchmarking.md).
+
+## Animated links and measured weight (0.2.7)
+
+Color bands and line width encode the accepted phone draft token share for the selected run: blue below 25%, mint from 25% to below 60%, violet from 60%. A measured zero is distinct from absent evidence. This is token attribution, including EOS IDs; it is not hardware utilization, pooled RAM or acceleration. The current engine selects at most one phone draft proposer per run.
+
+Motion identifies the selected running remote-draft route. It is not packet telemetry. Offline, revoked, unknown, completed and host-fallback routes do not animate. Historical weights remain inspectable. The animation toggle persists locally, hidden tabs pause, and the operating system's reduced-motion preference is respected. Polling preserves SVG elements so the animation does not restart at each refresh.

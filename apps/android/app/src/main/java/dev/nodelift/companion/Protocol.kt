@@ -43,7 +43,7 @@ data class Pairing(val url: String, val certificate: String, val sha256: String,
     }
 }
 
-class Client(val pairing: Pairing, var token: String = "") {
+class Client(val pairing: Pairing, var token: String = "", private val context: Context? = null) {
     @Volatile var lastConnectionId: String = ""
         private set
     private val factory = run {
@@ -64,10 +64,38 @@ class Client(val pairing: Pairing, var token: String = "") {
         }
         SSLContext.getInstance("TLS").apply { init(null, arrayOf(pinned), null) }.socketFactory
     }
+    private fun openLocalConnection(url: URL): HttpsURLConnection {
+        val cm = context?.getSystemService(android.net.ConnectivityManager::class.java)
+        val destination = java.net.InetAddress.getByName(url.host) // Validated literal IPv4; no DNS lookup.
+        // A Wi-Fi network may have no Internet validation while cellular remains default.
+        // Bind this request only when that LAN has a specific route to the paired host.
+        // Tethering is not always exposed as a Network: retain OS routing in that case.
+        @Suppress("DEPRECATION")
+        val local = cm?.allNetworks?.firstOrNull { network ->
+            val caps = cm.getNetworkCapabilities(network)
+            val lan = caps?.hasTransport(android.net.NetworkCapabilities.TRANSPORT_WIFI) == true ||
+                caps?.hasTransport(android.net.NetworkCapabilities.TRANSPORT_ETHERNET) == true
+            lan && cm.getLinkProperties(network)?.routes?.any { !it.isDefaultRoute && it.matches(destination) } == true
+        }
+        val route = if (local != null) {
+            if (cm?.getNetworkCapabilities(local)?.hasTransport(android.net.NetworkCapabilities.TRANSPORT_WIFI) == true) "wifi" else "ethernet"
+        } else "system"
+        if (route != lastRoute) {
+            Diagnostics.record(when (route) {
+                "wifi" -> DiagnosticEvent.ROUTE_WIFI
+                "ethernet" -> DiagnosticEvent.ROUTE_ETHERNET
+                else -> DiagnosticEvent.ROUTE_SYSTEM
+            })
+            lastRoute = route
+        }
+        return (local?.openConnection(url) ?: url.openConnection()) as HttpsURLConnection
+    }
+    @Volatile var lastRoute: String = "unknown"
+        private set
     @Volatile private var active: HttpsURLConnection? = null
     fun cancel() { active?.disconnect() }
     fun bytes(path: String, body: ByteArray? = null, raw: Boolean = false): ByteArray {
-        val connection = URL(pairing.url + path).openConnection() as HttpsURLConnection
+        val connection = openLocalConnection(URL(pairing.url + path))
         active = connection
         var completed = false
         try {
@@ -98,7 +126,7 @@ class Client(val pairing: Pairing, var token: String = "") {
     }
     fun json(path: String, body: JSONObject): JSONObject = JSONObject(String(bytes(path, body.toString().toByteArray()), Charsets.UTF_8))
     fun downloadModel(destination: File, expected: Long, sha256: String, progress: (Long,Long)->Unit) {
-        val connection=URL(pairing.url+"/v1/engine/model").openConnection() as HttpsURLConnection
+        val connection=openLocalConnection(URL(pairing.url+"/v1/engine/model"))
         active=connection
         val temporary=File(destination.parentFile,"draft.partial")
         try {

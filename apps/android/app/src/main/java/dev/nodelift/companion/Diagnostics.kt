@@ -72,9 +72,18 @@ object Diagnostics {
             network.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)->"cellular"
             else->"other"
         }
+        @Suppress("DEPRECATION")
+        val available = cm.allNetworks.mapNotNull { n -> cm.getNetworkCapabilities(n) }.flatMap { caps ->
+            listOfNotNull(
+                "wifi".takeIf { caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) },
+                "ethernet".takeIf { caps.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) },
+                "cellular".takeIf { caps.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) },
+                "vpn".takeIf { caps.hasTransport(NetworkCapabilities.TRANSPORT_VPN) })
+        }.distinct()
         val report=JSONObject().put("schema","nodelift-diagnostics-v1").put("platform","android")
             .put("version",info.versionName).put("build",if(Build.VERSION.SDK_INT>=28)info.longVersionCode else @Suppress("DEPRECATION") info.versionCode.toLong())
             .put("api",Build.VERSION.SDK_INT).put("default_network_transport",transport)
+            .put("available_network_transports",JSONArray(available))
             .put("thermal",if(Build.VERSION.SDK_INT>=29)activity.getSystemService(PowerManager::class.java).currentThermalStatus else -1)
             .put("session_running",NodeService.running).put("connected",NodeService.connected).put("engine_ready",NodeService.engineReady)
             .put("events",JSONArray((store?.lines() ?: emptyList()).map{JSONObject(it)}))

@@ -68,3 +68,17 @@ for(const [width,columns,padding] of [[390,1,18],[700,2,24],[1100,3,24]]) {
   }
 }
 console.log('Device graph: remote/local/fallback/EOS/missing-data attribution, memory scopes and dated network grouping passed.');
+// Link motion/weight must retain the same evidence boundaries as the inspector.
+const {edgeAppearance}=require('../host/nodelift/graph.js');
+const visualRun=run('remote_draft',[block('remote_draft',8,5,6)],{status:'running'});
+const online={id:'synthetic-phone',online:true};
+const weighted=edgeAppearance(online,visualRun,contribution(visualRun));
+assert.equal(weighted.band,'high');assert.equal(weighted.width,5.125);assert.equal(weighted.flowing,true);
+assert.equal(edgeAppearance({...online,online:false},visualRun,remote).flowing,false);
+assert.equal(edgeAppearance(online,visualRun,remote,false).flowing,false);
+assert.equal(edgeAppearance(online,{...visualRun,status:'completed'},remote).flowing,false);
+assert.equal(edgeAppearance(online,{...visualRun,blocks:[block('host',2)]},remote).flowing,false);
+assert.equal(edgeAppearance({id:'unselected',online:true},visualRun,remote).share,null);
+assert.equal(edgeAppearance(online,run('remote_draft',[]),contribution(null)).band,'unmeasured');
+assert.equal(edgeAppearance(online,visualRun,zero).width,2);
+console.log('Evidence-weighted links: live/historical/offline/fallback/unknown/zero distinctions passed.');

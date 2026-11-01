@@ -802,5 +802,17 @@
   "Update available: {0} · build {1}": "Update available: {0} · build {1}",
   "No newer companion release was found.": "No newer companion release was found.",
   "Update check unavailable. Check your connection or try again later.": "Update check unavailable. Check your connection or try again later.",
-  "Unable to clear diagnostics. Try again.": "Unable to clear diagnostics. Try again."
+  "Unable to clear diagnostics. Try again.": "Unable to clear diagnostics. Try again.",
+  "Connect the computer to Wi-Fi or Ethernet, then create a new QR code.": "Connect the computer to Wi-Fi or Ethernet, then create a new QR code.",
+  "The computer's network address changed. Restart NodeLift with --address auto and create a new QR code.": "The computer's network address changed. Restart NodeLift with --address auto and create a new QR code.",
+  "The local connection could not start. Check the computer's network and whether another NodeLift host is running.": "The local connection could not start. Check the computer's network and whether another NodeLift host is running.",
+  "The computer changed networks. Choose New QR code and scan again.": "The computer changed networks. Choose New QR code and scan again.",
+  "Cannot reach your computer. Keep both devices on the same Wi-Fi or hotspot, then create a new QR code on the computer. Hotspot client isolation can also block the connection.": "Cannot reach your computer. Keep both devices on the same Wi-Fi or hotspot, then create a new QR code on the computer. Hotspot client isolation can also block the connection.",
+  "The computer's secure identity could not be verified. Create a new QR code and confirm its identity before pairing again.": "The computer's secure identity could not be verified. Create a new QR code and confirm its identity before pairing again.",
+  "Animate active links": "Animate active links",
+  "Motion shows the selected running draft route, not packet traffic. Offline and historical links stay still.": "Motion shows the selected running draft route, not packet traffic. Offline and historical links stay still.",
+  "Below 25%": "Below 25%",
+  "25% to below 60%": "25% to below 60%",
+  "60% and above": "60% and above",
+  "Color and width show accepted draft token share in the selected run, not compute utilization.": "Color and width show accepted draft token share in the selected run, not compute utilization."
 }

@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
-    <application android:name=".NodeLiftApplication" android:label="NodeLift" android:theme="@style/AppTheme" android:icon="@drawable/ic_node" android:allowBackup="false" android:usesCleartextTraffic="false" android:supportsRtl="true">
+    <application android:name=".NodeLiftApplication" android:label="NodeLift" android:theme="@style/AppTheme" android:icon="@drawable/ic_node" android:roundIcon="@drawable/ic_node" android:allowBackup="false" android:usesCleartextTraffic="false" android:supportsRtl="true">
         <provider android:name="androidx.core.content.FileProvider" android:authorities="${applicationId}.diagnostics" android:exported="false" android:grantUriPermissions="true">
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/diagnostic_paths" />
         </provider>

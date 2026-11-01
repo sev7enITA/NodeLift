@@ -55,25 +55,13 @@ private struct NodeLiftButtonStyle: ButtonStyle {
     }
 }
 
-/// Native rendering of assets/brand/nodelift-mark.svg, including the original orbit.
+/// Approved showcase emblem; the simplified mark is reserved for small system icons.
 private struct NodeLiftMark: View {
     var body: some View {
-        Canvas { context, size in
-            let scale = min(size.width, size.height) / 64
-            let transform = CGAffineTransform(scaleX: scale, y: scale)
-            var letter = Path()
-            letter.move(to: CGPoint(x: 15, y: 48))
-            letter.addLine(to: CGPoint(x: 15, y: 17))
-            letter.addLine(to: CGPoint(x: 49, y: 47))
-            letter.addLine(to: CGPoint(x: 49, y: 16))
-            context.stroke(letter.applying(transform), with: .color(aquaColor), style: StrokeStyle(lineWidth: 8 * scale, lineCap: .square, lineJoin: .bevel))
-            var orbit = Path()
-            orbit.move(to: CGPoint(x: 5, y: 40))
-            orbit.addCurve(to: CGPoint(x: 59, y: 26), control1: CGPoint(x: 12, y: 53), control2: CGPoint(x: 52, y: 43))
-            context.stroke(orbit.applying(transform), with: .color(Color(red: 233/255, green: 249/255, blue: 252/255)), lineWidth: 2 * scale)
-            context.fill(Path(ellipseIn: CGRect(x: 5, y: 39, width: 6, height: 6)).applying(transform), with: .color(Color(red: 233/255, green: 249/255, blue: 252/255)))
-            context.fill(Path(ellipseIn: CGRect(x: 52, y: 28, width: 6, height: 6)).applying(transform), with: .color(aquaColor))
-        }.accessibilityHidden(true)
+        Image("NodeLiftEmblem")
+            .resizable()
+            .scaledToFit()
+            .accessibilityHidden(true)
     }
 }
 
