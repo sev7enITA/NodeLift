@@ -61,16 +61,17 @@ class ReleaseHistoryTests(unittest.TestCase):
 
     def test_untrusted_markup_is_escaped_and_outside_sections_preserved(self):
         data = copy.deepcopy(self.data)
-        data['releases'][0]['changes'] = ['<script>alert("x")</script> & details']
+        data['releases'][0]['changes'] = ['<script>alert("x")</script> & details about stale invitations']
         rendered = history.render_html(data)
         self.assertNotIn('<script>', rendered)
         self.assertIn('&lt;script&gt;', rendered)
         index = self.root/'site/NodeLift/index.html'
-        index.write_text('before\n'+history.START+'stale'+history.END+'\nafter')
+        index.write_text('before\n'+history.START+'REPLACE_ME_HISTORY_FIXTURE_987'+history.END+'\nafter')
         generated = history.outputs(data, self.root)[index]
         self.assertTrue(generated.startswith('before\n'))
         self.assertTrue(generated.endswith('\nafter'))
-        self.assertNotIn('stale', generated)
+        self.assertNotIn('REPLACE_ME_HISTORY_FIXTURE_987', generated)
+        self.assertIn('stale invitations', generated)
         index.write_text('missing markers')
         with self.assertRaises(ValueError): history.outputs(data, self.root)
 

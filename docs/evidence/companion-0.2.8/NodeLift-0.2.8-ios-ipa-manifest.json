@@ -1,0 +1,14 @@
+{
+  "name": "NodeLift-0.2.8-ios-unsigned.ipa",
+  "bytes": 5307162,
+  "sha256": "b099f5d78e9a21209423911509881558e2b085cc74819e22176e17f331b12be7",
+  "source_archive": "NodeLift-0.2.8-ios-unsigned.zip",
+  "source_sha256": "829ac89b4e36891aaf19d6e0b5555d68099da87b220542abb00562ab5a69cad6",
+  "source_commit": "b7c812356945fc83b675b713cc9735ba83d64abd",
+  "version": "0.2.8",
+  "minimum_os": "17.0",
+  "platform": "iphoneos",
+  "signing": "unsigned; personal signing and provisioning required",
+  "app_payload_byte_identical": true,
+  "device_installation_tested": false
+}

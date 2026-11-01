@@ -3,6 +3,21 @@
   "documentation_language": "en",
   "releases": [
     {
+      "version": "0.2.8",
+      "build": 10,
+      "published_at": "2026-11-01T21:07:55Z",
+      "status": "experimental-prerelease",
+      "title": "Stable device enrollment and local dashboard recovery",
+      "url": "https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.8",
+      "changes": [
+        "Android and iOS store a private installation identity in Android Keystore-encrypted storage or iOS Keychain. Pairing derives a separate key for each host, so scanning another QR reuses the same node and renews its access credential. No IMEI, MAC address or hardware fingerprint is collected.",
+        "Existing enrollment is adopted only after an invitation-bound proof of the saved credential. Different phones with the same model remain separate. Interrupted pairing can recover with a new QR and the persisted identity.",
+        "The desktop offers a protected Restore local session button with localized feedback. Owner-confirmed legacy consolidation preserves diagnostic jobs and their original enrollment IDs."
+      ],
+      "validation": "Android build, 14 JVM tests and lint (0 errors, 17 warnings), unsigned iOS ARM64 build, 10 enrollment identity tests, 24 host protocol/network tests and real Swift TLS repeat enrollment on macOS passed. Kotlin/Swift identity and proof vectors match the host. Physical-phone repeated QR qualification remains pending.",
+      "limitations": "Update the desktop host before pairing with 0.2.8. Removing Android app data or losing identity storage creates a new installation; automatic physical-device recognition after identity loss is not claimed. Older companions do not send identity proof. HarmonyOS/NEXT builds remain deferred. No inference performance claim."
+    },
+    {
       "version": "0.2.7",
       "build": 9,
       "published_at": "2026-11-01T20:11:37Z",

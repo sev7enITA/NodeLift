@@ -1,0 +1,12 @@
+{
+  "anonymous_http_verified": true,
+  "files": [
+    "index.html",
+    "assets/site-locales.js",
+    "data/mobile-downloads.json",
+    "data/mobile-installation.md",
+    "data/changelog.md",
+    "data/changelog.json"
+  ],
+  "version": "0.2.8"
+}

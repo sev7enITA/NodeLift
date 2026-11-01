@@ -1,0 +1,23 @@
+{
+  "version": "0.2.8",
+  "build": 10,
+  "source_commit": "b7c812356945fc83b675b713cc9735ba83d64abd",
+  "host_enrollment_tests": 10,
+  "host_protocol_tests": 19,
+  "host_network_pairing_tests": 5,
+  "android_jvm_tests": 14,
+  "android_lint": {
+    "errors": 0,
+    "warnings": 17
+  },
+  "ios_arm64_unsigned_build": true,
+  "swift_macos_tls_repeat_pairing": true,
+  "same_model_distinct_identity_test": true,
+  "native_engine_libraries_unchanged": true,
+  "android_signer_continuity": true,
+  "physical_phone_repeat_pairing_tested": false,
+  "inference_speedup_claimed": false,
+  "external_model_review": "No new GLM or Gemini review for this enrollment patch.",
+  "full_host_suite_tests": 103,
+  "private_ios_installation": "A development-signed copy was installed and version 0.2.8 (10) read back; launch succeeded. Physical repeated QR pairing remains pending."
+}

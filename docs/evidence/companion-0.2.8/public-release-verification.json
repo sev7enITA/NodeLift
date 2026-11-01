@@ -1,0 +1,33 @@
+{
+  "release": "https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.8",
+  "source_commit": "b7c812356945fc83b675b713cc9735ba83d64abd",
+  "integrity_verified": true,
+  "scope": "published bytes and tag identity; no execution, signing or device qualification",
+  "assets": [
+    {
+      "name": "NodeLift-0.2.8-build-manifest.json",
+      "bytes": 1375,
+      "sha256": "f37cb46e8db840eb6e17bc040de33164ee0048d65cb41f1933a7cecfdddd8e57"
+    },
+    {
+      "name": "NodeLift-0.2.8-android-debug.apk",
+      "bytes": 22231603,
+      "sha256": "f3fe2a209bc99b439252dae260d95f7a5a912235b48ba77f74e2e78771bbd809"
+    },
+    {
+      "name": "NodeLift-0.2.8-ios-unsigned.zip",
+      "bytes": 5306938,
+      "sha256": "829ac89b4e36891aaf19d6e0b5555d68099da87b220542abb00562ab5a69cad6"
+    },
+    {
+      "name": "NodeLift-0.2.8-ios-unsigned.ipa",
+      "bytes": 5307162,
+      "sha256": "b099f5d78e9a21209423911509881558e2b085cc74819e22176e17f331b12be7"
+    },
+    {
+      "name": "NodeLift-0.2.8-ios-ipa-manifest.json",
+      "bytes": 571,
+      "sha256": "85c8e28a02ffc1680ca55b3d8f61445965df9552086fae7b617571eee3590e66"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "version": "0.2.8",
+  "build": 10,
+  "source_commit": "b7c812356945fc83b675b713cc9735ba83d64abd",
+  "build_mode": "cached native engine binaries, fresh Kotlin/Swift companion source",
+  "android_signing": "laboratory debug signer, same certificate as 0.2.7",
+  "ios_signing": "unsigned; Apple signing and provisioning required",
+  "physical_device_tested": false,
+  "assets": {
+    "NodeLift-0.2.8-android-debug.apk": {
+      "bytes": 22231603,
+      "sha256": "f3fe2a209bc99b439252dae260d95f7a5a912235b48ba77f74e2e78771bbd809"
+    },
+    "NodeLift-0.2.8-ios-unsigned.zip": {
+      "bytes": 5306938,
+      "sha256": "829ac89b4e36891aaf19d6e0b5555d68099da87b220542abb00562ab5a69cad6"
+    },
+    "NodeLift-0.2.8-ios-unsigned.ipa": {
+      "bytes": 5307162,
+      "sha256": "b099f5d78e9a21209423911509881558e2b085cc74819e22176e17f331b12be7"
+    },
+    "NodeLift-0.2.8-ios-ipa-manifest.json": {
+      "bytes": 571,
+      "sha256": "85c8e28a02ffc1680ca55b3d8f61445965df9552086fae7b617571eee3590e66"
+    }
+  },
+  "native_libraries": {
+    "lib/arm64-v8a/libimage_processing_util_jni.so": "0292b063fafccf734472cbb59588e756c2dbca907c72021ba6fbf126385508a2",
+    "lib/arm64-v8a/libnodelift.so": "f7c3d82d32884a569aecd53d4f0c66cbb58cd14fbb93acfee7e8441917120b79",
+    "lib/arm64-v8a/libsurface_util_jni.so": "a5c9d1928ea92ec7a94dff8cf666e7739cd734198b9f0ae1d4e28ea3c86516ba"
+  }
+}

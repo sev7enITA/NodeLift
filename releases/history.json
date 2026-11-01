@@ -5,7 +5,7 @@
     {
       "version": "0.2.8",
       "build": 10,
-      "published_at": null,
+      "published_at": "2026-11-01T21:07:55Z",
       "status": "experimental-prerelease",
       "title": "Stable device enrollment and local dashboard recovery",
       "url": "https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.8",
