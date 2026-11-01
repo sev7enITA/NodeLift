@@ -1,3 +1,9 @@
+# Current packages and historical evidence
+
+Current companion: **0.2.3 / build 5**, [published assets and hash manifest](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.3). Android is a debug-signed laboratory build; iOS is unsigned and needs provisioning. See [localization validation](../docs/LOCALIZATION.md) and [host integration validation](../research/integrations-2026-11-01/VALIDATION.md).
+
+The dated sections below retain historical results; they are not the latest release index.
+
 # NodeLift 0.2.1: build and validation
 
 31 October 2026. Experimental native inference release. **No physical-phone LLM speedup, pooled RAM or production readiness is established.**

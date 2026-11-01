@@ -1,0 +1,30 @@
+name: Device benchmark
+description: Share a reproducible positive, negative or failed comparison.
+title: "[Benchmark] "
+body:
+  - type: input
+    id: hardware
+    attributes:
+      label: Devices and topology
+      description: Host/phone models, OS, RAM, Wi-Fi/hotspot/USB/Ethernet and lifecycle state.
+    validations:
+      required: true
+  - type: textarea
+    id: configuration
+    attributes:
+      label: Frozen configuration
+      description: NodeLift/native commits, model revisions/hashes/quantization, prompt set, sampling, context and output limits.
+    validations:
+      required: true
+  - type: textarea
+    id: comparison
+    attributes:
+      label: Baseline and observations
+      description: Host-only/local-draft/remote-draft comparisons, actual output counts, time boundaries, repetitions, errors and fallback. Label simulations explicitly.
+    validations:
+      required: true
+  - type: textarea
+    id: limits
+    attributes:
+      label: Limits and artifacts
+      description: Thermal/battery state, uncertainty and sanitized raw results. Do not attach credentials, private prompts or model weights.

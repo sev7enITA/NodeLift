@@ -1,0 +1,26 @@
+name: Bug report
+description: Report a reproducible NodeLift failure.
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: "For sensitive security findings use SECURITY.md. Do not include invitations, API keys, private prompts or signing material."
+  - type: input
+    id: versions
+    attributes:
+      label: Versions and environment
+      description: NodeLift commit/release, host OS/hardware and companion version/device.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include expected and observed behavior and a public example prompt if needed.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Relevant evidence
+      description: Sanitized error, model revision/quantization, topology and whether the issue occurs on host-only execution.

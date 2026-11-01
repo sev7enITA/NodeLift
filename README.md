@@ -1,6 +1,12 @@
-<img src="assets/brand/nodelift-mark.svg" width="88" alt="NodeLift symbol">
+<img src="assets/brand/nodelift-mark.svg" width="112" alt="NodeLift symbol">
 
 # NodeLift
+
+English · [简体中文](docs/readme/README_zh-Hans.md) · [Italiano](docs/readme/README_it.md)
+
+[![Source checks](https://github.com/sev7enITA/NodeLift/actions/workflows/checks.yml/badge.svg)](https://github.com/sev7enITA/NodeLift/actions/workflows/checks.yml)
+
+[Quickstart](docs/wiki/Quickstart.md) · [Wiki](https://github.com/sev7enITA/NodeLift/wiki) · [How-to guides](docs/README.md) · [Gallery](docs/GALLERY.md) · [Troubleshooting](docs/wiki/Troubleshooting.md)
 
 **Give the hardware you already own another useful role in local AI.**
 
@@ -8,7 +14,7 @@ NodeLift is an experimental local inference workbench and mobile companion syste
 
 **[Live project showcase and interactive atlas](https://www.fabriziodegni.com/NodeLift/)** · [55-entry detailed matrix](site/NodeLift/data/comparison.md) · [Assessment and engineering lessons](research/comparison-2026-10-31/ASSESSMENT.md) · [Publication verification](docs/SHOWCASE_DEPLOYMENT.md). The dated atlas distinguishes applications, runtimes, serving systems and research; it is not an exhaustive inventory or a universal performance ranking.
 
-**[0.2.2 experimental prerelease](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.2), 1 November 2026.** Native inference, authenticated mobile work leases, an OpenAI-style text gateway, Android/iOS companion sources and an LM Studio generator adapter are implemented. **Phone inference speedup, pooled RAM, large hybrid-model speculation and sustained mobile operation are not yet qualified.** The first real-weight control experiments found local drafting slower than target-only inference on the small test pair. Negative results are published.
+**[0.2.3 experimental prerelease](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.3), 1 November 2026.** Native inference, authenticated mobile work leases, an OpenAI-style text gateway, Android/iOS companion sources and an LM Studio generator adapter are implemented. **Phone inference speedup, pooled RAM, large hybrid-model speculation and sustained mobile operation are not yet qualified.** The first real-weight control experiments found local drafting slower than target-only inference on the small test pair. Negative results are published.
 
 **Host 0.3.0 integration preview:** public Hugging Face GGUF search/download with SHA-256 verification, direct file/path import, opt-in OpenRouter, and a loopback text bridge for oMLX/LM Studio. English (default), Simplified Chinese and Italian UI. [Setup](docs/INTEGRATIONS.md#model-sources-and-external-engines-host-030-preview) · [Source review and qualification](research/integrations-2026-11-01/ASSESSMENT.md). Companion binaries are 0.2.3/build 5.
 
@@ -28,7 +34,7 @@ NodeLift is an experimental local inference workbench and mobile companion syste
 
 This is **not an Ollama backend patch**. Clients with a custom OpenAI-style endpoint can call NodeLift within its text/greedy subset. The LM Studio adapter selects NodeLift as a generator; it does not split LM Studio's own loaded model across phones.
 
-[Download Android 0.2.2](https://github.com/sev7enITA/NodeLift/releases/download/v0.2.2/NodeLift-0.2.2-android-debug.apk) · [Source checks](https://github.com/sev7enITA/NodeLift/actions)
+[Download Android 0.2.3](https://github.com/sev7enITA/NodeLift/releases/download/v0.2.3/NodeLift-0.2.3-android-debug.apk) · [Source checks](https://github.com/sev7enITA/NodeLift/actions)
 
 ## Start on the host
 
@@ -37,6 +43,7 @@ Requirements: Python 3.12+, C++17 compiler, CMake 3.22+, Git and locally license
 ```sh
 git clone https://github.com/sev7enITA/NodeLift.git
 cd NodeLift
+python3 scripts/doctor.py
 ./scripts/build-native.sh
 python3 scripts/fetch-control-models.py
 PYTHONPATH=host python3 -m nodelift.host --address YOUR_PRIVATE_LAN_IPV4
@@ -73,3 +80,9 @@ cd adapters/lmstudio && npm ci --ignore-scripts && npm test
 Native tests require the built library and weights. Network/CPU qualification tests are not LLM benchmarks. The upstream comparison script additionally requires llama-server built from the pinned checkout. Weights, pairing databases, private prompts and signing secrets do not belong in Git.
 
 Contributions are welcome: reproducible device measurements, backend bring-up, failure tests and improvements against an appropriate local comparator. See [CONTRIBUTING](CONTRIBUTING.md), [license](LICENSE), [third-party notices](THIRD_PARTY_NOTICES.md) and [brand provenance](docs/BRAND.md).
+
+## Authorship and contribution
+
+Conceived and developed by **Fabrizio Degni**. [Website](https://www.fabriziodegni.com/) · [LinkedIn](https://www.linkedin.com/in/fdegni/) · [About and credits](docs/wiki/About-and-credits.md).
+
+Start with a [reproducible bug or device benchmark](https://github.com/sev7enITA/NodeLift/issues/new/choose). The [REA engineering study](research/rea-2026-11-01/ASSESSMENT.md) records lessons adopted for onboarding and verification, and potential engine work that still needs testing.

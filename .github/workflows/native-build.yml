@@ -1,0 +1,25 @@
+name: Native build check
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: native-build-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  macos-build:
+    runs-on: macos-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile the pinned native core
+        run: ./scripts/build-native.sh
+      - name: Record the build environment
+        run: |
+          mkdir -p artifacts
+          python3 scripts/doctor.py --json > artifacts/native-build-environment.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: native-build-environment
+          path: artifacts/native-build-environment.json
+          if-no-files-found: error

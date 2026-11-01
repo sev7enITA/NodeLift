@@ -57,6 +57,6 @@ Client calls to NodeLift's `/v1/chat/completions` continue to default to native 
 }
 ```
 
-Use `openrouter` only for an intentionally cloud-routed request. Provider setup/catalog loading requires dashboard admin authority; the client key cannot change keys/endpoints or import models. External token usage is omitted if the provider does not report it. Phone lease endpoints and mobile credentials are unchanged. Mobile 0.2.2 remains the latest companion build; host 0.3.0 does not imply new mobile binaries.
+Use `openrouter` only for an intentionally cloud-routed request. Provider setup/catalog loading requires dashboard admin authority; the client key cannot change keys/endpoints or import models. External token usage is omitted if the provider does not report it. Phone lease endpoints and mobile credentials are unchanged. Mobile 0.2.3/build 5 adds Italian alongside English and Simplified Chinese. The host 0.3.0 integrations preview is separate from mobile engine qualification.
 
 [Repository review and reuse decisions](../research/integrations-2026-11-01/ASSESSMENT.md) · [Validation and limits](../research/integrations-2026-11-01/VALIDATION.md).

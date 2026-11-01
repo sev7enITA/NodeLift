@@ -1,6 +1,6 @@
-# NodeLift 0.2.1: guida del laboratorio
+# NodeLift: guida del laboratorio (companion 0.2.3)
 
-Questa versione aggiunge inferenza reale alla companion 0.1. **Non è ancora dimostrato uno speedup su telefoni fisici.**
+Il motore nativo è stato introdotto nella 0.2.1; la companion attuale è 0.2.3/build 5, con inglese predefinito, cinese semplificato e italiano. **Non è ancora dimostrato uno speedup su telefoni fisici.**
 
 ## Computer
 
@@ -15,7 +15,7 @@ La configurazione resta nella directory privata dello stato. Il token dashboard 
 
 ## Android ARM64
 
-0.2.1 si installa sopra 0.1/0.2.0 se usa la stessa firma di debug locale. Non disinstallare: l'aggiornamento conserva l'associazione. È una build per il laboratorio, non Play Store.
+La 0.2.3 conserva la firma della 0.2.2. Un aggiornamento sopra altre versioni richiede la stessa firma di debug locale. Non disinstallare: l'aggiornamento conserva l'associazione. È una build per il laboratorio, non Play Store.
 
 1. Installa l'APK aggiornato, apri NodeLift e Riprendi sessione.
 2. Sul Mac scegli `qwen2.5-1.5b-instruct-q4_k_m.gguf` come target e `qwen2.5-0.5b-instruct-q4_k_m.gguf` come draft; Applica.
