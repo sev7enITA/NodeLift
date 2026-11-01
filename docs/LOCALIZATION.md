@@ -2,7 +2,15 @@
 
 The control room and Android/iOS companions use **English by default**, independent of browser or system language. Choose **Language → 简体中文** for Simplified Chinese or **Language → Italiano** for Italian. The explicit choice is saved locally per browser/device. No account or translation service is needed. Traditional Chinese is not included in this release.
 
-Mobile version: **0.2.4, build 6**. Update the Android APK over the existing same-key installation to retain pairing. The unsigned iOS app requires Apple signing and provisioning before installation. The HarmonyOS candidate has the same language selection in source; it remains uncompiled and unqualified on a physical device. LM Studio's SDK-owned configuration schema, developer CLI diagnostics and the public showcase are separate surfaces and remain in their existing languages.
+Mobile version: **0.2.4, build 6**. Update the Android APK over the existing same-key installation to retain pairing. The unsigned iOS app requires Apple signing and provisioning before installation. The HarmonyOS candidate has the same language selection in source; it remains uncompiled and unqualified on a physical device. LM Studio's SDK-owned configuration schema and developer CLI diagnostics remain in their existing languages. The public showcase has its own three-language catalog, described below.
+
+## Public showcase — 1 November 2026
+
+The website defaults to **English**, including its source HTML and no-JavaScript presentation. The selector order is **EN → 中文 (Simplified Chinese) → IT**. Browser/OS language does not override the default. An explicit visitor selection is saved locally; a `?lang=en`, `?lang=zh-Hans` or `?lang=it` URL takes precedence over that preference. Unknown language codes fall back to English. `zh` and `zh-CN` links resolve to `zh-Hans`.
+
+The 303-message Chinese catalog in `site/NodeLift/assets/site-locales.js` covers the narrative, downloads, credits, accessibility labels, architecture steps, atlas controls, project-field labels, errors, pagination and presentation controls. Italian translations remain in explicit HTML attributes and dynamic message pairs. English is readable before scripts load. Chinese uses local CJK font fallbacks without downloading a font package. Title, description, document language and social locale metadata update with the selection; alternate-language links are declared in the HTML.
+
+The atlas's research entries, original evidence, model/project names and downloadable research files retain their canonical English content in every language. The interface explicitly explains this, including in Chinese. Switching language preserves search/filter state and an open project; generated share links include the chosen language. This website change does not change the mobile applications or their release version.
 
 The 0.2.4 companion build includes the device-graph catalog additions and 55 new shared messages for About, References and manual update discovery. Version and build values come from installed package metadata.
 

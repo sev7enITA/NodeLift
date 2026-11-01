@@ -1,0 +1,68 @@
+{
+  "checked_utc": "2026-11-01T05:02:49.608100+00:00",
+  "scope": "Public showcase localization only; no engine or mobile release change",
+  "default_language": "en",
+  "language_order": [
+    "en",
+    "zh-Hans",
+    "it"
+  ],
+  "chinese_messages": 303,
+  "source_checks": {
+    "javascript_syntax": true,
+    "static_translation_coverage": true,
+    "placeholder_parity": true,
+    "language_precedence_and_fallback": true,
+    "literal_argument_substitution": true
+  },
+  "local_browser_checks": [
+    "English on first visit without query/preference",
+    "Italian persists on a subsequent bare-URL visit",
+    "Explicit English URL overrides saved Italian",
+    "Chinese DistAI search returns one of 55 projects",
+    "All 18 project-field labels render in Chinese",
+    "Language switch preserves DistAI query"
+  ],
+  "local_dom_layout_checks": [
+    {
+      "language": "en",
+      "viewport_width": 375,
+      "document_scroll_width": 375
+    },
+    {
+      "language": "zh-Hans",
+      "viewport_width": 375,
+      "document_scroll_width": 375
+    },
+    {
+      "language": "en",
+      "viewport_width": 768,
+      "document_scroll_width": 768
+    }
+  ],
+  "live_browser_checks": {
+    "languages": [
+      "en",
+      "zh-Hans",
+      "it"
+    ],
+    "order": [
+      "en",
+      "zh-Hans",
+      "it"
+    ],
+    "projects_loaded": 55,
+    "viewport_width": 1685,
+    "document_scroll_width": 1685,
+    "chinese_download_heading": "移动应用下载 · 0.2.4",
+    "ended_with_language": "en"
+  },
+  "canonical_research_entries": "English in every UI language",
+  "limits": [
+    "No physical mobile browser test",
+    "No independent linguistic review",
+    "No new engine or inference benchmark",
+    "Responsive checks use DOM geometry; retained screenshot uses the normal desktop viewport"
+  ],
+  "viewport_override_reset": true
+}

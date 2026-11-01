@@ -2,11 +2,13 @@
 (() => {
   const $ = id => document.getElementById(id);
   const params = new URLSearchParams(location.search);
-  let language = params.get('lang') === 'en' ? 'en' : 'it';
-  if (!params.has('lang')) { try { language = localStorage.getItem('nodelift-site-language') === 'en' ? 'en' : 'it'; } catch (_) {} }
-  const textNodes = [...document.querySelectorAll('[data-en]')].map(node => ({node,it:node.textContent,en:node.dataset.en}));
-  const labelNodes = [...document.querySelectorAll('[data-en-label]')].map(node => ({node,it:node.getAttribute('aria-label'),en:node.dataset.enLabel}));
-  const tr = (it,en) => language === 'en' ? en : it;
+  const locale = window.NodeLiftSiteLocale;
+  let savedLanguage = null;
+  try { savedLanguage = localStorage.getItem('nodelift-site-language'); } catch (_) {}
+  let language = locale.resolveLanguage(params.get('lang'), savedLanguage);
+  const textNodes = [...document.querySelectorAll('[data-en]')].map(node => ({node,it:node.dataset.it,en:node.dataset.en}));
+  const labelNodes = [...document.querySelectorAll('[data-en-label]')].map(node => ({node,it:node.dataset.itLabel,en:node.dataset.enLabel}));
+  const tr = (it,en,...args) => locale.translate(it,en,language,args);
   const make = (tag,text,className) => { const node=document.createElement(tag); if(text!==undefined)node.textContent=String(text); if(className)node.className=className; return node; };
   const safeText = value => typeof value === 'string' && value.trim() ? value : tr('Non documentato nel dataset.','Not documented in the dataset.');
   let dataset = null;
@@ -45,11 +47,16 @@
   ];
   function applyLanguage() {
     document.documentElement.lang=language;
-    for(const item of textNodes)item.node.textContent=item[language];
-    for(const item of labelNodes)item.node.setAttribute('aria-label',item[language]);
-    $('lang-it').setAttribute('aria-pressed',String(language==='it'));
-    $('lang-en').setAttribute('aria-pressed',String(language==='en'));
+    for(const item of textNodes)item.node.textContent=tr(item.it,item.en);
+    for(const item of labelNodes)item.node.setAttribute('aria-label',tr(item.it,item.en));
+    for(const lang of locale.languages)$('lang-'+lang).setAttribute('aria-pressed',String(language===lang));
     document.title=tr('NodeLift — Il tuo hardware ha ancora un futuro.','NodeLift — Your hardware still has a future.');
+    document.querySelector('meta[name="description"]').content=tr('NodeLift: un laboratorio open source per delegare inferenza AI a dispositivi locali. Architettura, risultati riproducibili e atlante comparativo dei sistemi distribuiti.','NodeLift: an open-source laboratory for delegating AI inference to local devices. Architecture, reproducible results and a comparison atlas of distributed systems.');
+    for(const selector of ['meta[property="og:title"]','meta[name="twitter:title"]'])document.querySelector(selector).content=document.title;
+    for(const selector of ['meta[property="og:description"]','meta[name="twitter:description"]'])document.querySelector(selector).content=document.querySelector('meta[name="description"]').content;
+    const localeCodes={en:'en_US','zh-Hans':'zh_CN',it:'it_IT'};
+    document.querySelector('meta[property="og:locale"]').content=localeCodes[language];
+    document.querySelectorAll('meta[property="og:locale:alternate"]').forEach((node,i)=>node.content=locale.languages.filter(lang=>lang!==language).map(lang=>localeCodes[lang])[i]);
     document.querySelector('.hero-emblem').alt=tr('Emblema originale NodeLift: una N luminosa composta da nodi interconnessi','Original NodeLift emblem: a luminous N formed from interconnected nodes');
     $('project-search').placeholder=tr('llama.cpp, Android, speculazione…','llama.cpp, Android, speculation…');
     renderStep();
@@ -61,13 +68,13 @@
   function syncURL() {
     const url=new URL(location.href);
     filterIds.forEach((id,i)=>{ const value=$(id).value.trim(); if(value)url.searchParams.set(filterParams[i],value);else url.searchParams.delete(filterParams[i]); });
-    if(language==='en')url.searchParams.set('lang','en');else url.searchParams.delete('lang');
+    url.searchParams.set('lang',language);
     if(selectedProject)url.searchParams.set('project',selectedProject.id);else url.searchParams.delete('project');
     history.replaceState(null,'',url);
   }
-  for(const lang of ['it','en'])$('lang-'+lang).addEventListener('click',()=>{language=lang;try{localStorage.setItem('nodelift-site-language',lang);}catch(_){}applyLanguage();syncURL();});
+  for(const lang of locale.languages)$('lang-'+lang).addEventListener('click',()=>{language=lang;try{localStorage.setItem('nodelift-site-language',lang);}catch(_){}applyLanguage();syncURL();});
   function renderStep() {
-    const step=stepContent[activeStep];$('step-label').textContent=step.label;$('step-copy').textContent=step[language];
+    const step=stepContent[activeStep];$('step-label').textContent=tr(['DRAFT REMOTO','VERIFICA DEL TARGET','OUTPUT CONFERMATO','FALLBACK CON SCADENZA'][activeStep],step.label);$('step-copy').textContent=tr(step.it,step.en);
     document.querySelector('.architecture-stage').dataset.stage=String(activeStep);
     document.querySelectorAll('.step').forEach((button,i)=>{button.classList.toggle('active',i===activeStep);button.setAttribute('aria-pressed',String(i===activeStep));});
   }
@@ -101,10 +108,10 @@
     $('atlas-error').hidden=true;$('atlas-empty').hidden=filtered.length>0;
     document.querySelector('.table-scroll').hidden=filtered.length===0;
     $('table-instruction').hidden=filtered.length===0;
-    $('atlas-status').textContent=tr(`${filtered.length} di ${dataset.projects.length} progetti · verifica ${dataset.updated}`,`${filtered.length} of ${dataset.projects.length} projects · checked ${dataset.updated}`);
-    $('page-summary').textContent=filtered.length?tr(`${start+1}–${end} di ${filtered.length} risultati`,`${start+1}–${end} of ${filtered.length} results`):tr('0 risultati','0 results');
+    $('atlas-status').textContent=tr('{0} di {1} progetti · verifica {2}','{0} of {1} projects · checked {2}',filtered.length,dataset.projects.length,dataset.updated);
+    $('page-summary').textContent=filtered.length?tr('{0}–{1} di {2} risultati','{0}–{1} of {2} results',start+1,end,filtered.length):tr('0 risultati','0 results');
     $('previous-page').disabled=page===0;$('next-page').disabled=end>=filtered.length;
-    const scope=dataset.scope&&typeof dataset.scope[language]==='string'?dataset.scope[language]:'';
+    const scope=dataset.scope ? tr(dataset.scope.it || dataset.scope.en || '',dataset.scope.en || '') : '';
     $('dataset-scope').textContent=scope;
     for(const project of rows){
       const row=make('tr');const name=make('th');name.scope='row';name.append(projectButton(project),make('span',uiLabel('category',project.category),'project-category'));row.append(name);
@@ -219,7 +226,7 @@
   window.addEventListener('focus',restoreIfScreen);
   window.addEventListener('pageshow',restoreIfScreen);
   document.addEventListener('pointerdown',restoreIfScreen,{capture:true});
-  window.addEventListener('popstate',()=>{const state=new URLSearchParams(location.search);language=state.get('lang')==='en'?'en':'it';applyLanguage();filterIds.forEach((id,i)=>$(id).value=state.get(filterParams[i])||'');page=0;renderAtlas();if(dataset){const p=dataset.projects.find(p=>p.id===state.get('project'));if(p)openProject(p);else if($('project-dialog').open)$('project-dialog').close();}});
-  const initialURL=new URL(location.href);if(language==='en')initialURL.searchParams.set('lang','en');else initialURL.searchParams.delete('lang');history.replaceState(null,'',initialURL);
+  window.addEventListener('popstate',()=>{const state=new URLSearchParams(location.search);language=locale.resolveLanguage(state.get('lang'),null);applyLanguage();filterIds.forEach((id,i)=>$(id).value=state.get(filterParams[i])||'');page=0;renderAtlas();if(dataset){const p=dataset.projects.find(p=>p.id===state.get('project'));if(p)openProject(p);else if($('project-dialog').open)$('project-dialog').close();}});
+  const initialURL=new URL(location.href);initialURL.searchParams.set('lang',language);history.replaceState(null,'',initialURL);
   applyLanguage();loadAtlas();
 })();
