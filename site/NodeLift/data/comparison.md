@@ -1,4 +1,4 @@
-# NodeLift — Detailed comparison atlas
+# NodeLift: Detailed comparison atlas
 
 **2026-10-31 · 55 selected entries · Dataset v1**
 

@@ -297,7 +297,7 @@ def main():
             discovery = subprocess.Popen(["dns-sd", "-R", "NodeLift", "_nodelift._tcp", "local", str(args.port), "protocol=1"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except FileNotFoundError:
             print("Bonjour unavailable; pairing ticket still works.")
-    print(f"NodeLift 0.3.0 — experimental native inference; mobile speedup unqualified.\nDashboard (local, private link): http://127.0.0.1:{admin.server_port}/#{admin_token}", flush=True)
+    print(f"NodeLift 0.3.0: experimental native inference; mobile speedup unqualified.\nDashboard (local, private link): http://127.0.0.1:{admin.server_port}/#{admin_token}", flush=True)
     stop = threading.Event()
     signal.signal(signal.SIGINT, lambda *_: stop.set())
     signal.signal(signal.SIGTERM, lambda *_: stop.set())

@@ -1,6 +1,6 @@
 # Mobile downloads
 
-The [NodeLift portal download section](https://www.fabriziodegni.com/NodeLift/#downloads) links to companion 0.2.5/build 7 packages and checksums.
+The [NodeLift portal download section](https://www.fabriziodegni.com/NodeLift/#downloads) links to companion 0.2.6/build 8 packages and checksums.
 
 | Platform | Current artifact |
 | --- | --- |
@@ -11,7 +11,7 @@ The [NodeLift portal download section](https://www.fabriziodegni.com/NodeLift/#d
 
 The iOS IPA is a byte-identical repackaging of the published device app, not a new binary build. It is not directly installable from Safari. There is no TestFlight or App Store release.
 
-Read the [full installation and signing guide](https://github.com/sev7enITA/NodeLift/blob/main/docs/MOBILE_DOWNLOADS.md), [machine-readable platform inventory](https://www.fabriziodegni.com/NodeLift/data/mobile-downloads.json) and [release assets](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.5).
+Read the [full installation and signing guide](https://github.com/sev7enITA/NodeLift/blob/main/docs/MOBILE_DOWNLOADS.md), [machine-readable platform inventory](https://www.fabriziodegni.com/NodeLift/data/mobile-downloads.json) and [release assets](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.6).
 
 A compiled or signed package does not establish physical-device installation, sustained inference or a speedup. The HarmonyOS native SDK build, signing and device qualification remain open.
 

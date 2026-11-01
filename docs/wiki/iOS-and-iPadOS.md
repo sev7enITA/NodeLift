@@ -1,6 +1,6 @@
 # iPhone and iPad
 
-The [public download section](https://www.fabriziodegni.com/NodeLift/#downloads) offers a **compiled, unsigned device build** as an IPA or `.app` ZIP. Both contain the same 0.2.5 app. It cannot be installed as-is: Apple signing and provisioning are required. There is no TestFlight or App Store release.
+The [public download section](https://www.fabriziodegni.com/NodeLift/#downloads) offers a **compiled, unsigned device build** as an IPA or `.app` ZIP. Both contain the same 0.2.6 app. It cannot be installed as-is: Apple signing and provisioning are required. There is no TestFlight or App Store release.
 
 See the [download and signing guide](https://github.com/sev7enITA/NodeLift/blob/main/docs/MOBILE_DOWNLOADS.md) for package hashes and platform requirements.
 
@@ -19,3 +19,7 @@ English is the default; Simplified Chinese and Italian are selectable. OS permis
 **Qualification remains open:** physical installation, sustained Metal/CPU inference, thermal behavior and measured phone speedup. [Source and build evidence](https://github.com/sev7enITA/NodeLift/blob/main/docs/LOCALIZATION.md).
 
 Huawei HarmonyOS NEXT needs the separate ArkTS candidate. An Android APK or this iOS build does not qualify it; no HAP is available.
+
+See the [iPhone distribution guide](https://github.com/sev7enITA/NodeLift/blob/main/docs/IOS_DISTRIBUTION.md) for development signing, ad hoc devices, TestFlight and the intended App Store companion. The current IPA is unsigned.
+
+Support logs can be exported without USB from **About & References → Diagnostics** in companion 0.2.6. [Diagnostic scope and limitations](https://github.com/sev7enITA/NodeLift/blob/main/docs/MOBILE_DIAGNOSTICS.md).

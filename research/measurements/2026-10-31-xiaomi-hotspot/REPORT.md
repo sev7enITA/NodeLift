@@ -1,4 +1,4 @@
-# NodeLift — first physical Xiaomi/hotspot trial
+# NodeLift: first physical Xiaomi/hotspot trial
 
 31 October 2026. Exploratory protocol diagnostics; no LLM inference was performed. This report preserves the conditions and limitations of that historical session.
 

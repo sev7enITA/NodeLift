@@ -10,6 +10,7 @@ import CryptoKit
     }
     @Published var status: Message = "Ready to pair"
     @Published var running = false
+    @Published var connected = false
     @Published var lastResult: Message = "No measurements yet"
     @Published var telemetry: Message = ""
     @Published var hasSavedSession = Vault.load() != nil
@@ -41,7 +42,7 @@ import CryptoKit
         thermalObserver=NotificationCenter.default.addObserver(forName:ProcessInfo.thermalStateDidChangeNotification,object:nil,queue:.main) { [weak self] _ in
             Task { @MainActor in
                 guard let self, !self.permitsDraft else {return}
-                self.draft?.cancel();self.engineStatus="Thermal pause · let the device cool down"
+                Diagnostics.shared.record(.thermalPause);self.draft?.cancel();self.engineStatus="Thermal pause · let the device cool down"
             }
         }
         _ = capabilities()
@@ -55,7 +56,7 @@ import CryptoKit
         var system = utsname(); uname(&system)
         let machine = withUnsafePointer(to:&system.machine) { pointer in pointer.withMemoryRebound(to:CChar.self, capacity:1) { String(cString:$0) } }
         #if targetEnvironment(simulator)
-        let osName = "iOS Simulator \(UIDevice.current.systemVersion) — NOT physical device"
+        let osName = "iOS Simulator \(UIDevice.current.systemVersion): NOT physical device"
         #else
         let osName = "\(UIDevice.current.systemName) \(UIDevice.current.systemVersion)"
         #endif
@@ -76,17 +77,18 @@ import CryptoKit
     }
     func importDraft(_ url:URL) {
         guard !running && !importingModel else {return}
+        Diagnostics.shared.record(.modelLoading)
         importingModel=true;engineStatus="Importing and verifying SHA-256…"
         Task {
             do { _ = try await NativeDraft.importFile(url);engineStatus="Draft imported · enable the engine and resume the session" }
-            catch { engineStatus=Message(error.localizedDescription) }
+            catch { Diagnostics.shared.record(.modelFailed,error:error);engineStatus=Message(error.localizedDescription) }
             importingModel=false
         }
     }
     private func prepareDraft() async throws {
         if !engineEnabled {draft?.cancel();draft=nil;return}
         guard draft == nil && permitsDraft else {return}
-        engineStatus="Loading draft…"
+        Diagnostics.shared.record(.modelLoading);engineStatus="Loading draft…"
         let (sha,_) = try await NativeDraft.checkedModel()
         try Task.checkCancellation()
         let worker=try NativeDraft();draft=worker
@@ -94,7 +96,7 @@ import CryptoKit
                                         "n_ctx":engineContext,"threads":engineThreads,"gpu_layers":engineMetal ? 999:0])
         try Task.checkCancellation()
         guard let fingerprint=info["tokenizer_fingerprint"] as? String else {throw NodeError.message("Tokenizer missing")}
-        draftSHA=sha;draftFingerprint=fingerprint
+        draftSHA=sha;draftFingerprint=fingerprint;Diagnostics.shared.record(.modelReady)
         engineStatus=Message("Draft ready · {0} · foreground only",engineMetal ? "Metal":"CPU")
     }
     private func draftResult(_ work:[String:Any]) async -> [String:Any] {
@@ -114,12 +116,13 @@ import CryptoKit
             guard permitsDraft else {throw NodeError.message("Thermal or battery pause")}
             result["tokens"]=value["tokens"]
             lastResult=Message("Native draft: {0} ms · proposals require verification on your Mac",String(format:"%.1f",value["ms"] as? Double ?? 0))
-        } catch {result["error"]=error.localizedDescription}
+        } catch {Diagnostics.shared.record(.jobFailed,error:error);result["error"]=error.localizedDescription}
         return result
     }
     func connect(newTicket: Bool) {
         guard !running else { return }
-        running = true; status = "Connecting to your computer…"
+        Diagnostics.shared.record(.sessionStart)
+        running = true; connected = false; status = "Connecting to your computer…"
         let current = UUID(); generation = current
         let text = ticketText
         task = Task {
@@ -148,12 +151,15 @@ import CryptoKit
                 while !Task.isCancelled {
                     do {
                         do {try await prepareDraft()}
-                        catch {try Task.checkCancellation();draft?.cancel();draft=nil;engineEnabled=false;engineStatus=Message(error.localizedDescription)}
+                        catch {try Task.checkCancellation();draft?.cancel();draft=nil;Diagnostics.shared.record(.modelFailed,error:error);engineEnabled=false;engineStatus=Message(error.localizedDescription)}
                         var value:[String:Any]=[:]
                         if ProcessInfo.processInfo.systemUptime-lastHeartbeat>=3 {
                             value = try await c.json("/v1/heartbeat",body:capabilities())
                             lastHeartbeat=ProcessInfo.processInfo.systemUptime
-                            status="Connected · waiting for work"
+                            try Task.checkCancellation()
+                            guard generation == current else { return }
+                            if !connected {Diagnostics.shared.record(.sessionConnected)}
+                            connected=true; status="Connected · waiting for work"
                         }
                         if let job=value["job"] as? [String:Any], let id=job["id"] as? String, let kind=job["kind"] as? String {
                             status = kind.hasPrefix("network") ? "Measuring network…" : "Running synthetic CPU calibration…"
@@ -175,18 +181,20 @@ import CryptoKit
                         errors=0
                     } catch {
                         try Task.checkCancellation()
-                        errors += 1; status=Message("Connection interrupted · attempt {0}/3",errors)
+                        Diagnostics.shared.record(.sessionRetry,error:error)
+                        connected=false; errors += 1; status=Message("Connection interrupted · attempt {0}/3",errors)
                         if errors>=3 { throw error }
                     }
                     try await Task.sleep(nanoseconds:3_000_000_000)
                 }
-            } catch { if !Task.isCancelled && generation == current { status=Message(error.localizedDescription) } }
-            if generation == current { running=false }
+            } catch { if !Task.isCancelled && generation == current { Diagnostics.shared.record(.sessionFailed,error:error);status=Message(error.localizedDescription) } }
+            if generation == current { running=false; connected=false }
         }
     }
     func pause() {
+        if running {Diagnostics.shared.record(.sessionStop)}
         generation = UUID()
-        task?.cancel();draft?.cancel();draft=nil;client?.cancel();client=nil;running=false
+        task?.cancel();draft?.cancel();draft=nil;client?.cancel();client=nil;running=false;connected=false
         engineStatus="Engine paused · resume with the app open"
         status="Paused · no delegated work"
     }
@@ -251,6 +259,7 @@ enum Benchmarks {
                 note=Message("FP32 matvec 256×256, Swift, single thread: {0} iterations. Does not predict tokens/s.",sample["iterations"] ?? 0)
             } else { throw NodeError.message("Unsupported job") }
         } catch {
+            Diagnostics.shared.record(.jobFailed,error:error)
             state=Task.isCancelled ? "cancelled" : error.localizedDescription == "thermal_pause" ? "thermal_pause" : "failed"
             note=Message(error.localizedDescription)
         }

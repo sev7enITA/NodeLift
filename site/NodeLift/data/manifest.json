@@ -11,20 +11,20 @@
       "sha256": "e268b281659dfb73715e611c931205d93e2655e38e8429069b7a6c01a983af7d"
     },
     "comparison.md": {
-      "bytes": 90946,
-      "sha256": "23e6fb931ac1cc53132702c5d85b43ed03aa40898a5683577e45a64e7bbec573"
+      "bytes": 90943,
+      "sha256": "78ba1ba61a54a0cb5ce1867bfe2d3466b004747634c82aa766c7622925700900"
     },
     "methodology.md": {
-      "bytes": 5663,
-      "sha256": "044a92362b1ff092e53b2527b9d2b49da4ee361d18f02dc51843a2657ece5c78"
+      "bytes": 5660,
+      "sha256": "9232557f8bfb7b4885986a3ddb882e210ad63c2dfb82746f86463024e690aa5b"
     },
     "source-inventory.json": {
       "bytes": 14950,
       "sha256": "d8fd90027152f1ff1af89fc975230440419566d38f1dc8f63ebbddb9a8647067"
     },
     "assessment.md": {
-      "bytes": 8587,
-      "sha256": "f8993e9767fbe8ceadd1b84eb60d9561331ef907cd04e21cc3217a405e4370cd"
+      "bytes": 8584,
+      "sha256": "82837cb6324fa9ef0ddd691274049b3b7006ef1b5fb66349190e5d251a6d8c44"
     }
   },
   "documentation_updated": "2026-11-01"

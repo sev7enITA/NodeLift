@@ -4,7 +4,7 @@
 
 Every published companion build has an entry below. Android packages are laboratory builds; iOS packages require Apple signing and provisioning. Historical validation belongs to the named version and does not establish current physical-device performance.
 
-## [0.2.5](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.5) — build 7 · 2026-11-01
+## [0.2.5](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.5): build 7 · 2026-11-01
 
 **Desktop QR pairing and native mobile scanning** · experimental-prerelease
 
@@ -17,7 +17,7 @@ Every published companion build has an entry below. Android packages are laborat
 
 **Limits:** Physical Android/iOS camera scanning remains unqualified. iOS requires personal Apple signing/provisioning and cannot install directly from Safari. HarmonyOS/NEXT builds are deferred. No inference speedup or RAM-pooling claim.
 
-## [0.2.4](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.4) — build 6 · 2026-11-01
+## [0.2.4](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.4): build 6 · 2026-11-01
 
 **About, references and manual release discovery** · experimental-prerelease
 
@@ -29,7 +29,7 @@ Every published companion build has an entry below. Android packages are laborat
 
 **Limits:** No physical Android/iPhone installation or UI qualification. Native HarmonyOS/NEXT remains uncompiled without a HAP or native LLM worker. No new native-engine performance result.
 
-## [0.2.3](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.3) — build 5 · 2026-11-01
+## [0.2.3](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.3): build 5 · 2026-11-01
 
 **Italian UI and host integration preview** · experimental-prerelease
 
@@ -41,7 +41,7 @@ Every published companion build has an entry below. Android packages are laborat
 
 **Limits:** Physical mobile UI and Android instrumentation execution remain unverified; no ADB device was available. No new GLM/Gemini review for Italian. iOS requires signing; no HarmonyOS HAP or new speed benchmark.
 
-## [0.2.2](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.2) — build 4 · 2026-10-31
+## [0.2.2](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.2): build 4 · 2026-10-31
 
 **Default English and Simplified Chinese localization** · experimental-prerelease
 
@@ -53,7 +53,7 @@ Every published companion build has an entry below. Android packages are laborat
 
 **Limits:** Physical localization and sustained active-node switching remain unverified. Android instrumentation did not execute because the emulator stayed offline. No physical-phone acceleration or pooled RAM established.
 
-## [0.2.1](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.1) — build 3 · 2026-10-31
+## [0.2.1](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.1): build 3 · 2026-10-31
 
 **Native inference and authenticated mobile draft workers** · experimental-prerelease
 
@@ -67,7 +67,7 @@ Every published companion build has an entry below. Android packages are laborat
 
 ## Documentation and tooling updates
 
-### 2026-11-01 — English documentation and synchronized release history
+### 2026-11-01: English documentation and synchronized release history
 
 - Repository guides, historical assessments and research dossiers are maintained in English; application/showcase localization remains English, Simplified Chinese and Italian.
 - One versioned history generates the repository changelog, portal downloadable notes and rendered release notes. Build and CI checks reject missing build entries or stale generated history.

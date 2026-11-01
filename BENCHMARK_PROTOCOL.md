@@ -1,4 +1,4 @@
-# ExpandMyHW — proposed experimental protocol
+# ExpandMyHW: proposed experimental protocol
 
 Preliminary version, 31 October 2026, written before hardware results were collected. Freeze the protocol after device inventory and before observing decisive results. The thresholds below are engineering proposals to make “clearly outperform” measurable, not predicted performance or thresholds already approved by the owner.
 
@@ -40,7 +40,7 @@ Repeat with idle radio, continuous traffic and contested networking; compare kee
 
 ## Phase 1: discriminating microexperiments
 
-### E1 — autonomous draft, one chat
+### E1: autonomous draft, one chat
 
 A phone hosts the entire draft and proposes blocks k=1/2/4/8/16, restricted to safe supported values. The host verifies and commits; contexts and proposal sequences carry IDs/versions. Start greedy. Per block, measure draft, transfer, wait, verification, accepted tokens, rollback, actual bytes and discarded work.
 
@@ -48,13 +48,13 @@ Compare D1/D2 against the strongest B0/B1/B2 on the same workload. Acceptance va
 
 **Early feasibility stop:** if even an optimistic bound cannot beat the baseline, explicitly listing omitted costs, do not build the plugin for that combination. Beating the bound still requires an end-to-end trial. For non-greedy sampling, measure the exact protocol and verify acceptance/rejection and residual sampling; sending only token IDs does not establish equivalence.
 
-### E2 — capacity without reloading weights every token
+### E2: capacity without reloading weights every token
 
 Select a target/context that actually exceeds host-available memory. Compare C0/C1 without changing model identity; record paging, SSD I/O, loading, TTFT and decode. Do not use poorer quantization or fewer experts only for the cluster.
 
 **Stop:** insufficient mobile/KV memory, frequent restarts, or remote cost exceeding the measured out-of-core path. If C0 cannot start, report new capacity and absolute C1 times without an invented speedup ratio.
 
-### E3 — transport and policy controls
+### E3: transport and policy controls
 
 Repeat the strongest D/P configuration on the same nodes, changing only transport. Compare all nodes, planner-selected subsets and host alone. Introduce network contention, observed throttling and node departure. Count detection, replanning and context-reconstruction time.
 

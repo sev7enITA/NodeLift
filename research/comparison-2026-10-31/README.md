@@ -1,4 +1,4 @@
-# Comparison atlas — 31 October 2026
+# Comparison atlas: 31 October 2026
 
 - [Assessment and consequences for the engine](ASSESSMENT.md)
 - [Canonical 55-entry JSON](../../site/NodeLift/data/comparison.json)

@@ -25,13 +25,13 @@ fun installedCompanionVersion(activity: Activity): String {
     return try {
         val info = activity.packageManager.getPackageInfo(activity.packageName, 0)
         val code = if (Build.VERSION.SDK_INT >= 28) info.longVersionCode else info.versionCode.toLong()
-        L10n.text(activity, "Version {0} · build {1}", info.versionName ?: "—", code)
+        L10n.text(activity, "Version {0} · build {1}", info.versionName ?: "-", code)
     } catch (_: PackageManager.NameNotFoundException) {
         L10n.text(activity, "Version unavailable")
     }
 }
 
-/** Project information stays local; each fixed public URL opens only after a tap. */
+/** Public update metadata is checked by UpdateMonitor; diagnostics leave the device only after export. */
 fun showAbout(activity: Activity): Dialog {
     val bg = Color.rgb(11, 21, 28)
     val mint = Color.rgb(145, 243, 206)
@@ -76,15 +76,70 @@ fun showAbout(activity: Activity): Dialog {
             setOnClickListener { open(url) }
         }, LinearLayout.LayoutParams(-1, -2))
     }
-    content.addView(text("NodeLift", 29f, ink).apply { setTypeface(null, Typeface.BOLD) })
+    content.addView(LinearLayout(activity).apply {
+        orientation = LinearLayout.HORIZONTAL; gravity = Gravity.CENTER_VERTICAL
+        addView(android.widget.ImageView(activity).apply {
+            setImageResource(R.drawable.ic_node_mark); importantForAccessibility = android.view.View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        }, LinearLayout.LayoutParams(dp(42), dp(42)).apply { marginEnd = dp(12) })
+        addView(text("NodeLift", 29f, ink).apply { setTypeface(null, Typeface.BOLD) })
+    })
     content.addView(text(installedCompanionVersion(activity), 13f, mint))
     content.addView(text("Experimental companion", 12f, mint))
     content.addView(text("Created by Fabrizio Degni", 19f, ink))
     content.addView(text("Original concept, research direction and development."))
     content.addView(text("Updates", 18f, ink))
-    content.addView(text("Open the official releases page and compare your installed version with the release notes. This is a manual check; no update is installed automatically."))
+    content.addView(text("NodeLift checks the official version metadata at launch and weekly while running. If the system suspends the app, an overdue check runs when you return. Installation is always your choice."))
+    val updateState = text("", 14f, mint).apply { accessibilityLiveRegion = android.view.View.ACCESSIBILITY_LIVE_REGION_POLITE }
+    content.addView(updateState)
+    val checkUpdates = Button(activity).apply {
+        text = t("Check now"); ControlUI.style(this, ControlUI.Tone.SECONDARY)
+        setOnClickListener {
+            isEnabled = false; text = t("Checking for updates…")
+            UpdateMonitor.check(activity, manual = true)
+        }
+    }
+    content.addView(checkUpdates, LinearLayout.LayoutParams(-1, -2))
     link("Check releases on GitHub", "https://github.com/sev7enITA/NodeLift/releases")
     link("Official downloads & installation", "https://www.fabriziodegni.com/NodeLift/#downloads")
+    content.addView(text("Diagnostics", 18f, ink))
+    content.addView(text("A bounded seven-day log stays on this device. It records app and OS versions, technical events and limited error details. Pairing credentials, QR codes and prompt contents are excluded. Nothing is uploaded automatically."))
+    content.addView(text("After an error or interruption, export a report and choose where to save or share it. Some native crashes and system shutdowns may leave no complete report."))
+    val diagnosticState = text("", 14f, mint).apply {
+        accessibilityLiveRegion = android.view.View.ACCESSIBILITY_LIVE_REGION_POLITE
+        visibility = android.view.View.GONE
+    }
+    if (Diagnostics.hasPreviousIncident) {
+        diagnosticState.text = t("A previous interruption was recorded. Export diagnostics from About & References.")
+        diagnosticState.setTextColor(ControlUI.amber)
+        diagnosticState.visibility = android.view.View.VISIBLE
+    }
+    content.addView(diagnosticState)
+    content.addView(Button(activity).apply {
+        text = t("Export diagnostics"); ControlUI.style(this, ControlUI.Tone.SECONDARY)
+        setOnClickListener {
+            isEnabled = false
+            val exported = Diagnostics.export(activity)
+            diagnosticState.text = t(if (exported) "Diagnostic report prepared. Choose where to save or share it." else "Unable to export diagnostics. Try again.")
+            diagnosticState.setTextColor(if (exported) mint else ControlUI.amber)
+            diagnosticState.visibility = android.view.View.VISIBLE
+            isEnabled = true
+        }
+    }, LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(6) })
+    content.addView(Button(activity).apply {
+        text = t("Clear diagnostics"); ControlUI.style(this, ControlUI.Tone.DANGER)
+        setOnClickListener {
+            android.app.AlertDialog.Builder(activity)
+                .setTitle(t("Clear diagnostics"))
+                .setMessage(t("Delete the local diagnostic history? Previously exported copies are not affected."))
+                .setNegativeButton(t("Cancel"), null)
+                .setPositiveButton(t("Clear diagnostics")) { _, _ ->
+                    val cleared = Diagnostics.clear()
+                    diagnosticState.text = t(if (cleared) "Local diagnostic history cleared." else "Unable to clear diagnostics. Try again.")
+                    diagnosticState.setTextColor(if (cleared) mint else ControlUI.amber)
+                    diagnosticState.visibility = android.view.View.VISIBLE
+                }.show()
+        }
+    }, LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(6) })
     content.addView(text("Project & author", 18f, ink))
     link("Source repository", "https://github.com/sev7enITA/NodeLift")
     link("Project website", "https://www.fabriziodegni.com/NodeLift/")
@@ -107,7 +162,20 @@ fun showAbout(activity: Activity): Dialog {
         setOnClickListener { dialog.dismiss() }
     }, LinearLayout.LayoutParams(-1, -2))
     dialog.setContentView(root)
+    val handler = android.os.Handler(android.os.Looper.getMainLooper())
+    val refreshUpdates = object : Runnable {
+        override fun run() {
+            val currentMessage = UpdateMonitor.message.render(activity)
+            if (updateState.text.toString() != currentMessage) updateState.text = currentMessage
+            checkUpdates.isEnabled = !UpdateMonitor.checking
+            checkUpdates.text = t(if (UpdateMonitor.checking) "Checking for updates…" else "Check now")
+            ControlUI.describe(checkUpdates, checkUpdates.text.toString())
+            if (dialog.isShowing) handler.postDelayed(this, 1000)
+        }
+    }
+    dialog.setOnDismissListener { handler.removeCallbacks(refreshUpdates) }
     dialog.show()
+    handler.post(refreshUpdates)
     dialog.window?.apply {
         setBackgroundDrawable(ColorDrawable(bg))
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, (activity.resources.displayMetrics.heightPixels * 0.88).toInt())

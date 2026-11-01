@@ -19,6 +19,36 @@ let authenticated = false;
 let refreshing = false;
 let configurationDirty = false;
 let actionPending = false;
+const busyControls = new Map();
+const pendingNodeActions = new Map();
+const nodeActionFeedback = new Map();
+let engineActionFeedback = null;
+let configurationActionFeedback = null;
+let nodeAnnouncement = null;
+function setButtonLabel(button,message){
+  const label=button.querySelector('[data-i18n]')||button;
+  label.textContent=t(message);label.dataset.i18n=message;
+}
+function setControlBusy(id, busy, label, idleLabel) {
+  const button=$(id);
+  if(busy){const labelNode=button.querySelector('[data-i18n]')||button;busyControls.set(id,{label,idleLabel:busyControls.get(id)?.idleLabel||labelNode.dataset.i18n||idleLabel});}
+  else{
+    const previous=busyControls.get(id);busyControls.delete(id);
+    button.removeAttribute('aria-busy');
+    if(previous)setButtonLabel(button,previous.idleLabel);
+  }
+  renderBusyControls();
+}
+function renderBusyControls(){
+  for(const [id,state] of busyControls){const button=$(id);button.disabled=true;button.setAttribute('aria-busy','true');setButtonLabel(button,state.label);}
+}
+function renderEngineFeedback(){
+  const status=$('engine-action-status');
+  status.hidden=!authenticated||!engineActionFeedback||engineActionFeedback.state==='busy';
+  status.textContent=status.hidden?'':t(engineActionFeedback.message);
+  if(engineActionFeedback)status.dataset.state=engineActionFeedback.state;
+}
+
 let engineSignature = '';
 let nodeSignature = '';
 let jobSignature = '';
@@ -35,26 +65,61 @@ const stateNames = {completed:"Completed", running:"Running", queued:"Queued", f
 function el(tag, text, cls) { const n = document.createElement(tag); if (text !== undefined) n.textContent = text; if (cls) n.className = cls; return n; }
 function showError(error, id='error') { $(id).dataset.message=error.message || String(error); $(id).textContent = t($(id).dataset.message); $(id).hidden = false; }
 function clearError(id='error') { $(id).hidden = true; $(id).textContent = ''; delete $(id).dataset.message; }
-function number(value, digits=2) { return typeof value === 'number' && Number.isFinite(value) ? value.toLocaleString(NodeLiftI18n.locale,{minimumFractionDigits:digits,maximumFractionDigits:digits}) : '—'; }
+function number(value, digits=2) { return typeof value === 'number' && Number.isFinite(value) ? value.toLocaleString(NodeLiftI18n.locale,{minimumFractionDigits:digits,maximumFractionDigits:digits}) : '-'; }
 function gib(value) { return typeof value === 'number' ? number(value / 1073741824,1) + ' GiB' : t("Not detected"); }
 function quantile(values,q) { const a=[...values].filter(Number.isFinite).sort((x,y)=>x-y); return a.length ? a[Math.ceil(q*a.length)-1] : null; }
-function when(epoch) { const d=new Date(epoch*1000); return Number.isFinite(d.getTime()) ? d.toLocaleString(NodeLiftI18n.locale,{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}) : '—'; }
+function when(epoch) { const d=new Date(epoch*1000); return Number.isFinite(d.getTime()) ? d.toLocaleString(NodeLiftI18n.locale,{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'}) : '-'; }
 function empty(title, detail) { const box=el('div',undefined,'empty'); box.append(el('span','⌁','empty-symbol'),el('h3',title),el('p',detail)); return box; }
 function metric(list,label,value,small=false) { const wrap=el('div',undefined,'metric'); wrap.append(el('dt',label),el('dd',value,small?'small':''));list.append(wrap); }
-function action(label,fn,{quiet=false,disabled=false,danger=false}={}) { const b=el('button',label,quiet?'quiet':''); if(danger)b.classList.add('danger');b.disabled=disabled;b.onclick=async()=>{b.disabled=true;clearError();try{await fn();}catch(e){showError(e);}finally{b.disabled=disabled;}};return b; }
+function announceNodeAction(nodeId,message){
+  nodeAnnouncement=message?{nodeId,message}:null;
+  const name=(snapshot?.nodes||[]).find(node=>node.id===nodeId)?.name;
+  $('device-action-announcement').textContent=message?(name?name+': ':'')+t(message):'';
+}
+function action(label,fn,{quiet=false,disabled=false,danger=false,nodeId,kind,busyLabel}={}) {
+  const pending=pendingNodeActions.get(nodeId);
+  const b=el('button',t(pending?.kind===kind?pending.message:label),quiet?'quiet':'');
+  b.type='button';b.dataset.node=nodeId;b.dataset.action=kind;b.dataset.idleLabel=label;b.dataset.i18n=pending?.kind===kind?pending.message:label;
+  if(danger)b.classList.add('danger');
+  b.disabled=disabled||!authenticated||!!pending;
+  if(pending?.kind===kind)b.setAttribute('aria-busy','true');
+  b.onclick=async()=>{
+    if(b.disabled||!authenticated||pendingNodeActions.has(nodeId))return;
+    const requestedAt=Date.now()/1000,priorJobs=(snapshot?.jobs||[]).filter(job=>job.node===nodeId&&job.kind===kind).map(job=>job.id??job.created);
+    pendingNodeActions.set(nodeId,{kind,message:busyLabel});
+    nodeActionFeedback.set(nodeId,{state:'busy',message:busyLabel});clearError();renderNodes();
+    try{
+      await fn();
+      if(authenticated){const message=kind==='revoke'?'Pairing revoked.':'Test requested. Follow its result in Measurements.';nodeActionFeedback.set(nodeId,{state:'success',kind,requestedAt,priorJobs,message});announceNodeAction(nodeId,message);}
+    }catch(e){
+      if(authenticated){const message='Request failed. Review the error and try again.';nodeActionFeedback.set(nodeId,{state:'error',message});announceNodeAction(nodeId,message);}
+      showError(e);
+    }finally{
+      pendingNodeActions.delete(nodeId);
+      if(authenticated&&snapshot)renderNodes();
+      else for(const button of $('nodes').querySelectorAll('button'))if(button.dataset.node===nodeId){button.removeAttribute('aria-busy');setButtonLabel(button,button.dataset.idleLabel);button.disabled=true;}
+    }
+  };
+  return b;
+}
+function updateSessionControls(){
+  const pairingBusy=busyControls.has('invite')||busyControls.has('renew-invite');
+  $('invite').disabled=!authenticated||pairingBusy;
+  $('renew-invite').disabled=!authenticated||pairingBusy;
+  $('export').disabled=!authenticated||!snapshot;
+  $('job-filter').disabled=!authenticated||!snapshot;
+  $('open-client-access').disabled=!authenticated||busyControls.has('open-client-access');
+}
 function sessionReady(ready) {
   authenticated=ready;
-  $('invite').disabled=!ready;
-  $('export').disabled=!ready || !snapshot;
-  $('job-filter').disabled=!ready || !snapshot;
-  $('open-client-access').disabled=!ready;
+  updateSessionControls();
   $('session-dot').className='status-dot '+(ready?'ready':'error');
   $('session-label').textContent=ready?t("Local session active"):t("Access required");
   if(!ready){
-    hideClientAccess();
+    hideClientAccess();nodeActionFeedback.clear();announceNodeAction(null,null);engineActionFeedback=null;configurationActionFeedback=null;
     aboutMetadata=null;aboutVersionRequested=false;aboutVersionLoading=false;aboutVersionEpoch++;
     pairing.clear();snapshot=null;engineSnapshot=null;
-    $('online').textContent='—';$('registered-label').textContent=t("Session unavailable");
+    $('online').textContent='-';$('registered-label').textContent=t("Session unavailable");
     $('engine-summary').textContent=t("Access required");$('engine-backend').textContent=t("Local session required");
     $('engine-state').textContent=t("ACCESS REQUIRED");$('engine-state').className='chip neutral';
     $('engine-notice').textContent=t("Open the dashboard using the session link to access laboratory controls.");
@@ -62,7 +127,7 @@ function sessionReady(ready) {
     NodeLiftGraph.clear();
     $('jobs').replaceChildren(el('p',t("Measurements appear after access is established."),'muted'));
     $('engine-runs').replaceChildren(el('p',t("Runs appear after access is established."),'muted'));
-    $('completed-count').textContent='—';$('nav-count').textContent='—';
+    $('completed-count').textContent='-';$('nav-count').textContent='-';
     nodeSignature='';jobSignature='';engineSignature='';
   }
   renderAboutVersion();
@@ -83,28 +148,39 @@ async function api(path, body) {
 }
 function renderNodes() {
   const nodes=snapshot.nodes||[];
+  for(const [id,feedback] of nodeActionFeedback){
+    const finished=feedback.state==='success'&&feedback.kind!=='revoke'&&(snapshot.jobs||[]).some(job=>job.node===id&&job.kind===feedback.kind&&job.created>=feedback.requestedAt-1&&!(feedback.priorJobs||[]).includes(job.id??job.created)&&!['queued','running'].includes(job.state));
+    if(!nodes.some(node=>node.id===id)||finished){nodeActionFeedback.delete(id);if(nodeAnnouncement?.nodeId===id)announceNodeAction(null,null);}
+  }
   const online=nodes.filter(n=>n.online&&!n.revoked).length;
   $('online').textContent=online;
   $('nav-count').textContent=nodes.length;
   $('registered-label').textContent=nodes.length===1?t('1 paired device'):t('{0} paired devices',nodes.length);
   $('cluster-caption').textContent=online?t("Detected availability and capabilities"):t("Devices waiting to connect");
-  const signature=JSON.stringify(nodes.map(n=>({id:n.id,name:n.name,online:n.online,revoked:n.revoked,capabilities:n.capabilities})))+JSON.stringify((snapshot.jobs||[]).filter(j=>['queued','running'].includes(j.state)).map(j=>j.node));
+  const signature=JSON.stringify(nodes.map(n=>({id:n.id,name:n.name,online:n.online,revoked:n.revoked,capabilities:n.capabilities})))+JSON.stringify((snapshot.jobs||[]).filter(j=>['queued','running'].includes(j.state)).map(j=>j.node))+JSON.stringify([...pendingNodeActions])+JSON.stringify([...nodeActionFeedback]);
   if(signature===nodeSignature)return;
   nodeSignature=signature;
-  const container=$('nodes');container.replaceChildren();
+  const container=$('nodes'),focused=document.activeElement;
+  const focusNode=container.contains(focused)?focused.dataset.node:null,focusAction=focusNode?focused.dataset.action:null;
+  container.replaceChildren();
   if(!nodes.length){container.append(empty(t("Your first node opens new possibilities"),t("Create an invitation, open the companion on your phone and pair the device.")));}
   for(const n of nodes){
     const c=n.capabilities||{};
     const card=el('article',undefined,'node '+(n.online&&!n.revoked?'online-node':''));
+    card.dataset.node=n.id;card.tabIndex=-1;
     const heading=el('div',undefined,'node-head'),icon=el('span',undefined,'device-symbol');icon.setAttribute('aria-hidden','true');
     const label=el('div',undefined,'node-heading');label.append(el('h3',n.name),el('small',c.os||t("System not detected")));
     const state=el('div',undefined,'node-status');state.append(el('span',n.revoked?t("REVOKED"):n.online?t("● CONNECTED"):t("○ OFFLINE"),'state '+(n.online&&!n.revoked?'':'offline')),el('span',c.engine_ready?t("LLM READY"):t("QUALIFICATION"),'chip '+(c.engine_ready?'':'neutral')));heading.append(icon,label,state);card.append(heading);
     const d=el('dl');metric(d,t("Physical RAM"),gib(c.physical_memory_bytes));metric(d,t(NodeLiftGraph.memoryScope(c))+"¹",gib(c.available_memory_bytes));metric(d,t("Thermal status"),t(c.thermal||"Not detected"));metric(d,t("Connection"),t(c.transport||"Not detected"),true);metric(d,t("Battery"),typeof c.battery_percent==='number'?number(c.battery_percent,0)+'%':t("Not detected"));metric(d,t('Companion'),c.app_version||t("Not detected"));card.append(d);
     const footer=el('div',undefined,'node-footer'),buttons=el('div',undefined,'actions');
     const pending=(snapshot.jobs||[]).some(j=>j.node===n.id&&['queued','running'].includes(j.state));
-    for(const [label,kind] of [[t("Quick network test"),'network'],[t("Paced network test"),'network_paced'],[t("CPU test"),'cpu']])buttons.append(action(label,async()=>{await api('job',{node_id:n.id,kind});await refresh();},{disabled:!n.online||!!n.revoked||pending||!(c.supported_jobs||[]).includes(kind)}));
-    const revoke=action(t("Revoke pairing"),async()=>{await api('revoke',{node_id:n.id});await refresh();},{quiet:true,danger:true,disabled:!!n.revoked});revoke.classList.add('revoke-action');footer.append(buttons,revoke);card.append(footer,el('p',t("¹ Operating system indicator. This is not RAM already allocated to the model."),'node-footnote'));container.append(card);
+    for(const [label,kind] of [["Quick network test",'network'],["Paced network test",'network_paced'],["CPU test",'cpu']])buttons.append(action(label,async()=>{await api('job',{node_id:n.id,kind});await refresh();},{nodeId:n.id,kind,busyLabel:"Requesting test…",disabled:!n.online||!!n.revoked||pending||!(c.supported_jobs||[]).includes(kind)}));
+    const revoke=action("Revoke pairing",async()=>{await api('revoke',{node_id:n.id});await refresh();},{nodeId:n.id,kind:'revoke',busyLabel:"Revoking pairing…",quiet:true,danger:true,disabled:!!n.revoked});revoke.classList.add('revoke-action');footer.append(buttons,revoke);card.append(footer);
+    const feedback=nodeActionFeedback.get(n.id);
+    if(pending||(feedback&&feedback.state!=='busy')){const status=el('p',t(pending?"A test is queued or running. Follow its result in Measurements.":feedback.message),'control-feedback');status.dataset.state=pending?'busy':feedback.state;status.setAttribute('role','status');card.append(status);}
+    card.append(el('p',t("¹ Operating system indicator. This is not RAM already allocated to the model."),'node-footnote'));container.append(card);
   }
+  if(focusNode){const card=[...container.children].find(item=>item.dataset.node===focusNode);const button=card&&[...card.querySelectorAll('button')].find(item=>item.dataset.action===focusAction);if(card){card.dataset.action=focusAction;(button&&!button.disabled?button:card).focus({preventScroll:true});}}
   renderRemoteNodes();
 }
 function renderRemoteNodes() {
@@ -177,7 +253,7 @@ function renderRuns(runs) {
     if(r.text)card.append(el('pre',r.text,'output-text'));else if(['queued','running','loading'].includes(r.status))card.append(el('p',t("Processing…"),'muted'));
     if(r.status==='completed'&&!r.text&&r.backend&&r.backend!=='native')card.append(el('p',t('Completed without visible text. Try a larger output budget or a text model.'),'muted'));
     if(r.prompt&&(!r.backend||r.backend==='native')){
-      const details=el('details',undefined,'run-prompt');details.append(el('summary',t("Prompt and parameters")),el('p',r.prompt),el('p',t('Output limit: {0} tokens · draft block: {1}',r.max_tokens??'—',r.draft_k??'—')));
+      const details=el('details',undefined,'run-prompt');details.append(el('summary',t("Prompt and parameters")),el('p',r.prompt),el('p',t('Output limit: {0} tokens · draft block: {1}',r.max_tokens??'-',r.draft_k??'-')));
       details.append(el('p',t('Delegation control: {0}',r.draft_policy==='adaptive'?t('adaptive'):t('fixed'))+(m.draft_disabled_reason?' · '+t('Return to computer: {0}',t(draftReasons[m.draft_disabled_reason]||m.draft_disabled_reason)):'')));
       if(r.mode==='remote_draft')details.append(el('p',t('Per-proposal timeout: {0} s. Total remote wait includes node work and transfer; it does not measure network speed.',number((r.remote_timeout_ms??30000)/1000,3))));
       const widths=(Array.isArray(r.blocks)?r.blocks:[]).map(b=>b.verification_batch_width).filter(w=>Number.isInteger(w)&&w>0);
@@ -198,10 +274,14 @@ function updateConfigurationState(){
   const applied=engineSnapshot?.config,form=formConfiguration();
   configurationDirty=!!applied&&configFields.some(([,name])=>String(form[name]??'')!==String(applied[name]??''));
   const hasTarget=!!applied?.target_model;
-  $('configuration-status').textContent=configurationDirty?t("Unapplied changes. Apply or revert before running."):hasTarget?t("The visible configuration is applied."):t("Select and apply a model to begin.");
+  const feedback=authenticated?configurationActionFeedback:null;
+  $('configuration-status').hidden=feedback?.state==='busy';
+  $('configuration-status').textContent=feedback?(feedback.state==='busy'?'':t(feedback.message)):configurationDirty?t("Unapplied changes. Apply or revert before running."):hasTarget?t("The visible configuration is applied."):t("Select and apply a model to begin.");
+  $('configuration-status').dataset.state=feedback?.state||'';
   $('configuration-status').className='configuration-status '+(configurationDirty?'dirty':'');
   $('configure').classList.toggle('needs-apply',configurationDirty);
-  $('configure').textContent=configurationDirty?t("Apply changes"):hasTarget?t("Configuration applied"):t("Apply configuration");
+  $('configure').dataset.state=hasTarget&&!configurationDirty?'applied':'unapplied';
+  setButtonLabel($('configure'),configurationDirty?"Apply changes":hasTarget?"Configuration applied":"Apply configuration");
   $('revert-config').hidden=!configurationDirty;
   $('applied-config-description').textContent=hasTarget?t('{0} · draft: {1} · context {2} · {3} threads · GPU {4} layers',modelName(applied.target_model),modelName(applied.draft_model),applied.n_ctx,applied.threads,applied.gpu_layers):t("No model configured.");
 }
@@ -230,6 +310,9 @@ function updateEngineControls() {
   const ready=mode==='host'||mode==='lookup'||(mode==='local_draft'?!!engineSnapshot?.config?.draft_model:!!$('remote-node').value);
   $('start-run').disabled=!available||busy||!configured||!ready||(!external&&configurationDirty)||!$('prompt').value.trim();
   $('stop-run').disabled=!authenticated||!engineSnapshot?.busy||actionPending;
+  setButtonLabel($('start-run'),engineSnapshot?.busy?'Run in progress':'Run');
+  $('start-run').dataset.state=engineSnapshot?.busy?'running':'idle';
+  renderEngineFeedback();renderBusyControls();
   $('mode-help').textContent=external?t($('run-backend').value==='openrouter'?'Cloud request to the selected OpenRouter model. Charges depend on the provider. No phone acceleration is measured.':'Text request to the selected local server. This does not use NodeLift phone drafting.'):mode==='host'?t("Computer baseline. No LLM work is sent to phones."):mode==='lookup'?t("Proposes sequences already in the context and verifies them with the target. No second model is required; it may help with repetitive text."):mode==='local_draft'?t("Target and draft on the computer: compare this before attributing a gain to the network."):t("The node proposes token blocks; the target on the computer verifies them. Requires a companion with an LLM engine ready.");
 }
 function remoteTimeoutMs(){
@@ -239,9 +322,11 @@ function remoteTimeoutMs(){
   return Math.round(seconds*1000);
 }
 async function refreshEngine() {
-  if(!authenticated)return;
+  if(!authenticated)return false;
   try {
     engineSnapshot=await api('engine/status');
+    if(engineActionFeedback?.state==='warning')engineActionFeedback={state:'success',message:engineActionFeedback.acceptedMessage};
+    if(configurationActionFeedback?.state==='warning')configurationActionFeedback={state:'success',message:configurationActionFeedback.acceptedMessage};
     const available=!!engineSnapshot.available,busy=!!engineSnapshot.busy;
     $('engine-summary').textContent=busy?t("Running"):available?t("Available"):t("Unavailable");
     $('engine-backend').textContent=engineSnapshot.backend||t("Local backend");
@@ -253,12 +338,12 @@ async function refreshEngine() {
     optionsForModels($('draft-model'),engineSnapshot.models||[],t("No draft selected"));
     if(!configurationDirty)writeAppliedConfiguration();
     if(window.renderModelLibrary)renderModelLibrary();
-    renderRuns(engineSnapshot.runs||[]);updateEngineControls();NodeLiftGraph.update(snapshot,engineSnapshot);
+    renderRuns(engineSnapshot.runs||[]);updateEngineControls();NodeLiftGraph.update(snapshot,engineSnapshot);return true;
   } catch(e) {
     engineSnapshot=null;$('engine-summary').textContent=t("Unavailable");$('engine-backend').textContent=t("Configuration required");$('engine-state').textContent=t("UNAVAILABLE");$('engine-state').className='chip neutral';
     $('engine-notice').className='notice';$('engine-notice').textContent=e.status===404?t("This server version offers pairing and diagnostics. LLM controls become active when the engine is available."):e.message;
     if(authenticated&&engineSignature==='')$('engine-runs').replaceChildren(el('p',t("Output appears after configuring the engine and completing the first run."),'muted'));
-    updateEngineControls();if(authenticated&&snapshot)NodeLiftGraph.update(snapshot,null);
+    updateEngineControls();if(authenticated&&snapshot)NodeLiftGraph.update(snapshot,null);return false;
   }
 }
 function renderAboutVersion() {
@@ -290,44 +375,111 @@ async function refresh() {
   finally{refreshing=false;}
 }
 const pairing = NodeLiftPairing.mount({api, t, authenticated:()=>authenticated, error:showError});
-$('invite').onclick=()=>pairing.open();
-$('renew-invite').onclick=()=>pairing.open();
+async function openPairing(){
+  if(!authenticated||busyControls.has('invite')||busyControls.has('renew-invite'))return;
+  clearError();setControlBusy('invite',true,'Creating QR code…','Add device');setControlBusy('renew-invite',true,'Creating QR code…','New QR code');
+  try{await pairing.open();if(!$('pairing').hidden)$('pairing').scrollIntoView({behavior:window.matchMedia?.('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});}
+  catch(error){showError(error);}
+  finally{setControlBusy('invite',false);setControlBusy('renew-invite',false);updateSessionControls();}
+}
+$('invite').onclick=openPairing;
+$('renew-invite').onclick=openPairing;
 $('hide').onclick=()=>pairing.close();
 $('copy').onclick=()=>pairing.copy();
 $('export').onclick=()=>{if(!snapshot)return;const data={...snapshot,engine:engineSnapshot,exported_at:new Date().toISOString()};const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=el('a');a.href=url;a.download='nodelift-laboratory.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
 $('job-filter').onchange=renderJobs;
-for(const [id] of configFields)$(id).addEventListener('input',updateEngineControls);
-$('revert-config').onclick=()=>{writeAppliedConfiguration();updateEngineControls();};
+for(const [id] of configFields)$(id).addEventListener('input',()=>{configurationActionFeedback=null;updateEngineControls();});
+$('revert-config').onclick=()=>{configurationActionFeedback=null;writeAppliedConfiguration();updateEngineControls();};
 for(const id of ['run-mode','remote-node','prompt','run-backend','provider-model'])$(id).addEventListener('input',updateEngineControls);
-$('configuration-form').onsubmit=async event=>{event.preventDefault();if($('configure').disabled)return;clearError('engine-error');actionPending=true;updateEngineControls();try{await api('engine/configure',{target_model:$('target-model').value,draft_model:$('draft-model').value||null,n_ctx:Number($('context-size').value),threads:Number($('threads').value),gpu_layers:Number($('gpu-layers').value)});configurationDirty=false;await refreshEngine();}catch(e){showError(e,'engine-error');}finally{actionPending=false;updateEngineControls();}};
-$('run-form').onsubmit=async event=>{event.preventDefault();if($('start-run').disabled)return;clearError('engine-error');actionPending=true;updateEngineControls();try{await api('engine/run',{backend:$('run-backend').value,provider_model:$('provider-model').value||undefined,prompt:$('prompt').value.trim(),mode:$('run-mode').value,draft_policy:$('draft-policy').value,node_id:$('run-mode').value==='remote_draft'?$('remote-node').value:undefined,max_tokens:Number($('max-tokens').value),draft_k:Number($('draft-k').value),remote_timeout_ms:$('run-mode').value==='remote_draft'?remoteTimeoutMs():undefined});await refreshEngine();}catch(e){showError(e,'engine-error');}finally{actionPending=false;updateEngineControls();}};
-$('stop-run').onclick=async()=>{clearError('engine-error');actionPending=true;updateEngineControls();try{await api('engine/stop',{});await refreshEngine();}catch(e){showError(e,'engine-error');}finally{actionPending=false;updateEngineControls();}};
+async function submitEngineAction(id,busyLabel,acceptedLabel,request){
+  if(actionPending||$(id).disabled||!authenticated)return;
+  const isConfiguration=id==='configure';
+  if(isConfiguration)engineActionFeedback=null;
+  const feedback=value=>{if(isConfiguration)configurationActionFeedback=value;else engineActionFeedback=value;};
+  clearError('engine-error');actionPending=true;
+  feedback({state:'busy',message:busyLabel});
+  setControlBusy(id,true,busyLabel,isConfiguration?'Apply configuration':id==='start-run'?'Run':'Stop');updateEngineControls();
+  try{
+    try{await request();}
+    catch(e){
+      if(authenticated)feedback({state:'error',message:'Request failed. Review the error and try again.'});
+      showError(e,'engine-error');return;
+    }
+    if(!authenticated)return;
+    feedback({state:'success',message:acceptedLabel});
+    // A failed follow-up read must not turn an accepted mutation into a failure.
+    let refreshed=false;
+    try{refreshed=(await refreshEngine())!==false;}catch(_){engineSnapshot=null;}
+    if(!refreshed&&authenticated)feedback({state:'warning',acceptedMessage:acceptedLabel,message:isConfiguration?'Configuration saved. Status is temporarily unavailable.':'Request accepted. Status is temporarily unavailable.'});
+  }finally{actionPending=false;setControlBusy(id,false);updateEngineControls();}
+}
+$('configuration-form').onsubmit=event=>{event.preventDefault();return submitEngineAction('configure','Applying configuration…','Configuration saved. Check the applied configuration.',async()=>{await api('engine/configure',{target_model:$('target-model').value,draft_model:$('draft-model').value||null,n_ctx:Number($('context-size').value),threads:Number($('threads').value),gpu_layers:Number($('gpu-layers').value)});configurationDirty=false;});};
+$('run-form').onsubmit=event=>{event.preventDefault();return submitEngineAction('start-run','Requesting run…','Run requested. Follow its state and output below.',()=>api('engine/run',{backend:$('run-backend').value,provider_model:$('provider-model').value||undefined,prompt:$('prompt').value.trim(),mode:$('run-mode').value,draft_policy:$('draft-policy').value,node_id:$('run-mode').value==='remote_draft'?$('remote-node').value:undefined,max_tokens:Number($('max-tokens').value),draft_k:Number($('draft-k').value),remote_timeout_ms:$('run-mode').value==='remote_draft'?remoteTimeoutMs():undefined}));};
+$('stop-run').onclick=()=>submitEngineAction('stop-run','Requesting stop…','Stop requested. Wait for the run state to update.',()=>api('engine/stop',{}));
 function hideClientAccess(){
-  clientAccessEpoch++;clientAccess=null;clientKeyVisible=false;clearTimeout(clientAccessTimer);clearTimeout(clientRevealTimer);
+  clientAccessEpoch++;setControlBusy('open-client-access',false);setControlBusy('copy-client-key',false);clientAccess=null;clientKeyVisible=false;clearTimeout(clientAccessTimer);clearTimeout(clientRevealTimer);
   $('client-access').hidden=true;$('client-base-url').value='';$('client-model').value='';$('client-key-display').textContent=t("Key hidden");
-  $('reveal-client-key').textContent=t("Reveal key");$('reveal-client-key').disabled=true;$('copy-client-key').disabled=true;
+  $('reveal-client-key').textContent=t("Reveal key");$('reveal-client-key').setAttribute('aria-pressed','false');$('reveal-client-key').disabled=true;$('copy-client-key').disabled=true;
   $('client-access-status').textContent='';$('open-client-access').disabled=!authenticated;
 }
 $('open-client-access').onclick=async()=>{
-  hideClientAccess();const epoch=clientAccessEpoch;$('client-access').hidden=false;$('open-client-access').disabled=true;$('client-access-status').textContent=t("Retrieving local access…");
+  if($('open-client-access').disabled||!authenticated)return;
+  hideClientAccess();setControlBusy('open-client-access',true,'Retrieving local access…','Local API access');const epoch=clientAccessEpoch;$('client-access').hidden=false;$('open-client-access').disabled=true;$('client-access-status').textContent=t("Retrieving local access…");
   try{const access=await api('client-access');if(epoch!==clientAccessEpoch||!authenticated)return;
     if(typeof access.api_key!=='string'||typeof access.base_url!=='string'||typeof access.model!=='string')throw Error("API access unavailable.");
     clientAccess=access;$('client-base-url').value=access.base_url;$('client-model').value=access.model;
     $('reveal-client-key').disabled=false;$('copy-client-key').disabled=false;$('client-access-status').textContent=t("The key is hidden and excluded from exports. This panel closes after two minutes or when you switch tabs.");
     clientAccessTimer=setTimeout(hideClientAccess,120000);
   }catch(e){if(epoch===clientAccessEpoch)$('client-access-status').textContent=e.status===404?t("API access unavailable in this server session."):t('API access unavailable: {0}',t(e.message));}
-  finally{if(epoch===clientAccessEpoch)$('open-client-access').disabled=!authenticated;}
+  finally{if(epoch===clientAccessEpoch){setControlBusy('open-client-access',false);$('open-client-access').disabled=!authenticated;}}
 };
 $('close-client-access').onclick=hideClientAccess;
 $('reveal-client-key').onclick=()=>{
-  if(!clientAccess)return;clientKeyVisible=!clientKeyVisible;clearTimeout(clientRevealTimer);
+  if(!clientAccess)return;clientKeyVisible=!clientKeyVisible;$('reveal-client-key').setAttribute('aria-pressed',String(clientKeyVisible));clearTimeout(clientRevealTimer);
   $('client-key-display').textContent=clientKeyVisible?clientAccess.api_key:t("Key hidden");$('reveal-client-key').textContent=clientKeyVisible?t("Hide key"):t("Reveal key");
-  if(clientKeyVisible)clientRevealTimer=setTimeout(()=>{clientKeyVisible=false;$('client-key-display').textContent=t("Key hidden");$('reveal-client-key').textContent=t("Reveal key");},30000);
+  if(clientKeyVisible)clientRevealTimer=setTimeout(()=>{clientKeyVisible=false;$('reveal-client-key').setAttribute('aria-pressed','false');$('client-key-display').textContent=t("Key hidden");$('reveal-client-key').textContent=t("Reveal key");},30000);
 };
-$('copy-client-key').onclick=async()=>{if(!clientAccess)return;try{await navigator.clipboard.writeText(clientAccess.api_key);$('client-access-status').textContent=t("Key copied to clipboard. Paste it into the local client you want to connect.");}catch(_){$('client-access-status').textContent=t("Copy unavailable. Use Reveal key to copy it manually.");}};
+$('copy-client-key').onclick=async()=>{
+  if(!clientAccess||$('copy-client-key').disabled)return;
+  const epoch=clientAccessEpoch;setControlBusy('copy-client-key',true,'Copying…','Copy key');
+  try{await navigator.clipboard.writeText(clientAccess.api_key);if(epoch===clientAccessEpoch)$('client-access-status').textContent=t("Key copied to clipboard. Paste it into the local client you want to connect.");}
+  catch(_){if(epoch===clientAccessEpoch)$('client-access-status').textContent=t("Copy unavailable. Use Reveal key to copy it manually.");}
+  finally{if(epoch===clientAccessEpoch){setControlBusy('copy-client-key',false);$('copy-client-key').disabled=!clientAccess;}}
+};
 document.addEventListener('visibilitychange',()=>{if(document.hidden)hideClientAccess();});
 const sections=[...document.querySelectorAll('main>section[id]')];
-if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){document.querySelectorAll('.rail nav a').forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+entry.target.id));}},{rootMargin:'-15% 0px -65% 0px'});sections.forEach(section=>observer.observe(section));}
+const navigationLinks=[...document.querySelectorAll('.rail nav a')];
+let navigationFramePending=false;
+function navigationSectionAt(rows,anchor){
+  const visible=rows.filter(row=>row.height>0);
+  let selected=visible[0]?.id;
+  for(const row of visible){if(row.top>anchor)break;selected=row.id;}
+  return selected;
+}
+function updateNavigation(){
+  navigationFramePending=false;
+  // Read every major section together: observer entries only describe changes,
+  // and cannot identify the current section after a large jump or layout change.
+  const offset=parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop)||0;
+  const anchor=Math.min(Math.max(0,window.innerHeight-1),offset+24);
+  const rows=sections.map(section=>{const rect=section.getBoundingClientRect();return {id:section.id,top:rect.top,height:rect.height};});
+  const selected=navigationSectionAt(rows,anchor);
+  for(const link of navigationLinks){
+    const active=link.getAttribute('href')==='#'+selected;
+    link.classList.toggle('active',active);
+    if(active)link.setAttribute('aria-current','location');else link.removeAttribute('aria-current');
+  }
+}
+function scheduleNavigationUpdate(){
+  if(navigationFramePending)return;
+  navigationFramePending=true;requestAnimationFrame(updateNavigation);
+}
+window.addEventListener('scroll',scheduleNavigationUpdate,{passive:true});
+window.addEventListener('resize',scheduleNavigationUpdate);
+window.addEventListener('hashchange',scheduleNavigationUpdate);
+for(const link of navigationLinks)link.addEventListener('click',scheduleNavigationUpdate);
+if('ResizeObserver' in window)new ResizeObserver(scheduleNavigationUpdate).observe($('main'));
+scheduleNavigationUpdate();
 $('language').addEventListener('change',event=>NodeLiftI18n.setLanguage(event.target.value));
 document.addEventListener('nodelift-languagechange',()=>{
   // Language changes never restart a run or submit form edits.
@@ -335,7 +487,7 @@ document.addEventListener('nodelift-languagechange',()=>{
   if(window.renderModelLibrary)renderModelLibrary();
   nodeSignature='';jobSignature='';engineSignature='';
   sessionReady(authenticated);
-  if(snapshot){renderNodes();renderJobs();NodeLiftGraph.update(snapshot,engineSnapshot);}
+  if(snapshot){renderNodes();renderJobs();NodeLiftGraph.update(snapshot,engineSnapshot);if(nodeAnnouncement)announceNodeAction(nodeAnnouncement.nodeId,nodeAnnouncement.message);}
   if(engineSnapshot){renderRuns(engineSnapshot.runs||[]);}
   for(const id of ['error','engine-error'])if($(id).dataset.message)$(id).textContent=t($(id).dataset.message);
   refreshEngine();

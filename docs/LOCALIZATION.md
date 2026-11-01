@@ -4,7 +4,7 @@ The control room and Android/iOS companions use **English by default**, independ
 
 Mobile version: **0.2.4, build 6**. Update the Android APK over the existing same-key installation to retain pairing. The unsigned iOS app requires Apple signing and provisioning before installation. The HarmonyOS candidate has the same language selection in source; it remains uncompiled and unqualified on a physical device. LM Studio's SDK-owned configuration schema and developer CLI diagnostics remain in their existing languages. The public showcase has its own three-language catalog, described below.
 
-## Public showcase — 1 November 2026
+## Public showcase: 1 November 2026
 
 The website defaults to **English**, including its source HTML and no-JavaScript presentation. The selector order is **EN → 中文 (Simplified Chinese) → IT**. Browser/OS language does not override the default. An explicit visitor selection is saved locally; a `?lang=en`, `?lang=zh-Hans` or `?lang=it` URL takes precedence over that preference. Unknown language codes fall back to English. `zh` and `zh-CN` links resolve to `zh-Hans`.
 
@@ -49,7 +49,7 @@ adb shell am instrument -w dev.nodelift.companion.test/dev.nodelift.companion.Lo
 
 The test restores its language preference and process locale. It does not pair with a host, request inference or establish phone performance.
 
-## Italian addition — 0.2.3, 1 November 2026
+## Italian addition: 0.2.3, 1 November 2026
 
 - Added Italian for all 557 shared message IDs across the control room, Android, iOS and HarmonyOS candidate. English remains the new-install default; existing English/Chinese choices remain valid. Unknown preferences fall back to English.
 - Catalog key parity, placeholders and generated-file freshness pass for both translations. JavaScript and Swift formatter checks pass for all three languages, including Italian nested telemetry, literal arguments, fallback and preference validation.

@@ -48,7 +48,7 @@ def main():
             row["tags"] = "; ".join(project["tags"])
             row["sources"] = " | ".join(f"{s['label']}: {s['url']}" for s in project["sources"])
             writer.writerow(row)
-    text = ["# NodeLift — Detailed comparison atlas", "",
+    text = ["# NodeLift: Detailed comparison atlas", "",
             f"**{dataset['updated']} · {len(projects)} selected entries · Dataset v{dataset['schema_version']}**", "",
             dataset["scope"]["en"], "", "[Method / Metodo](methodology.md)", "",
             "Technical descriptions are canonical English. Upstream results are not NodeLift replications.", "",

@@ -1,28 +1,30 @@
 # About, references and update discovery
 
-The control room and companion 0.2.4/build 6 include **About & References**. English is the default; Italian and Simplified Chinese are available.
+**About & References** identifies Fabrizio Degni as NodeLift's creator, links the project, source, references and licenses, and shows the installed platform version. English is the default, followed by Simplified Chinese and Italian.
 
-| Surface | Where to open it | Version source |
+| Surface | Version source | Update discovery |
 | --- | --- | --- |
-| Desktop control room | Navigation rail or footer | Authenticated local `/admin/about`, using the running host package version |
-| Android | About & References below the app heading | Android package version name and build code |
-| iOS / iPadOS | About & References in the header | App bundle version and build |
-| HarmonyOS candidate | Expandable About & References below the heading | Runtime bundle metadata; source remains uncompiled |
+| Desktop control room | Authenticated local `/admin/about` | Official releases link; host source preview is separate from companion version |
+| Android 0.2.6 | Android package version and build | Automatic at process launch and weekly while running; explicit Check now |
+| iOS / iPadOS 0.2.6 | App bundle version and build | Automatic at process launch and weekly while running; overdue check on return from suspension; explicit Check now |
+| HarmonyOS source candidate | Runtime bundle metadata | Existing manual release link; native SDK build and automatic-check parity remain pending |
 
-The section identifies **Fabrizio Degni** as the project's creator and author, with links to the project showcase, personal website and LinkedIn. It also links to the source repository, architecture, comparison research, third-party notices and original-code MIT license.
+## Automatic mobile checks
 
-## Updates
+The companion fetches the small public [mobile release manifest](https://www.fabriziodegni.com/NodeLift/data/mobile-downloads.json) over HTTPS. The experimental release channel includes published NodeLift companion prereleases. Three numeric version components are compared numerically, followed by the build number for the same version. An older manifest cannot trigger a downgrade prompt. Malformed or oversized responses fail without changing pairing or the engine.
 
-**Check releases on GitHub** opens the official repository's release list in the browser. Compare the installed companion version with the release notes and follow the [installation guide](MOBILE_DOWNLOADS.md). The control room identifies its host source preview separately: the host and mobile companions do not share one version number.
+A fresh process checks at launch even if a prior check was recent. A successful check schedules the next check seven days later. Failed due checks retry after one hour while the process runs. There is one request in flight at a time. The OS may suspend timers, especially on iOS or during Android power saving; the app performs an overdue check when it returns to the foreground. It cannot promise background execution while the OS has suspended or terminated it.
 
-This is manual update discovery. Opening About does not contact GitHub or download/install an update. No automatic “latest version” or “update available” result is asserted. The links are fixed public HTTPS destinations without pairing or model data.
+**Check now** is an explicit retry. The UI distinguishes checking, a newer release, no newer release and an unavailable check. Installation is always chosen by the user through the official download route. No APK, IPA or executable is downloaded or installed by the checker. iOS signing requirements still apply.
 
-On iOS and HarmonyOS, moving to the browser may pause the node under the existing foreground lifecycle. Return to NodeLift and resume when ready. Opening the About sheet/dialog alone does not alter engine settings or pairing.
+Checks send a generic app user-agent and no device identifier, pairing token, prompt, model data or diagnostic report. The public server necessarily receives the network request and source IP like any HTTPS website. This is metadata discovery over HTTPS, not a signed automatic installer. A future installer would need separate package authenticity, platform signing and rollback design.
 
-## Verification scope
+## Diagnostics
 
-The Android APK and unsigned iOS device app compile as 0.2.4/build 6. The Android signing identity and the packaged Android/iOS native engine binaries match 0.2.3; this is a companion UI update, not a native-engine rebuild.
+**Export diagnostics** and **Clear diagnostics** are separate from updates. Export uses the platform share sheet; no log upload runs automatically. See [wireless support and crash-report limitations](MOBILE_DIAGNOSTICS.md).
 
-Desktop checks cover runtime host metadata, unavailable/unauthenticated behavior, localized labels, narrow-screen overflow and external-link attributes. Catalog parity, placeholder checks, JavaScript/Swift formatters and focused host protocol tests pass. Physical Android/iPhone UI and installation checks remain open; no ADB device was connected during packaging. HarmonyOS/NEXT still requires its SDK build, signing and physical-device qualification.
+Opening a browser or share destination may pause iOS delegated work under its existing foreground lifecycle. Return to NodeLift and resume when ready. Opening About or checking metadata does not alter engine consent or pairing.
 
-Independent browser evaluation passed at 1440/768/375 CSS pixels, including navigation, three languages and the actual GitHub release action. GLM-5.3 with Max effort returned PASS on sanitized About source; it did not execute the app or review screenshots. No Gemini review was performed. [External review scope and adjudication](evidence/about-2026-11-01/model-review.json) · [Browser evidence](evidence/about-2026-11-01/evaluation-evidence.json).
+## Verification
+
+See [0.2.6 release evidence](evidence/companion-0.2.6/README.md) for automated checks, builds, external-review scope and device limitations. Earlier [About evaluation](evidence/about-2026-11-01/model-review.json) covers the earlier manual-link UI only; it is not evidence of these new automatic checks.

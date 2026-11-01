@@ -25,3 +25,16 @@
 The current companions are 0.2.5/build 7. Host sources include the 0.3.0 integration preview. Historical reports are dated evidence, not automatically current support claims.
 
 Repository documentation is maintained in English. Application and showcase languages remain English (default), Simplified Chinese and Italian.
+
+## Acknowledgements
+
+[Projects, contributors and research credits](ACKNOWLEDGEMENTS.md) record the work that informed NodeLift and link to its authors.
+
+## Mobile support
+
+- [Local diagnostic export](MOBILE_DIAGNOSTICS.md)
+- [Automatic update checks and About](ABOUT_AND_UPDATES.md)
+- [iPhone installation and planned TestFlight/App Store distribution](IOS_DISTRIBUTION.md)
+
+- [Locally Uncensored source study](../research/locally-uncensored-2026-11-01/ASSESSMENT.md)
+- [Apple MLX comparison and proposed execution architecture](../research/apple-mlx-2026-11-01/ASSESSMENT.md)

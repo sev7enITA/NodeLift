@@ -4,8 +4,8 @@ const transferNames={transferring:'Transferring',verifying:'Verifying',completed
 function modelMessage(message){libraryMessage=message;$('transfer-status').textContent=t(message);}
 function renderProviderInfo(){
   const backend=$('run-backend').value,model=(engineSnapshot?.providers?.models?.[backend]||[]).find(m=>m.id===$('provider-model').value);
-  let label=model?t('Model: {0} · context: {1}',model.id,model.context_length??'—'):t('Refresh provider models first');
-  if(backend==='openrouter'&&model){const p=model.pricing||{};const price=x=>typeof x==='string'&&x.trim()!==''&&Number.isFinite(Number(x))?number(Number(x)*1e6,4):'—';label+=' · '+t('USD / million tokens · input {0} · output {1}. Published rates may change; other charges may apply.',price(p.prompt),price(p.completion));}
+  let label=model?t('Model: {0} · context: {1}',model.id,model.context_length??'-'):t('Refresh provider models first');
+  if(backend==='openrouter'&&model){const p=model.pricing||{};const price=x=>typeof x==='string'&&x.trim()!==''&&Number.isFinite(Number(x))?number(Number(x)*1e6,4):'-';label+=' · '+t('USD / million tokens · input {0} · output {1}. Published rates may change; other charges may apply.',price(p.prompt),price(p.completion));}
   $('provider-model-info').textContent=label;
 }
 function renderHub(){

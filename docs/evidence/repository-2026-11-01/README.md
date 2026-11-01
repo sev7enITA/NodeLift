@@ -1,4 +1,4 @@
-# Repository publication verification — 1 November 2026
+# Repository publication verification: 1 November 2026
 
 Source update: [`07e31d34e7b8aee1d0c1836932404281e110da46`](https://github.com/sev7enITA/NodeLift/commit/07e31d34e7b8aee1d0c1836932404281e110da46). This record and the README visual preview are documentation-only follow-ups.
 

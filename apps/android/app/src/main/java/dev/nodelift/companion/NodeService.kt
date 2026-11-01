@@ -27,6 +27,9 @@ class NodeService : Service() {
             if (running) context.getSystemService(NotificationManager::class.java).notify(1,notification(context))
         }
         @Volatile var running = false
+        @Volatile var connected = false
+        @Volatile var modelLoading = false
+        @Volatile var engineReady = false
         @Volatile var status = ui("Ready to pair")
         @Volatile var lastResult = ui("No measurements yet")
         @Volatile var telemetry = ui("")
@@ -59,8 +62,9 @@ class NodeService : Service() {
     override fun onBind(intent: Intent?) = null
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (running) return START_NOT_STICKY
+        Diagnostics.record(DiagnosticEvent.SESSION_START)
         startForeground(1, notification(this))
-        stop.set(false); running = true; runId = generation.incrementAndGet()
+        stop.set(false); connected=false;running = true; runId = generation.incrementAndGet()
         val ticketText = intent?.getStringExtra("ticket")
         worker = Thread {
             try {
@@ -79,24 +83,32 @@ class NodeService : Service() {
                     try {
                         if(!enginePrefs.getBoolean("enabled",false) && mobileDraft!=null){mobileDraft?.close();mobileDraft=null;engineStatus=ui("Engine paused")}
                         if(downloadRequested.getAndSet(false)) {
+                            Diagnostics.record(DiagnosticEvent.MODEL_LOADING)
+                            modelLoading=true;engineReady=false
                             try {
                                 check(energyAllowed()){ "Battery or thermal status prevents loading" }
                                 mobileDraft?.close();mobileDraft=MobileDraft(this)
                                 engineStatus=ui("Downloading draft from your computer…")
                                 mobileDraft!!.download(c){done,total -> engineStatus=ui("Draft download: {0}%",done*100/total)}
                                 enginePrefs.edit().putBoolean("enabled",true).apply()
-                                engineStatus=ui("Draft ready · ARM64 CPU · SHA-256 verified")
-                            } catch(e:Exception){mobileDraft?.close();mobileDraft=null;engineStatus=ui(e.message ?: "Loading failed");lastResult=engineStatus;enginePrefs.edit().putBoolean("enabled",false).apply()}
+                                engineStatus=ui("Draft ready · ARM64 CPU · SHA-256 verified");Diagnostics.record(DiagnosticEvent.MODEL_READY)
+                            } catch(e:Exception){Diagnostics.record(DiagnosticEvent.MODEL_FAILED,e);mobileDraft?.close();mobileDraft=null;engineStatus=ui(e.message ?: "Loading failed");lastResult=engineStatus;enginePrefs.edit().putBoolean("enabled",false).apply()}
+                            finally{modelLoading=false}
                         } else if(enginePrefs.getBoolean("enabled",false) && mobileDraft==null && energyAllowed()) {
-                            try {engineStatus=ui("Loading draft…");mobileDraft=MobileDraft(this).also { it.loadSaved() };engineStatus=ui("Draft ready · ARM64 CPU")}
-                            catch(e:Exception){mobileDraft?.close();mobileDraft=null;enginePrefs.edit().putBoolean("enabled",false).apply();engineStatus=ui(e.message ?: "Loading failed")}
+                            Diagnostics.record(DiagnosticEvent.MODEL_LOADING)
+                            modelLoading=true;engineReady=false
+                            try {engineStatus=ui("Loading draft…");mobileDraft=MobileDraft(this).also { it.loadSaved() };engineStatus=ui("Draft ready · ARM64 CPU");Diagnostics.record(DiagnosticEvent.MODEL_READY)}
+                            catch(e:Exception){Diagnostics.record(DiagnosticEvent.MODEL_FAILED,e);mobileDraft?.close();mobileDraft=null;enginePrefs.edit().putBoolean("enabled",false).apply();engineStatus=ui(e.message ?: "Loading failed")}
+                            finally{modelLoading=false}
                         }
+                        engineReady=mobileDraft?.ready==true && enginePrefs.getBoolean("enabled",false) && energyAllowed()
                         var job: JSONObject? = null
                         if(SystemClock.elapsedRealtime()-lastHeartbeat>=3000) {
                             val response = c.json("/v1/heartbeat", capabilities())
                             lastHeartbeat=SystemClock.elapsedRealtime()
                             job=response.optJSONObject("job")
-                            status = ui("Connected · node available")
+                            if(!connected)Diagnostics.record(DiagnosticEvent.SESSION_CONNECTED)
+                            connected=true;status = ui("Connected · node available")
                         }
                         if (job != null) runJob(c, job)
                         else if(mobileDraft?.ready==true && enginePrefs.getBoolean("enabled",false) && energyAllowed()) {
@@ -112,17 +124,18 @@ class NodeService : Service() {
                         errors = 0
                     } catch (e: Exception) {
                         if (stop.get()) break
-                        errors++
+                        Diagnostics.record(DiagnosticEvent.SESSION_RETRY,e)
+                        errors++;connected=false
                         status = ui("Connection interrupted · attempt {0}/3",errors)
                         if (errors >= 3) throw e
                         Thread.sleep(1000)
                     }
                 }
             } catch (e: Exception) {
-                if (!stop.get()) status = ui(e.message ?: "Connection failed")
+                if (!stop.get()) {Diagnostics.record(DiagnosticEvent.SESSION_FAILED,e);status = ui(e.message ?: "Connection failed")}
             } finally {
                 mobileDraft?.close();mobileDraft=null;engineStatus=ui("Draft unloaded from memory")
-                if (generation.get() == runId) running = false
+                if (generation.get() == runId) {running=false;connected=false;modelLoading=false;engineReady=false;downloadRequested.set(false)}
                 stopSelfResult(startId)
             }
         }.also { it.start() }
@@ -213,6 +226,7 @@ class NodeService : Service() {
                 lastResult = ui("CPU · {0} iterations in {1} ms",iterations,"%.0f".format(ms))
             } else error("Unsupported job")
         } catch(e: Exception) {
+            Diagnostics.record(DiagnosticEvent.JOB_FAILED,e)
             outcome = if (stop.get()) "cancelled" else if(e.message == "thermal_pause") "thermal_pause" else "failed"
             note = e.message ?: "Measurement interrupted"
             lastResult = ui("Measurement interrupted: {0}",ui(note))
@@ -220,7 +234,8 @@ class NodeService : Service() {
         if (!stop.get()) c.json("/v1/result", JSONObject().put("job_id", job.getString("id")).put("status", outcome).put("samples", samples).put("note", note))
     }
     override fun onDestroy() {
-        mobileDraft?.cancel()
+        Diagnostics.record(DiagnosticEvent.SESSION_STOP)
+        mobileDraft?.cancel();connected=false;engineReady=false;downloadRequested.set(false)
         stop.set(true); client?.cancel(); worker?.interrupt()
         if(Build.VERSION.SDK_INT>=29) thermalListener?.let {getSystemService(PowerManager::class.java).removeThermalStatusListener(it)}
         if(worker==null && generation.get() == runId) running = false

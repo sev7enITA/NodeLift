@@ -9,8 +9,13 @@
 
 Android APK and the iOS app bundle include copies of the llama.cpp, JSON and SHA-256 notices from `native/licenses`. The LM Studio adapter uses the separately installed `@lmstudio/sdk` package under its own package license; dependencies and integrity hashes are locked in its package-lock.
 
-## QR pairing (companion 0.2.5)
+## QR pairing (companion 0.2.6)
 
 - The desktop vendors Project Nayuki’s [QR Code generator v1.8.0](https://github.com/nayuki/QR-Code-generator/tree/v1.8.0), MIT. The upstream TypeScript source and generated JavaScript retain the license header in `host/nodelift/vendor`. Generation runs entirely on the local dashboard.
-- Android embeds [ZXing Android Embedded 4.3.0](https://github.com/journeyapps/zxing-android-embedded/tree/v4.3.0) and [ZXing core 3.5.3](https://github.com/zxing/zxing/tree/zxing-3.5.3), Apache-2.0. Their notices are bundled under `assets/licenses`. The scanner requires no Google Play services or external scanner app. AndroidX dependencies retain their packaged notices.
+- Android uses [CameraX 1.6.2](https://developer.android.com/jetpack/androidx/releases/camera) from AndroidX for lifecycle-bound camera capture, and [ZXing core 3.5.3](https://github.com/zxing/zxing/tree/zxing-3.5.3) for offline decoding, both Apache-2.0. Notices are bundled under `assets/licenses`. No Google Play services or external scanner app is required. CameraX/AndroidX transitive dependencies retain their packaged notices.
+- Companion 0.2.5 used ZXing Android Embedded 4.3.0. That legacy scanner dependency is removed in 0.2.6; its prior-release notice is retained for provenance.
 - iOS uses Apple’s AVFoundation QR metadata API. Camera frames stay on-device.
+
+## Research acknowledgements
+
+See [Acknowledgements and research credits](docs/ACKNOWLEDGEMENTS.md) for named projects, contributors, study scope and direct visit links. Research citations are separate from the dependency notices above.

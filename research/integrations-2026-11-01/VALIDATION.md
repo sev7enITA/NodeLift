@@ -1,4 +1,4 @@
-# Integration validation — 1 November 2026
+# Integration validation: 1 November 2026
 
 This change is host 0.3.0 preview. Mobile binaries remain the previously released 0.2.2. No phone speedup or pooled-memory claim is added.
 

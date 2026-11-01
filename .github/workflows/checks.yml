@@ -36,3 +36,5 @@ jobs:
         working-directory: .
       - run: node scripts/check-pairing.cjs
         working-directory: .
+      - run: node scripts/check-control-states.cjs
+        working-directory: .

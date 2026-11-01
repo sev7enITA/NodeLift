@@ -1,4 +1,4 @@
-# NodeLift — global comparison and engineering implications
+# NodeLift: global comparison and engineering implications
 
 **Sources frozen on 31 October 2026 · 55 entries · experimental NodeLift 0.2.1 checkpoint**
 

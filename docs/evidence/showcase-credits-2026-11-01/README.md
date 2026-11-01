@@ -1,4 +1,4 @@
-# Showcase authorship and credits — 2026-11-01
+# Showcase authorship and credits: 2026-11-01
 
 Published at https://www.fabriziodegni.com/NodeLift/#about.
 
@@ -8,8 +8,8 @@ Added an Italian/English About & Credits chapter naming Fabrizio Degni as NodeLi
 
 ## Sources
 
-- https://www.fabriziodegni.com/ — public page retrieved on 2026-11-01; supports technology strategy, AI/data governance and international ICT experience. No employer endorsement is implied.
-- https://www.linkedin.com/in/fdegni/ — profile URL supplied by the owner and linked from the personal site. LinkedIn profile content could not be retrieved; the biography does not depend on it.
+- https://www.fabriziodegni.com/: public page retrieved on 2026-11-01; supports technology strategy, AI/data governance and international ICT experience. No employer endorsement is implied.
+- https://www.linkedin.com/in/fdegni/: profile URL supplied by the owner and linked from the personal site. LinkedIn profile content could not be retrieved; the biography does not depend on it.
 - Repository LICENSE, THIRD_PARTY_NOTICES.md, docs/BRAND.md and research/integrations-2026-11-01/VALIDATION.md support the credits and link targets.
 
 ## Publication and checks

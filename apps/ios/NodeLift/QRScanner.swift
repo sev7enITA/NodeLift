@@ -22,7 +22,7 @@ struct QRScanner: UIViewControllerRepresentable {
         private var closed = false // Accessed exclusively on queue.
         private var delivered = false // Metadata callbacks run on main.
         override func viewDidLoad() {
-            super.viewDidLoad(); view.backgroundColor = .black
+            super.viewDidLoad(); view.backgroundColor = .black;Diagnostics.shared.record(.cameraOpen)
             switch AVCaptureDevice.authorizationStatus(for: .video) {
             case .authorized: configure()
             case .notDetermined:
@@ -32,7 +32,7 @@ struct QRScanner: UIViewControllerRepresentable {
             default: fail("Camera access is required to scan. Enable it in Settings or use manual pairing.")
             }
         }
-        private func fail(_ message: String) { guard !delivered else { return }; delivered = true; onError?(message) }
+        private func fail(_ message: String) { guard !delivered else { return }; delivered = true;Diagnostics.shared.record(.cameraFailed); onError?(message) }
         private func configure() {
             queue.async { [weak self] in
                 guard let self, !closed else { return }
@@ -55,7 +55,7 @@ struct QRScanner: UIViewControllerRepresentable {
                     let layer = AVCaptureVideoPreviewLayer(session: self.session)
                     layer.videoGravity = .resizeAspectFill; self.view.layer.addSublayer(layer); self.preview = layer; self.view.setNeedsLayout()
                 }
-                session.startRunning()
+                session.startRunning();Diagnostics.shared.record(.cameraReady)
             }
         }
         override func viewDidLayoutSubviews() {
@@ -75,7 +75,7 @@ struct QRScanner: UIViewControllerRepresentable {
         }
         func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput objects: [AVMetadataObject], from connection: AVCaptureConnection) {
             guard !delivered, let value = (objects.first as? AVMetadataMachineReadableCodeObject)?.stringValue else { return }
-            delivered = true; onCode?(value)
+            delivered = true;Diagnostics.shared.record(.cameraResult); onCode?(value)
         }
     }
 }

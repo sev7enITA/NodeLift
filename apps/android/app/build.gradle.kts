@@ -7,8 +7,8 @@ android {
         applicationId = "dev.nodelift.companion"
         minSdk = 26
         targetSdk = 36
-        versionCode = 7
-        versionName = "0.2.5"
+        versionCode = 8
+        versionName = "0.2.6"
         ndk { abiFilters += "arm64-v8a" }
         externalNativeBuild { cmake { arguments += listOf("-DGGML_METAL=OFF","-DGGML_VULKAN=OFF","-DGGML_CPU_ARM_ARCH=armv8-a","-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON") } }
         testInstrumentationRunner = providers.gradleProperty("nodeliftTestRunner").getOrElse("dev.nodelift.companion.ProtocolCheck")
@@ -19,6 +19,9 @@ android {
 }
 
 dependencies {
-    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation("androidx.camera:camera-camera2:1.6.2")
+    implementation("androidx.camera:camera-lifecycle:1.6.2")
+    implementation("androidx.camera:camera-view:1.6.2")
+    testImplementation("junit:junit:4.13.2")
     implementation("com.google.zxing:core:3.5.3")
 }

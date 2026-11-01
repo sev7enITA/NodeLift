@@ -14,15 +14,15 @@ struct Index {
   @State result: string = node.result;
   @State running: boolean = false;
   @State aboutExpanded: boolean = false;
-  @State versionName: string = '—';
-  @State versionCode: string = '—';
+  @State versionName: string = '-';
+  @State versionCode: string = '-';
   @State aboutLinkError: boolean = false;
   private async readInstalledVersion(): Promise<void> {
     try {
       const info = await bundleManager.getBundleInfoForSelf(bundleManager.BundleFlag.GET_BUNDLE_INFO_DEFAULT);
       this.versionName = info.versionName;
       this.versionCode = info.versionCode.toString();
-    } catch (_) { this.versionName = '—'; this.versionCode = '—'; }
+    } catch (_) { this.versionName = '-'; this.versionCode = '-'; }
   }
   private versionLabel(): string {
     return this.t('Version {0} · build {1}').replace('{0}', this.versionName).replace('{1}', this.versionCode);

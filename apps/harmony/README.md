@@ -1,4 +1,4 @@
-# NodeLift HarmonyOS — native candidate
+# NodeLift HarmonyOS: native candidate
 
 ArkTS/ArkUI sources for the Huawei Pura 70 Ultra reported by the owner as running HarmonyOS NEXT 7. **Not compiled, signed or tested on a device.** DevEco Studio/HarmonyOS SDK was unavailable in the inspected development environment; native compilation remains deferred due to limited disk space.
 

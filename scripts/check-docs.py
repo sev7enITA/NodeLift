@@ -18,6 +18,9 @@ def check():
     checked = 0
     for page in pages:
         source = re.sub(r'^```.*?^```[^\n]*', '', page.read_text(), flags=re.M | re.S)
+        # Preserve the original external reviewer transcript; enforce owner style elsewhere.
+        if page.relative_to(ROOT).as_posix() != 'research/integrations-2026-11-01/GLM-REVIEW.md' and chr(0x2014) in source:
+            errors.append(f'{page.relative_to(ROOT)}: authored prose must not use em dashes')
         # Catch known prose regressions, not a general-purpose language classifier.
         if re.search(r'(?i)\b(?:guida del laboratorio|stato delle verifiche|prima dell.implementazione|nessun risultato|sono stati|non è ancora|cosa è implementato|fonti consultate il|compilazione e installazione|sorgente candidato|la possibilità di|dai un nuovo ruolo)\b', source):
             errors.append(f'{page.relative_to(ROOT)}: authored documentation must be English')
@@ -37,13 +40,17 @@ def check():
             checked += 1
             if not local.exists():
                 errors.append(f'{page.relative_to(ROOT)}: missing target {raw}')
+    for name in ('site/NodeLift/index.html', 'site/NodeLift/assets/showcase.js', 'site/NodeLift/assets/site-locales.js'):
+        text = (ROOT/name).read_text()
+        if chr(0x2014) in text or '&mdash;' in text or '&#8212;' in text:
+            errors.append(name+': authored showcase copy must not use em dashes')
     readme = (ROOT/'README.md').read_text()
     version = re.search(r'versionName = "([^"]+)"', (ROOT/'apps/android/app/build.gradle.kts').read_text()).group(1)
     if f'releases/tag/v{version}' not in readme:
         errors.append('README does not link to the current companion release')
     if f'releases/download/v{version}/NodeLift-{version}-android-debug.apk' not in readme:
         errors.append('README does not link to the current Android asset')
-    for name in ('Home', 'Quickstart', 'Android', 'iOS-and-iPadOS', 'Models-and-providers', 'Benchmarking', 'Troubleshooting', 'Development-and-workflows', 'Architecture', 'About-and-credits', '_Sidebar', '_Footer'):
+    for name in ('Home', 'Quickstart', 'Android', 'iOS-and-iPadOS', 'Models-and-providers', 'Benchmarking', 'Troubleshooting', 'Development-and-workflows', 'Architecture', 'About-and-credits', 'Acknowledgements', '_Sidebar', '_Footer'):
         if not (ROOT/'docs/wiki'/f'{name}.md').exists():
             errors.append('Missing Wiki source: '+name)
     return {'pages': len(pages), 'local_targets_checked': checked, 'companion_version': version, 'errors': errors}

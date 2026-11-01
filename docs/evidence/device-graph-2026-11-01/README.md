@@ -1,4 +1,4 @@
-# Device graph verification — 1 November 2026
+# Device graph verification: 1 November 2026
 
 Scope: desktop control room, authenticated host inventory, telemetry timestamps and output-attribution presentation. The native inference algorithm, phone runtime, model weights and release binaries are unchanged.
 

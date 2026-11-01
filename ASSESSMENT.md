@@ -1,4 +1,4 @@
-# ExpandMyHW — pre-implementation assessment
+# ExpandMyHW: pre-implementation assessment
 
 31 October 2026. The owner's priority is **higher speed than the computer alone**, using local phones/tablets. Running larger models is a second benefit to measure separately. This document preserves the initial assessment, before native inference was implemented. The project was subsequently named **NodeLift** and qualification companions were developed: see the [0.1 checkpoint](docs/COMPANION_0_1.md), [current engine guide](docs/ENGINE_0_2.md) and [measured results](research/measurements/ENGINE_RESULTS.md). Statements about missing implementation below refer to this initial checkpoint.
 

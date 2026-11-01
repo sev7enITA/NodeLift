@@ -1,4 +1,4 @@
-# NodeLift 0.1 — qualification companions
+# NodeLift 0.1: qualification companions
 
 Historical checkpoint, 31 October 2026. The owner selected **NodeLift** as the name; the original ExpandMyHW directory preserves paths and research. This first pairing/measurement implementation was **not a distributed inference engine**. For the current release, use the [engine guide](ENGINE_0_2.md), [QR pairing guide](QR_PAIRING.md) and [changelog](../CHANGELOG.md). Implementation gaps below describe version 0.1, not all later versions.
 

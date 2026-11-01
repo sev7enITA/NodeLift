@@ -1,6 +1,9 @@
 name: Documentation checks
 on:
   push:
+    # Source tags can precede final GitHub publication timestamps.
+    # Full publication consistency is checked on branches and pull requests.
+    branches: ['**']
   pull_request:
 permissions:
   contents: read

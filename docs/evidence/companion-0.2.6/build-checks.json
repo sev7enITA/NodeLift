@@ -1,0 +1,77 @@
+{
+  "version": "0.2.6",
+  "build": 8,
+  "android": {
+    "compiled": true,
+    "jvm_decoder_tests": 6,
+    "failures": 0,
+    "errors": 0,
+    "instrumentation_compiled": true,
+    "instrumentation_executed": false,
+    "lint_errors": 0,
+    "lint_warnings": 18,
+    "signer_sha256": "80322431dee7cbce87601a4ef232706ea0717e0890721823ad15a8272b6e9a46",
+    "signer_matches_0_2_5": true,
+    "native_sha256": {
+      "lib/arm64-v8a/libnodelift.so": "f7c3d82d32884a569aecd53d4f0c66cbb58cd14fbb93acfee7e8441917120b79"
+    },
+    "zipalign_16k_passed": true,
+    "native_library_alignment": {
+      "lib/arm64-v8a/libimage_processing_util_jni.so": {
+        "sha256": "0292b063fafccf734472cbb59588e756c2dbca907c72021ba6fbf126385508a2",
+        "load_segment_alignments": [
+          16384,
+          16384,
+          16384
+        ],
+        "elf_16k_aligned": true
+      },
+      "lib/arm64-v8a/libnodelift.so": {
+        "sha256": "f7c3d82d32884a569aecd53d4f0c66cbb58cd14fbb93acfee7e8441917120b79",
+        "load_segment_alignments": [
+          16384,
+          16384,
+          16384
+        ],
+        "elf_16k_aligned": true
+      },
+      "lib/arm64-v8a/libsurface_util_jni.so": {
+        "sha256": "a5c9d1928ea92ec7a94dff8cf666e7739cd734198b9f0ae1d4e28ea3c86516ba",
+        "load_segment_alignments": [
+          16384,
+          16384
+        ],
+        "elf_16k_aligned": true
+      }
+    },
+    "jvm_support_policy_tests": 4
+  },
+  "ios": {
+    "compiled_unsigned": true,
+    "version": "0.2.6",
+    "native_sha256": {
+      "NodeLift.app/Frameworks/nodelift.framework/Info.plist": "96dac348667e5b43c4759d7146340140b8870b631b294e84ec8aa38078fe17d6",
+      "NodeLift.app/Frameworks/nodelift.framework/nodelift": "8291c7addae661f09932c9a1cf758a237cf42fd7c645baccc37b3c206646fc85"
+    }
+  },
+  "host_protocol_tests": 19,
+  "host_protocol_passed": true,
+  "physical_camera_tested": false,
+  "physical_native_ui_tested": false,
+  "reported_crash_root_cause_confirmed": false,
+  "inference_benchmark_performed": false,
+  "mobile_support": {
+    "android_jvm_tests": 10,
+    "swift_policy_checks": "passed",
+    "privacy": "exception messages/paths excluded; numeric iOS errors only",
+    "retention": "three 128 KiB journals; seven-day export filter and pruning",
+    "startup_weekly_offline_version_checks": "policy unit tests, not physical scheduling",
+    "physical_crash_reproduction": false,
+    "physical_share_flow": false,
+    "native_app_icons_compiled": true
+  },
+  "lint_current": {
+    "errors": 0,
+    "warnings": 18
+  }
+}

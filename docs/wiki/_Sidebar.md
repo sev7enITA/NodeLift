@@ -13,3 +13,5 @@
 - [About and credits](https://github.com/sev7enITA/NodeLift/wiki/About-and-credits)
 
 [GitHub repository](https://github.com/sev7enITA/NodeLift) · [Showcase](https://www.fabriziodegni.com/NodeLift/)
+
+- [Acknowledgements](https://github.com/sev7enITA/NodeLift/wiki/Acknowledgements)

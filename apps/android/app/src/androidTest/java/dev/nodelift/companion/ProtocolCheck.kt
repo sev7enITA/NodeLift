@@ -15,12 +15,12 @@ class ProtocolCheck : Instrumentation() {
                 val ticket = context.assets.open("pairing.json").bufferedReader().use { JSONObject(it.readText()) }
                 val pairing = Pairing.parse(ticket)
                 val client = Client(pairing)
-                val reply = client.json("/v1/pair",JSONObject().put("invite",pairing.invite).put("name","Android emulator protocol QA").put("capabilities",JSONObject().put("model","EMULATOR — NOT A PHONE").put("os","Android test")))
+                val reply = client.json("/v1/pair",JSONObject().put("invite",pairing.invite).put("name","Android emulator protocol QA").put("capabilities",JSONObject().put("model","EMULATOR: NOT A PHONE").put("os","Android test")))
                 client.token = reply.getString("token")
                 check(client.bytes("/v1/probe?size=16384").size == 16384)
                 val uploaded = JSONObject(String(client.bytes("/v1/upload", ByteArray(16384), true)))
                 check(uploaded.getInt("bytes") == 16384)
-                client.json("/v1/heartbeat",JSONObject().put("model","EMULATOR — NOT A PHONE"))
+                client.json("/v1/heartbeat",JSONObject().put("model","EMULATOR: NOT A PHONE"))
                 val damaged = pairing.json().put("sha256","0".repeat(64))
                 var rejected = false
                 try { Pairing.parse(damaged) } catch (_:Exception) { rejected = true }

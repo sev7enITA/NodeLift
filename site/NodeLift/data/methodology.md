@@ -1,4 +1,4 @@
-# NodeLift — comparison methodology
+# NodeLift: comparison methodology
 
 Source freeze: **31 October 2026**. Dataset version: **1**. Curator: Fabrizio Degni / NodeLift project. The evidence snapshot remains unchanged by later documentation translations or companion releases.
 

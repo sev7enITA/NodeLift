@@ -1,4 +1,4 @@
-# DistAI — evidence, limits and lessons for ExpandMyHW
+# DistAI: evidence, limits and lessons for ExpandMyHW
 
 Assessment dated 31 October 2026, before ExpandMyHW hardware benchmarks. This document distinguishes inspected code, author-published results, our recalculations and hypotheses requiring tests. It is neither repository certification nor an independent performance replication. ExpandMyHW was subsequently named NodeLift; [later NodeLift results](../measurements/ENGINE_RESULTS.md) are reported separately.
 

@@ -50,7 +50,7 @@
     for(const item of textNodes)item.node.textContent=tr(item.it,item.en);
     for(const item of labelNodes)item.node.setAttribute('aria-label',tr(item.it,item.en));
     for(const lang of locale.languages)$('lang-'+lang).setAttribute('aria-pressed',String(language===lang));
-    document.title=tr('NodeLift — Il tuo hardware ha ancora un futuro.','NodeLift — Your hardware still has a future.');
+    document.title=tr('NodeLift: Il tuo hardware ha ancora un futuro.','NodeLift: Your hardware still has a future.');
     document.querySelector('meta[name="description"]').content=tr('NodeLift: un laboratorio open source per delegare inferenza AI a dispositivi locali. Architettura, risultati riproducibili e atlante comparativo dei sistemi distribuiti.','NodeLift: an open-source laboratory for delegating AI inference to local devices. Architecture, reproducible results and a comparison atlas of distributed systems.');
     for(const selector of ['meta[property="og:title"]','meta[name="twitter:title"]'])document.querySelector(selector).content=document.title;
     for(const selector of ['meta[property="og:description"]','meta[name="twitter:description"]'])document.querySelector(selector).content=document.querySelector('meta[name="description"]').content;

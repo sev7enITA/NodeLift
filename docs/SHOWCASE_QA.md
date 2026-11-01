@@ -1,4 +1,4 @@
-# Public showcase QA — NodeLift 0.2.1
+# Public showcase QA: NodeLift 0.2.1
 
 31 October 2026. This record concerns the static public showcase, not the private control room, engine performance or physical companion qualification. The atlas snapshot contains 55 projects across six categories.
 
@@ -44,7 +44,7 @@ Post-change browser observations confirmed rapid right/right/right/left navigati
 
 ## Final external disposition
 
-**Round 2: PASS.** The actual Google Gemini follow-up used the observed **Argon / Alta (Gemini 4)** selector and completed with: “PASS — No mandatory web-publication fixes remain.” The separate evaluator accepted that disposition and scored design, originality, craft and functionality at **2/3 each**. The provider's perfect scores were not adopted as evidence of flawless execution.
+**Round 2: PASS.** The actual Google Gemini follow-up used the observed **Argon / Alta (Gemini 4)** selector and completed with: “PASS: No mandatory web-publication fixes remain.” The separate evaluator accepted that disposition and scored design, originality, craft and functionality at **2/3 each**. The provider's perfect scores were not adopted as evidence of flawless execution.
 
 The reviewer received the current public source/QA bundle and eight newly captured screenshots. It reviewed those attachments and supporting QA; it did not execute the site or test physical phones. The all-project/filter checks above remain implementation-agent observations, not tests performed by Gemini.
 

@@ -77,3 +77,37 @@ html:lang(zh-Hans) .eyebrow, html:lang(zh-Hans) .status, html:lang(zh-Hans) .sec
 @media print { .release-section { content-visibility: visible; } .release-entry { break-inside: avoid; color: #152b33; background: none; } .release-entry::details-content { display: block; } .release-entry .release-body { display: block; } }
 
 @media(max-width:850px) { .primary-nav { min-width: 0; max-width: 100%; overflow-x: auto; justify-content: flex-start; } .primary-nav a { flex-shrink: 0; } }
+
+/* Acknowledgements: named people, clear roles and direct paths to their work. */
+.acknowledgements-section{border-top:1px solid var(--line)}
+.acknowledgements-heading{display:grid;grid-template-columns:1.05fr 1fr;gap:85px;align-items:start;margin-bottom:44px}
+.acknowledgements-heading h2{font-size:clamp(38px,3.7vw,53px);margin:0}
+.acknowledgements-heading .large-copy{font-size:18px!important;line-height:1.8;margin:0}
+.acknowledgements-layout{display:grid;grid-template-columns:.85fr 1.15fr;gap:70px;align-items:start}
+.acknowledgement-group{min-width:0}
+.acknowledgement-group>h3{display:flex;gap:14px;align-items:baseline;font-size:15px;line-height:1.5;margin:0;padding:15px 0;border-top:1px solid #56717a;border-bottom:1px solid var(--line)}
+.acknowledgement-group>h3>span:first-child{font:10px var(--mono);color:var(--aqua);flex-shrink:0}
+.acknowledgements-foundations>.acknowledgement-group+.acknowledgement-group{margin-top:38px}
+.acknowledgement{padding:21px 0;border-bottom:1px solid var(--line)}
+.acknowledgement h4{font-size:20px;line-height:1.4;letter-spacing:-.4px;font-weight:500;margin:0 0 5px}
+.acknowledgement h4 a{text-decoration:none;display:inline-block;padding:3px 0}
+.acknowledgement h4 a>span{font-size:15px;color:var(--aqua);margin-left:6px}
+.acknowledgement p{font-size:13px;line-height:1.8;color:var(--muted);margin:10px 0 0;max-width:65ch;overflow-wrap:anywhere}
+.acknowledgement .acknowledgement-owner{font-size:11px;color:#c4d9df;margin:0;line-height:1.7}
+.acknowledgement-featured{border-left:2px solid var(--aqua);padding:22px 24px 25px;background:linear-gradient(105deg,#12303880,transparent)}
+.acknowledgement-featured h4{font-size:31px;letter-spacing:-.8px}
+.acknowledgement-featured h4 a{color:var(--aqua)}
+.acknowledgement-featured p{font-size:14px;color:#c0d4da}
+.acknowledgement-links{display:flex;gap:22px;flex-wrap:wrap;margin-top:10px}
+.acknowledgement-links a{font-size:12px;display:inline-flex;align-items:center;gap:6px;min-height:36px;text-decoration-color:#5c828b}
+.acknowledgement-links a>span{color:var(--aqua)}
+.acknowledgements-footer{margin-top:45px;padding-top:26px;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr auto;gap:20px 65px;align-items:start}
+.acknowledgements-footer h3{font-size:19px;margin:0 0 9px}
+.acknowledgements-footer p{font-size:13px;line-height:1.8;color:var(--muted);max-width:72ch;margin:0}
+.acknowledgements-actions{display:flex;align-items:flex-start;flex-direction:column;gap:12px}
+.acknowledgements-footer .acknowledgements-scope{grid-column:1/-1;font-size:11px;max-width:none;color:#a7c1c9}
+@media(max-width:1150px){.acknowledgements-heading{gap:40px}.acknowledgements-layout{gap:40px}.acknowledgements-footer{gap:20px 40px}}
+@media(min-width:851px) and (max-width:1050px){.masthead{padding:15px 28px 0;gap:15px;min-height:107px;flex-wrap:wrap}.primary-nav{order:3;width:100%;margin:0;justify-content:space-between;gap:20px;padding-bottom:13px}.header-actions{margin-left:auto}html{scroll-padding-top:125px}}
+@media(max-width:850px){.acknowledgements-heading{grid-template-columns:1fr;gap:24px}.acknowledgements-heading .large-copy{max-width:680px}.acknowledgements-layout{gap:30px;grid-template-columns:1fr 1.1fr}.acknowledgements-heading h2{font-size:42px}.acknowledgement-featured{padding:18px}.acknowledgements-footer{gap:20px 30px}}
+@media(max-width:600px){.acknowledgements-heading{margin-bottom:30px}.acknowledgements-heading h2{font-size:36px}.acknowledgements-heading .large-copy{font-size:16px!important}.acknowledgements-layout{display:flex;flex-direction:column;gap:34px}.acknowledgements-foundations,.acknowledgements-research{width:100%}.acknowledgement-group>h3{font-size:14px}.acknowledgement{padding-top:18px;padding-bottom:20px}.acknowledgement h4{font-size:21px}.acknowledgement h4 a{min-height:44px;display:inline-flex;gap:7px;align-items:center}.acknowledgement p{font-size:14px}.acknowledgement .acknowledgement-owner{font-size:12px}.acknowledgement-featured h4{font-size:30px}.acknowledgement-links a{font-size:13px;min-height:44px}.acknowledgements-footer{display:flex;flex-direction:column;margin-top:30px;padding-top:24px;gap:23px}.acknowledgements-footer p{font-size:14px}.acknowledgements-footer .acknowledgements-scope{font-size:12px}.acknowledgements-actions{gap:13px}.acknowledgements-foundations>.acknowledgement-group+.acknowledgement-group{margin-top:30px}}
+@media print{.acknowledgements-heading,.acknowledgements-layout,.acknowledgements-footer{display:block}.acknowledgements-heading h2{font-size:28pt;margin-bottom:18pt}.acknowledgements-heading .large-copy{font-size:11pt!important}.acknowledgements-heading{margin-bottom:20pt}.acknowledgement-group{margin-top:22pt}.acknowledgement-group>h3{break-after:avoid}.acknowledgement{break-inside:avoid;padding:12pt 0}.acknowledgement-featured{padding:12pt;border-left:2px solid #56717a}.acknowledgement h4,.acknowledgement-featured h4{font-size:15pt}.acknowledgement p,.acknowledgement-featured p{font-size:10pt;max-width:none}.acknowledgement .acknowledgement-owner{font-size:9pt}.acknowledgement-links a{font-size:10pt}.acknowledgements-footer{margin-top:24pt;padding-top:15pt}.acknowledgements-footer p,.acknowledgements-footer .acknowledgements-scope{font-size:9pt}.acknowledgements-actions{margin:15pt 0}.acknowledgements-actions .button{border-color:#56717a}}

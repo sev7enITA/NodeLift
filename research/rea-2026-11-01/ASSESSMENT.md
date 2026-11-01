@@ -1,4 +1,4 @@
-# REA lessons for NodeLift — 1 November 2026
+# REA lessons for NodeLift: 1 November 2026
 
 Reviewed upstream: [morluto/rea](https://github.com/morluto/rea), frozen at [`6e9ee97a69cb16c7150d8b550e705cba055ee4f0`](https://github.com/morluto/rea/tree/6e9ee97a69cb16c7150d8b550e705cba055ee4f0). This is a focused source/documentation assessment, not a full audit or runtime reproduction.
 

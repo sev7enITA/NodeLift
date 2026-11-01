@@ -60,9 +60,9 @@ def main():
     if args.json:
         print(json.dumps(report, indent=2))
     else:
-        print('NodeLift setup inventory — no model or native library was executed.\n')
+        print('NodeLift setup inventory: no model or native library was executed.\n')
         for check in report['checks']:
-            print(f"{check['name']}: {check['state']} — {check['detail']}")
+            print(f"{check['name']}: {check['state']}: {check['detail']}")
             if check['state'] in ('missing', 'unqualified'):
                 print('  ' + check['remediation'])
         print('\nPresence is not a version check, successful inference or phone qualification.')

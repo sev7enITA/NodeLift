@@ -1,4 +1,4 @@
-# External reviews — status and critical assessment
+# External reviews: status and critical assessment
 
 > Archived 0.1 review history, 31 October 2026. Both requested models later completed engine design and source reviews; adjudicated outcomes are in [ENGINE_REVIEW.md](ENGINE_REVIEW.md). Unavailability below describes earlier attempts only.
 

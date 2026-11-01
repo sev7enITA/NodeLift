@@ -1,5 +1,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
+import UIKit
 
 private let canvasColor = Color(red: 0.035, green: 0.071, blue: 0.086)
 private let panelColor = Color(red: 0.063, green: 0.114, blue: 0.133)
@@ -7,36 +8,79 @@ private let lineColor = Color(red: 0.16, green: 0.25, blue: 0.28)
 private let aquaColor = Color(red: 0.63, green: 1.0, blue: 0.945)
 private let amberColor = Color(red: 1.0, green: 0.824, blue: 0.54)
 
-@main struct NodeLiftApp: App {
+/// Explicit pressed/disabled states remain legible independently of the global tint.
+private struct NodeLiftButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var enabled
+    var primary = false
+    var destructive = false
+    func makeBody(configuration: Configuration) -> some View {
+        let accent = destructive ? Color(red: 1, green: 0.66, blue: 0.66) : aquaColor
+        let fill = !enabled ? Color(red: 0.10, green: 0.15, blue: 0.18) : configuration.isPressed ? Color(red: 0.24, green: 0.44, blue: 0.43) : primary ? aquaColor : panelColor
+        configuration.label
+            .font(.subheadline.weight(.semibold))
+            .foregroundStyle(!enabled ? Color(red: 0.62, green: 0.70, blue: 0.74) : configuration.isPressed ? Color.white : primary ? canvasColor : accent)
+            .padding(.horizontal, 14).padding(.vertical, 12).frame(minHeight: 50)
+            .background(fill, in: RoundedRectangle(cornerRadius: 11))
+            .overlay(RoundedRectangle(cornerRadius: 11).stroke(enabled ? accent.opacity(configuration.isPressed ? 1 : 0.65) : lineColor, lineWidth: configuration.isPressed ? 2 : 1))
+            .contentShape(RoundedRectangle(cornerRadius: 11))
+            .scaleEffect(configuration.isPressed && enabled ? 0.98 : 1)
+    }
+}
+
+@MainActor @main struct NodeLiftApp: App {
     @StateObject private var model = NodeModel()
     @Environment(\.scenePhase) private var phase
+
+    init() {
+        Diagnostics.shared.start()
+        UpdateMonitor.shared.start()
+    }
 
     var body: some Scene {
         WindowGroup {
             ContentView(model: model)
                 .preferredColorScheme(.dark)
                 .environment(\.locale, Locale(identifier: model.language))
+                .task { if phase == .active { Diagnostics.shared.setActive(true) } }
                 .onChange(of: phase) { _, value in
-                    if value == .background { model.pause() }
+                    if value == .active {
+                        Diagnostics.shared.setActive(true)
+                        UpdateMonitor.shared.onResume()
+                    } else if value == .background {
+                        Diagnostics.shared.setActive(false)
+                        model.pause()
+                    }
                 }
         }
     }
 }
 
-/// Small original geometric mark; no external resource or downloaded font required.
-private struct NodeLiftMark: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.move(to: CGPoint(x: rect.width * 0.22, y: rect.height * 0.77))
-        path.addLine(to: CGPoint(x: rect.width * 0.22, y: rect.height * 0.23))
-        path.addLine(to: CGPoint(x: rect.width * 0.78, y: rect.height * 0.77))
-        path.addLine(to: CGPoint(x: rect.width * 0.78, y: rect.height * 0.23))
-        return path
+/// Native rendering of assets/brand/nodelift-mark.svg, including the original orbit.
+private struct NodeLiftMark: View {
+    var body: some View {
+        Canvas { context, size in
+            let scale = min(size.width, size.height) / 64
+            let transform = CGAffineTransform(scaleX: scale, y: scale)
+            var letter = Path()
+            letter.move(to: CGPoint(x: 15, y: 48))
+            letter.addLine(to: CGPoint(x: 15, y: 17))
+            letter.addLine(to: CGPoint(x: 49, y: 47))
+            letter.addLine(to: CGPoint(x: 49, y: 16))
+            context.stroke(letter.applying(transform), with: .color(aquaColor), style: StrokeStyle(lineWidth: 8 * scale, lineCap: .square, lineJoin: .bevel))
+            var orbit = Path()
+            orbit.move(to: CGPoint(x: 5, y: 40))
+            orbit.addCurve(to: CGPoint(x: 59, y: 26), control1: CGPoint(x: 12, y: 53), control2: CGPoint(x: 52, y: 43))
+            context.stroke(orbit.applying(transform), with: .color(Color(red: 233/255, green: 249/255, blue: 252/255)), lineWidth: 2 * scale)
+            context.fill(Path(ellipseIn: CGRect(x: 5, y: 39, width: 6, height: 6)).applying(transform), with: .color(Color(red: 233/255, green: 249/255, blue: 252/255)))
+            context.fill(Path(ellipseIn: CGRect(x: 52, y: 28, width: 6, height: 6)).applying(transform), with: .color(aquaColor))
+        }.accessibilityHidden(true)
     }
 }
 
 struct ContentView: View {
     @ObservedObject var model: NodeModel
+    @ObservedObject private var updates = UpdateMonitor.shared
+    @State private var incidentNotice = Diagnostics.shared.hasPreviousIncident
     @State private var showModelImporter = false
     @State private var importError: String?
     @State private var pairingExpanded = true
@@ -46,6 +90,7 @@ struct ContentView: View {
     @State private var pairingCode: String?
     @State private var pairingIdentity = ""
     @State private var confirmPairing = false
+    @State private var confirmForget = false
 
     private func T(_ key: String) -> String { Message(key).resolve(model.language) }
 
@@ -71,7 +116,7 @@ struct ContentView: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 10) {
-                NodeLiftMark().stroke(aquaColor, style: StrokeStyle(lineWidth: 3.5, lineCap: .square, lineJoin: .bevel))
+                NodeLiftMark()
                     .frame(width: 35, height: 35).accessibilityHidden(true)
                 Text("NodeLift").font(.system(size: 27, weight: .semibold)).tracking(-1)
                 Text("/").font(.system(size: 27, weight: .light)).foregroundStyle(aquaColor).padding(.leading, -8)
@@ -82,6 +127,14 @@ struct ContentView: View {
                 Label(T("About & References"), systemImage: "info.circle")
                     .font(.subheadline).frame(minHeight: 44)
             }.tint(aquaColor).accessibilityIdentifier("open-about")
+            if updates.available {
+                Text(updates.message.resolve(model.language)).font(.footnote.weight(.semibold))
+                    .foregroundStyle(amberColor).accessibilityIdentifier("update-notice")
+            }
+            if incidentNotice {
+                Text(T("A previous interruption was recorded. Export diagnostics from About & References."))
+                    .font(.footnote).foregroundStyle(amberColor).accessibilityIdentifier("diagnostic-notice")
+            }
             Picker(T("Language"), selection: $model.language) {
                 Text("English").tag("en")
                 Text("简体中文").tag("zh-Hans")
@@ -98,14 +151,17 @@ struct ContentView: View {
     private var sessionCard: some View {
         card {
             HStack {
-                Label(model.running ? T("SESSION ACTIVE") : T("SESSION PAUSED"), systemImage: model.running ? "circle.fill" : "circle")
+                Label(model.connected ? T("SESSION ACTIVE") : model.running ? T("Connecting…") : T("SESSION PAUSED"), systemImage: model.connected ? "circle.fill" : model.running ? "arrow.triangle.2.circlepath" : "circle")
                     .font(.system(size: 10, weight: .medium, design: .monospaced)).foregroundStyle(aquaColor)
                 Spacer()
                 Text(T("LOCAL")).font(.system(size: 9, design: .monospaced))
                     .padding(.horizontal, 7).padding(.vertical, 4)
                     .overlay(RoundedRectangle(cornerRadius: 4).stroke(lineColor))
             }
-            Text(model.status.resolve(model.language)).font(.title3.weight(.medium)).accessibilityIdentifier("session-status")
+            HStack {
+                if model.running && !model.connected { ProgressView().tint(aquaColor).accessibilityLabel(T("Connecting…")) }
+                Text(model.status.resolve(model.language)).font(.title3.weight(.medium)).accessibilityIdentifier("session-status")
+            }
             if !model.telemetry.key.isEmpty {
                 Text(model.telemetry.resolve(model.language)).font(.system(size: 12, design: .monospaced))
                     .foregroundStyle(.secondary).lineSpacing(4)
@@ -113,15 +169,15 @@ struct ContentView: View {
             HStack(spacing: 10) {
                 if model.hasSavedSession {
                     Button { model.connect(newTicket: false) } label: {
-                        Label(T("Resume"), systemImage: "play.fill").frame(maxWidth: .infinity)
+                        Label(model.connected ? T("✓ Session active") : model.running ? T("Connecting…") : T("Resume"), systemImage: model.connected ? "checkmark.circle" : "play.fill").frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(.borderedProminent).tint(aquaColor).foregroundStyle(canvasColor)
+                    .buttonStyle(NodeLiftButtonStyle(primary: true))
                     .disabled(settingsLocked)
                 }
                 Button { model.pause() } label: {
                     Label(T("Pause"), systemImage: "pause.fill").frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.bordered).tint(aquaColor).disabled(!model.running)
+                .buttonStyle(NodeLiftButtonStyle()).disabled(!model.running)
             }
             Label(T("Foreground only"), systemImage: "iphone")
                 .font(.footnote.weight(.medium)).foregroundStyle(aquaColor)
@@ -141,7 +197,7 @@ struct ContentView: View {
                 .accessibilityIdentifier("engine-status").fixedSize(horizontal: false, vertical: true)
             Toggle(isOn: $model.engineEnabled) {
                 VStack(alignment: .leading, spacing: 5) {
-                    Text(T("Allow LLM proposals")).font(.subheadline.weight(.semibold))
+                    Text(T(model.engineEnabled ? "LLM proposals · ON" : "LLM proposals · OFF")).font(.subheadline.weight(.semibold))
                     Text(T("Your paired Mac can send context to the draft. The main model on your Mac verifies the proposals."))
                         .font(.footnote).foregroundStyle(.secondary)
                 }
@@ -156,7 +212,7 @@ struct ContentView: View {
                 Label(model.importingModel ? T("Importing…") : T("Import GGUF draft"), systemImage: "square.and.arrow.down")
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.bordered).tint(aquaColor).disabled(settingsLocked)
+            .buttonStyle(NodeLiftButtonStyle()).disabled(settingsLocked)
             if model.importingModel {
                 ProgressView().tint(aquaColor).frame(maxWidth: .infinity)
                     .accessibilityLabel(T("Importing model"))
@@ -223,7 +279,7 @@ struct ContentView: View {
                     note(T("Choose Add device on your computer, then scan its QR code. Keep both devices on the same local network or phone hotspot."))
                     Button { showScanner = true } label: {
                         Label(T("Scan QR"), systemImage: "qrcode.viewfinder").frame(maxWidth: .infinity)
-                    }.buttonStyle(.borderedProminent).tint(aquaColor).foregroundStyle(canvasColor).disabled(settingsLocked)
+                    }.buttonStyle(NodeLiftButtonStyle(primary: true)).disabled(settingsLocked)
                     Text(T("Manual pairing")).font(.footnote).foregroundStyle(.secondary)
                     TextEditor(text: $model.ticketText).font(.system(size: 12, design: .monospaced))
                         .frame(height: 90).scrollContentBackground(.hidden).padding(8)
@@ -233,12 +289,12 @@ struct ContentView: View {
                     Button { model.connect(newTicket: true) } label: {
                         Text(T("Pair and activate node")).frame(maxWidth: .infinity)
                     }
-                    .buttonStyle(.borderedProminent).tint(aquaColor).foregroundStyle(canvasColor)
+                    .buttonStyle(NodeLiftButtonStyle(primary: true))
                     .disabled(settingsLocked || model.ticketText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     if model.hasSavedSession {
                         Divider().overlay(lineColor)
-                        Button(T("Forget computer"), role: .destructive) { model.forget() }
-                            .buttonStyle(.bordered).disabled(model.importingModel)
+                        Button(T("Forget computer"), role: .destructive) { confirmForget = true }
+                            .buttonStyle(NodeLiftButtonStyle(destructive: true)).disabled(settingsLocked)
                     }
                 }.padding(.top, 15)
             } label: {
@@ -289,8 +345,8 @@ struct ContentView: View {
             }.padding(22).frame(maxWidth: 700)
         }
         .frame(maxWidth: .infinity).background(canvasColor)
-        .onAppear { pairingExpanded = !model.hasSavedSession }
-        .sheet(isPresented: $showAbout) { AboutView(language: model.language) }
+        .onAppear { pairingExpanded = !model.hasSavedSession; incidentNotice = Diagnostics.shared.hasPreviousIncident }
+        .sheet(isPresented: $showAbout, onDismiss: { incidentNotice = Diagnostics.shared.hasPreviousIncident }) { AboutView(language: model.language) }
         .sheet(isPresented: $showScanner, onDismiss: {
             if let value = scannedCode { scannedCode = nil; acceptPairingCode(value) }
         }) {
@@ -302,6 +358,10 @@ struct ContentView: View {
             }
         }
         .onOpenURL { url in acceptPairingCode(url.absoluteString) }
+        .alert(T("Forget computer"), isPresented: $confirmForget) {
+            Button(T("Cancel"), role: .cancel) {}
+            Button(T("Forget computer"), role: .destructive) { if !settingsLocked { model.forget() } }
+        } message: { Text(T("Remove the saved pairing from this phone? To revoke its server access too, use Revoke on the computer.")) }
         .alert(T("Pair your computer"), isPresented: $confirmPairing) {
             Button(T("Cancel"), role: .cancel) { pairingCode = nil }
             Button(T("Pair and activate node")) {
@@ -332,8 +392,8 @@ struct ContentView: View {
 
 
 private enum CompanionBuild {
-    static var version: String { Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "—" }
-    static var build: String { Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "—" }
+    static var version: String { Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "-" }
+    static var build: String { Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "-" }
     static func description(_ language: String) -> String {
         Message("Version {0} · build {1}", version, build).resolve(language)
     }
@@ -344,6 +404,13 @@ private struct AboutView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
     @State private var linkError = false
+    @ObservedObject private var updates = UpdateMonitor.shared
+    @State private var diagnosticFeedback = ""
+    @State private var diagnosticFailed = false
+    @State private var preparingExport = false
+    @State private var confirmClear = false
+    @State private var diagnosticShare: DiagnosticShare?
+    @State private var previousIncident = Diagnostics.shared.hasPreviousIncident
     private func T(_ key: String) -> String { Message(key).resolve(language) }
 
     private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
@@ -381,7 +448,7 @@ private struct AboutView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 18) {
                     HStack(spacing: 12) {
-                        NodeLiftMark().stroke(aquaColor, style: StrokeStyle(lineWidth: 3, lineCap: .square, lineJoin: .bevel))
+                        NodeLiftMark()
                             .frame(width: 38, height: 38).accessibilityHidden(true)
                         VStack(alignment: .leading, spacing: 6) {
                             Text("NodeLift").font(.largeTitle.weight(.semibold))
@@ -395,9 +462,50 @@ private struct AboutView: View {
                         link("LinkedIn", "https://www.linkedin.com/in/fdegni/")
                     }
                     section("Updates") {
-                        note("Open the official releases page and compare your installed version with the release notes. This is a manual check; no update is installed automatically.")
+                        note("NodeLift checks the official version metadata at launch and weekly while running. If the system suspends the app, an overdue check runs when you return. Installation is always your choice.")
+                        HStack(alignment: .top, spacing: 10) {
+                            if updates.checking { ProgressView().tint(aquaColor) }
+                            Text(updates.message.resolve(language)).font(.subheadline).foregroundStyle(aquaColor)
+                                .accessibilityIdentifier("update-status")
+                        }
+                        Button { updates.check(manual: true) } label: {
+                            Label(T(updates.checking ? "Checking for updates…" : "Check now"), systemImage: "arrow.clockwise")
+                                .frame(maxWidth: .infinity)
+                        }.buttonStyle(NodeLiftButtonStyle()).disabled(updates.checking)
+                            .accessibilityIdentifier("check-updates")
                         link("Check releases on GitHub", "https://github.com/sev7enITA/NodeLift/releases")
                         link("Official downloads & installation", "https://www.fabriziodegni.com/NodeLift/#downloads")
+                    }
+                    section("Diagnostics") {
+                        note("A bounded seven-day log stays on this device. It records app and OS versions, technical events and limited error details. Pairing credentials, QR codes and prompt contents are excluded. Nothing is uploaded automatically.")
+                        note("After an error or interruption, export a report and choose where to save or share it. Some native crashes and system shutdowns may leave no complete report.")
+                        if previousIncident {
+                            Text(T("A previous interruption was recorded. Export diagnostics from About & References."))
+                                .font(.footnote).foregroundStyle(amberColor)
+                        }
+                        Button {
+                            preparingExport = true
+                            diagnosticFailed = false
+                            do {
+                                diagnosticShare = DiagnosticShare(url: try Diagnostics.shared.export())
+                                diagnosticFeedback = "Diagnostic report prepared. Choose where to save or share it."
+                            } catch {
+                                diagnosticFeedback = "Unable to export diagnostics. Try again."
+                                diagnosticFailed = true
+                            }
+                            preparingExport = false
+                        } label: {
+                            Label(T("Export diagnostics"), systemImage: "square.and.arrow.up").frame(maxWidth: .infinity)
+                        }.buttonStyle(NodeLiftButtonStyle()).disabled(preparingExport)
+                            .accessibilityIdentifier("export-diagnostics")
+                        Button { confirmClear = true } label: {
+                            Label(T("Clear diagnostics"), systemImage: "trash").frame(maxWidth: .infinity)
+                        }.buttonStyle(NodeLiftButtonStyle(destructive: true)).disabled(preparingExport)
+                            .accessibilityIdentifier("clear-diagnostics")
+                        if !diagnosticFeedback.isEmpty {
+                            Text(T(diagnosticFeedback)).font(.footnote).foregroundStyle(diagnosticFailed ? amberColor : aquaColor)
+                                .accessibilityIdentifier("diagnostic-feedback")
+                        }
                     }
                     section("Project & author") {
                         link("Source repository", "https://github.com/sev7enITA/NodeLift")
@@ -423,5 +531,31 @@ private struct AboutView: View {
                 .navigationTitle(T("About & References")).navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .confirmationAction) { Button(T("Close")) { dismiss() }.tint(aquaColor) } }
         }.preferredColorScheme(.dark)
+            .sheet(item: $diagnosticShare) { item in DiagnosticShareSheet(url: item.url) }
+            .alert(T("Clear diagnostics"), isPresented: $confirmClear) {
+                Button(T("Cancel"), role: .cancel) {}
+                Button(T("Clear diagnostics"), role: .destructive) {
+                    let cleared = Diagnostics.shared.clear()
+                    if cleared { previousIncident = Diagnostics.shared.hasPreviousIncident }
+                    diagnosticFeedback = cleared ? "Local diagnostic history cleared." : "Unable to clear diagnostics. Try again."
+                    diagnosticFailed = !cleared
+                }
+            } message: {
+                Text(T("Delete the local diagnostic history? Previously exported copies are not affected."))
+            }
     }
 }
+
+private struct DiagnosticShare: Identifiable {
+    let id = UUID()
+    let url: URL
+}
+
+private struct DiagnosticShareSheet: UIViewControllerRepresentable {
+    let url: URL
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: [url], applicationActivities: nil)
+    }
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+}
+

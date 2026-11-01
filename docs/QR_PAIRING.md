@@ -1,6 +1,6 @@
 # Pair a phone by scanning the desktop QR
 
-Companion **0.2.5 / build 7** introduces an offline QR flow for Android and iOS. Update the host source as well as the companion: older host processes do not serve the QR assets and invitation-status endpoints.
+Companion **0.2.6 / build 8** updates the offline QR flow for Android and iOS. Update the host source as well as the companion: older host processes do not serve the QR assets and invitation-status endpoints.
 
 1. Connect the computer and phone to the same local network. A phone hotspot is supported: the phone can provide the hotspot to the Mac.
 2. Open the authenticated NodeLift desktop control room and choose **Add device**.
@@ -17,8 +17,14 @@ Existing sessions survive the APK update. You do not need to forget a working co
 - If enrollment wins a simultaneous race with Close, the completed session remains paired: use **Revoke pairing** on its device card to disconnect it. Close cancels unused invitations, not established sessions.
 - The QR disappears when its invitation is used, closed or expires. The device graph provides the actual connection status. Closing a browser tab makes a best-effort revocation request; browser termination cannot guarantee delivery.
 - **Manual pairing** retains the original JSON invitation path. Use this if the camera is unavailable or permission is denied.
-- If scanning fails, increase screen brightness, keep the entire white square visible, move the camera slightly farther away, and generate a fresh QR if it expired. Confirm companion version 0.2.5 or later.
+- If scanning fails, increase screen brightness, keep the entire white square visible, move the camera slightly farther away, and generate a fresh QR if it expired. Update to companion 0.2.6 or later. Android now offers **Retry camera** or **Cancel** if camera startup fails.
 - A successful scan cannot repair a network with client isolation, a stale host IP or a blocked listening port. The invitation uses the host address chosen at startup. The host refuses to reuse a certificate after its configured IP changes. After changing networks, start with the current LAN address and a new private `--state` directory, then pair devices again; do not delete the old state as a workaround.
+
+## Control feedback in 0.2.6
+
+Available controls have a solid or outlined accent; unavailable controls are muted. Pressing a control changes its appearance immediately. Connecting, pausing, loading and desktop requests have explicit progress text. A requested operation is not shown as completed until its state supports that claim. The LLM switch shows ON/OFF permission independently from the actual Draft ready status. Forget computer is available after pausing and requires confirmation; it removes the local credential, while Revoke on the desktop revokes server access.
+
+The Android scanner uses CameraX with latest-frame backpressure, a bounded offline decoder and lifecycle cleanup. It no longer starts the legacy embedded CaptureActivity. The exact 0.2.5 Xiaomi crash cause remains unconfirmed without a device log. See [0.2.6 validation evidence](evidence/companion-0.2.6/README.md).
 
 ## Protocol and privacy
 
@@ -28,7 +34,7 @@ The compact transport is `nodelift://pair/v1/<IPv4:port>/<expiry>/<invite>/<base
 
 The host stores only the invitation digest and its expiry. Pairing consumes it atomically once. Status and revocation endpoints require the desktop admin token and loopback origin. Native session credentials continue to use Android Keystore / iOS Keychain storage. QR rendering and camera decoding run locally; frames are not uploaded or stored. Anyone who can see a still-valid invitation can attempt enrollment, so do not share screenshots of live invitations.
 
-The desktop uses Project Nayuki's MIT QR generator; Android uses Apache-2.0 ZXing; iOS uses AVFoundation. See [third-party notices](../THIRD_PARTY_NOTICES.md).
+The desktop uses Project Nayuki's MIT QR generator; Android uses CameraX with Apache-2.0 ZXing decoding; iOS uses AVFoundation. See [third-party notices](../THIRD_PARTY_NOTICES.md).
 
 ## Verification scope
 

@@ -12,6 +12,10 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
+      - name: Check mobile support policies
+        run: |
+          swiftc apps/ios/NodeLift/DiagnosticJournal.swift apps/ios/NodeLift/UpdatePolicy.swift apps/ios/Tests/SupportPolicyCheck.swift -o /tmp/nodelift-support-check
+          /tmp/nodelift-support-check
       - name: Compile the pinned native core
         run: ./scripts/build-native.sh
       - name: Record the build environment

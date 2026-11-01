@@ -62,3 +62,7 @@ The first external design evaluation used Gemini 4 Argon with reasoning Alta and
 Nonmutating browser checks verified that selecting a different target and entering a prompt leaves Start disabled until applying or reverting. Revert restored the actual applied model and eligibility without changing backend configuration. The missing-session measurement filter is disabled and its renderer also accepts a null snapshot.
 
 A local API access panel fetches connection details only after an explicit click. The key is held in transient memory, absent from exports, and not inserted into the DOM unless the user deliberately reveals it. Revealed text hides after 30 seconds; closing the panel, switching tabs or two minutes after opening clears the access data. Copy is an explicit action. No API key was revealed, copied, logged or captured during the initial panel test; the then-running server did not yet expose the new route. Reassessment and post-restart integration verification are tracked separately by the root agent.
+
+## Companion 0.2.6
+
+Android uses native vector geometry plus an adaptive launcher icon and monochrome mask. iOS uses the same orbital mark in SwiftUI and an opaque 1024-pixel AppIcon. The platform raster asset is reproducible with `swift scripts/render-app-icon.swift output.png`. The original brand assets remain in Git and are linked at the top of the README.

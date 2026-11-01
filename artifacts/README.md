@@ -29,7 +29,7 @@ The observed Xiaomi test still refers to the 0.1 qualification companion. The ne
 
 The section below records earlier evidence only; current status is above.
 
-# NodeLift 0.1.0 — build and checks
+# NodeLift 0.1.0: build and checks
 
 31 October 2026. **Qualification companion: no distributed LLM engine implemented at this checkpoint.**
 

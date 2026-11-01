@@ -2,7 +2,7 @@
 
 Published 31 October 2026: **https://www.fabriziodegni.com/NodeLift/**.
 
-## English default and Simplified Chinese — 1 November 2026
+## English default and Simplified Chinese: 1 November 2026
 
 The public showcase now opens in English by default, with language controls ordered **EN → 中文 → IT**. Simplified Chinese covers 303 messages, including narrative, architecture steps, downloads, credits, accessibility labels and dynamic atlas controls. Explicit visitor choices persist; a language in the URL takes precedence. English is also the source HTML/no-JavaScript default. Research entries and evidence downloads retain their canonical English text, as explained in each UI language. See [localization behavior](LOCALIZATION.md#public-showcase--1-november-2026).
 
@@ -10,7 +10,7 @@ Three existing files matched their previous hashes and were backed up before rep
 
 Chrome verified all three languages on the public site, the EN/中文/IT control order and all 55 atlas entries loading. Local browser checks covered first-visit English, saved Italian, an English URL overriding that preference, Chinese filtering and all 18 project-detail labels, and filter preservation during switching. DOM layout checks found no horizontal document overflow at 375 CSS pixels in English/Chinese or at 768 pixels in English after bounding the decorative hero grid. The temporary viewport override was reset. These are browser checks, not physical-mobile tests or independent linguistic review. [Validation record](evidence/showcase-languages-2026-11-01/validation.json) · [Unmodified live Chinese screenshot](evidence/showcase-languages-2026-11-01/live-chinese.png).
 
-## Companion 0.2.4 and in-app About — 1 November 2026
+## Companion 0.2.4 and in-app About: 1 November 2026
 
 The portal download section now points to companion **0.2.4/build 6**: Android APK, unsigned iOS IPA and compiled `.app` ZIP. About & References, runtime installed version, Fabrizio Degni attribution, official project links, technical references and manual release discovery are included in the desktop and companion sources. [About behavior and qualification](ABOUT_AND_UPDATES.md).
 
@@ -18,7 +18,7 @@ Three existing portal files were backed up after matching the previous published
 
 Native HarmonyOS/NEXT remains uncompiled. The owner reported completing Huawei login and explicitly postponed SDK acquisition/build because the Mac lacks sufficient free disk space. No SDK download was started. The public guide records this deferral; no HAP is advertised as available.
 
-## Mobile downloads update — 1 November 2026
+## Mobile downloads update: 1 November 2026
 
 The ten-chapter showcase now exposes `/NodeLift/#downloads` in its main navigation. It links to companion 0.2.3 Android APK, unsigned iOS IPA and compiled `.app` ZIP, plus the installation guide and SHA-256 inventory. APK-compatible HarmonyOS is explicitly an unverified compatibility trial. Native HarmonyOS/NEXT still has no compiled HAP; SDK acquisition requires Huawei sign-in in the inspected environment.
 
@@ -28,7 +28,7 @@ Four scoped portal files were uploaded over certificate-verified FTPS using the 
 
 Browser checks confirmed Italian/English download labels and URLs, the explicit unsigned-iOS and unavailable-HAP states, and no horizontal document overflow at 390 CSS pixels. The deployed page was read back in Chrome. These are publication/UI checks, not device installation or inference tests. See [installation requirements](MOBILE_DOWNLOADS.md).
 
-## Initial publication — 31 October 2026
+## Initial publication: 31 October 2026
 
 The nine-chapter Italian/English showcase and the 55-entry comparison atlas are live. At **2026-10-31 22:10:44 UTC**, anonymous requests returned HTTP 200 for all **12 files**, with every byte count and SHA-256 matching the frozen publication manifest. The path without a trailing slash resolves to the canonical `/NodeLift/` URL.
 
