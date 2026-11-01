@@ -2,7 +2,17 @@
 
 Published 31 October 2026: **https://www.fabriziodegni.com/NodeLift/**.
 
-## Current status
+## Mobile downloads update — 1 November 2026
+
+The ten-chapter showcase now exposes `/NodeLift/#downloads` in its main navigation. It links to companion 0.2.3 Android APK, unsigned iOS IPA and compiled `.app` ZIP, plus the installation guide and SHA-256 inventory. APK-compatible HarmonyOS is explicitly an unverified compatibility trial. Native HarmonyOS/NEXT still has no compiled HAP; SDK acquisition requires Huawei sign-in in the inspected environment.
+
+The IPA is a container change only: all app-file bytes match the existing published iOS ZIP. The original release packages and build manifest were preserved; the IPA and its packaging manifest were added as supplementary assets. [Release readback](evidence/mobile-downloads-2026-11-01/release-readback.json) verified all five assets against GitHub digests and local packages.
+
+Four scoped portal files were uploaded over certificate-verified FTPS using the owner's existing hosting profile. Before replacing the two existing files, their remote bytes were saved locally and matched the previous repository versions. Temporary uploads were read back before rename. [Anonymous HTTP verification](evidence/mobile-downloads-2026-11-01/portal-readback.json) confirms all **14 public files** match the [frozen manifest](evidence/mobile-downloads-2026-11-01/deployment-manifest.json), with the canonical `/NodeLift/` path intact.
+
+Browser checks confirmed Italian/English download labels and URLs, the explicit unsigned-iOS and unavailable-HAP states, and no horizontal document overflow at 390 CSS pixels. The deployed page was read back in Chrome. These are publication/UI checks, not device installation or inference tests. See [installation requirements](MOBILE_DOWNLOADS.md).
+
+## Initial publication — 31 October 2026
 
 The nine-chapter Italian/English showcase and the 55-entry comparison atlas are live. At **2026-10-31 22:10:44 UTC**, anonymous requests returned HTTP 200 for all **12 files**, with every byte count and SHA-256 matching the frozen publication manifest. The path without a trailing slash resolves to the canonical `/NodeLift/` URL.
 

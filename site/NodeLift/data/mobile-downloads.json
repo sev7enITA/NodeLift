@@ -1,0 +1,73 @@
+{
+  "updated": "2026-11-01",
+  "version": "0.2.3",
+  "build": 5,
+  "source_commit": "396ba0eca65857fa94c55d21fd8eb26930ce4431",
+  "languages": [
+    "en",
+    "zh-Hans",
+    "it"
+  ],
+  "assets": {
+    "NodeLift-0.2.3-android-debug.apk": {
+      "bytes": 16061453,
+      "sha256": "3b170992809d9453950461c18e4f18a0d374692fbc4baf62042f250c354917e6",
+      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.3/NodeLift-0.2.3-android-debug.apk"
+    },
+    "NodeLift-0.2.3-ios-unsigned.zip": {
+      "bytes": 3210588,
+      "sha256": "6d69d15396f517580d89d04005c441aec06aef5d736fa5b394b4d9dd0347f3e5",
+      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.3/NodeLift-0.2.3-ios-unsigned.zip"
+    },
+    "NodeLift-0.2.3-ios-unsigned.ipa": {
+      "bytes": 3204412,
+      "sha256": "893df2ae3eb5a9c2cb14247d74a5e06d1657484d1a29e3b2a149d4d002e7034c",
+      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.3/NodeLift-0.2.3-ios-unsigned.ipa"
+    }
+  },
+  "platforms": {
+    "android": {
+      "artifact": "NodeLift-0.2.3-android-debug.apk",
+      "status": "compiled-debug-signed",
+      "minimum_api": 26,
+      "architecture": "arm64-v8a",
+      "physical_native_inference_qualified": false
+    },
+    "ios": {
+      "artifacts": [
+        "NodeLift-0.2.3-ios-unsigned.ipa",
+        "NodeLift-0.2.3-ios-unsigned.zip"
+      ],
+      "status": "compiled-unsigned",
+      "minimum_os": "17.0",
+      "architecture": "arm64",
+      "requires_personal_signing": true,
+      "direct_browser_install": false,
+      "physical_installation_tested": false
+    },
+    "harmonyos_apk_compatibility_trial": {
+      "artifact": "NodeLift-0.2.3-android-debug.apk",
+      "status": "unverified-compatibility-trial",
+      "requires": [
+        "APK support",
+        "Android API 26+",
+        "arm64-v8a"
+      ],
+      "native_harmonyos_package": false,
+      "huawei_installation_tested": false,
+      "next_supported": false
+    },
+    "harmonyos_native_and_next": {
+      "artifact": null,
+      "status": "source-candidate-uncompiled",
+      "target_api": 23,
+      "sdk_available_on_build_host": false,
+      "sdk_download_requires_huawei_login": true,
+      "native_llm_worker": false,
+      "physical_installation_tested": false
+    }
+  },
+  "verification_scope": "Package identity and IPA payload equivalence; no physical-device installation or performance qualification",
+  "original_build_manifest": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.3/NodeLift-0.2.3-build-manifest.json",
+  "ipa_packaging_manifest": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.3/NodeLift-0.2.3-ios-ipa-manifest.json"
+}

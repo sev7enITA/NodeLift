@@ -6,6 +6,7 @@
 |---|---|
 | Understand the shared RAM/compute objective | [Product direction and roadmap](ROADMAP.md) |
 | First host run | [Quickstart](wiki/Quickstart.md) |
+| Download mobile packages and check signing | [Mobile downloads](MOBILE_DOWNLOADS.md) |
 | Add Android | [Android](wiki/Android.md) |
 | Add iPhone / iPad | [iOS and iPadOS](wiki/iOS-and-iPadOS.md) |
 | Import models, Hugging Face, OpenRouter | [Models and providers](wiki/Models-and-providers.md) |

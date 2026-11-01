@@ -1,6 +1,7 @@
 ## NodeLift
 
 - [Home](https://github.com/sev7enITA/NodeLift/wiki/Home)
+- [Mobile downloads](https://github.com/sev7enITA/NodeLift/wiki/Mobile-downloads)
 - [Quickstart](https://github.com/sev7enITA/NodeLift/wiki/Quickstart)
 - [Android](https://github.com/sev7enITA/NodeLift/wiki/Android)
 - [iOS and iPadOS](https://github.com/sev7enITA/NodeLift/wiki/iOS-and-iPadOS)

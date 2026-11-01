@@ -1,6 +1,8 @@
 # iPhone and iPad
 
-The [0.2.3 iOS ZIP](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.3) contains an **unsigned device build**. It cannot be installed as-is: Apple signing and provisioning are required. There is no TestFlight or App Store release.
+The [public download section](https://www.fabriziodegni.com/NodeLift/#downloads) offers a **compiled, unsigned device build** as an IPA or `.app` ZIP. Both contain the same 0.2.3 app. It cannot be installed as-is: Apple signing and provisioning are required. There is no TestFlight or App Store release.
+
+See the [download and signing guide](https://github.com/sev7enITA/NodeLift/blob/main/docs/MOBILE_DOWNLOADS.md) for package hashes and platform requirements.
 
 To build from source, install Xcode and xcodegen, then run `./scripts/build-ios.sh`. Configure your signing team and provisioning in Xcode before installing on a device you own. The packaged native framework supports the candidate Metal/CPU path; compilation does not qualify it on a physical iPhone.
 

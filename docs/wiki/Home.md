@@ -8,6 +8,7 @@ Current download: [companion 0.2.3 / build 5](https://github.com/sev7enITA/NodeL
 
 | Start here | Guide |
 |---|---|
+| Download mobile builds | [Packages, signatures and platform status](https://github.com/sev7enITA/NodeLift/wiki/Mobile-downloads) |
 | First local run | [Quickstart](https://github.com/sev7enITA/NodeLift/wiki/Quickstart) |
 | Add a phone | [Android](https://github.com/sev7enITA/NodeLift/wiki/Android) · [iPhone / iPad](https://github.com/sev7enITA/NodeLift/wiki/iOS-and-iPadOS) |
 | Choose weights or providers | [Models and providers](https://github.com/sev7enITA/NodeLift/wiki/Models-and-providers) |

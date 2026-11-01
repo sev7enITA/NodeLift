@@ -37,3 +37,9 @@
 @media(max-width:850px){.about-grid{grid-template-columns:1fr;gap:42px}.about-author h2{font-size:60px}.about-author .large-copy,.author-bio,.author-mission{max-width:none}}
 @media(max-width:600px){.about-author h2{font-size:50px;letter-spacing:-2px}.author-role{font-size:9px;letter-spacing:1.1px}.author-bio,.author-mission{font-size:14px}.author-links{gap:22px}.about-credits h3{font-size:18px}.credits-ledger dd{margin-left:25px}.about-section{padding-bottom:40px}}
 @media print{.about-section{break-before:page;padding:20px 0;border:0}.about-grid{display:block}.about-author h2{font-size:36px;color:#111}.author-role,.credit-index{color:#333}.author-bio,.author-mission,.credits-ledger dd p,.author-license{color:#222}.about-credits{margin-top:25px}.credits-ledger>div{break-inside:avoid}.author-links{margin:15px 0}.author-links .button{color:#111;border:1px solid #888;background:none}.about-author .large-copy{color:#222!important}}
+
+/* Direct access to platform downloads below the fixed masthead. */
+#downloads { scroll-margin-top: 110px; min-width: 0; }
+#downloads > h3 { margin: 0 0 16px; font-size: clamp(22px, 2.4vw, 32px); }
+#downloads > .boundary-note { margin: 0 0 20px; }
+#downloads em { overflow-wrap: anywhere; }
