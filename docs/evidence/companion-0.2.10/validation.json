@@ -1,0 +1,27 @@
+{
+  "version": "0.2.10",
+  "build": 12,
+  "android_jvm": {
+    "tests": 18,
+    "failures": 0,
+    "errors": 0
+  },
+  "android_lint": {
+    "errors": 0,
+    "warnings": 17
+  },
+  "android_signer_matches_0_2_9": true,
+  "android_native_libraries_unchanged": true,
+  "ios_native_library_unchanged": true,
+  "android_catalogs_match_source": true,
+  "compiled_sources_match_workspace": true,
+  "ios_arm64_build": true,
+  "ios_signing": "unsigned",
+  "ios_ipa_zip_payload_equal": true,
+  "physical_device_tested": false,
+  "native_libraries": {
+    "lib/arm64-v8a/libimage_processing_util_jni.so": "0292b063fafccf734472cbb59588e756c2dbca907c72021ba6fbf126385508a2",
+    "lib/arm64-v8a/libnodelift.so": "f7c3d82d32884a569aecd53d4f0c66cbb58cd14fbb93acfee7e8441917120b79",
+    "lib/arm64-v8a/libsurface_util_jni.so": "a5c9d1928ea92ec7a94dff8cf666e7739cd734198b9f0ae1d4e28ea3c86516ba"
+  }
+}
