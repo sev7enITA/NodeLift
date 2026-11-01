@@ -1,0 +1,131 @@
+{
+  "base_url": "https://www.fabriziodegni.com/NodeLift/",
+  "checked_unix": 1793552300.173511,
+  "canonical": {
+    "status": 200,
+    "final_url": "https://www.fabriziodegni.com/NodeLift/?verify=1793552296420742000",
+    "correct_path": true
+  },
+  "all_files_match": true,
+  "files": [
+    {
+      "file": "assets/nodelift-emblem.png",
+      "status": 200,
+      "bytes": 1077866,
+      "sha256": "377278075d7b2718ea72d9d74d20455ae2a90cad0d772807ee59c2c9afafb46d",
+      "matches": true
+    },
+    {
+      "file": "assets/nodelift-mark.svg",
+      "status": 200,
+      "bytes": 349,
+      "sha256": "882967df9afbd509ac5633c8cf2d1d693d6fd73c2b2f85a49da845fda93404ca",
+      "matches": true
+    },
+    {
+      "file": "assets/showcase.css",
+      "status": 200,
+      "bytes": 70960,
+      "sha256": "a117430d26f424c8436890e8a136e50e116f0dd572888b7add6cfca63895f5a5",
+      "matches": true
+    },
+    {
+      "file": "assets/showcase.js",
+      "status": 200,
+      "bytes": 22677,
+      "sha256": "329f1b0276f4afb8bd64d1bb6341b9154a26afe34c2f7093c330e7cb5fb842c9",
+      "matches": true
+    },
+    {
+      "file": "data/assessment.md",
+      "status": 200,
+      "bytes": 8584,
+      "sha256": "82837cb6324fa9ef0ddd691274049b3b7006ef1b5fb66349190e5d251a6d8c44",
+      "matches": true
+    },
+    {
+      "file": "data/comparison.csv",
+      "status": 200,
+      "bytes": 62238,
+      "sha256": "e268b281659dfb73715e611c931205d93e2655e38e8429069b7a6c01a983af7d",
+      "matches": true
+    },
+    {
+      "file": "data/comparison.json",
+      "status": 200,
+      "bytes": 95698,
+      "sha256": "d3f3d69319b5947e91aaddd8c32b7b81a131073a6337457ed8b037c7172d769e",
+      "matches": true
+    },
+    {
+      "file": "data/comparison.md",
+      "status": 200,
+      "bytes": 90943,
+      "sha256": "78ba1ba61a54a0cb5ce1867bfe2d3466b004747634c82aa766c7622925700900",
+      "matches": true
+    },
+    {
+      "file": "data/manifest.json",
+      "status": 200,
+      "bytes": 925,
+      "sha256": "b1b1ffeb65188236a8bce2ff524949664b1a552333da1bdf6b98df218c1076aa",
+      "matches": true
+    },
+    {
+      "file": "data/methodology.md",
+      "status": 200,
+      "bytes": 5660,
+      "sha256": "9232557f8bfb7b4885986a3ddb882e210ad63c2dfb82746f86463024e690aa5b",
+      "matches": true
+    },
+    {
+      "file": "data/mobile-downloads.json",
+      "status": 200,
+      "bytes": 3404,
+      "sha256": "4d16bb66e4d7ca352b809af2e388e8835eaf9eb53fddd14fb5776939a0d5a78a",
+      "matches": true
+    },
+    {
+      "file": "data/mobile-installation.md",
+      "status": 200,
+      "bytes": 7467,
+      "sha256": "21f7152cb8015fa465f7ad29438050bdb6e35ed9a915efe9e7dfdb00de75bb46",
+      "matches": true
+    },
+    {
+      "file": "data/source-inventory.json",
+      "status": 200,
+      "bytes": 14950,
+      "sha256": "d8fd90027152f1ff1af89fc975230440419566d38f1dc8f63ebbddb9a8647067",
+      "matches": true
+    },
+    {
+      "file": "index.html",
+      "status": 200,
+      "bytes": 89499,
+      "sha256": "a0207467abdab8bd480528d79726f058142685d00f0bc6fb745b8cb0ad999e4a",
+      "matches": true
+    },
+    {
+      "file": "assets/site-locales.js",
+      "status": 200,
+      "bytes": 34183,
+      "sha256": "cce9dcf87451743301dd5dbef0f908caa4db01a4048ad7e53ab04cb9c546261d",
+      "matches": true
+    },
+    {
+      "file": "data/changelog.md",
+      "status": 200,
+      "bytes": 10239,
+      "sha256": "8c138ebab78a3415522cc0435410a08bad91e173c3fd229204c2e125e35a123c",
+      "matches": true
+    },
+    {
+      "file": "data/changelog.json",
+      "status": 200,
+      "bytes": 11110,
+      "sha256": "17b812899fe1e0840f5b0d2783e82285d1b70fd39540d59c38304c2d94473734",
+      "matches": true
+    }
+  ]
+}

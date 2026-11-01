@@ -71,3 +71,10 @@ These images use synthetic fixture data, not a live node or live invitation.
 [Diagnostics](../../MOBILE_DIAGNOSTICS.md) are private, bounded and explicitly exported. [Automatic update checks](../../ABOUT_AND_UPDATES.md) run at process launch and weekly while running, retry after failure, and defer during OS suspension. Native headers and launcher assets use the current orbital mark. [iOS distribution](../../IOS_DISTRIBUTION.md) remains unsigned for this release; TestFlight and App Store are planned.
 
 The dedicated showcase Credits section passed an actual Gemini 4 Argon High visual review of the final desktop CUA screenshot and a narrow Chinese Chromium capture. Its documented capture overlays were not represented as physical/native UI evidence.
+## Published release verification
+
+Release `v0.2.6` is published as a prerelease. The APK and unsigned iOS packages were downloaded from their public GitHub URLs and checked against the recorded sizes and SHA-256 digests. See [public release verification](public-release-verification.json).
+
+The portal was staged and read back over FTPS, then independently fetched through anonymous HTTPS. All 17 expected public files matched the deployment manifest, including the 0.2.6 downloads and changelog. See [HTTP verification](portal-http-verification.json) and [FTPS readback](portal-ftps-readback.json). Browser verification confirmed the English download page, current package links, explicit unsigned iOS requirements and the dedicated Credits section.
+
+Publication commit `8f76bb009fe54dc0b9a86559bdbfe7be0b743260` passed [Source checks](https://github.com/sev7enITA/NodeLift/actions/runs/41329035723) and [Documentation checks](https://github.com/sev7enITA/NodeLift/actions/runs/41329035804). These checks do not replace physical phone qualification.
