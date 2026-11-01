@@ -43,7 +43,7 @@ For distributing signed builds to testers, use Apple's supported registered-devi
 
 The [ArkTS project](https://github.com/sev7enITA/NodeLift/tree/main/apps/harmony) currently targets API 23 or later and implements a network-qualification candidate. It has **no native model loader or LLM worker**. Its TLS, pinning and lifecycle behavior still need toolchain and physical-device validation.
 
-On 1 November, this build environment had no DevEco Studio, HarmonyOS SDK, `ohpm`, `hvigor` or `hdc`. The official [DevEco Studio download](https://developer.huawei.com/consumer/en/deveco-studio/) led to HUAWEI ID sign-in. No compiler run or HAP was produced. Logging in enables the SDK acquisition step; it does not establish that the project compiles.
+On 1 November, this build environment had no DevEco Studio, HarmonyOS SDK, `ohpm`, `hvigor` or `hdc`. The official [DevEco Studio download](https://developer.huawei.com/consumer/en/deveco-studio/) led to HUAWEI ID sign-in. No compiler run or HAP was produced. The owner subsequently reported completing Huawei sign-in and requested postponement because the build Mac has insufficient free disk space. SDK acquisition and the native build are therefore deferred; no HAP was produced.
 
 Remaining release steps: obtain the official SDK covering API 23, compile and resolve ArkTS/API diagnostics, sign for the intended test device, verify pairing/network/cancellation behavior on Huawei hardware, then publish a versioned HAP and checksum with its exact compatibility scope. A model worker requires additional implementation and inference testing.
 

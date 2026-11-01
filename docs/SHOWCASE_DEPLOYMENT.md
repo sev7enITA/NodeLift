@@ -2,6 +2,14 @@
 
 Published 31 October 2026: **https://www.fabriziodegni.com/NodeLift/**.
 
+## Companion 0.2.4 and in-app About — 1 November 2026
+
+The portal download section now points to companion **0.2.4/build 6**: Android APK, unsigned iOS IPA and compiled `.app` ZIP. About & References, runtime installed version, Fabrizio Degni attribution, official project links, technical references and manual release discovery are included in the desktop and companion sources. [About behavior and qualification](ABOUT_AND_UPDATES.md).
+
+Three existing portal files were backed up after matching the previous published manifest, then replaced through certificate-verified FTPS with readback before rename. [Anonymous HTTP verification](evidence/about-2026-11-01/portal-readback.json) confirms all **14 public files** match the [frozen payload](evidence/about-2026-11-01/deployment-manifest.json). Chrome confirmed the public 0.2.4 links. [Release verification](evidence/about-2026-11-01/release-readback.json) checked all five release assets and the tag's source identity.
+
+Native HarmonyOS/NEXT remains uncompiled. The owner reported completing Huawei login and explicitly postponed SDK acquisition/build because the Mac lacks sufficient free disk space. No SDK download was started. The public guide records this deferral; no HAP is advertised as available.
+
 ## Mobile downloads update — 1 November 2026
 
 The ten-chapter showcase now exposes `/NodeLift/#downloads` in its main navigation. It links to companion 0.2.3 Android APK, unsigned iOS IPA and compiled `.app` ZIP, plus the installation guide and SHA-256 inventory. APK-compatible HarmonyOS is explicitly an unverified compatibility trial. Native HarmonyOS/NEXT still has no compiled HAP; SDK acquisition requires Huawei sign-in in the inspected environment.

@@ -1,0 +1,34 @@
+{
+  "scope": "Independent browser design QA plus static mobile About review; GLM-5.3 Max source critique completed",
+  "viewports": [
+    1440,
+    768,
+    375
+  ],
+  "overflow_observed": false,
+  "installed_host_version": "0.3.0",
+  "languages_checked": [
+    "en",
+    "it",
+    "zh-Hans"
+  ],
+  "manual_release_link_destination_verified": "https://github.com/sev7enITA/NodeLift/releases",
+  "minimum_external_link_height_css_px": 44,
+  "native_physical_ui_tested": false,
+  "sources": {
+    "host/nodelift/dashboard.html": "1248542282785e5b4ca1ad8a2950a3ad357af8db9b59ca4590caa8d6ca338f87",
+    "host/nodelift/dashboard.css": "3a39111e0a48bcc1cfff9c44afe43791caa8f13ed954fda1fe0cf7c3297d4eeb",
+    "host/nodelift/dashboard.js": "1335a9df5b9a42c16976c91bfab7c9c3c5306a799906fe5a5a70309bf5a9c819",
+    "apps/android/app/src/main/java/dev/nodelift/companion/AboutDialog.kt": "1b5b64054fcf590b041a7fa98dd33282147fb891a4add5463d1fb2694d6c7c81",
+    "apps/ios/NodeLift/NodeLiftApp.swift": "b47feacef1a5713090139fb28a8deb10625e88f15695a441be32ee46bc96cf1c",
+    "apps/harmony/entry/src/main/ets/pages/Index.ets": "6863f9cc866bee83cdafa1ef242189dbf429a6d1f3a383c3be148fd5ece2a255"
+  },
+  "external_model": {
+    "name": "GLM-5.3",
+    "effort": "Max",
+    "verified_in": "browser model selector",
+    "verdict": "PASS",
+    "scope": "Sanitized About-only HTML/CSS, Kotlin, SwiftUI and ArkTS source; no execution or screenshot assessment",
+    "gemini_review_performed": false
+  }
+}

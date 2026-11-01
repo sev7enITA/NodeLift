@@ -1,0 +1,70 @@
+{
+  "review_date": "2026-11-01",
+  "source_commit": "bc5967bf3e0a7270be8f795a09f73159e48ea514",
+  "overall_verdict": "PASS",
+  "independent_browser_qa": {
+    "viewports_css_px": [
+      1440,
+      768,
+      375
+    ],
+    "horizontal_document_overflow_observed": false,
+    "external_about_link_minimum_height_css_px": 44,
+    "manual_release_destination_verified": "https://github.com/sev7enITA/NodeLift/releases",
+    "localizations_checked": [
+      "en",
+      "it",
+      "zh-Hans"
+    ],
+    "host_version_preserved_after_language_switch": true,
+    "session_free_version_fallback_verified": true
+  },
+  "external_model": {
+    "name": "GLM-5.3",
+    "effort": "Max",
+    "verified_in": "browser model selector",
+    "verdict": "PASS",
+    "scope": "Sanitized About-only HTML/CSS, Kotlin, SwiftUI and ArkTS source; no execution or screenshot assessment",
+    "gemini_review_performed": false
+  },
+  "review_packet_sha256": "a7a03b8edca50b1242f526b87eace9922e463c444248adc83814c5a92d636988",
+  "adjudications": [
+    {
+      "finding": "Android should disclose a browser-triggered worker pause",
+      "disposition": "rejected",
+      "reason": "Android activity pause only stops the UI refresh callback; NodeService remains a foreground service. The scoped model packet did not include the full service lifecycle."
+    },
+    {
+      "finding": "iOS failed-link feedback may be below the visible scroll area",
+      "disposition": "accepted_nonblocking_refinement",
+      "reason": "Failure handling exists, but presenting an alert or feedback nearer the activated link would improve discoverability."
+    },
+    {
+      "finding": "Mobile references omit the desktop Wiki link",
+      "disposition": "optional_refinement",
+      "reason": "Mobile still supplies repository, official downloads, architecture, research, third-party notices and license references required by the brief."
+    },
+    {
+      "finding": "CATEGORY_BROWSABLE narrows Android link handlers",
+      "disposition": "intentional",
+      "reason": "The links are fixed public HTTPS references intended for a browsable URL handler; failure is caught."
+    },
+    {
+      "finding": "Very narrow desktop reference grid may be dense",
+      "disposition": "qualification_note",
+      "reason": "The375px view is readable with no overflow. Smaller widths and enlarged fonts were not qualified."
+    },
+    {
+      "finding": "Language changes may overwrite the installed host version",
+      "disposition": "resolved_by_browser_evidence",
+      "reason": "Italian and Simplified Chinese switches retained the runtime0.3.0 version."
+    }
+  ],
+  "limitations": [
+    "GLM review is source-only; it did not execute code or inspect screenshots.",
+    "Native Android/iOS physical-device UI, large fonts and screen readers were not tested in this review.",
+    "HarmonyOS remains an uncompiled source candidate.",
+    "No Gemini review was performed.",
+    "Compilation, signing and inference performance are separate qualification scopes."
+  ]
+}
