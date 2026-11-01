@@ -16,6 +16,7 @@
 | Build and verify | [Development / workflows](wiki/Development-and-workflows.md) |
 | Understand execution | [Architecture](wiki/Architecture.md) |
 | Inspect devices and their contribution | [Device graph and product shape](DEVICE-GRAPH.md) |
+| Evaluate hardware inventory and device benchmarks | [android-hrwinfo / DeviceHardware assessment](../research/hardware-inventory-2026-11-01/ASSESSMENT.md) |
 | Change language | [Localization](LOCALIZATION.md) |
 | Find app information and updates | [About, references and updates](ABOUT_AND_UPDATES.md) |
 | Identify authorship and dependencies | [Credits](wiki/About-and-credits.md) |
