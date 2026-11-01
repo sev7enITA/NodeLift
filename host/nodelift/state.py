@@ -1,5 +1,7 @@
 """Persistent enrollment and bounded jobs. Only hashes of credentials are stored."""
 import hashlib
+import hmac
+import re
 import json
 import math
 import secrets
@@ -55,6 +57,16 @@ class State:
             # Legacy rows deliberately retain an unknown telemetry timestamp:
             # last_seen also changes on authenticated probes and is not a sample.
             db.execute("BEGIN IMMEDIATE")
+            db.execute("CREATE TABLE IF NOT EXISTS metadata (key TEXT PRIMARY KEY, value TEXT NOT NULL)")
+            db.execute("INSERT OR IGNORE INTO metadata VALUES ('pairing_scope', ?)", (secrets.token_hex(32),))
+            columns = {r["name"] for r in db.execute("PRAGMA table_info(nodes)")}
+            for name in ("identity_hash", "merged_into"):
+                if name not in columns:
+                    db.execute(f"ALTER TABLE nodes ADD COLUMN {name} TEXT")
+            db.execute("CREATE UNIQUE INDEX IF NOT EXISTS node_identity ON nodes(identity_hash) WHERE identity_hash IS NOT NULL")
+            db.execute("CREATE TABLE IF NOT EXISTS node_merges (source TEXT PRIMARY KEY, target TEXT NOT NULL, merged_at REAL NOT NULL, reason TEXT NOT NULL)")
+            if "original_node" not in {r["name"] for r in db.execute("PRAGMA table_info(jobs)")}:
+                db.execute("ALTER TABLE jobs ADD COLUMN original_node TEXT")
             if "capabilities_updated_at" not in {r["name"] for r in db.execute("PRAGMA table_info(nodes)")}:
                 db.execute("ALTER TABLE nodes ADD COLUMN capabilities_updated_at REAL")
         self.path.chmod(0o600)
@@ -88,19 +100,71 @@ class State:
             row = db.execute("SELECT expires FROM invites WHERE hash=?", (digest(value),)).fetchone()
         return {"pending": bool(row and row["expires"] > time.time())}
 
-    def pair(self, invite, name, caps):
+    def pairing_scope(self):
+        with self.db() as db:
+            return db.execute("SELECT value FROM metadata WHERE key='pairing_scope'").fetchone()[0]
+
+    def pair(self, invite, name, caps, device_key=None, previous=None):
         if not isinstance(invite, str) or len(invite) > 128 or not isinstance(name, str) or not name.strip() or len(name) > 80:
             raise ValueError("invalid enrollment")
+        if device_key is not None and (not isinstance(device_key, str) or not re.fullmatch(r"[0-9a-f]{64}", device_key)):
+            raise ValueError("invalid device identity")
+        if previous is not None and (not isinstance(previous, dict)
+                or not isinstance(previous.get("node_id"), str) or not re.fullmatch(r"[0-9a-f]{24}", previous["node_id"])
+                or not isinstance(previous.get("proof"), str) or not re.fullmatch(r"[0-9a-f]{64}", previous["proof"])):
+            raise ValueError("invalid continuity proof")
         capabilities = clean_caps(caps)
+        identity = digest(device_key) if device_key else None
         node, token = secrets.token_hex(12), secrets.token_urlsafe(32)
         with self.db() as db:
             db.execute("BEGIN IMMEDIATE")
             row = db.execute("DELETE FROM invites WHERE hash=? AND expires>? RETURNING hash", (digest(invite), time.time())).fetchone()
             if row is None:
                 raise PermissionError("invitation expired or already used")
+            known = db.execute("SELECT * FROM nodes WHERE identity_hash=?", (identity,)).fetchone() if identity else None
+            # Adoption of pre-identity enrollments requires possession of their
+            # credential, proved against this one-use invitation. The raw old
+            # credential is never sent to a newly scanned computer.
+            if not known and previous:
+                old = db.execute("SELECT * FROM nodes WHERE id=?", (previous["node_id"],)).fetchone()
+                if old:
+                    expected = hmac.new(bytes.fromhex(old["token_hash"]),
+                                        ("nodelift-repair-v1\n"+invite).encode(), hashlib.sha256).hexdigest()
+                    if not hmac.compare_digest(expected, previous["proof"]):
+                        raise PermissionError("invalid continuity proof")
+                    if old["merged_into"]:
+                        raise PermissionError("enrollment was consolidated; use the current companion session")
+                    if old["identity_hash"] and old["identity_hash"] != identity:
+                        raise PermissionError("device identity changed")
+                    known = old
             now = time.time()
-            db.execute("INSERT INTO nodes (id,token_hash,name,capabilities,last_seen,revoked,capabilities_updated_at) VALUES (?,?,?,?,?,0,?)", (node, digest(token), name.strip(), json.dumps(capabilities), now, now))
-        return {"node_id": node, "token": token, "protocol": 1}
+            if known:
+                node = known["id"]
+                db.execute("UPDATE nodes SET token_hash=?,name=?,capabilities=?,last_seen=?,revoked=0,capabilities_updated_at=?,identity_hash=COALESCE(identity_hash,?) WHERE id=?",
+                           (digest(token), name.strip(), json.dumps(capabilities), now, now, identity, node))
+                # Results from the superseded session must not finish old work.
+                db.execute("UPDATE jobs SET state='cancelled',finished=? WHERE node=? AND state IN ('running','queued')", (now, node))
+            else:
+                db.execute("INSERT INTO nodes (id,token_hash,name,capabilities,last_seen,revoked,capabilities_updated_at,identity_hash) VALUES (?,?,?,?,?,0,?,?)",
+                           (node, digest(token), name.strip(), json.dumps(capabilities), now, now, identity))
+        return {"node_id": node, "token": token, "protocol": 1, "reused": known is not None}
+
+    def merge_nodes(self, source, target, reason):
+        """Owner-confirmed legacy cleanup only; never infer identity from a name."""
+        if source == target or not isinstance(reason, str) or not reason.strip():
+            raise ValueError("distinct nodes and an owner reason required")
+        with self.db() as db:
+            db.execute("BEGIN IMMEDIATE")
+            rows = {r["id"]: r for r in db.execute("SELECT * FROM nodes WHERE id IN (?,?)", (source, target))}
+            if len(rows) != 2 or any(r["merged_into"] for r in rows.values()):
+                raise ValueError("two unconsolidated nodes required")
+            if rows[source]["identity_hash"] or rows[target]["identity_hash"]:
+                raise ValueError("only legacy enrollments may be manually consolidated")
+            if db.execute("SELECT 1 FROM jobs WHERE node IN (?,?) AND state IN ('queued','running')", (source, target)).fetchone():
+                raise ValueError("wait for active device jobs to finish")
+            db.execute("UPDATE nodes SET merged_into=?,revoked=1 WHERE id=?", (target, source))
+            db.execute("UPDATE jobs SET original_node=COALESCE(original_node,node),node=? WHERE node=?", (target, source))
+            db.execute("INSERT INTO node_merges VALUES (?,?,?,?)", (source, target, time.time(), reason[:500]))
 
     def authenticate(self, token):
         if not token or len(token) > 128:
@@ -180,7 +244,7 @@ class State:
         with self.db() as db:
             db.execute("UPDATE jobs SET state='timed_out',finished=? WHERE state='running' AND started<?", (now, now-120))
             db.execute("UPDATE jobs SET state='expired',finished=? WHERE state='queued' AND created<?", (now, now-300))
-            nodes = [dict(r) for r in db.execute("SELECT id,name,capabilities,last_seen,revoked,capabilities_updated_at FROM nodes ORDER BY name")]
+            nodes = [dict(r) for r in db.execute("SELECT id,name,capabilities,last_seen,revoked,capabilities_updated_at FROM nodes WHERE merged_into IS NULL ORDER BY name")]
             jobs = [dict(r) for r in db.execute("SELECT * FROM jobs ORDER BY created DESC LIMIT 100")]
         for n in nodes:
             n["capabilities"] = json.loads(n["capabilities"])

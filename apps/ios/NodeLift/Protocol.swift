@@ -130,5 +130,44 @@ enum Vault {
         guard SecItemCopyMatching(q as CFDictionary, &item) == errSecSuccess, let data = item as? Data else { return nil }
         return try? JSONDecoder().decode(Credentials.self, from: data)
     }
+    private static func identity() throws -> Data {
+        let identityQuery: [String: Any] = [kSecClass as String:kSecClassGenericPassword,
+            kSecAttrService as String:"dev.nodelift.identity", kSecAttrAccount as String:"installation"]
+        var lookup = identityQuery
+        lookup[kSecReturnData as String] = true; lookup[kSecMatchLimit as String] = kSecMatchLimitOne
+        var item: CFTypeRef?
+        let status = SecItemCopyMatching(lookup as CFDictionary, &item)
+        if status == errSecSuccess, let data = item as? Data, data.count == 32 { return data }
+        guard status == errSecItemNotFound else { throw NodeError.message("Secure storage failed") }
+        var bytes = [UInt8](repeating:0, count:32)
+        guard SecRandomCopyBytes(kSecRandomDefault, bytes.count, &bytes) == errSecSuccess else { throw NodeError.message("Secure storage failed") }
+        let data = Data(bytes)
+        var record = identityQuery; record[kSecValueData as String] = data
+        record[kSecAttrAccessible as String] = kSecAttrAccessibleWhenUnlockedThisDeviceOnly
+        guard SecItemAdd(record as CFDictionary, nil) == errSecSuccess else { throw NodeError.message("Secure storage failed") }
+        return data
+    }
+    static func enrollment(scope: String, invite: String, previous: Credentials?) throws -> [String: Any] {
+        guard scope.range(of:"^[0-9a-f]{64}$", options:.regularExpression) != nil else {
+            throw NodeError.message("Update NodeLift on your computer before pairing.")
+        }
+        var result:[String:Any] = ["device_key":EnrollmentIdentity.scoped(try identity(), scope)]
+        if let previous {
+            result["previous"] = ["node_id":previous.node_id,
+                "proof":EnrollmentIdentity.continuity(previous.token, invite)]
+        }
+        return result
+    }
     static func clear() { SecItemDelete(query as CFDictionary) }
+}
+
+// Pure protocol primitives shared with the host test vectors.
+enum EnrollmentIdentity {
+    private static func hmac(_ key:Data, _ message:String) -> String {
+        HMAC<SHA256>.authenticationCode(for:Data(message.utf8), using:SymmetricKey(data:key)).map { String(format:"%02x",$0) }.joined()
+    }
+    static func scoped(_ root:Data, _ scope:String) -> String { hmac(root, "nodelift-device-v1\n"+scope) }
+    static func continuity(_ token:String, _ invite:String) -> String {
+        hmac(Data(SHA256.hash(data:Data(token.utf8))), "nodelift-repair-v1\n"+invite)
+    }
 }

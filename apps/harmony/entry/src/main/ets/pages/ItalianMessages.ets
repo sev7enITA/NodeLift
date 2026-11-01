@@ -821,5 +821,6 @@ export const italianMessages: Record<string, string> = {
   "● CONNECTED": "● CONNESSO",
   "● Session active": "● Sessione attiva",
   "✓ Draft ready": "✓ Draft pronto",
-  "✓ Session active": "✓ Sessione attiva"
+  "✓ Session active": "✓ Sessione attiva",
+  "Update NodeLift on your computer before pairing.": "Aggiorna NodeLift sul computer prima dell’abbinamento."
 };

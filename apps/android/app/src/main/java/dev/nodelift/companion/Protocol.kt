@@ -158,7 +158,7 @@ object Vault {
     fun save(context: Context, value: JSONObject) {
         val c = Cipher.getInstance("AES/GCM/NoPadding").apply { init(Cipher.ENCRYPT_MODE, key()) }
         val data = c.doFinal(value.toString().toByteArray())
-        context.getSharedPreferences("vault", 0).edit().putString("iv", Base64.encodeToString(c.iv, Base64.NO_WRAP)).putString("data", Base64.encodeToString(data, Base64.NO_WRAP)).commit()
+        check(context.getSharedPreferences("vault", 0).edit().putString("iv", Base64.encodeToString(c.iv, Base64.NO_WRAP)).putString("data", Base64.encodeToString(data, Base64.NO_WRAP)).commit()) { "Secure storage failed" }
     }
     fun load(context: Context): JSONObject? = try {
         val prefs = context.getSharedPreferences("vault", 0)
@@ -168,5 +168,28 @@ object Vault {
             JSONObject(String(c.doFinal(Base64.decode(encoded, Base64.NO_WRAP)), Charsets.UTF_8))
         }
     } catch (_: Exception) { null }
+    @Synchronized
+    private fun identity(context: Context): ByteArray {
+        val prefs = context.getSharedPreferences("vault_identity", 0)
+        val encoded = prefs.getString("data", null)
+        if (encoded != null) {
+            val c = Cipher.getInstance("AES/GCM/NoPadding").apply {
+                init(Cipher.DECRYPT_MODE, key(), GCMParameterSpec(128, Base64.decode(prefs.getString("iv", ""), Base64.NO_WRAP)))
+            }
+            return c.doFinal(Base64.decode(encoded, Base64.NO_WRAP)).also { check(it.size == 32) }
+        }
+        val identity = ByteArray(32).also { java.security.SecureRandom().nextBytes(it) }
+        val c = Cipher.getInstance("AES/GCM/NoPadding").apply { init(Cipher.ENCRYPT_MODE, key()) }
+        check(prefs.edit().putString("iv", Base64.encodeToString(c.iv, Base64.NO_WRAP))
+            .putString("data", Base64.encodeToString(c.doFinal(identity), Base64.NO_WRAP)).commit()) { "Secure storage failed" }
+        return identity
+    }
+    fun enrollment(context: Context, scope: String, invite: String, previous: JSONObject?): JSONObject {
+        require(scope.matches(Regex("[0-9a-f]{64}"))) { "Update NodeLift on your computer before pairing." }
+        val result = JSONObject().put("device_key", EnrollmentIdentity.scoped(identity(context), scope))
+        if (previous != null) result.put("previous", JSONObject().put("node_id", previous.getString("node_id"))
+            .put("proof", EnrollmentIdentity.continuity(previous.getString("token"), invite)))
+        return result
+    }
     fun clear(context: Context) { context.getSharedPreferences("vault", 0).edit().clear().commit() }
 }

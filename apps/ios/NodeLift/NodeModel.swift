@@ -134,7 +134,11 @@ import CryptoKit
                     guard let expiry = ticket.expires_at, expiry > Date().timeIntervalSince1970, let invite = ticket.invite else { throw NodeError.message("Invitation expired: create a new one") }
                     let pairingClient = try NodeClient(ticket: ticket)
                     client = pairingClient
-                    let response = try await pairingClient.json("/v1/pair",body:["invite":invite,"name":UIDevice.current.model + " · NodeLift","capabilities":capabilities()])
+                    let healthData = try await pairingClient.bytes("/health")
+                    let health = try JSONSerialization.jsonObject(with:healthData) as? [String:Any]
+                    var body = try Vault.enrollment(scope:health?["pairing_scope"] as? String ?? "", invite:invite, previous:Vault.load())
+                    body["invite"] = invite; body["name"] = UIDevice.current.model + " · NodeLift"; body["capabilities"] = capabilities()
+                    let response = try await pairingClient.json("/v1/pair",body:body)
                     guard let token = response["token"] as? String, let id = response["node_id"] as? String else { throw NodeError.message("Pairing failed") }
                     var saved = ticket; saved.invite = nil; saved.expires_at = nil
                     credentials = Credentials(pairing:saved,token:token,node_id:id)

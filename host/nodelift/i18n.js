@@ -822,7 +822,8 @@ const NodeLiftChinese = {
   "● CONNECTED": "● 已连接",
   "● Session active": "● 会话已启用",
   "✓ Draft ready": "✓ 草稿模型已就绪",
-  "✓ Session active": "✓ 会话已启用"
+  "✓ Session active": "✓ 会话已启用",
+  "Update NodeLift on your computer before pairing.": "配对前请更新电脑上的 NodeLift。"
 };
 const NodeLiftItalian = {
   "0 layers uses CPU. 999 requests the maximum GPU offload supported by the backend. Compatibility depends on the model.": "0 livelli usa la CPU. 999 richiede il massimo numero di livelli sulla GPU supportato dal backend. La compatibilità dipende dal modello.",
@@ -1646,7 +1647,8 @@ const NodeLiftItalian = {
   "● CONNECTED": "● CONNESSO",
   "● Session active": "● Sessione attiva",
   "✓ Draft ready": "✓ Draft pronto",
-  "✓ Session active": "✓ Sessione attiva"
+  "✓ Session active": "✓ Sessione attiva",
+  "Update NodeLift on your computer before pairing.": "Aggiorna NodeLift sul computer prima dell’abbinamento."
 };
 const NodeLiftCatalogs = {"zh-Hans": NodeLiftChinese, it: NodeLiftItalian};
 'use strict';

@@ -821,5 +821,6 @@ let chineseMessages: [String: String] = [
     "● CONNECTED": "● 已连接",
     "● Session active": "● 会话已启用",
     "✓ Draft ready": "✓ 草稿模型已就绪",
-    "✓ Session active": "✓ 会话已启用"
+    "✓ Session active": "✓ 会话已启用",
+    "Update NodeLift on your computer before pairing.": "配对前请更新电脑上的 NodeLift。"
 ]

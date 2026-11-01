@@ -69,11 +69,15 @@ class NodeService : Service() {
         worker = Thread {
             try {
                 status = ui("Connecting to your computer…")
-                val saved = if (ticketText == null) Vault.load(this) else null
+                val previous = Vault.load(this)
+                val saved = if (ticketText == null) previous else null
                 val ticket = Pairing.parse(if (ticketText != null) JSONObject(ticketText) else saved?.getJSONObject("pairing") ?: error("Paste an invitation from your computer."))
                 val c = Client(ticket, saved?.optString("token") ?: "", this); client = c
                 if (ticketText != null) {
-                    val response = c.json("/v1/pair", JSONObject().put("invite", ticket.invite).put("name", "${Build.MANUFACTURER} ${Build.MODEL}").put("capabilities", capabilities()))
+                    val health = JSONObject(String(c.bytes("/health"), Charsets.UTF_8))
+                    val body = Vault.enrollment(this, health.optString("pairing_scope"), ticket.invite, previous)
+                        .put("invite", ticket.invite).put("name", "${Build.MANUFACTURER} ${Build.MODEL}").put("capabilities", capabilities())
+                    val response = c.json("/v1/pair", body)
                     c.token = response.getString("token")
                     Vault.save(this, JSONObject().put("pairing", ticket.json()).put("token", c.token).put("node_id", response.getString("node_id")))
                 }

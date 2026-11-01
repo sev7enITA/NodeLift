@@ -13,3 +13,7 @@ For ordinary setup failures and sanitized bugs, use the repository issue forms. 
 The dashboard is a trusted local application: a browser page served from its exact `http://127.0.0.1:<port>` origin may recover the current administrator session. Recovery requires a POST with explicit matching Origin, same-origin Fetch Metadata, a dedicated request header and an empty JSON object. The server also checks the Host header and loopback peer. Responses are not cached and no CORS access is enabled. Recovery does not rotate the server key, change phone enrollment or expose the route on the companion LAN listener. Other administrative endpoints still require their bearer credential.
 
 This is not isolation between local OS users, browser extensions or processes able to access the Mac. A compromised same-origin dashboard script can act with dashboard privileges. Do not reverse-proxy the dashboard to a network interface or embed untrusted scripts.
+
+## Companion identity
+
+Android/iOS enrollment continuity uses a private random installation secret, host-scoped derivation, an invitation-bound proof for legacy credential adoption, and a unique hashed identity on the host. Every re-enrollment still requires a valid owner-issued invitation. Identity secrets are excluded from capabilities, dashboard exports and diagnostic journals. This is not hardware attestation and cannot recognize a device after all identity material is lost. See [device identity and its trust limits](docs/DEVICE_IDENTITY.md).

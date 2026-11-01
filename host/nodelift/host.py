@@ -151,10 +151,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
             if self.server.admin_token is not None:
                 return self.admin(method, path)
             if method == "GET" and path == "/health":
-                return self.send(200, {"service": "NodeLift", "protocol": 1})
+                return self.send(200, {"service": "NodeLift", "protocol": 1, "pairing_scope": self.server.state.pairing_scope()})
             if method == "POST" and path == "/v1/pair":
                 v = self.body()
-                return self.send(200, self.server.state.pair(v.get("invite"), v.get("name"), v.get("capabilities", {})))
+                return self.send(200, self.server.state.pair(v.get("invite"), v.get("name"), v.get("capabilities", {}), v.get("device_key"), v.get("previous")))
             node = self.server.state.authenticate(self.bearer())
             if self.server.engine:
                 if method == "GET" and path == "/v1/engine/poll":
