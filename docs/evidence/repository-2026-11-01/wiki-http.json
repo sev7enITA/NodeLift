@@ -1,0 +1,42 @@
+[
+  {
+    "page": "iOS-and-iPadOS",
+    "status": 200
+  },
+  {
+    "page": "Architecture",
+    "status": 200
+  },
+  {
+    "page": "Android",
+    "status": 200
+  },
+  {
+    "page": "Troubleshooting",
+    "status": 200
+  },
+  {
+    "page": "Benchmarking",
+    "status": 200
+  },
+  {
+    "page": "Quickstart",
+    "status": 200
+  },
+  {
+    "page": "Models-and-providers",
+    "status": 200
+  },
+  {
+    "page": "Home",
+    "status": 200
+  },
+  {
+    "page": "About-and-credits",
+    "status": 200
+  },
+  {
+    "page": "Development-and-workflows",
+    "status": 200
+  }
+]

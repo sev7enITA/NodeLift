@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Source checks",
+    "id": 41268529285,
+    "source_commit": "07e31d34e7b8aee1d0c1836932404281e110da46",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/sev7enITA/NodeLift/actions/runs/41268529285"
+  },
+  {
+    "name": "Documentation checks",
+    "id": 41268529287,
+    "source_commit": "07e31d34e7b8aee1d0c1836932404281e110da46",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/sev7enITA/NodeLift/actions/runs/41268529287"
+  },
+  {
+    "name": "Release verification",
+    "id": 41268561791,
+    "source_commit": "07e31d34e7b8aee1d0c1836932404281e110da46",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/sev7enITA/NodeLift/actions/runs/41268561791"
+  },
+  {
+    "name": "Native build check",
+    "id": 41268563738,
+    "source_commit": "07e31d34e7b8aee1d0c1836932404281e110da46",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/sev7enITA/NodeLift/actions/runs/41268563738"
+  }
+]

@@ -1,0 +1,57 @@
+{
+  "wiki_url": "https://github.com/sev7enITA/NodeLift/wiki",
+  "commit": "3a80a5aa29091a80bd493547faebd441021de3a6",
+  "pages": 10,
+  "sidebar_and_footer": true,
+  "all_source_bytes_match_remote": true,
+  "files": [
+    {
+      "file": "iOS-and-iPadOS.md",
+      "sha256": "e2a0d8200b2e96e99f7946bcecb5c9e509cd04cf416b03c5b0c114a41a7dc157"
+    },
+    {
+      "file": "Architecture.md",
+      "sha256": "8136e51d0a6a570e76b7ca4f21380d4c5c3a209af7627e64eb4291e3b63732b8"
+    },
+    {
+      "file": "Android.md",
+      "sha256": "97b3c694ece5d967d7f7303be13bcf0f92b255be6039e006736c57881e3786f0"
+    },
+    {
+      "file": "Troubleshooting.md",
+      "sha256": "554a6d56df6a308e2067be5d2d1e532e8974ec41565d59c6c93d81a32c4933e7"
+    },
+    {
+      "file": "Benchmarking.md",
+      "sha256": "bdc13b3093c9967c35fae3ccafea4f04860d3767f8a3932fe682c16bee577456"
+    },
+    {
+      "file": "Quickstart.md",
+      "sha256": "8d2fb159324a3f98540f6a3a4ab702787725c462cd83cb3c3444805100f54e19"
+    },
+    {
+      "file": "Models-and-providers.md",
+      "sha256": "fceac7e6c401d0110c78256fa0e8ddf1ead75a096d96250d4068ca7fa2b4d6b8"
+    },
+    {
+      "file": "Home.md",
+      "sha256": "f53cb5801a40b169ae343b44595a5106a2b4f78b679a7308674889bf4ba304e2"
+    },
+    {
+      "file": "About-and-credits.md",
+      "sha256": "7fa3619f92236e4cb02b5f17206b852f0e620b9f0058f292658fc4c9c02c0ab7"
+    },
+    {
+      "file": "Development-and-workflows.md",
+      "sha256": "c9d218d173a9b4e3010936c50e2a27f9f3a042802f933a84df3a78a5ffd5f63d"
+    },
+    {
+      "file": "_Sidebar.md",
+      "sha256": "334ec6aac47daff136c5b2302f7abf7b39f1b7828067dd7500b89b6b3c6d0a21"
+    },
+    {
+      "file": "_Footer.md",
+      "sha256": "31d13f61d5b8b72331717af2e9fff11251eeaed934321afd8aedbd22093fefff"
+    }
+  ]
+}
