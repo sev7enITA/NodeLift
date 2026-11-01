@@ -17,6 +17,8 @@ import javax.crypto.spec.GCMParameterSpec
 import javax.net.ssl.HttpsURLConnection
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManagerFactory
+import javax.net.ssl.X509TrustManager
+import java.security.cert.CertificateException
 import java.io.File
 import java.io.ByteArrayOutputStream
 import java.nio.file.Files
@@ -49,7 +51,18 @@ class Client(val pairing: Pairing, var token: String = "") {
         val cert = CertificateFactory.getInstance("X.509").generateCertificate(pairing.certificate.byteInputStream())
         store.setCertificateEntry("nodelift-host", cert)
         val tm = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm()).apply { init(store) }
-        SSLContext.getInstance("TLS").apply { init(null, tm.trustManagers, null) }.socketFactory
+        val delegate = tm.trustManagers.filterIsInstance<X509TrustManager>().single()
+        val pinned = object : X509TrustManager {
+            override fun getAcceptedIssuers(): Array<X509Certificate> = delegate.acceptedIssuers
+            override fun checkClientTrusted(chain: Array<X509Certificate>, authType: String) = delegate.checkClientTrusted(chain, authType)
+            override fun checkServerTrusted(chain: Array<X509Certificate>, authType: String) {
+                val leaf = chain.firstOrNull() ?: throw CertificateException("Missing server certificate")
+                val fingerprint = MessageDigest.getInstance("SHA-256").digest(leaf.encoded).joinToString("") { "%02x".format(it) }
+                if (fingerprint != pairing.sha256) throw CertificateException("Computer identity changed")
+                delegate.checkServerTrusted(chain, authType)
+            }
+        }
+        SSLContext.getInstance("TLS").apply { init(null, arrayOf(pinned), null) }.socketFactory
     }
     @Volatile private var active: HttpsURLConnection? = null
     fun cancel() { active?.disconnect() }

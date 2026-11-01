@@ -63,6 +63,29 @@ class ProtocolTests(unittest.TestCase):
             db.execute("UPDATE invites SET expires=? WHERE hash=?", (time.time()-1, digest(code)))
         self.assertEqual(self.request("/v1/pair", {"invite":code,"name":"Expired","capabilities":{}})[0],401)
 
+    def test_admin_invitation_status_revoke_and_replay(self):
+        def admin(path, code, token="test-admin"):
+            c = http.client.HTTPConnection("127.0.0.1", self.admin.server_port, timeout=3)
+            c.request("POST", path, json.dumps({"invite":code}), {"Authorization":"Bearer "+token})
+            response=c.getresponse(); result=(response.status,json.loads(response.read())); c.close(); return result
+        code, _ = self.state.invite()
+        other, _ = self.state.invite()
+        self.assertEqual(admin('/admin/invite/status',code,token='')[0],401)
+        self.assertEqual(admin('/admin/invite/revoke',code,token='')[0],401)
+        self.assertEqual(admin('/admin/invite/status',code),(200,{'pending':True}))
+        self.assertEqual(admin('/admin/invite/revoke',code),(200,{'pending':False}))
+        self.assertEqual(self.request('/v1/pair',{'invite':code,'name':'Revoked'})[0],401)
+        self.assertEqual(admin('/admin/invite/status',other),(200,{'pending':True}))
+        self.assertEqual(self.request('/v1/pair',{'invite':other,'name':'Used'})[0],200)
+        self.assertEqual(admin('/admin/invite/status',other),(200,{'pending':False}))
+        self.assertEqual(admin('/admin/invite/status',None)[0],400)
+
+    def test_qr_assets_are_local_and_do_not_contain_invitation(self):
+        for path, content in [('/qr.js',b'Project Nayuki'),('/pairing.js',b'NodeLiftPairing')]:
+            c=http.client.HTTPConnection('127.0.0.1',self.admin.server_port,timeout=3)
+            c.request('GET',path);response=c.getresponse();data=response.read();c.close()
+            self.assertEqual(response.status,200);self.assertTrue(content in data)
+
     def test_authentication_and_revocation(self):
         p = self.pair()
         self.assertEqual(self.request("/v1/probe?size=64")[0], 401)

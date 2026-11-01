@@ -1,1 +1,3 @@
 "NSLocalNetworkUsageDescription" = "NodeLift connects to your computer to measure network and device capabilities.";
+
+"NSCameraUsageDescription" = "Scan the pairing QR code shown by NodeLift on your computer.";

@@ -34,3 +34,5 @@ jobs:
         working-directory: .
       - run: node scripts/check-device-graph.cjs
         working-directory: .
+      - run: node scripts/check-pairing.cjs
+        working-directory: .

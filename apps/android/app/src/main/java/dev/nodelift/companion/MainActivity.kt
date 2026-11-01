@@ -23,6 +23,7 @@ class MainActivity : Activity() {
     private lateinit var result: TextView
     private lateinit var connect: Button
     private lateinit var resume: Button
+    private lateinit var scan: Button
     private lateinit var engineInfo: TextView
     private var aboutDialog: android.app.Dialog? = null
     private val render = object: Runnable {
@@ -33,7 +34,7 @@ class MainActivity : Activity() {
     }
     private fun updateState() {
             state.text = NodeService.status.render(this@MainActivity); info.text = NodeService.telemetry.render(this@MainActivity).ifEmpty { "${Build.MANUFACTURER} ${Build.MODEL}\nAndroid ${Build.VERSION.RELEASE}" }; result.text = NodeService.lastResult.render(this@MainActivity)
-            connect.isEnabled = !NodeService.running; resume.isEnabled = !NodeService.running && Vault.load(this@MainActivity) != null
+            scan.isEnabled = !NodeService.running; connect.isEnabled = !NodeService.running; resume.isEnabled = !NodeService.running && Vault.load(this@MainActivity) != null
             engineInfo.text=NodeService.engineStatus.render(this@MainActivity)
     }
     private fun t(key: String, vararg args: Any) = L10n.text(this,key,*args)
@@ -44,6 +45,7 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         buildScreen()
+        if (savedInstanceState == null) consumeLink(intent)
     }
     private fun buildScreen() {
         val pendingTicket=if(::ticket.isInitialized)ticket.text.toString() else ""
@@ -79,13 +81,18 @@ class MainActivity : Activity() {
         root.addView(text("YOUR DEVICE. A NEW NODE.",11f,mint))
         root.addView(text("More life for your hardware.\nOne node, new possibilities.",27f).apply { setPadding(0,dp(24),0,dp(20)) })
         val statusCard=card(); statusCard.addView(text("SESSION",11f,mint)); state=text(NodeService.status.render(this),19f); statusCard.addView(state); info=text("",14f,muted); statusCard.addView(info); root.addView(statusCard)
-        val pairing=card(); pairing.addView(text("Pair your computer",20f)); pairing.addView(text("Choose “Add device” in the NodeLift dashboard, then paste the invitation here. It is private, temporary and single-use.",14f,muted))
+        val pairing=card(); pairing.addView(text("Pair your computer",20f)); pairing.addView(text("Choose Add device on your computer, then scan its QR code. Keep both devices on the same local network or phone hotspot.",14f,muted))
+        scan=button("Scan QR") {
+            if(checkSelfPermission(Manifest.permission.CAMERA)==PackageManager.PERMISSION_GRANTED) openScanner()
+            else requestPermissions(arrayOf(Manifest.permission.CAMERA),43)
+        }; pairing.addView(scan)
+        pairing.addView(text("Manual pairing",13f,muted))
         ticket=EditText(this).apply { hint=t("Paste your NodeLift invitation"); setTextColor(ink); setHintTextColor(muted); minLines=2; maxLines=4; textSize=13f; importantForAutofill=View.IMPORTANT_FOR_AUTOFILL_NO_EXCLUDE_DESCENDANTS }
         ticket.setText(pendingTicket)
         pairing.addView(ticket)
         connect=button("Pair and activate node") {
             val value=ticket.text.toString().trim()
-            try { val obj=org.json.JSONObject(value); require(obj.getInt("protocol")==1); require(obj.getDouble("expires_at")>System.currentTimeMillis()/1000.0) { "Invitation expired. Create a new one." }; Pairing.parse(obj); start(value); ticket.text.clear() }
+            try { val obj=PairingCode.decode(value); start(obj.toString()); ticket.text.clear() }
             catch(e:Exception) { NodeService.status=ui(e.message ?: "Invalid invitation") }
         }
         pairing.addView(connect); resume=button("Resume session") { start(null) }; pairing.addView(resume); root.addView(pairing)
@@ -117,6 +124,44 @@ class MainActivity : Activity() {
         val measurement=card();measurement.addView(text("Last measurement",20f));result=text(NodeService.lastResult.render(this),15f,mint);measurement.addView(result);measurement.addView(text("Available RAM is a system indicator, not memory already shared. Synthetic tests do not indicate tokens/s.",13f,muted));root.addView(measurement)
         root.addView(text(installedCompanionVersion(this),12f,muted))
         root.addView(text("Experimental companion",12f,muted));scroll.addView(root);setContentView(scroll); updateState()
+    }
+    private fun openScanner() {
+        if(NodeService.running)return
+        com.google.zxing.integration.android.IntentIntegrator(this)
+            .setDesiredBarcodeFormats(com.google.zxing.integration.android.IntentIntegrator.QR_CODE)
+            .setPrompt(t("Point the camera at the QR code on your computer."))
+            .setBeepEnabled(false).setOrientationLocked(false).initiateScan()
+    }
+    override fun onRequestPermissionsResult(code:Int, permissions:Array<out String>, results:IntArray) {
+        super.onRequestPermissionsResult(code,permissions,results)
+        if(code==43) {
+            if(results.firstOrNull()==PackageManager.PERMISSION_GRANTED)openScanner()
+            else NodeService.status=ui("Camera access is required to scan. Enable it in Settings or use manual pairing.")
+        }
+    }
+    override fun onActivityResult(code:Int, resultCode:Int, data:Intent?) {
+        super.onActivityResult(code,resultCode,data)
+        val result=com.google.zxing.integration.android.IntentIntegrator.parseActivityResult(code,resultCode,data)
+        result?.contents?.let { acceptCode(it) }
+    }
+    override fun onNewIntent(value:Intent) { super.onNewIntent(value);consumeLink(value) }
+    private fun consumeLink(value:Intent?) {
+        val link=value?.dataString ?: return
+        value.data=null // Do not retain a single-use invitation in the activity intent.
+        acceptCode(link)
+    }
+    private fun acceptCode(value:String) {
+        if(NodeService.running){NodeService.status=ui("Pause the node before pairing another computer.");return}
+        try {
+            val obj=PairingCode.decode(value); val pairing=Pairing.parse(obj)
+            android.app.AlertDialog.Builder(this).setTitle(t("Pair your computer"))
+                .setMessage(t("Computer: {0} · Identity: {1}",java.net.URL(pairing.url).authority,pairing.sha256.take(16)))
+                .setNegativeButton(t("Cancel"),null)
+                .setPositiveButton(t("Pair and activate node")){_,_->
+                    try{if(!NodeService.running){start(PairingCode.decode(obj.toString()).toString());ticket.text.clear()}}
+                    catch(e:Exception){NodeService.status=ui(e.message ?: "Invalid invitation")}
+                }.show()
+        } catch(e:Exception){NodeService.status=ui(e.message ?: "Invalid invitation")}
     }
     private fun start(value: String?) {
         if(Build.VERSION.SDK_INT>=33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)!=PackageManager.PERMISSION_GRANTED) requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS),42)

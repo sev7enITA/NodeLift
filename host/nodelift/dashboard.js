@@ -53,7 +53,7 @@ function sessionReady(ready) {
   if(!ready){
     hideClientAccess();
     aboutMetadata=null;aboutVersionRequested=false;aboutVersionLoading=false;aboutVersionEpoch++;
-    $('pairing').hidden=true;$('ticket').value='';snapshot=null;engineSnapshot=null;
+    pairing.clear();snapshot=null;engineSnapshot=null;
     $('online').textContent='—';$('registered-label').textContent=t("Session unavailable");
     $('engine-summary').textContent=t("Access required");$('engine-backend').textContent=t("Local session required");
     $('engine-state').textContent=t("ACCESS REQUIRED");$('engine-state').className='chip neutral';
@@ -289,9 +289,11 @@ async function refresh() {
   catch(e){if(authenticated)NodeLiftGraph.disconnected();$('session-label').textContent=authenticated?t("Connection needs checking"):t("Access required");$('session-dot').className='status-dot error';showError(e);}
   finally{refreshing=false;}
 }
-$('invite').onclick=async()=>{clearError();$('invite').disabled=true;try{const ticket=await api('invite',{});$('ticket').value=JSON.stringify(ticket);$('pairing').hidden=false;$('expiry').textContent=t('Expires at {0}',new Date(ticket.expires_at*1000).toLocaleTimeString(NodeLiftI18n.locale));$('pairing').scrollIntoView({behavior:'smooth',block:'center'});$('copy').focus({preventScroll:true});}catch(e){showError(e);}finally{$('invite').disabled=!authenticated;}};
-$('copy').onclick=async()=>{try{await navigator.clipboard.writeText($('ticket').value);$('copy').textContent=t("Copied");setTimeout(()=>$('copy').textContent=t("Copy invitation"),2000);}catch(e){$('ticket').select();showError(Error("Select and copy the invitation manually."));}};
-$('hide').onclick=()=>{$('pairing').hidden=true;$('ticket').value='';$('invite').focus();};
+const pairing = NodeLiftPairing.mount({api, t, authenticated:()=>authenticated, error:showError});
+$('invite').onclick=()=>pairing.open();
+$('renew-invite').onclick=()=>pairing.open();
+$('hide').onclick=()=>pairing.close();
+$('copy').onclick=()=>pairing.copy();
 $('export').onclick=()=>{if(!snapshot)return;const data={...snapshot,engine:engineSnapshot,exported_at:new Date().toISOString()};const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=el('a');a.href=url;a.download='nodelift-laboratory.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
 $('job-filter').onchange=renderJobs;
 for(const [id] of configFields)$(id).addEventListener('input',updateEngineControls);
@@ -336,7 +338,6 @@ document.addEventListener('nodelift-languagechange',()=>{
   if(snapshot){renderNodes();renderJobs();NodeLiftGraph.update(snapshot,engineSnapshot);}
   if(engineSnapshot){renderRuns(engineSnapshot.runs||[]);}
   for(const id of ['error','engine-error'])if($(id).dataset.message)$(id).textContent=t($(id).dataset.message);
-  if($('ticket').value){try{const ticket=JSON.parse($('ticket').value);$('expiry').textContent=t('Expires at {0}',new Date(ticket.expires_at*1000).toLocaleTimeString(NodeLiftI18n.locale));}catch(_) {}}
   refreshEngine();
 });
 sessionReady(false);refresh();setInterval(refresh,3000);

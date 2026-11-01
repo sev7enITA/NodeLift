@@ -41,6 +41,11 @@ struct ContentView: View {
     @State private var importError: String?
     @State private var pairingExpanded = true
     @State private var showAbout = false
+    @State private var showScanner = false
+    @State private var scannedCode: String?
+    @State private var pairingCode: String?
+    @State private var pairingIdentity = ""
+    @State private var confirmPairing = false
 
     private func T(_ key: String) -> String { Message(key).resolve(model.language) }
 
@@ -215,7 +220,11 @@ struct ContentView: View {
         card {
             DisclosureGroup(isExpanded: $pairingExpanded) {
                 VStack(alignment: .leading, spacing: 15) {
-                    note(T("Choose “Add device” in the Mac dashboard and paste the complete invitation here. It is single-use and valid for 5 minutes."))
+                    note(T("Choose Add device on your computer, then scan its QR code. Keep both devices on the same local network or phone hotspot."))
+                    Button { showScanner = true } label: {
+                        Label(T("Scan QR"), systemImage: "qrcode.viewfinder").frame(maxWidth: .infinity)
+                    }.buttonStyle(.borderedProminent).tint(aquaColor).foregroundStyle(canvasColor).disabled(settingsLocked)
+                    Text(T("Manual pairing")).font(.footnote).foregroundStyle(.secondary)
                     TextEditor(text: $model.ticketText).font(.system(size: 12, design: .monospaced))
                         .frame(height: 90).scrollContentBackground(.hidden).padding(8)
                         .background(canvasColor, in: RoundedRectangle(cornerRadius: 7))
@@ -242,14 +251,24 @@ struct ContentView: View {
         }
     }
 
+    private func acceptPairingCode(_ value: String) {
+        guard !settingsLocked else { model.status = "Pause the node before pairing another computer."; return }
+        do {
+            let ticket = try Ticket.decodeInvitation(value)
+            pairingCode = value
+            pairingIdentity = Message("Computer: {0} · Identity: {1}", URLComponents(string: ticket.url)?.host ?? ticket.url, String(ticket.sha256.prefix(16))).resolve(model.language)
+            confirmPairing = true
+        } catch { model.status = Message(error.localizedDescription) }
+    }
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 19) {
                 header
                 sessionCard
+                pairingCard
                 engineCard
                 limitsCard
-                pairingCard
                 card {
                     eyebrow(T("03 / LAST RESULT"))
                     Text(model.lastResult.resolve(model.language)).foregroundStyle(aquaColor).font(.subheadline)
@@ -272,6 +291,24 @@ struct ContentView: View {
         .frame(maxWidth: .infinity).background(canvasColor)
         .onAppear { pairingExpanded = !model.hasSavedSession }
         .sheet(isPresented: $showAbout) { AboutView(language: model.language) }
+        .sheet(isPresented: $showScanner, onDismiss: {
+            if let value = scannedCode { scannedCode = nil; acceptPairingCode(value) }
+        }) {
+            NavigationStack {
+                QRScanner(language: model.language, onCode: { value in scannedCode = value; showScanner = false }, onError: { message in model.status = Message(message); showScanner = false })
+                    .overlay(alignment: .bottom) { Text(T("Point the camera at the QR code on your computer.")).padding().background(.black.opacity(0.7)).foregroundStyle(.white) }
+                    .navigationTitle(T("Scan QR"))
+                    .toolbar { ToolbarItem(placement: .cancellationAction) { Button(T("Cancel")) { showScanner = false } } }
+            }
+        }
+        .onOpenURL { url in acceptPairingCode(url.absoluteString) }
+        .alert(T("Pair your computer"), isPresented: $confirmPairing) {
+            Button(T("Cancel"), role: .cancel) { pairingCode = nil }
+            Button(T("Pair and activate node")) {
+                if let value = pairingCode, !settingsLocked { model.ticketText = value; model.connect(newTicket: true) }
+                pairingCode = nil
+            }
+        } message: { Text(pairingIdentity) }
         .fileImporter(isPresented: $showModelImporter, allowedContentTypes: [.data], allowsMultipleSelection: false) { result in
             switch result {
             case .success(let urls):

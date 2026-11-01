@@ -717,7 +717,26 @@ const NodeLiftChinese = {
   "This candidate measures the network only; a native LLM worker is not implemented.": "此候选版本仅测量网络；尚未实现原生 LLM 工作节点。",
   "NodeLift": "NodeLift",
   "LinkedIn": "LinkedIn",
-  "© 2026 Fabrizio Degni": "© 2026 Fabrizio Degni"
+  "© 2026 Fabrizio Degni": "© 2026 Fabrizio Degni",
+  "Scan. Pair. Connect.": "扫描。配对。连接。",
+  "Open NodeLift on your phone and tap Scan QR. Keep both devices on the same local network or phone hotspot.": "在手机上打开 NodeLift，点击「扫描二维码」。请将两台设备连接到同一本地网络或手机热点。",
+  "Requires companion 0.2.5 or later. The invitation is private, single-use and valid for 5 minutes.": "需要配套应用 0.2.5 或更新版本。邀请属于私密信息，仅限使用一次，有效期为 5 分钟。",
+  "New QR code": "新建二维码",
+  "Manual pairing": "手动配对",
+  "Scan this QR code with the NodeLift companion": "使用 NodeLift 配套应用扫描此二维码",
+  "Generated locally. No QR service or cloud account.": "在本地生成，无需二维码服务或云账户。",
+  "QR hidden. Revocation could not be confirmed; the invitation expires after 5 minutes.": "二维码已隐藏。无法确认撤销成功；邀请将在 5 分钟后过期。",
+  "Invitation expired. Choose New QR code.": "邀请已过期。请选择「新建二维码」。",
+  "Expires in {0}:{1}": "剩余有效时间：{0}:{1}",
+  "Invitation used or closed. Check connected devices.": "邀请已使用或关闭。请查看已连接的设备。",
+  "Computer: {0} · Identity: {1}": "电脑：{0} · 身份指纹：{1}",
+  "Choose Add device on your computer, then scan its QR code. Keep both devices on the same local network or phone hotspot.": "在电脑上选择「添加设备」，然后扫描二维码。请将两台设备连接到同一本地网络或手机热点。",
+  "Scan QR": "扫描二维码",
+  "Point the camera at the QR code on your computer.": "将摄像头对准电脑上的二维码。",
+  "Camera access is required to scan. Enable it in Settings or use manual pairing.": "扫描需要摄像头权限。请在设置中启用，或使用手动配对。",
+  "Camera unavailable. Use manual pairing.": "摄像头不可用。请使用手动配对。",
+  "Pause the node before pairing another computer.": "配对另一台电脑之前，请先暂停节点。",
+  "PAIR / 01": "配对 / 01"
 };
 const NodeLiftItalian = {
   "0 layers uses CPU. 999 requests the maximum GPU offload supported by the backend. Compatibility depends on the model.": "0 livelli usa la CPU. 999 richiede il massimo numero di livelli sulla GPU supportato dal backend. La compatibilità dipende dal modello.",
@@ -1436,7 +1455,26 @@ const NodeLiftItalian = {
   "This candidate measures the network only; a native LLM worker is not implemented.": "Questo candidato misura solo la rete; un worker LLM nativo non è implementato.",
   "NodeLift": "NodeLift",
   "LinkedIn": "LinkedIn",
-  "© 2026 Fabrizio Degni": "© 2026 Fabrizio Degni"
+  "© 2026 Fabrizio Degni": "© 2026 Fabrizio Degni",
+  "Scan. Pair. Connect.": "Inquadra. Abbina. Connetti.",
+  "Open NodeLift on your phone and tap Scan QR. Keep both devices on the same local network or phone hotspot.": "Apri NodeLift sul telefono e tocca Scansiona QR. Collega entrambi i dispositivi alla stessa rete locale o hotspot del telefono.",
+  "Requires companion 0.2.5 or later. The invitation is private, single-use and valid for 5 minutes.": "Richiede la companion 0.2.5 o successiva. L’invito è privato, monouso e valido per 5 minuti.",
+  "New QR code": "Nuovo QR code",
+  "Manual pairing": "Abbinamento manuale",
+  "Scan this QR code with the NodeLift companion": "Inquadra questo QR code con la companion NodeLift",
+  "Generated locally. No QR service or cloud account.": "Generato localmente. Nessun servizio QR o account cloud.",
+  "QR hidden. Revocation could not be confirmed; the invitation expires after 5 minutes.": "QR nascosto. Revoca non confermata: l’invito scade dopo 5 minuti.",
+  "Invitation expired. Choose New QR code.": "Invito scaduto. Scegli Nuovo QR code.",
+  "Expires in {0}:{1}": "Scade tra {0}:{1}",
+  "Invitation used or closed. Check connected devices.": "Invito utilizzato o chiuso. Controlla i dispositivi connessi.",
+  "Computer: {0} · Identity: {1}": "Computer: {0} · Identità: {1}",
+  "Choose Add device on your computer, then scan its QR code. Keep both devices on the same local network or phone hotspot.": "Scegli Aggiungi dispositivo sul computer, poi inquadra il QR code. Collega entrambi i dispositivi alla stessa rete locale o hotspot del telefono.",
+  "Scan QR": "Scansiona QR",
+  "Point the camera at the QR code on your computer.": "Inquadra con la fotocamera il QR code sul computer.",
+  "Camera access is required to scan. Enable it in Settings or use manual pairing.": "Per la scansione serve l’accesso alla fotocamera. Abilitalo nelle Impostazioni o usa l’abbinamento manuale.",
+  "Camera unavailable. Use manual pairing.": "Fotocamera non disponibile. Usa l’abbinamento manuale.",
+  "Pause the node before pairing another computer.": "Metti in pausa il nodo prima di abbinare un altro computer.",
+  "PAIR / 01": "ABBINA / 01"
 };
 const NodeLiftCatalogs = {"zh-Hans": NodeLiftChinese, it: NodeLiftItalian};
 'use strict';

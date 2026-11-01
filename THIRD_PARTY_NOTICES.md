@@ -8,3 +8,9 @@
 - The NodeLift emblem was generated for this project with image generation; the compact geometric SVG is original project artwork. Neither uses film artwork, logos or characters.
 
 Android APK and the iOS app bundle include copies of the llama.cpp, JSON and SHA-256 notices from `native/licenses`. The LM Studio adapter uses the separately installed `@lmstudio/sdk` package under its own package license; dependencies and integrity hashes are locked in its package-lock.
+
+## QR pairing (companion 0.2.5)
+
+- The desktop vendors Project Nayuki’s [QR Code generator v1.8.0](https://github.com/nayuki/QR-Code-generator/tree/v1.8.0), MIT. The upstream TypeScript source and generated JavaScript retain the license header in `host/nodelift/vendor`. Generation runs entirely on the local dashboard.
+- Android embeds [ZXing Android Embedded 4.3.0](https://github.com/journeyapps/zxing-android-embedded/tree/v4.3.0) and [ZXing core 3.5.3](https://github.com/zxing/zxing/tree/zxing-3.5.3), Apache-2.0. Their notices are bundled under `assets/licenses`. The scanner requires no Google Play services or external scanner app. AndroidX dependencies retain their packaged notices.
+- iOS uses Apple’s AVFoundation QR metadata API. Camera frames stay on-device.

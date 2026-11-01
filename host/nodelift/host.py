@@ -199,10 +199,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
         expected = "127.0.0.1:" + str(self.server.server_port)
         if host != expected or self.headers.get("Origin", "http://" + expected) != "http://" + expected:
             raise PermissionError("loopback origin required")
-        assets = {"/": ("dashboard.html", "text/html; charset=utf-8"), "/app.js": ("dashboard.js", "text/javascript"), "/graph.js": ("graph.js", "text/javascript"), "/models.js": ("models.js", "text/javascript"), "/i18n.js": ("i18n.js", "text/javascript"), "/style.css": ("dashboard.css", "text/css")}
+        assets = {"/qr.js": ("vendor/qrcodegen.js", "text/javascript"), "/pairing.js": ("pairing.js", "text/javascript"), "/": ("dashboard.html", "text/html; charset=utf-8"), "/app.js": ("dashboard.js", "text/javascript"), "/graph.js": ("graph.js", "text/javascript"), "/models.js": ("models.js", "text/javascript"), "/i18n.js": ("i18n.js", "text/javascript"), "/style.css": ("dashboard.css", "text/css")}
         if method == "GET" and path in assets:
             name, kind = assets[path]
-            return self.send(200, Path(__file__).with_name(name).read_bytes(), kind)
+            return self.send(200, (Path(__file__).parent / name).read_bytes(), kind)
         if method == "GET" and path.startswith('/brand/'):
             name = path.removeprefix('/brand/')
             folder = Path(__file__).resolve().parents[2]/'assets/brand'
@@ -246,6 +246,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
         if method == "POST" and path == "/admin/invite":
             self.body()
             return self.send(200, self.server.ticket_factory())
+        if method == "POST" and path in ("/admin/invite/status", "/admin/invite/revoke"):
+            return self.send(200, self.server.state.invitation(self.body().get("invite"), revoke=path.endswith("/revoke")))
         if method == "POST" and path == "/admin/job":
             v = self.body()
             return self.send(200, self.server.state.queue(v.get("node_id"), v.get("kind")))

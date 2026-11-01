@@ -126,7 +126,7 @@ import CryptoKit
             do {
                 var credentials: Credentials
                 if newTicket {
-                    let ticket = try JSONDecoder().decode(Ticket.self, from: Data(text.utf8))
+                    let ticket = try Ticket.decodeInvitation(text)
                     try ticket.validate()
                     guard let expiry = ticket.expires_at, expiry > Date().timeIntervalSince1970, let invite = ticket.invite else { throw NodeError.message("Invitation expired: create a new one") }
                     let pairingClient = try NodeClient(ticket: ticket)

@@ -10,13 +10,40 @@ struct Ticket: Codable, Sendable {
     var invite: String?
     var expires_at: Double?
 
+    static func decodeInvitation(_ value: String, now: Double = Date().timeIntervalSince1970) throws -> Ticket {
+        guard value.utf8.count <= 8192 else { throw NodeError.message("Invalid invitation") }
+        let text = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        let prefix = "nodelift://pair/v1/"
+        let ticket: Ticket
+        if text.hasPrefix(prefix) {
+            let parts = text.dropFirst(prefix.count).components(separatedBy: "/")
+            func matches(_ value: String, _ pattern: String) -> Bool { value.range(of: "^" + pattern + "$", options: .regularExpression) != nil }
+            guard parts.count == 4, matches(parts[0], "[0-9.]+:[0-9]{1,5}"), matches(parts[1], "[0-9]{10}"), matches(parts[2], "[A-Za-z0-9_-]{32}"), matches(parts[3], "[A-Za-z0-9_-]{64,6000}"), let expiry = Double(parts[1]) else { throw NodeError.message("Invalid invitation") }
+            var encoded = parts[3].replacingOccurrences(of: "-", with: "+").replacingOccurrences(of: "_", with: "/")
+            encoded += String(repeating: "=", count: (4 - encoded.count % 4) % 4)
+            guard let der = Data(base64Encoded: encoded) else { throw NodeError.message("Invalid invitation") }
+            let certificate = "-----BEGIN CERTIFICATE-----\n" + der.base64EncodedString(options: [.lineLength64Characters, .endLineWithLineFeed]) + "\n-----END CERTIFICATE-----\n"
+            ticket = Ticket(protocol: 1, url: "https://" + parts[0], certificate: certificate, sha256: SHA256.hash(data: der).map { String(format: "%02x", $0) }.joined(), invite: parts[2], expires_at: expiry)
+        } else {
+            do { ticket = try JSONDecoder().decode(Ticket.self, from: Data(text.utf8)) }
+            catch { throw NodeError.message("Invalid invitation") }
+        }
+        guard let invite = ticket.invite, invite.range(of: "^[A-Za-z0-9_-]{32}$", options: .regularExpression) != nil else { throw NodeError.message("Invalid invitation") }
+        guard let expiry = ticket.expires_at, expiry.isFinite, expiry > now else { throw NodeError.message("Invitation expired. Create a new one.") }
+        try ticket.validate()
+        return ticket
+    }
+
     var certificateData: Data? {
         let lines = certificate.components(separatedBy: .newlines).filter { !$0.hasPrefix("---") }.joined()
         return Data(base64Encoded: lines)
     }
     func validate() throws {
         guard self.protocol == 1, let u = URLComponents(string: url), u.scheme == "https", u.user == nil, u.password == nil, u.query == nil, u.fragment == nil, u.path.isEmpty || u.path == "/", let host = u.host else { throw NodeError.message("Invalid HTTPS invitation") }
-        let parts = host.split(separator: ".").compactMap { Int($0) }
+        guard u.port == nil || (1...65535).contains(u.port!) else { throw NodeError.message("Invalid HTTPS invitation") }
+        let labels = host.split(separator: ".", omittingEmptySubsequences: false)
+        let parts = labels.compactMap { Int($0) }
+        guard labels.count == 4 else { throw NodeError.message("The computer must be on your local network") }
         guard parts.count == 4, parts.allSatisfy({ (0...255).contains($0) }), parts[0] == 10 || parts[0] == 127 || parts[0] == 192 && parts[1] == 168 || parts[0] == 172 && (16...31).contains(parts[1]) else { throw NodeError.message("The computer must be on your local network") }
         guard let data = certificateData, data.count <= 16384, SecCertificateCreateWithData(nil, data as CFData) != nil, SHA256.hash(data: data).map({ String(format:"%02x", $0) }).joined() == sha256.lowercased() else { throw NodeError.message("Invalid computer identity") }
     }

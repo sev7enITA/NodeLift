@@ -77,6 +77,17 @@ class State:
             db.execute("INSERT INTO invites VALUES (?,?)", (digest(value), expiry))
         return value, expiry
 
+    def invitation(self, value, revoke=False):
+        """Inspect/revoke one invitation. Only the authenticated admin routes use this."""
+        if not isinstance(value, str) or not 1 <= len(value) <= 128:
+            raise ValueError("invalid invitation")
+        with self.db() as db:
+            if revoke:
+                db.execute("DELETE FROM invites WHERE hash=?", (digest(value),))
+                return {"pending": False}
+            row = db.execute("SELECT expires FROM invites WHERE hash=?", (digest(value),)).fetchone()
+        return {"pending": bool(row and row["expires"] > time.time())}
+
     def pair(self, invite, name, caps):
         if not isinstance(invite, str) or len(invite) > 128 or not isinstance(name, str) or not name.strip() or len(name) > 80:
             raise ValueError("invalid enrollment")

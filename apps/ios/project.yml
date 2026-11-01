@@ -15,14 +15,21 @@ targets:
     type: application
     platform: iOS
     sources: [NodeLift]
+    info:
+      path: NodeLift/Info.plist
+      properties:
+        CFBundleURLTypes:
+          - CFBundleURLName: dev.nodelift.pairing
+            CFBundleURLSchemes: [nodelift]
+        NSCameraUsageDescription: Scan the pairing QR code shown by NodeLift on your computer.
     dependencies:
       - framework: ../../native/build/iphoneos/lib/nodelift.framework
         embed: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.nodelift.companion
-        MARKETING_VERSION: 0.2.4
-        CURRENT_PROJECT_VERSION: 6
+        MARKETING_VERSION: 0.2.5
+        CURRENT_PROJECT_VERSION: 7
         SWIFT_OBJC_BRIDGING_HEADER: NodeLift/Bridge.h
         TARGETED_DEVICE_FAMILY: '1,2'
         GENERATE_INFOPLIST_FILE: YES
