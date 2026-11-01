@@ -88,7 +88,7 @@ class Server(http.server.ThreadingHTTPServer):
 
 class Handler(http.server.BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
-    server_version = "NodeLift/0.2.1"
+    server_version = "NodeLift/0.3.0"
 
     def setup(self):
         super().setup()
@@ -197,7 +197,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         expected = "127.0.0.1:" + str(self.server.server_port)
         if host != expected or self.headers.get("Origin", "http://" + expected) != "http://" + expected:
             raise PermissionError("loopback origin required")
-        assets = {"/": ("dashboard.html", "text/html; charset=utf-8"), "/app.js": ("dashboard.js", "text/javascript"), "/i18n.js": ("i18n.js", "text/javascript"), "/style.css": ("dashboard.css", "text/css")}
+        assets = {"/": ("dashboard.html", "text/html; charset=utf-8"), "/app.js": ("dashboard.js", "text/javascript"), "/models.js": ("models.js", "text/javascript"), "/i18n.js": ("i18n.js", "text/javascript"), "/style.css": ("dashboard.css", "text/css")}
         if method == "GET" and path in assets:
             name, kind = assets[path]
             return self.send(200, Path(__file__).with_name(name).read_bytes(), kind)
@@ -218,6 +218,21 @@ class Handler(http.server.BaseHTTPRequestHandler):
             raise PermissionError("open the dashboard link printed by NodeLift")
         if self.server.engine:
             if method == 'GET' and path == '/admin/client-access':return self.send(200,{'base_url':'http://127.0.0.1:'+str(self.server.server_port)+'/v1','api_key':self.server.client_token,'model':'nodelift'})
+            library = self.server.engine.library
+            query = parse_qs(urlsplit(self.path).query)
+            if method == 'POST' and path == '/admin/models/import':
+                result = library.import_path(self.body().get('path'))
+                self.server.engine.catalog_deadline = 0
+                return self.send(200, result)
+            if method == 'GET' and path == '/admin/models/search':return self.send(200,library.search(query.get('q',[''])[0]))
+            if method == 'GET' and path == '/admin/models/inspect':return self.send(200,library.inspect(query.get('repo',[''])[0],query.get('revision',['main'])[0]))
+            if method == 'POST' and path == '/admin/models/download':return self.send(200,library.download(self.body()))
+            if method == 'POST' and path == '/admin/models/upload/start':return self.send(200,library.upload_start(self.body()))
+            if method == 'POST' and path == '/admin/models/upload/chunk':return self.send(200,library.upload_chunk(query.get('id',[''])[0],int(query.get('offset',['-1'])[0]),self.body(raw=True)))
+            if method == 'POST' and path == '/admin/models/upload/finish':return self.send(200,library.finish(self.body().get('id')))
+            if method == 'POST' and path == '/admin/models/cancel':return self.send(200,library.cancel(self.body().get('id')))
+            if method == 'POST' and path == '/admin/providers/configure':return self.send(200,self.server.engine.configure_provider(self.body()))
+            if method == 'POST' and path == '/admin/providers/models':return self.send(200,self.server.engine.providers.models(self.body().get('backend')))
             if method == 'GET' and path == '/admin/engine/status':return self.send(200,self.server.engine.status())
             if method == 'POST' and path == '/admin/engine/configure':return self.send(200,self.server.engine.configure(self.body()))
             if method == 'POST' and path == '/admin/engine/run':return self.send(200,self.server.engine.start(self.body()))
@@ -276,7 +291,7 @@ def main():
             discovery = subprocess.Popen(["dns-sd", "-R", "NodeLift", "_nodelift._tcp", "local", str(args.port), "protocol=1"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except FileNotFoundError:
             print("Bonjour unavailable; pairing ticket still works.")
-    print(f"NodeLift 0.2.1 — experimental native inference; mobile speedup unqualified.\nDashboard (local, private link): http://127.0.0.1:{admin.server_port}/#{admin_token}", flush=True)
+    print(f"NodeLift 0.3.0 — experimental native inference; mobile speedup unqualified.\nDashboard (local, private link): http://127.0.0.1:{admin.server_port}/#{admin_token}", flush=True)
     stop = threading.Event()
     signal.signal(signal.SIGINT, lambda *_: stop.set())
     signal.signal(signal.SIGTERM, lambda *_: stop.set())

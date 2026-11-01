@@ -35,3 +35,28 @@ TypeScript, stream tests and actual SDK Chat → handler → live NodeLift infer
 [Ollama exposes its own OpenAI-style subset](https://docs.ollama.com/api/openai-compatibility); that does not make an arbitrary engine an internal Ollama plugin. NodeLift does not intercept or split an Ollama model.
 
 Clients with a configurable OpenAI-style text endpoint can point directly to NodeLift. Their default parameters, tools, network topology and streaming expectations still require individual qualification.
+
+## Model sources and external engines (host 0.3.0 preview)
+
+The **Models** section now supports public Hugging Face search and immutable GGUF downloads, registration of an existing absolute local model path without copying, and browser file import. Select a model as target/draft and apply configuration before native inference. Complete single-file GGUF v2/v3 is the import format; the pinned llama.cpp runtime still determines architecture support at load time. No pickle/Python execution, automatic safetensors conversion, split-file assembly or remote license acceptance occurs. An interrupted download must restart; partial files are not model candidates.
+
+For OpenRouter, expand **External engines and cloud access**, enter your key locally, save session access and refresh the provider catalog. In **Execution backend**, explicitly select **OpenRouter**, choose the model, review its displayed rates, then Run. Keys are memory-only and cleared by a host restart. Generations may incur charges. No cloud request is made by native generation, status polling, or merely selecting a backend. Public catalog queries need no key.
+
+For oMLX or LM Studio's local server, configure **Local API** with `http://127.0.0.1:8000/v1` or the server's actual loopback port (LM Studio commonly uses 1234), save session access and refresh models. Select **Local API** in the run form. Only text streaming is supported. The external server owns loading, cache, scheduling and its own distributed features. This bridge does not supply phone drafting or merge native caches across runtimes. The bridge requires a completion reason and `[DONE]`; a truncated stream is an error. No request is automatically retried.
+
+Client calls to NodeLift's `/v1/chat/completions` continue to default to native execution, independently of dashboard selection. To opt into an external engine explicitly:
+
+```json
+{
+  "model": "nodelift",
+  "messages": [{"role": "user", "content": "Hello"}],
+  "nodelift_backend": "local_api",
+  "nodelift_provider_model": "a-model-id-from-the-local-server",
+  "max_tokens": 64,
+  "stream": true
+}
+```
+
+Use `openrouter` only for an intentionally cloud-routed request. Provider setup/catalog loading requires dashboard admin authority; the client key cannot change keys/endpoints or import models. External token usage is omitted if the provider does not report it. Phone lease endpoints and mobile credentials are unchanged. Mobile 0.2.2 remains the latest companion build; host 0.3.0 does not imply new mobile binaries.
+
+[Repository review and reuse decisions](../research/integrations-2026-11-01/ASSESSMENT.md) · [Validation and limits](../research/integrations-2026-11-01/VALIDATION.md).

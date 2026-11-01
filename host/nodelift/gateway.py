@@ -6,7 +6,7 @@ import time
 def chat(handler, engine, body):
     allowed={'model','messages','temperature','n','top_p','max_tokens','max_completion_tokens',
              'stream','nodelift_mode','nodelift_node_id','nodelift_draft_k','nodelift_remote_timeout_ms','nodelift_draft_policy',
-             'presence_penalty','frequency_penalty'}
+             'presence_penalty','frequency_penalty','nodelift_backend','nodelift_provider_model'}
     unknown=set(body)-allowed
     if unknown:raise ValueError('parameters not qualified: '+', '.join(sorted(unknown)))
     body={key:value for key,value in body.items() if value is not None}
@@ -21,7 +21,7 @@ def chat(handler, engine, body):
     if body.get('model','nodelift')!='nodelift':raise ValueError('model must be nodelift (select target in dashboard)')
     messages=body.get('messages')
     if not isinstance(messages,list):raise ValueError('messages required')
-    run_id=engine.start({'messages':messages,'mode':body.get('nodelift_mode','host'),
+    run_id=engine.start({'backend':body.get('nodelift_backend','native'),'provider_model':body.get('nodelift_provider_model'),'messages':messages,'mode':body.get('nodelift_mode','host'),
                          'node_id':body.get('nodelift_node_id'),'draft_k':body.get('nodelift_draft_k',4),
                          'draft_policy':body.get('nodelift_draft_policy','fixed'),
                          'remote_timeout_ms':body.get('nodelift_remote_timeout_ms',30000),
@@ -54,10 +54,13 @@ def chat(handler, engine, body):
         if streaming:
             event(chunk({},run['finish_reason']));handler.wfile.write(b'data: [DONE]\n\n');handler.wfile.flush()
         else:
-            return handler.send(200,{'id':'chatcmpl-'+run_id,'object':'chat.completion','created':created,'model':'nodelift',
-                                    'choices':[{'index':0,'message':{'role':'assistant','content':text},'finish_reason':run['finish_reason']}],
-                                    'usage':{'prompt_tokens':run['prompt_tokens'],'completion_tokens':len(run['tokens']),
-                                             'total_tokens':run['prompt_tokens']+len(run['tokens'])}})
+            result={'id':'chatcmpl-'+run_id,'object':'chat.completion','created':created,'model':'nodelift',
+                    'choices':[{'index':0,'message':{'role':'assistant','content':text},'finish_reason':run['finish_reason']}]}
+            if run.get('backend','native')=='native':
+                result['usage']={'prompt_tokens':run['prompt_tokens'],'completion_tokens':len(run['tokens']),
+                                 'total_tokens':run['prompt_tokens']+len(run['tokens'])}
+            elif run.get('usage') is not None:result['usage']=run['usage']
+            return handler.send(200,result)
     except (BrokenPipeError,ConnectionResetError):
         engine.stop(run_id);handler.close_connection=True
     except Exception as error:

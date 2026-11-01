@@ -10,6 +10,8 @@ NodeLift is an experimental local inference workbench and mobile companion syste
 
 **[0.2.2 experimental prerelease](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.2), 1 November 2026.** Native inference, authenticated mobile work leases, an OpenAI-style text gateway, Android/iOS companion sources and an LM Studio generator adapter are implemented. **Phone inference speedup, pooled RAM, large hybrid-model speculation and sustained mobile operation are not yet qualified.** The first real-weight control experiments found local drafting slower than target-only inference on the small test pair. Negative results are published.
 
+**Host 0.3.0 integration preview:** public Hugging Face GGUF search/download with SHA-256 verification, direct file/path import, opt-in OpenRouter, and a loopback text bridge for oMLX/LM Studio. English and Simplified Chinese UI. [Setup](docs/INTEGRATIONS.md#model-sources-and-external-engines-host-030-preview) · [Source review and qualification](research/integrations-2026-11-01/ASSESSMENT.md). Companion binaries remain 0.2.2.
+
 **Engine controls:** measured adaptive draft control, context lookup without a second model, and greedy argmax caching are available in source and the dashboard. [Optimization study and measured limits](research/optimization-2026-10-31/REPORT.md). The 0.2.2 companions add English (default) and Simplified Chinese, with a saved in-app language choice. [Localization and validation](docs/LOCALIZATION.md).
 
 ## Implementation and evidence

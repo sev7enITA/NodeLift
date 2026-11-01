@@ -1,5 +1,5 @@
 'use strict';
-const t = (key, ...args) => NodeLiftI18n.t(key, ...args);
+const t = (key, ...args) => {const match=typeof key==='string'&&key.match(/^Provider request failed \(HTTP (\d{3})\)$/);return match?NodeLiftI18n.t('Provider request failed (HTTP {0})',match[1]):NodeLiftI18n.t(key,...args);};
 const $ = id => document.getElementById(id);
 const isSessionFragment = value => /^[A-Za-z0-9_-]{32,}$/.test(value);
 let key = isSessionFragment(location.hash.slice(1)) ? location.hash.slice(1) : '';
@@ -65,7 +65,7 @@ function sessionReady(ready) {
 async function api(path, body) {
   if(!key){sessionReady(false);throw Error(sessionMessage());}
   const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),body===undefined?9000:60000);
+  const timer=setTimeout(()=>controller.abort(),body===undefined?(path.startsWith('models/')?30000:9000):60000);
   try {
     const r=await fetch('/admin/'+path,{method:body===undefined?'GET':'POST',headers:{Authorization:'Bearer '+key,'Content-Type':'application/json'},body:body===undefined?undefined:JSON.stringify(body),signal:controller.signal});
     if(r.status===401){sessionReady(false);throw Error(sessionMessage());}
@@ -145,10 +145,10 @@ function renderJobs() {
 }
 function optionsForModels(select,models,placeholder) {
   const selected=select.value;
-  const signature=NodeLiftI18n.language+JSON.stringify(models.map(m=>[m.path||m.id,m.name,m.bytes]));
+  const signature=NodeLiftI18n.language+JSON.stringify(models.map(m=>[m.path||m.id,m.name,m.bytes,m.source]));
   if(select.dataset.models===signature)return;
   select.dataset.models=signature;select.replaceChildren();const blank=el('option',placeholder);blank.value='';select.append(blank);
-  for(const m of models){const option=el('option',(m.name||m.id)+(typeof m.bytes==='number'?' · '+gib(m.bytes):''));option.value=m.path||m.id;select.append(option);}
+  for(const m of models){const option=el('option',(m.name||m.id)+(m.source==='huggingface'?' · Hugging Face':m.source==='upload'?' · '+t('Imported file'):'')+(typeof m.bytes==='number'?' · '+gib(m.bytes):''));option.value=m.path||m.id;select.append(option);}
   if(models.some(m=>(m.path||m.id)===selected))select.value=selected;
 }
 function firstNumber(object,keys){for(const key of keys)if(typeof object[key]==='number'&&Number.isFinite(object[key]))return object[key];return null;}
@@ -158,7 +158,7 @@ function renderRuns(runs) {
   const box=$('engine-runs');box.replaceChildren();if(!runs.length){box.append(el('p',t("Output and measured timings appear after a run. No simulated results."),'muted'));return;}
   for(const r of [...runs].sort((a,b)=>(b.created||0)-(a.created||0))){
     const card=el('article',undefined,'engine-run'),head=el('div',undefined,'run-heading');
-    head.append(el('span',(t(modeNames[r.mode]||r.mode||"Generation"))+' · '+(t(stateNames[r.status]||r.status||"Status unavailable")),'run-title'),el('time',when(r.created)));card.append(head);
+    head.append(el('span',(r.backend&&r.backend!=='native'?(r.backend==='openrouter'?'OpenRouter · '+t('Cloud'):'Local API')+' · '+r.provider_model:t(modeNames[r.mode]||r.mode||"Generation"))+' · '+(t(stateNames[r.status]||r.status||"Status unavailable")),'run-title'),el('time',when(r.created)));card.append(head);
     const m=r.metrics||{},metrics=el('div',undefined,'run-metrics');
     const tps=firstNumber(m,['tokens_per_second','decode_tps','decode_tokens_per_second','tps']);
     const tokens=firstNumber(m,['generated_tokens','output_tokens','tokens']);
@@ -171,7 +171,8 @@ function renderRuns(runs) {
     if(metrics.children.length)card.append(metrics);
     if(r.error)card.append(el('p',t(r.error),'run-error'));
     if(r.text)card.append(el('pre',r.text,'output-text'));else if(['queued','running','loading'].includes(r.status))card.append(el('p',t("Processing…"),'muted'));
-    if(r.prompt){
+    if(r.status==='completed'&&!r.text&&r.backend&&r.backend!=='native')card.append(el('p',t('Completed without visible text. Try a larger output budget or a text model.'),'muted'));
+    if(r.prompt&&(!r.backend||r.backend==='native')){
       const details=el('details',undefined,'run-prompt');details.append(el('summary',t("Prompt and parameters")),el('p',r.prompt),el('p',t('Output limit: {0} tokens · draft block: {1}',r.max_tokens??'—',r.draft_k??'—')));
       details.append(el('p',t('Delegation control: {0}',r.draft_policy==='adaptive'?t('adaptive'):t('fixed'))+(m.draft_disabled_reason?' · '+t('Return to computer: {0}',t(draftReasons[m.draft_disabled_reason]||m.draft_disabled_reason)):'')));
       if(r.mode==='remote_draft')details.append(el('p',t('Per-proposal timeout: {0} s. Total remote wait includes node work and transfer; it does not measure network speed.',number((r.remote_timeout_ms??30000)/1000,3))));
@@ -202,14 +203,20 @@ function updateConfigurationState(){
 }
 function updateEngineControls() {
   updateConfigurationState();
-  const available=authenticated&&!!engineSnapshot?.available;
+  const external=$('run-backend').value!=='native';
+  const available=authenticated&&(external||!!engineSnapshot?.available);
   const busy=!!engineSnapshot?.busy||actionPending;
-  const configured=!!engineSnapshot?.config?.target_model;
-  const mode=$('run-mode').value;
+  const configured=external?(!!$('provider-model').value&&($('run-backend').value!=='openrouter'||!!engineSnapshot?.providers?.openrouter_key_set)):!!engineSnapshot?.config?.target_model;
+  const mode=external?'host':$('run-mode').value;
   for(const id of ['target-model','draft-model','context-size','threads','gpu-layers'])$(id).disabled=!available||busy;
   $('configure').disabled=!available||busy||!$('target-model').value||!configurationDirty;
   $('revert-config').disabled=!available||busy;
-  $('run-mode').disabled=!available||busy;
+  $('run-backend').disabled=!authenticated||busy;
+  $('provider-model').disabled=!authenticated||busy;
+  $('provider-model-field').hidden=!external;
+  $('provider-model-info').hidden=!external;
+  $('run-mode').disabled=!available||busy||external;
+  if(external)$('run-mode').value='host';
   $('remote-node').disabled=!available||busy||mode!=='remote_draft';
   $('remote-timeout').disabled=!available||busy||mode!=='remote_draft';
   $('draft-k').disabled=!available||busy||mode==='host';
@@ -217,9 +224,9 @@ function updateEngineControls() {
   $('max-tokens').disabled=!available||busy;
   $('prompt').disabled=!available||busy;
   const ready=mode==='host'||mode==='lookup'||(mode==='local_draft'?!!engineSnapshot?.config?.draft_model:!!$('remote-node').value);
-  $('start-run').disabled=!available||busy||!configured||!ready||configurationDirty||!$('prompt').value.trim();
+  $('start-run').disabled=!available||busy||!configured||!ready||(!external&&configurationDirty)||!$('prompt').value.trim();
   $('stop-run').disabled=!authenticated||!engineSnapshot?.busy||actionPending;
-  $('mode-help').textContent=mode==='host'?t("Computer baseline. No LLM work is sent to phones."):mode==='lookup'?t("Proposes sequences already in the context and verifies them with the target. No second model is required; it may help with repetitive text."):mode==='local_draft'?t("Target and draft on the computer: compare this before attributing a gain to the network."):t("The node proposes token blocks; the target on the computer verifies them. Requires a companion with an LLM engine ready.");
+  $('mode-help').textContent=external?t($('run-backend').value==='openrouter'?'Cloud request to the selected OpenRouter model. Charges depend on the provider. No phone acceleration is measured.':'Text request to the selected local server. This does not use NodeLift phone drafting.'):mode==='host'?t("Computer baseline. No LLM work is sent to phones."):mode==='lookup'?t("Proposes sequences already in the context and verifies them with the target. No second model is required; it may help with repetitive text."):mode==='local_draft'?t("Target and draft on the computer: compare this before attributing a gain to the network."):t("The node proposes token blocks; the target on the computer verifies them. Requires a companion with an LLM engine ready.");
 }
 function remoteTimeoutMs(){
   const value=$('remote-timeout').value.trim();
@@ -241,6 +248,7 @@ async function refreshEngine() {
     optionsForModels($('target-model'),engineSnapshot.models||[],t("Select a target model"));
     optionsForModels($('draft-model'),engineSnapshot.models||[],t("No draft selected"));
     if(!configurationDirty)writeAppliedConfiguration();
+    if(window.renderModelLibrary)renderModelLibrary();
     renderRuns(engineSnapshot.runs||[]);updateEngineControls();
   } catch(e) {
     engineSnapshot=null;$('engine-summary').textContent=t("Unavailable");$('engine-backend').textContent=t("Configuration required");$('engine-state').textContent=t("UNAVAILABLE");$('engine-state').className='chip neutral';
@@ -262,9 +270,9 @@ $('export').onclick=()=>{if(!snapshot)return;const data={...snapshot,engine:engi
 $('job-filter').onchange=renderJobs;
 for(const [id] of configFields)$(id).addEventListener('input',updateEngineControls);
 $('revert-config').onclick=()=>{writeAppliedConfiguration();updateEngineControls();};
-for(const id of ['run-mode','remote-node','prompt'])$(id).addEventListener('input',updateEngineControls);
+for(const id of ['run-mode','remote-node','prompt','run-backend','provider-model'])$(id).addEventListener('input',updateEngineControls);
 $('configuration-form').onsubmit=async event=>{event.preventDefault();if($('configure').disabled)return;clearError('engine-error');actionPending=true;updateEngineControls();try{await api('engine/configure',{target_model:$('target-model').value,draft_model:$('draft-model').value||null,n_ctx:Number($('context-size').value),threads:Number($('threads').value),gpu_layers:Number($('gpu-layers').value)});configurationDirty=false;await refreshEngine();}catch(e){showError(e,'engine-error');}finally{actionPending=false;updateEngineControls();}};
-$('run-form').onsubmit=async event=>{event.preventDefault();if($('start-run').disabled)return;clearError('engine-error');actionPending=true;updateEngineControls();try{await api('engine/run',{prompt:$('prompt').value.trim(),mode:$('run-mode').value,draft_policy:$('draft-policy').value,node_id:$('run-mode').value==='remote_draft'?$('remote-node').value:undefined,max_tokens:Number($('max-tokens').value),draft_k:Number($('draft-k').value),remote_timeout_ms:$('run-mode').value==='remote_draft'?remoteTimeoutMs():undefined});await refreshEngine();}catch(e){showError(e,'engine-error');}finally{actionPending=false;updateEngineControls();}};
+$('run-form').onsubmit=async event=>{event.preventDefault();if($('start-run').disabled)return;clearError('engine-error');actionPending=true;updateEngineControls();try{await api('engine/run',{backend:$('run-backend').value,provider_model:$('provider-model').value||undefined,prompt:$('prompt').value.trim(),mode:$('run-mode').value,draft_policy:$('draft-policy').value,node_id:$('run-mode').value==='remote_draft'?$('remote-node').value:undefined,max_tokens:Number($('max-tokens').value),draft_k:Number($('draft-k').value),remote_timeout_ms:$('run-mode').value==='remote_draft'?remoteTimeoutMs():undefined});await refreshEngine();}catch(e){showError(e,'engine-error');}finally{actionPending=false;updateEngineControls();}};
 $('stop-run').onclick=async()=>{clearError('engine-error');actionPending=true;updateEngineControls();try{await api('engine/stop',{});await refreshEngine();}catch(e){showError(e,'engine-error');}finally{actionPending=false;updateEngineControls();}};
 function hideClientAccess(){
   clientAccessEpoch++;clientAccess=null;clientKeyVisible=false;clearTimeout(clientAccessTimer);clearTimeout(clientRevealTimer);
@@ -296,6 +304,7 @@ $('language').addEventListener('change',event=>NodeLiftI18n.setLanguage(event.ta
 document.addEventListener('nodelift-languagechange',()=>{
   // Language changes never restart a run or submit form edits.
   hideClientAccess();
+  if(window.renderModelLibrary)renderModelLibrary();
   nodeSignature='';jobSignature='';engineSignature='';
   sessionReady(authenticated);
   if(snapshot){renderNodes();renderJobs();}

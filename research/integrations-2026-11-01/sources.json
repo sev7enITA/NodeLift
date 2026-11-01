@@ -1,0 +1,156 @@
+{
+  "review_date": "2026-11-01",
+  "repositories": [
+    {
+      "repo": "jundot/omlx",
+      "sha": "17fce1d939f65a3cb92616862710c3007ea32b95",
+      "license": {
+        "key": "apache-2.0",
+        "name": "Apache License 2.0",
+        "spdx_id": "Apache-2.0",
+        "url": "https://api.github.com/licenses/apache-2.0",
+        "node_id": "MDc6TGljZW5zZTI="
+      },
+      "files": {
+        "README.md": {
+          "bytes": 25721
+        },
+        "LICENSE": {
+          "bytes": 10768
+        },
+        "pyproject.toml": {
+          "bytes": 10909
+        },
+        "docs/experimental/distributed-cluster.md": {
+          "bytes": 20326
+        },
+        "omlx/admin/hf_downloader.py": {
+          "bytes": 97108
+        },
+        "omlx/cache/prefix_cache.py": {
+          "bytes": 272888
+        },
+        "omlx/engine_pool.py": {
+          "bytes": 212147
+        },
+        "omlx/engine/distributed.py": {
+          "bytes": 87564
+        }
+      }
+    },
+    {
+      "repo": "lmstudio-ai/lms",
+      "sha": "43d4b2680e3cf679ad19753fcc7af0cb0e4a12a2",
+      "license": {
+        "key": "mit",
+        "name": "MIT License",
+        "spdx_id": "MIT",
+        "url": "https://api.github.com/licenses/mit",
+        "node_id": "MDc6TGljZW5zZTEz"
+      },
+      "files": {
+        "README.md": {
+          "bytes": 3379
+        },
+        "LICENSE": {
+          "bytes": 1066
+        }
+      }
+    },
+    {
+      "repo": "lmstudio-ai/lmstudio-js",
+      "sha": "4b9af903e866808013524eece1e9ceb7a7f18c68",
+      "license": {
+        "key": "mit",
+        "name": "MIT License",
+        "spdx_id": "MIT",
+        "url": "https://api.github.com/licenses/mit",
+        "node_id": "MDc6TGljZW5zZTEz"
+      },
+      "files": {
+        "README.md": {
+          "bytes": 3267
+        },
+        "LICENSE": {
+          "bytes": 1073
+        }
+      }
+    },
+    {
+      "repo": "lmstudio-ai/lmstudio-python",
+      "sha": "16796832c1665985c73f5a9e938cbf17b40adf02",
+      "license": {
+        "key": "mit",
+        "name": "MIT License",
+        "spdx_id": "MIT",
+        "url": "https://api.github.com/licenses/mit",
+        "node_id": "MDc6TGljZW5zZTEz"
+      },
+      "files": {
+        "README.md": {
+          "bytes": 7888
+        },
+        "LICENSE": {
+          "bytes": 1066
+        }
+      }
+    },
+    {
+      "repo": "lmstudio-ai/mlx-engine",
+      "sha": "ab523663477bcde9b7092710eec41da02990e991",
+      "license": {
+        "key": "mit",
+        "name": "MIT License",
+        "spdx_id": "MIT",
+        "url": "https://api.github.com/licenses/mit",
+        "node_id": "MDc6TGljZW5zZTEz"
+      },
+      "files": {
+        "README.md": {
+          "bytes": 4885
+        },
+        "LICENSE": {
+          "bytes": 1066
+        }
+      }
+    },
+    {
+      "repo": "lmstudio-ai/model-catalog",
+      "sha": "78bd5602295154a6477fa440fa45e024c62a26f5",
+      "license": {
+        "key": "apache-2.0",
+        "name": "Apache License 2.0",
+        "spdx_id": "Apache-2.0",
+        "url": "https://api.github.com/licenses/apache-2.0",
+        "node_id": "MDc6TGljZW5zZTI="
+      },
+      "files": {
+        "README.md": {
+          "bytes": 1531
+        },
+        "LICENSE": {
+          "bytes": 11357
+        }
+      }
+    },
+    {
+      "repo": "lmstudio-ai/venvstacks",
+      "sha": "c2e47ed7964d5ab206c98ba2ebc4e12e3e5c0c51",
+      "license": {
+        "key": "mit",
+        "name": "MIT License",
+        "spdx_id": "MIT",
+        "url": "https://api.github.com/licenses/mit",
+        "node_id": "MDc6TGljZW5zZTEz"
+      },
+      "files": {
+        "README.md": {
+          "bytes": 5446
+        },
+        "LICENSE": {
+          "bytes": 1074
+        }
+      }
+    }
+  ]
+}

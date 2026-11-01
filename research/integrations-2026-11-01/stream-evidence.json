@@ -1,0 +1,13 @@
+{
+  "kind": "live local LM Studio text bridge smoke test; not a throughput benchmark",
+  "provider_source_sha256": "e7bb41fb4116542ff57a53a08ea236663cef37f9d3b44c068242e183cc8ea445",
+  "model": "qwen3.8-27b",
+  "text": "HELLO",
+  "usage": {
+    "prompt_tokens": 62,
+    "completion_tokens": 30,
+    "total_tokens": 92
+  },
+  "elapsed_seconds": 1.9042001249617897,
+  "cloud_request": false
+}

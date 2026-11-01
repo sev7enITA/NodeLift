@@ -13,3 +13,8 @@ html[lang="zh-Hans"] .micro,html[lang="zh-Hans"] .eyebrow{letter-spacing:.08em}
 @media(max-width:650px){.topbar{flex-wrap:wrap;height:auto;min-height:72px;gap:10px;padding-block:12px}.language-control>span{display:none}.session-indicator{max-width:100%;flex-wrap:wrap}}
 
 label>.primary-label{font:inherit;color:inherit;margin-left:0}.language-control{margin-block:0}
+
+/* Explicit model sources and provider selection share the control-room grid. */
+#model-library form{display:grid;gap:12px;margin:20px 0}#model-library input,#model-library select{width:100%;min-width:0}#model-library .engine-layout{align-items:start}.model-results{display:flex;gap:8px;flex-wrap:wrap;max-height:240px;overflow:auto}.model-results button{overflow-wrap:anywhere;white-space:normal;text-align:left}#hf-details{overflow-wrap:anywhere}#hf-details select{margin:14px 0}#transfer-progress{width:100%;accent-color:var(--aqua);margin:12px 0}.provider-settings{margin-top:24px;padding:20px;border:1px solid var(--line)}.provider-settings summary{cursor:pointer;font-weight:600}.provider-settings p,#provider-model-info{overflow-wrap:anywhere}
+
+#model-library .engine-layout{display:grid;grid-template-columns:1fr 1fr;gap:24px}#model-library .engine-panel{padding:22px;background:var(--panel);border:1px solid var(--line);min-width:0}@media(max-width:760px){#model-library .engine-layout{grid-template-columns:1fr}}

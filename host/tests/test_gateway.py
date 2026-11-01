@@ -5,6 +5,7 @@ from pathlib import Path
 import tempfile
 import threading
 import unittest
+from unittest.mock import patch
 
 from nodelift.host import Server
 from nodelift.state import State
@@ -92,3 +93,17 @@ class GatewayTests(unittest.TestCase):
         self.assertEqual(chunks[0]['choices'][0]['delta']['role'],'assistant')
         self.assertEqual(''.join(c['choices'][0]['delta'].get('content','') for c in chunks),'Città 🌍')
         self.assertEqual(chunks[-1]['choices'][0]['finish_reason'],'stop')
+
+    def test_explicit_external_route_and_unknown_usage_is_omitted(self):
+        original=self.engine.start
+        def external(values):
+            result=original(values)
+            self.engine.runs[0]={'id':'contract-run','status':'completed','text':'Hello','finish_reason':'stop','backend':'local_api'}
+            return result
+        with patch.object(self.engine,'start',side_effect=external):
+            status,data=self.request('/v1/chat/completions',self.body(nodelift_backend='local_api',nodelift_provider_model='external/model'))
+        self.assertEqual(status,200);self.assertNotIn('usage',json.loads(data))
+        self.assertEqual(self.engine.requests[-1]['backend'],'local_api')
+        self.assertEqual(self.engine.requests[-1]['provider_model'],'external/model')
+        self.request('/v1/chat/completions',self.body())
+        self.assertEqual(self.engine.requests[-1]['backend'],'native')

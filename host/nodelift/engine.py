@@ -10,6 +10,8 @@ from pathlib import Path
 
 from .native import Native, ROOT, library_path
 from .scheduling import AdaptiveDraftGate, PromptLookup
+from .model_library import ModelLibrary
+from .providers import Providers
 
 
 def prefix_digest(tokens):
@@ -82,6 +84,8 @@ class Controller:
         self.cancelled = threading.Event()
         self.busy = False
         self.runs = []
+        self.library = ModelLibrary(state.folder)
+        self.providers = Providers()
         self.config = {'target_model':'', 'draft_model':'', 'n_ctx':2048, 'threads':8, 'gpu_layers':999}
         self.target = None
         self.draft = None
@@ -99,16 +103,19 @@ class Controller:
     def models(self, refresh=False):
         if not refresh and time.monotonic()<self.catalog_deadline:return self.catalog
         roots = [ROOT/'.models', Path.home()/'.lmstudio/models']
-        catalog=[]
+        catalog=[]; paths=self.library.paths(); seen=set()
         for root in roots:
+            try: paths.extend(sorted(root.rglob('*.gguf'))[:500])
+            except OSError: continue
+        for p in paths:
             try:
-                for p in sorted(root.rglob('*.gguf')):
-                    try: size=p.stat().st_size
-                    except OSError:continue
-                    catalog.append({'id':hashlib.sha256(str(p).encode()).hexdigest()[:16], 'path':str(p), 'name':p.stem, 'bytes':size})
-                    if len(catalog)>=100:break
-            except OSError:continue
-            if len(catalog)>=100:break
+                p=p.resolve(); size=p.stat().st_size
+                if not p.is_file() or str(p) in seen: continue
+            except OSError: continue
+            seen.add(str(p));source=self.library.source(p)
+            name=Path(source.get('name') or source.get('file') or p.name).stem
+            catalog.append({'id':hashlib.sha256(str(p).encode()).hexdigest()[:16], 'path':str(p), 'name':name, 'bytes':size, 'source':source.get('kind','local')})
+            if len(catalog)>=500: break
         self.catalog=catalog;self.catalog_deadline=time.monotonic()+5
         return catalog
 
@@ -117,7 +124,7 @@ class Controller:
             return {'available':library_path().exists(), 'busy':self.busy, 'models':self.models(),
                     'config':dict(self.config), 'runs':copy.deepcopy(self.runs[-30:][::-1]),
                     'backend':'llama.cpp locked native core · greedy experiment',
-                    'sampler':'greedy', 'capacity_sharding':False}
+                    'sampler':'greedy', 'capacity_sharding':False, 'library':self.library.status(), 'providers':self.providers.status()}
 
     def configure(self, values):
         with self.lock:
@@ -168,22 +175,28 @@ class Controller:
         if draft_policy not in ('fixed','adaptive'):raise ValueError('unsupported draft policy')
         budget=integer(values.get('max_tokens',64),1,512);k=integer(values.get('draft_k',4),1,16)
         remote_timeout_ms=integer(values.get('remote_timeout_ms',30000),500,60000)
+        backend=values.get('backend','native')
+        if backend not in ('native','openrouter','local_api'):raise ValueError('Unsupported inference backend')
+        if backend!='native':
+            if mode!='host':raise ValueError('External backends do not support NodeLift drafting modes')
+            self.providers.validate(backend,values.get('provider_model'))
         with self.lock:
             if self.busy:raise ValueError('engine is busy')
-            if not self.config['target_model']:raise ValueError('configure a target model first')
+            if backend=='native' and not self.config['target_model']:raise ValueError('configure a target model first')
             if mode in ('local_draft','remote_draft') and not self.config['draft_model']:raise ValueError('configure a draft model first')
             node_id=values.get('node_id')
             if mode=='remote_draft':
                 peer=next((n for n in self.state.snapshot()['nodes'] if n['id']==node_id),None)
                 if not peer or not peer['online'] or not peer['capabilities'].get('engine_ready'):raise ValueError('select an online native draft node')
             run={'id':secrets.token_hex(12),'epoch':secrets.token_hex(16),'created':time.time(),'status':'loading',
+                 'backend':backend,'provider_model':values.get('provider_model') if backend!='native' else None,
                  'mode':mode,'prompt':prompt,'max_tokens':budget,'draft_k':k,'node_id':node_id,
                  'draft_policy':draft_policy,
                  'remote_timeout_ms':remote_timeout_ms,'text':'','metrics':{},'blocks':[]}
             if messages is not None:run['messages']=messages
             self.busy=True;self.cancelled.clear();self.runs.append(copy.deepcopy(run))
             if len(self.runs)>30:self.runs.pop(0)
-            threading.Thread(target=self._execute,args=(run,dict(self.config)),daemon=True).start()
+            threading.Thread(target=self._execute if backend=='native' else self._execute_provider,args=(run,dict(self.config)),daemon=True).start()
             return {'run_id':run['id']}
 
     def stop(self, run_id=None):
@@ -191,10 +204,45 @@ class Controller:
             if run_id is not None and (not self.runs or self.runs[-1]['id']!=run_id):return {'stopping':False}
             if not self.busy:return {'stopping':False}
             self.cancelled.set()
+            self.providers.cancel()
             for engine in (self.target,self.draft):
                 if engine:engine.cancel()
         with self.mailbox.condition:self.mailbox.condition.notify_all()
         return {'stopping':self.busy}
+
+    def configure_provider(self, values):
+        with self.lock:
+            if self.busy: raise ValueError('Stop the current run before changing provider access')
+            return self.providers.configure(values)
+
+    def _execute_provider(self, run, config):
+        started=time.perf_counter(); first=None
+        try:
+            run['status']='running';self._publish(run)
+            messages=run.get('messages') or [{'role':'user','content':run['prompt']}]
+            for event in self.providers.stream(run['backend'],run['provider_model'],messages,run['max_tokens'],self.cancelled):
+                if self.cancelled.is_set():raise ValueError('Provider run cancelled')
+                if event['text'] and first is None:
+                    first=time.perf_counter();run['metrics']['ttft_ms']=(first-started)*1000
+                run['text']+=event['text']
+                if len(run['text'].encode())>1024**2:raise ValueError('Provider text exceeds supported limits')
+                if event['finish_reason']:run['finish_reason']=event['finish_reason']
+                if event['usage'] is not None:run['usage']=event['usage']
+                run['metrics']['elapsed_seconds']=time.perf_counter()-started
+                self._publish(run)
+            if self.cancelled.is_set():raise ValueError('Provider run cancelled')
+            run['status']='completed'
+        except Exception as error:
+            run['status']='cancelled' if self.cancelled.is_set() else 'failed'
+            # Provider bodies and credentials never enter run records or exports.
+            run['error']=str(error) if isinstance(error,ValueError) else 'Provider response could not be processed'
+        finally:
+            run['metrics']['request_total_ms']=(time.perf_counter()-started)*1000
+            run['metrics']['elapsed_seconds']=time.perf_counter()-started
+            run['measurement_scope']='cloud_provider' if run['backend']=='openrouter' else 'local_external_server'
+            if run.get('usage'):run['metrics']['generated_tokens']=run['usage']['completion_tokens']
+            self._publish(run)
+            with self.lock:self.busy=False
 
     def _load(self, config, use_draft):
         identity={**config,'target_sha256':self._sha(config['target_model']),

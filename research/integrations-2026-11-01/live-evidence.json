@@ -1,0 +1,75 @@
+{
+  "collected_at": "2026-10-31T23:51:03Z",
+  "runs": [
+    {
+      "backend": "native",
+      "provider_model": null,
+      "status": "completed",
+      "text": "HELLO",
+      "metrics": {
+        "load_ms": 901.1471669655293,
+        "prefill_ms": 24.470208038110286,
+        "ttft_ms": 29.926332994364202,
+        "generated_tokens": 3,
+        "accepted_tokens": 0,
+        "proposed_tokens": 0,
+        "elapsed_seconds": 0.03800566599238664,
+        "tokens_per_second": 221.64008119519804,
+        "fallbacks": 0,
+        "remote_wait_ms": 0,
+        "request_total_ms": 940.6571669969708
+      }
+    },
+    {
+      "backend": "local_api",
+      "provider_model": "qwen3.8-27b",
+      "status": "completed",
+      "text": "HELLO",
+      "metrics": {
+        "elapsed_seconds": 2.1315972919692285,
+        "ttft_ms": 2038.47162501188,
+        "request_total_ms": 2131.595999991987,
+        "generated_tokens": 30
+      },
+      "usage": {
+        "prompt_tokens": 62,
+        "completion_tokens": 30,
+        "total_tokens": 92
+      },
+      "measurement_scope": "local_external_server"
+    },
+    {
+      "backend": "local_api",
+      "provider_model": "qwen3.8-27b",
+      "status": "completed",
+      "text": "",
+      "metrics": {
+        "elapsed_seconds": 20.43996483401861,
+        "request_total_ms": 20439.962333999574,
+        "generated_tokens": 8
+      },
+      "usage": {
+        "prompt_tokens": 58,
+        "completion_tokens": 8,
+        "total_tokens": 66
+      },
+      "measurement_scope": "local_external_server"
+    }
+  ],
+  "download": {
+    "name": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+    "bytes": 491400032,
+    "received": 491400032,
+    "status": "completed",
+    "sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+    "source": {
+      "kind": "huggingface",
+      "repo": "Qwen/Qwen2.5-0.5B-Instruct-GGUF",
+      "revision": "9217f5db79a29953eb74d5343926648285ec7e67",
+      "file": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+      "sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db"
+    }
+  },
+  "openrouter_text_models": 433,
+  "openrouter_key_configured": false
+}

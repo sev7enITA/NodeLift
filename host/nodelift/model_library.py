@@ -1,0 +1,269 @@
+"""Explicit GGUF imports and verified, public Hugging Face downloads.
+
+No model code is executed here. A valid header is only an import check: the
+pinned native runtime still decides whether a model architecture can load.
+"""
+import copy
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import secrets
+import shutil
+import struct
+import threading
+import time
+from urllib.parse import quote, urlencode, urlsplit
+from urllib.request import Request, HTTPRedirectHandler, build_opener
+
+
+MAX_MODEL = 512 * 1024**3
+CHUNK = 1024**2
+
+
+class HubRedirect(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        target = urlsplit(newurl)
+        host = target.hostname or ''
+        if target.scheme != 'https' or target.port not in (None, 443) or not any(
+                host == domain or host.endswith('.' + domain) for domain in ('huggingface.co', 'hf.co')):
+            raise ValueError('Hugging Face redirect outside supported hosts')
+        return super().redirect_request(req, fp, code, msg, headers, newurl)
+
+
+def hub_open(url):
+    # Public downloads only; never attach an account credential to CDN redirects.
+    return build_opener(HubRedirect()).open(Request(url, headers={'User-Agent': 'NodeLift/0.3'}), timeout=20)
+
+
+def hub_json(url):
+    try:
+        with hub_open(url) as response:
+            raw = response.read(8 * CHUNK + 1)
+        if len(raw) > 8 * CHUNK: raise ValueError('Hugging Face response too large')
+        return json.loads(raw)
+    except (OSError, ValueError) as error:
+        raise ValueError('Hugging Face request failed; check the public repository and connection') from error
+
+
+def repo_id(value):
+    if not isinstance(value, str) or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,95}/[A-Za-z0-9][A-Za-z0-9_.-]{0,95}', value):
+        raise ValueError('Use a Hugging Face owner/repository identifier')
+    return value
+
+
+def single_gguf(name):
+    return isinstance(name, str) and name.lower().endswith('.gguf') and not re.search(r'-\d{5}-of-\d{5}\.gguf$', name, re.I)
+
+
+def check_gguf(path):
+    if not path.is_file() or not single_gguf(path.name):
+        raise ValueError('Select one complete GGUF file; split models are not supported')
+    with path.open('rb') as stream: header = stream.read(24)
+    if len(header) != 24: raise ValueError('Invalid GGUF header')
+    magic, version, tensors, metadata = struct.unpack('<4sIQQ', header)
+    if magic != b'GGUF' or version not in (2, 3) or not 0 < tensors < 10**7 or not 0 < metadata < 10**7:
+        raise ValueError('Invalid GGUF header')
+
+
+class ModelLibrary:
+    def __init__(self, folder):
+        self.folder = folder / 'models'
+        self.folder.mkdir(parents=True, exist_ok=True, mode=0o700)
+        self.registry_path = folder / 'model-library.json'
+        self.lock = threading.RLock()
+        self.records = {}
+        self.transfer = None
+        self.cancelled = threading.Event()
+        try:
+            data = json.loads(self.registry_path.read_text())
+            if isinstance(data, dict): self.records = data
+        except (OSError, ValueError): pass
+        # Reap only old owned crash leftovers, never a recent/live transfer or user file.
+        for path in self.folder.glob('.nodelift-*.part'):
+            if re.fullmatch(r'\.nodelift-[a-f0-9]{32}\.part', path.name) and time.time()-path.stat().st_mtime>86400:
+                path.unlink(missing_ok=True)
+
+    def paths(self):
+        with self.lock: return [Path(p) for p in self.records]
+
+    def source(self, path):
+        with self.lock: return dict(self.records.get(str(path), {}))
+
+    def _register(self, path, source):
+        with self.lock:
+            records = {**self.records, str(path): source}
+            temporary = self.registry_path.with_suffix('.tmp')
+            with temporary.open('w') as stream:
+                os.chmod(temporary, 0o600)
+                json.dump(records, stream)
+            temporary.replace(self.registry_path)
+            self.records = records
+        return {'path': str(path), 'source': source}
+
+    def import_path(self, value):
+        if not isinstance(value, str) or len(value) > 4096: raise ValueError('Model path required')
+        path = Path(value).expanduser()
+        if not path.is_absolute(): raise ValueError('Use an absolute model path')
+        try:
+            path = path.resolve(strict=True)
+            check_gguf(path)
+            return self._register(path, {'kind': 'local', 'bytes': path.stat().st_size})
+        except OSError as error:
+            raise ValueError('Model file is unavailable or unreadable') from error
+
+    def search(self, query):
+        if not isinstance(query, str) or not 1 <= len(query.strip()) <= 160: raise ValueError('Enter a model search')
+        rows = hub_json('https://huggingface.co/api/models?' + urlencode({'search': query.strip(), 'filter': 'gguf', 'limit': 12, 'sort': 'downloads', 'direction': -1}))
+        return {'models': [{'id': r['id'], 'downloads': r.get('downloads', 0)} for r in rows if isinstance(r.get('id'), str)]}
+
+    def inspect(self, repo, revision='main'):
+        repo = repo_id(repo)
+        if not isinstance(revision, str) or not re.fullmatch(r'[A-Za-z0-9_.-]{1,120}', revision): raise ValueError('Invalid model revision')
+        data = hub_json('https://huggingface.co/api/models/' + repo + '/revision/' + quote(revision, safe='') + '?blobs=true')
+        sha = data.get('sha', '')
+        if not re.fullmatch(r'[a-f0-9]{40}', sha): raise ValueError('Hugging Face did not return an immutable revision')
+        files = []
+        for row in data.get('siblings', []):
+            name = row.get('rfilename', '')
+            if not single_gguf(name): continue
+            digest = (row.get('lfs') or {}).get('sha256', '')
+            size = row.get('size')
+            if not re.fullmatch(r'[a-f0-9]{64}', digest) or type(size) is not int or not 24 <= size <= MAX_MODEL: continue
+            files.append({'name': name, 'bytes': size, 'sha256': digest})
+        return {'repo': repo, 'revision': sha, 'license': (data.get('cardData') or {}).get('license', 'See model card'),
+                'model_card': 'https://huggingface.co/' + repo, 'gated': bool(data.get('gated')), 'files': files}
+
+    def status(self):
+        with self.lock:
+            self._expire()
+            return {'transfer': copy.deepcopy(self.transfer)}
+
+    def _expire(self):
+        if self.transfer and self.transfer['kind'] == 'upload' and self.transfer['status'] == 'transferring' and time.monotonic() - self.transfer['touched'] > 900:
+            self._part().unlink(missing_ok=True)
+            self.transfer['status'] = 'expired'
+
+    def _part(self):
+        return self.folder / ('.nodelift-' + self.transfer['id'] + '.part')
+
+    def _begin(self, name, size, kind, source):
+        if not single_gguf(name) or Path(name).name != name or len(name) > 180 or not re.fullmatch(r'[A-Za-z0-9_. -]+', name):
+            raise ValueError('Use a single GGUF filename without folders or special characters')
+        if type(size) is not int or not 24 <= size <= MAX_MODEL: raise ValueError('Invalid model size')
+        with self.lock:
+            self._expire()
+            if self.transfer and self.transfer['status'] in ('transferring', 'verifying'): raise ValueError('Finish or cancel the current model transfer')
+            if shutil.disk_usage(self.folder).free < size + 1024**3: raise ValueError('Insufficient disk space; keep at least 1 GiB free')
+            self.transfer = {'id': secrets.token_hex(16), 'name': name, 'bytes': size, 'received': 0, 'kind': kind,
+                             'status': 'transferring', 'source': source, 'touched': time.monotonic()}
+            self.cancelled.clear()
+            with self._part().open('xb') as stream: os.chmod(stream.name, 0o600)
+            return copy.deepcopy(self.transfer)
+
+    def upload_start(self, values):
+        return self._begin(values.get('name'), values.get('bytes'), 'upload', {'kind': 'upload'})
+
+    def _check(self, identity):
+        self._expire()
+        if not self.transfer or identity != self.transfer['id'] or self.transfer['status'] != 'transferring':
+            raise ValueError('Unknown or inactive model transfer')
+
+    def upload_chunk(self, identity, offset, data):
+        with self.lock:
+            self._check(identity)
+            if self.transfer['kind'] != 'upload': raise ValueError('Not a browser upload')
+            if type(offset) is not int or offset != self.transfer['received']: raise ValueError('Model upload offset mismatch')
+            if not data or len(data) > CHUNK or offset + len(data) > self.transfer['bytes']: raise ValueError('Invalid model upload chunk')
+            with self._part().open('ab') as stream: stream.write(data)
+            self.transfer['received'] += len(data)
+            self.transfer['touched'] = time.monotonic()
+            return {'received': self.transfer['received']}
+
+    def finish(self, identity):
+        with self.lock:
+            self._check(identity)
+            if self.transfer['kind'] != 'upload': raise ValueError('Not a browser upload')
+            if self.transfer['received'] != self.transfer['bytes']: raise ValueError('Model transfer is incomplete')
+            self.transfer['status'] = 'verifying'
+        threading.Thread(target=self._finalize, args=(identity,), daemon=True).start()
+        return {'verifying': True}
+
+    def cancel(self, identity):
+        with self.lock:
+            if not self.transfer or self.transfer['id'] != identity: raise ValueError('Unknown model transfer')
+            if self.transfer['status'] not in ('transferring', 'verifying'): return {'cancelled': False}
+            self.cancelled.set()
+            if self.transfer['kind'] == 'upload' and self.transfer['status'] == 'transferring':
+                self._part().unlink(missing_ok=True)
+                self.transfer['status'] = 'cancelled'
+            return {'cancelled': True}
+
+    def download(self, values):
+        # Re-read pinned metadata; do not trust sizes, digests or URLs from the browser.
+        revision = values.get('revision', '')
+        if not isinstance(revision, str) or not re.fullmatch(r'[a-f0-9]{40}', revision): raise ValueError('Inspect the model before downloading')
+        info = self.inspect(values.get('repo'), revision)
+        if info['gated']: raise ValueError('Gated models require a manual download after accepting their terms')
+        row = next((r for r in info['files'] if r['name'] == values.get('file')), None)
+        if row is None: raise ValueError('Choose a complete GGUF with published SHA-256 and size')
+        source = {'kind': 'huggingface', 'repo': info['repo'], 'revision': revision, 'file': row['name'], 'sha256': row['sha256']}
+        transfer = self._begin(Path(row['name']).name, row['bytes'], 'huggingface', source)
+        url = 'https://huggingface.co/' + info['repo'] + '/resolve/' + revision + '/' + quote(row['name'], safe='/')
+        threading.Thread(target=self._download, args=(transfer['id'], url), daemon=True).start()
+        return transfer
+
+    def _download(self, identity, url):
+        try:
+            with hub_open(url) as response, self._part().open('ab') as stream:
+                if response.status != 200: raise ValueError('Unexpected download response')
+                while True:
+                    if self.cancelled.is_set(): raise ValueError('Model transfer cancelled')
+                    data = response.read1(CHUNK)
+                    if not data: break
+                    with self.lock:
+                        if self.transfer['received'] + len(data) > self.transfer['bytes']: raise ValueError('Model download exceeds published size')
+                        stream.write(data)
+                        self.transfer['received'] += len(data)
+                if self.transfer['received'] != self.transfer['bytes']: raise ValueError('Model download is incomplete')
+            with self.lock: self.transfer['status'] = 'verifying'
+            self._finalize(identity)
+        except Exception:
+            self._fail(identity, 'Hugging Face download failed; retry the transfer')
+
+    def _fail(self, identity, message):
+        with self.lock:
+            if not self.transfer or self.transfer['id'] != identity: return
+            self._part().unlink(missing_ok=True)
+            self.transfer['status'] = 'cancelled' if self.cancelled.is_set() else 'failed'
+            self.transfer['error'] = message
+
+    def _finalize(self, identity):
+        try:
+            part = self._part()
+            if part.stat().st_size != self.transfer['bytes']: raise ValueError('Model transfer is incomplete')
+            digest = hashlib.sha256()
+            with part.open('rb') as stream:
+                while data := stream.read(CHUNK):
+                    if self.cancelled.is_set(): raise ValueError('Model transfer cancelled')
+                    digest.update(data)
+            with self.lock:
+                if self.cancelled.is_set(): raise ValueError('Model transfer cancelled')
+                source = {**self.transfer['source'], 'name': self.transfer['name'], 'sha256': digest.hexdigest(), 'bytes': self.transfer['bytes']}
+                expected = self.transfer['source'].get('sha256')
+                if expected and expected != source['sha256']: raise ValueError('Model SHA-256 mismatch')
+                # Validate before publishing a .gguf name into the native catalog.
+                with part.open('rb') as stream: header = stream.read(24)
+                if len(header) != 24: raise ValueError('Invalid GGUF header')
+                magic, version, tensors, metadata = struct.unpack('<4sIQQ', header)
+                if magic != b'GGUF' or version not in (2, 3) or not 0 < tensors < 10**7 or not 0 < metadata < 10**7: raise ValueError('Invalid GGUF header')
+                destination = self.folder / (identity + '-' + self.transfer['name'])
+                part.replace(destination)
+                try: self._register(destination, source)
+                except Exception:
+                    destination.unlink(missing_ok=True)
+                    raise
+                self.transfer.update(status='completed', path=str(destination), sha256=source['sha256'])
+        except Exception as error:
+            self._fail(identity, str(error) if isinstance(error, ValueError) else 'Model verification failed')
