@@ -1,0 +1,34 @@
+{
+  "release": "https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.7",
+  "source_commit": "5d8241f501ee4060f1186a5c75b6c15bf0283479",
+  "integrity_verified": true,
+  "scope": "published bytes and tag identity; no execution, signing or device qualification",
+  "assets": [
+    {
+      "name": "NodeLift-0.2.7-build-manifest.json",
+      "bytes": 1374,
+      "sha256": "f90f974fd48af28cd91a8c55128b9638cc596c0f7c8661ef6dfb44cebb6e1401"
+    },
+    {
+      "name": "NodeLift-0.2.7-android-debug.apk",
+      "bytes": 22230995,
+      "sha256": "7929633d9655c769fe716d78e6bfbd223dd25ef805fe4a59bb2b52875d35db92"
+    },
+    {
+      "name": "NodeLift-0.2.7-ios-unsigned.ipa",
+      "bytes": 5301360,
+      "sha256": "dee6bef822a6652f625a43e95cbbfac0751844af3529e408dbf2448164c75626"
+    },
+    {
+      "name": "NodeLift-0.2.7-ios-ipa-manifest.json",
+      "bytes": 585,
+      "sha256": "26836d7d2165f6e0d80a0a0b73b85f92ea23e2311b0cdd6205065094a825d73f"
+    },
+    {
+      "name": "NodeLift-0.2.7-ios-unsigned.zip",
+      "bytes": 5301136,
+      "sha256": "02ac4324b8bb3e5fb6bb01ccde33489da50bb3e0abf789e4e68ecb71c6bed698"
+    }
+  ],
+  "download_method": "Public HTTPS: curl with retries for package bodies after transient urllib connection resets; direct verifier for manifests and tag metadata."
+}

@@ -1,0 +1,13 @@
+{
+  "secure_ftps": true,
+  "published": [
+    "assets/site-locales.js",
+    "data/mobile-downloads.json",
+    "data/mobile-installation.md",
+    "data/changelog.md",
+    "data/changelog.json",
+    "index.html"
+  ],
+  "remote_readback_verified": true,
+  "mobile_packages_changed": true
+}

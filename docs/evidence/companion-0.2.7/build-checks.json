@@ -31,5 +31,16 @@
   ],
   "physical_installation_tested": false,
   "phone_reconnection_confirmed": false,
-  "additional_glm_gemini_review_for_this_patch": false
+  "additional_glm_gemini_review_for_this_patch": false,
+  "physical_reconnection_status": "Owner will test Oppo Find N5 later; no success result claimed.",
+  "source_checks": {
+    "commit": "034aa14fb36dd838dfb4ab7a6ed9b9d9ef42454b",
+    "result": "success",
+    "url": "https://github.com/sev7enITA/NodeLift/actions/runs/41345753202"
+  },
+  "documentation_checks": {
+    "commit": "034aa14fb36dd838dfb4ab7a6ed9b9d9ef42454b",
+    "result": "success",
+    "url": "https://github.com/sev7enITA/NodeLift/actions/runs/41345753115"
+  }
 }
