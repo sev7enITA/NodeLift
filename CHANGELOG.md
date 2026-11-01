@@ -4,6 +4,20 @@
 
 Every published companion build has an entry below. Android packages are laboratory builds; iOS packages require Apple signing and provisioning. Historical validation belongs to the named version and does not establish current physical-device performance.
 
+## [0.2.9](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.9): build 11 · 2026-11-01
+
+**Device assessment, session visibility and simpler companions** · experimental-prerelease
+
+- Show authenticated peer IP, enrollment dates, latest contact and observed session boundaries for devices; show host LAN address and process session start. Legacy dates remain unknown until observed.
+- Automatically schedule bounded sequential network and synthetic CPU assessment for newly enrolled devices, with explicit retry and classifications based on returned measurements. Low battery, severe thermal state and host inference defer automatic work. A changed peer address invalidates the prior connection classification.
+- Replace ambiguous contribution labels with explicit host target/verifier role, no selected run, external route, unused phone, missing accounting or measured zero. Basic diagnostics never claim LLM speedup or shared RAM.
+- Reorganize Android and iOS into Home, Activity and Settings, separate connection from draft readiness, expose one next action, move advanced controls into disclosure and make diagnostic export directly available. Retain identity confirmation for QR and manual pairing.
+- Age the connection indicator from successful authenticated responses so a stale session cannot stay marked active indefinitely. This is status reporting, not a claimed fix for the unresolved physical network timeout.
+
+**Validation:** 115 host tests, five JavaScript suites, 18 Android JVM tests, Android lint (0 errors, 17 warnings) and unsigned iOS ARM64 compilation passed. An isolated browser and synthetic TLS worker exercised enrollment and sequential assessment. Gemini 4 Argon High provided a textual UX architecture review. Physical accessibility, networking and LLM speedup remain unqualified.
+
+**Limits:** Physical Android/iOS accessibility and stable mobile inference are not qualified. Basic assessment is HTTPS plus a synthetic CPU kernel; model-specific usefulness still needs a matched native comparison. Session boundaries are inferred after a contact gap over 20 seconds. iOS packages require Apple signing. HarmonyOS/NEXT remains deferred.
+
 ## [0.2.8](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.8): build 10 · 2026-11-01
 
 **Stable device enrollment and local dashboard recovery** · experimental-prerelease
