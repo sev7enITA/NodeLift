@@ -83,6 +83,8 @@ The optional control-model download is approximately 1.61 GB, with fixed [revisi
 
 ## Evidence before acceleration claims
 
+[Experimental llama.cpp community fork](https://github.com/sev7enITA/llama.cpp): NodeLift research wrapper, prefix-reuse measurements and a macOS arm64 prerelease. Prefix caching is an existing llama.cpp capability, not a new upstream optimization. The binary passed 31 strict real-model checks on the build Mac; it is ad hoc signed and not notarized.
+
 [Local 8B/3B experiments](research/llama-8b-pilot-2026-11-02/README.md): two exploratory same-Mac sessions, a fixed versus adaptive follow-up, and a separate upstream server control. Width 4 showed a small median total-time benefit in the first two NodeLift periods, alongside a later first token; these results do not establish a phone or distributed speedup. [Batch-shape diagnostics](research/batch-numerics-2026-11-02/README.md) and [cache-state stress](research/cache-stress-2026-11-02/README.md) retain the negative and positive controls.
 
 [Visual phone benchmarks](research/visual-benchmarks-2026-11-02/README.md): inspect paired timing, first-token delay, fallback and useful proposals. [Open the chart gallery](https://www.fabriziodegni.com/NodeLift/#benchmark-charts).
