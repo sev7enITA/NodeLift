@@ -130,3 +130,7 @@ Success means a reproducible, constrained result that another owner can obtain o
 - [MLX communication documentation](https://ml-explore.github.io/mlx/build/html/usage/distributed.html), including backend/topology selection and fast-synchronization warning.
 - [M3 Max MacBook Pro specifications](https://support.apple.com/en-us/117737).
 - [Security reporting](../SECURITY.md), [mobile diagnostics](MOBILE_DIAGNOSTICS.md), [updates](ABOUT_AND_UPDATES.md).
+
+## Desktop and server expansion
+
+The [desktop/server deployment contract](RFC_DESKTOP_SERVER_DEPLOYMENT.md) adds Windows/Linux workstations, GPU servers, approved office pools and site-local operation to the target architecture. It separates coordinator from executor, stable required partitions from opportunistic assistance, and whole-request routing from combined inference. The first proposed comparator is the Lenovo P16; its hardware and runtime are not yet qualified. This is design scope, not a shipped platform-support claim.

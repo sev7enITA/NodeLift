@@ -49,3 +49,7 @@ See the [optimization assessment](../research/optimization-2026-10-31/REPORT.md)
 The sought contribution is usable heterogeneous-device orchestration with reproducible evidence and lifecycle control. Remote speculation, adaptive blocks and pipelining are prior art. No unique algorithm, patentability or universal superiority is established.
 
 The [next distributed execution RFC](RFC_DISTRIBUTED_EXECUTION.md) specifies proposed control, data and evidence boundaries, capacity recovery, context deltas and benchmark gates. It is a design contract, not a description of capabilities already shipped.
+
+## Desktop and server expansion
+
+The [desktop/server deployment contract](RFC_DESKTOP_SERVER_DEPLOYMENT.md) adds Windows/Linux workstations, GPU servers, approved office pools and site-local operation to the target architecture. It separates coordinator from executor, stable required partitions from opportunistic assistance, and whole-request routing from combined inference. The first proposed comparator is the Lenovo P16; its hardware and runtime are not yet qualified. This is design scope, not a shipped platform-support claim.

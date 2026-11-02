@@ -1,10 +1,14 @@
 # Shared local RAM and compute for everyday AI interfaces
 
-Product direction, 1 November 2026. This is a development roadmap, not a declaration of implemented compatibility or measured gains.
+Product direction, updated 2 November 2026. This is a development roadmap, not a declaration of implemented compatibility or measured gains.
 
-**NodeLift's objective is to make memory and computation from the user's existing local devices available to the AI interfaces they already use.** The shared execution service is the core product. The desktop application is its control room; mobile companions provide execution resources; adapters connect client interfaces to the service. A new chat interface, cloud-provider forwarding or a successful device pairing alone does not meet this objective.
+**NodeLift's objective is to make memory and computation from the user's existing local devices available to the AI interfaces they already use.** The shared execution service is the core product. The desktop application is its control room; desktop, server and mobile workers are intended execution resources; adapters connect client interfaces to the service. A new chat interface, cloud-provider forwarding or a successful device pairing alone does not meet this objective.
 
 The user's preference for faster single-chat execution remains a performance requirement. Expanding executable model/context capacity is also a core workstream. Each needs its own evidence; a larger model that runs slowly and a faster small model are different outcomes.
+
+## Desktop and server scope
+
+Windows/Linux PCs, GPU workstations and dedicated servers join Mac and mobile devices as first-class target nodes. The coordinator need not execute the target model. The first proposed expansion is the user's Lenovo P16, followed by approved office and site-local pools. See the [desktop/server deployment contract](RFC_DESKTOP_SERVER_DEPLOYMENT.md) for backend candidates, shared-workstation budgets, capacity recovery, organizational boundaries and the Mac-only / P16-only / combined benchmark gate. This extends product scope; desktop workers and enterprise operation are not yet implemented.
 
 ## Target architecture
 

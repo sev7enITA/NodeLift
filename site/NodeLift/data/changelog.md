@@ -147,6 +147,12 @@ Every published companion build has an entry below. Android packages are laborat
 
 ## Host, documentation and tooling updates
 
+### 2026-11-02: Desktop, workstation and server deployment scope
+
+- Extend the two-path acceleration/capacity architecture to Windows/Linux PCs, GPU workstations, macOS nodes and dedicated servers, with the Lenovo P16 as the first proposed non-Mac qualification device.
+- Define dedicated, shared-workstation and site-local pools; separate coordinator and executor, approved resource reservations, interruption policies and project access boundaries. Benchmark Mac alone, P16 alone and combined execution against the strongest applicable standalone baseline.
+- Document backend candidates and office-pilot gates. This is a design update: no Windows/Linux worker, Lenovo benchmark, enterprise deployment or new companion build is claimed.
+
 ### 2026-11-02: Phone performance diagnosis and Android native optimization correction
 
 - Confirm that the distributed Android 0.2.8 native ELF matches an unoptimized Debug build. Enable -O3 for Android Debug native kernels while preserving symbols, assertions and the generic ARM ISA. Cross-compile the corrected AArch64 library and add a compile-command audit with five passing unit tests.
