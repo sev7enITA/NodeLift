@@ -1,0 +1,26 @@
+{
+  "schema": "nodelift.node-potential.v1",
+  "kernel_ratios": {
+    "prefill_rate_ratio": 6.762787264171339,
+    "decode_rate_ratio": 1.8025348826083272
+  },
+  "same_executable": true,
+  "baseline_configuration": {
+    "prompt_tokens": 128,
+    "generated_tokens": 32,
+    "repetitions": 3,
+    "threads": 4,
+    "gpu_layers_requested": 0
+  },
+  "candidate_configuration": {
+    "prompt_tokens": 128,
+    "generated_tokens": 32,
+    "repetitions": 3,
+    "threads": 4,
+    "gpu_layers_requested": 999
+  },
+  "classification": "requires_paired_end_to_end_assessment",
+  "distributed_speedup": null,
+  "qualified_recommendation": false,
+  "reason": "Standalone kernel comparison only; link, acceptance, verification, TTFT, reliability, energy and uncertainty are not measured here."
+}

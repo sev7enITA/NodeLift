@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "component": "NodeLift node probe",
+  "version": "0.1.0",
+  "build": 1,
+  "status": "source preview",
+  "built_on": "2026-11-02",
+  "python_requires": ">=3.10",
+  "url": "https://www.fabriziodegni.com/NodeLift/assets/NodeLift-node-probe-0.1.0.pyz",
+  "bytes": 23111,
+  "sha256": "e848fbfa0eddba618dd23b4bdbef6e3a309ceddfce3896592e5d752c781a7638",
+  "module_sha256": "7d132b5d9b05dbf797b6617a291fee313ce85df8dcf88b7fa41a7de8cef68553",
+  "builder_sha256": "ade29e4922d02afd6604bde6b04cf6f43e6d90d605725f1e04e422de9351a669",
+  "physical_validation": [
+    "macOS ARM64 inventory",
+    "llama-bench CPU and requested offload profiles on Apple M3 Max"
+  ],
+  "fixture_validation": [
+    "Windows ARM64 CIM parser",
+    "Linux ARM/Kirin-style fields",
+    "NVIDIA memory parser"
+  ],
+  "not_qualified": [
+    "Physical Windows or Linux execution",
+    "Snapdragon or Kirin NPU inference",
+    "Remote desktop enrollment or task execution",
+    "Connection-specific distributed acceleration"
+  ],
+  "contains_native_runtime": false,
+  "contains_model": false,
+  "automatic_upload": false
+}

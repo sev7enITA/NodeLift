@@ -122,3 +122,7 @@ NodeLift is created by Fabrizio Degni and informed by an open community of resea
 The full-color [NodeLift emblem and asset guide](assets/brand/README.md) is shared with the showcase and companions. [Locally Uncensored source lessons](research/locally-uncensored-2026-11-01/ASSESSMENT.md) credit its memory-planning, cancellation and diagnostics work.
 
 **Device assessment and companion navigation:** observed IP/session history, automatic basic diagnostics for new enrollments, explicit host responsibilities and Home / Activity / Settings on mobile. [KPI definitions and limits](docs/DEVICE_ASSESSMENT_AND_KPIS.md).
+
+### Generic node probe
+
+[Probe hardware/software and benchmark an existing local model](docs/NODE_PROBE.md). The portable Python module includes macOS, Windows and Linux collectors, ARM64/x86-64 handling, and explicit prefill/decode microbenchmarks. Mac execution is physically verified; other platform adapters have synthetic tests. No universal acceleration score, new desktop inference worker or NPU support is claimed.

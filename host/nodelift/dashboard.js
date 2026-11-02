@@ -10,6 +10,7 @@ try {
 if(isSessionFragment(location.hash.slice(1)))history.replaceState(null, '', '/');
 window.addEventListener('hashchange', () => { if (isSessionFragment(location.hash.slice(1))) location.reload(); });
 let snapshot = null;
+let nodeProbeReport = null;
 let engineSnapshot = null;
 let aboutMetadata = null;
 let aboutVersionRequested = false;
@@ -134,6 +135,8 @@ function updateSessionControls(){
   $('invite').disabled=!authenticated||pairingBusy;
   $('renew-invite').disabled=!authenticated||pairingBusy;
   $('export').disabled=!authenticated||!snapshot;
+  if($('probe-computer'))$('probe-computer').disabled=!authenticated||busyControls.has('probe-computer');
+  if($('export-node-probe'))$('export-node-probe').disabled=!authenticated||!nodeProbeReport;
   $('job-filter').disabled=!authenticated||!snapshot;
   $('open-client-access').disabled=!authenticated||busyControls.has('open-client-access');
 }
@@ -145,6 +148,7 @@ function sessionReady(ready) {
   $('session-dot').className='status-dot '+(ready?'ready':'error');
   $('session-label').textContent=ready?t("Local session active"):t("Access required");
   if(!ready){
+    nodeProbeReport=null;if($('node-probe-details'))$('node-probe-details').hidden=true;if($('node-probe-output'))$('node-probe-output').textContent='';
     hideClientAccess();nodeActionFeedback.clear();announceNodeAction(null,null);engineActionFeedback=null;configurationActionFeedback=null;
     aboutMetadata=null;aboutVersionRequested=false;aboutVersionLoading=false;aboutVersionEpoch++;
     pairing.clear();snapshot=null;engineSnapshot=null;
@@ -432,6 +436,25 @@ $('invite').onclick=openPairing;
 $('renew-invite').onclick=openPairing;
 $('hide').onclick=()=>pairing.close();
 $('copy').onclick=()=>pairing.copy();
+if($('probe-computer'))$('probe-computer').onclick=async()=>{
+  if(!authenticated||busyControls.has('probe-computer'))return;
+  nodeProbeReport=null;$('node-probe-details').hidden=true;$('node-probe-output').textContent='';
+  setControlBusy('probe-computer',true,'Probing hardware and software…');updateSessionControls();
+  $('node-probe-status').textContent=t('Probing hardware and software…');
+  try{
+    const result=await api('probe',{});
+    if(!authenticated)return;
+    if(result?.schema!=='nodelift.node-probe.v1')throw Error('Invalid node profile');
+    nodeProbeReport=result;$('node-probe-output').textContent=JSON.stringify(result,null,2);$('node-probe-details').hidden=false;
+    $('node-probe-status').textContent=t('Inventory collected. A model benchmark is still required.');
+  }catch(error){nodeProbeReport=null;$('node-probe-status').textContent=t('Hardware probe failed. Retry or export diagnostics.');}
+  finally{setControlBusy('probe-computer',false);updateSessionControls();}
+};
+if($('export-node-probe'))$('export-node-probe').onclick=()=>{
+  if(!authenticated||!nodeProbeReport)return;
+  const url=URL.createObjectURL(new Blob([JSON.stringify(nodeProbeReport,null,2)],{type:'application/json'}));
+  const link=document.createElement('a');link.href=url;link.download='NodeLift-node-profile.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+};
 $('export').onclick=()=>{if(!snapshot)return;const data={...snapshot,engine:engineSnapshot,exported_at:new Date().toISOString()};const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));const a=el('a');a.href=url;a.download='nodelift-laboratory.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
 $('job-filter').onchange=renderJobs;
 for(const [id] of configFields)$(id).addEventListener('input',()=>{configurationActionFeedback=null;updateEngineControls();});

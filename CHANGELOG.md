@@ -147,6 +147,14 @@ Every published companion build has an entry below. Android packages are laborat
 
 ## Host, documentation and tooling updates
 
+### 2026-11-02: Generic node probe 0.1.0 and native model microbenchmarks
+
+- Add a reusable local hardware/software probe for macOS, Windows and Linux, including ARM64 detection and explicit unknown states for unsupported accelerators. No machine-specific Lenovo profile is required.
+- Publish a portable Python 3.10+ package, authenticated desktop inventory/export controls and English, Simplified Chinese and Italian feedback. No model, native runtime or automatic upload is bundled.
+- Add bounded llama-bench invocation with artifact hashes, retained repetitions, failure records and same-model kernel comparisons. TTFT, energy, connection-specific acceleration and automatic remote-worker enrollment remain unqualified.
+- Validate physical Apple M3 Max inventory and CPU/requested-offload kernel profiles; Windows/Linux/ARM adapters have fixture tests only. The selected release source passed 151 host tests and seven desktop JavaScript suites in an isolated checkout. See docs/NODE_PROBE.md and research/node-probe-2026-11-02/README.md.
+- Credit linuxhw/hw-probe and llama.cpp. This is a host/tooling preview, not a new companion binary release; public mobile downloads remain 0.2.11/build 13.
+
 ### 2026-11-02: Desktop, workstation and server deployment scope
 
 - Extend the two-path acceleration/capacity architecture to Windows/Linux PCs, GPU workstations, macOS nodes and dedicated servers, with the Lenovo P16 as the first proposed non-Mac qualification device.

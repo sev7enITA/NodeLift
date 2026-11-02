@@ -2,6 +2,10 @@
 
 Status: accepted product scope, proposed implementation. 2 November 2026. This document extends the [distributed execution contract](RFC_DISTRIBUTED_EXECUTION.md); it does not ship a Windows/Linux worker, server installer or a qualified mixed-backend cluster.
 
+## Implemented probing stage
+
+The [generic node probe](NODE_PROBE.md) now provides reusable OS inventory adapters, a portable Python package, an authenticated host-inventory action and an explicit local model microbenchmark adapter. It is independent of a specific Lenovo configuration. Physical Mac checks and synthetic Windows/Linux/ARM adapter checks are distinguished; this does not complete the desktop-worker enrollment or distributed execution gates below.
+
 ## Product boundary
 
 NodeLift is a local execution service with a control room and device workers. Windows and Linux PCs, GPU workstations, macOS computers and dedicated servers are first-class target nodes alongside mobile companions. The coordinator and the target-model executor are separate roles: the Mac need not remain the fastest or primary executor. The user's Lenovo P16 is the first proposed non-Mac qualification device; its OS, generation, GPU, VRAM, RAM and usable connection are not yet verified.

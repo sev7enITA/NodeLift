@@ -6,6 +6,7 @@ import tempfile
 import threading
 import time
 import unittest
+from unittest.mock import patch
 
 from nodelift.host import Server, make_identity, public_key_pin
 from nodelift.state import State, digest
@@ -163,6 +164,16 @@ class ProtocolTests(unittest.TestCase):
         self.assertEqual(request({}),401)
         self.assertEqual(request({"Authorization":"Bearer test-admin","Origin":"https://attacker.invalid"}),401)
         self.assertEqual(request({"Authorization":"Bearer test-admin"}),200)
+
+    def test_probe_requires_admin_and_rejects_commands(self):
+        for token, payload, expected in [('', {}, 401), ('test-admin', {'command':'ignored'}, 400), ('test-admin', {}, 200)]:
+            with patch('nodelift.probe.cached_inventory', return_value={'schema':'nodelift.node-probe.v1'}) as probe:
+                c=http.client.HTTPConnection('127.0.0.1',self.admin.server_port,timeout=3)
+                c.request('POST','/admin/probe',json.dumps(payload),headers={'Authorization':'Bearer '+token,'Content-Type':'application/json'})
+                response=c.getresponse();data=json.loads(response.read());c.close()
+                self.assertEqual(response.status,expected)
+                self.assertEqual(probe.call_count,1 if expected==200 else 0)
+                if expected==200:self.assertEqual(data['schema'],'nodelift.node-probe.v1')
 
     def test_credentials_never_in_snapshot(self):
         p=self.pair();snapshot=json.dumps(self.state.snapshot())

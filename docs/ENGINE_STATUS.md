@@ -22,6 +22,7 @@ The original NodeLift code is MIT-licensed, not a closed proprietary inference r
 | OpenRouter | Explicit cloud text route with a configured session key | Can incur charges; does not use phone compute or expand local RAM. |
 | Client integration | Restricted OpenAI-style text API plus an LM Studio generator adapter | Full LM Studio GUI/plugin installation is separately unqualified. Not an internal Ollama plugin. No qualified Z.ai/MiMo GUI integration. |
 | Device assessment | Sequential connection diagnostic and synthetic CPU calibration, with history and readiness classification | These are not model-specific LLM benchmarks and cannot predict tokens/s or speedup. |
+| Generic desktop/server probe | Local OS hardware/software inventory and explicit same-model llama-bench kernel comparisons; see [node probe](NODE_PROBE.md) | Physical Mac qualification only; Windows/Linux ARM adapters have fixture tests. No automatic enrollment, TTFT, energy or distributed benefit established. |
 | Contribution view | Shows accepted draft-token attribution for a selected run, recorded wait and fallback | Token share is not CPU/GPU utilization or saved wall time. Host verifies all native output. |
 | Memory expansion | Phone RAM can hold its own draft model | No target-weight partitioning, shared KV cache, coherent memory pool or capacity sharding. |
 

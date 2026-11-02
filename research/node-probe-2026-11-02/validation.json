@@ -1,0 +1,63 @@
+{
+  "date": "2026-11-02",
+  "scope": "generic local inventory and explicit local llama-bench kernel probes",
+  "package_sha256": "e848fbfa0eddba618dd23b4bdbef6e3a309ceddfce3896592e5d752c781a7638",
+  "host_tests": {
+    "passed": 152,
+    "probe_tests": 12,
+    "protocol_tests": 20,
+    "note": "Full workspace suite, including existing engine work outside this selected change."
+  },
+  "javascript_checks": [
+    "localization",
+    "control-states",
+    "device-graph",
+    "context-help",
+    "impact-ui",
+    "model-library",
+    "pairing"
+  ],
+  "browser": {
+    "surface": "isolated authenticated localhost host",
+    "actual_mac_probe": true,
+    "exported_json_file_verified": true,
+    "languages": [
+      "en",
+      "zh-Hans",
+      "it"
+    ]
+  },
+  "live_host": {
+    "port": 9868,
+    "authenticated_probe_endpoint": "verified after restart"
+  },
+  "physical": {
+    "device": "Apple M3 Max",
+    "ram_gib": 64,
+    "cpu_profile_repetitions": 3,
+    "offload_profile_repetitions": 3,
+    "reports": [
+      "mac-cpu.json",
+      "mac-inventory.json",
+      "mac-kernel-comparison.json",
+      "mac-offload.json"
+    ]
+  },
+  "limitations": [
+    "Fixed CPU-then-offload order; no randomized repeated sessions or confidence intervals.",
+    "Synthetic local kernels, not user prompt correctness or client TTFT.",
+    "Compiled MTL/BLAS backends and requested offload are recorded; device allocation is not independently verified.",
+    "No Windows/Linux physical execution, NPU qualification, network, thermal endurance or energy measurement."
+  ],
+  "selected_release_host_tests": {
+    "passed": 151,
+    "probe_tests": 12,
+    "protocol_tests": 20,
+    "scope": "Clean main archive plus exactly the 36 selected files; unfinished engine changes excluded."
+  },
+  "documentation_check": {
+    "pages": 107,
+    "local_targets_checked": 464,
+    "errors": []
+  }
+}

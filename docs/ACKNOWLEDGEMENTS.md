@@ -104,3 +104,7 @@ Original third-party source, license text, recorded benchmark output and archive
 Thank you to **PurpleDoubleD and the Locally Uncensored contributors** for their published diagnostic, platform-version, signed-update and model-memory planning work. [Project](https://github.com/PurpleDoubleD/locally-uncensored) · [focused assessment](../research/locally-uncensored-2026-11-01/ASSESSMENT.md). No implementation code was imported.
 
 Thank you to **Apple and the MLX / MLX LM contributors** for the open distributed primitives, inference implementations and published measurements. [MLX](https://github.com/ml-explore/mlx) · [MLX LM](https://github.com/ml-explore/mlx-lm) · [distributed inference research](https://machinelearning.apple.com/research/mlx-distributed-inference). NodeLift does not claim to outperform those results or to implement their RDMA backend.
+
+## Generic hardware assessment
+
+Thanks to the [linuxhw/hw-probe contributors](https://github.com/linuxhw/hw-probe) for their hardware, driver and operability classification work. The [NodeLift node probe](NODE_PROBE.md) uses independently implemented allowlisted OS collectors and invokes no hw-probe upload or monitoring workflow. No hw-probe code is incorporated. Native model microbenchmarks use the separately installed [llama.cpp benchmark tool](https://github.com/ggml-org/llama.cpp/blob/master/tools/llama-bench/README.md). Detection, execution and acceleration evidence remain separate.
