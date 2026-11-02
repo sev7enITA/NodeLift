@@ -55,7 +55,9 @@ jobs:
       - name: Build a portable CPU benchmark and platform backend
         run: |
           test "$(cat native/llama.lock)" = "$(git -C vendor/llama.cpp rev-parse HEAD)"
-          cmake -S vendor/llama.cpp -B build/standalone-llama -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DGGML_NATIVE=OFF -DLLAMA_CURL=OFF -DLLAMA_OPENSSL=OFF -DGGML_METAL_EMBED_LIBRARY=ON -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF -DLLAMA_BUILD_SERVER=OFF -DLLAMA_BUILD_COMMIT="$(cat native/llama.lock)"
+          TOOLCHAIN=()
+          if [ "${{ matrix.artifact }}" = windows-arm64 ]; then TOOLCHAIN=(-T ClangCL -A ARM64); fi
+          cmake "${TOOLCHAIN[@]}" -S vendor/llama.cpp -B build/standalone-llama -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DGGML_NATIVE=OFF -DGGML_OPENMP=OFF -DGGML_METAL=OFF -DLLAMA_CURL=OFF -DLLAMA_OPENSSL=OFF -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF -DLLAMA_BUILD_SERVER=OFF -DLLAMA_BUILD_COMMIT="$(cat native/llama.lock)"
           cmake --build build/standalone-llama --config Release --target llama-bench --parallel 3
       - name: Bundle and run startup verification
         run: |
