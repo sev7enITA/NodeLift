@@ -1152,5 +1152,12 @@
   "meter scope differs": "ambito dello strumento diverso",
   "Candidate device": "Dispositivo candidato",
   "Connection label": "Etichetta della connessione",
-  "Labels identify the recorded setup. Exact hashes and configuration in the comparison scope remain authoritative.": "Le etichette identificano la configurazione registrata. Fanno fede gli hash esatti e la configurazione riportati nell’ambito del confronto."
+  "Labels identify the recorded setup. Exact hashes and configuration in the comparison scope remain authoritative.": "Le etichette identificano la configurazione registrata. Fanno fede gli hash esatti e la configurazione riportati nell’ambito del confronto.",
+  "Completed service including fallback": "Servizio completato, inclusi i fallback",
+  "These timings include fallback in completed service. They are not proof of phone acceleration. Primary timing metrics above exclude fallback pairs.": "Questi tempi includono il fallback nel servizio completato. Non dimostrano un’accelerazione dovuta al telefono. Le metriche temporali principali sopra escludono le coppie con fallback.",
+  "Service time saved": "Tempo risparmiato nel servizio",
+  "Service TTFT change": "Variazione TTFT del servizio",
+  "Pairs included: {0}": "Coppie incluse: {0}",
+  "{0} missing · {1} fallbacks · {2} matched outputs without fallback": "{0} mancanti · {1} fallback · {2} output corrispondenti senza fallback",
+  "{0} session clusters with eligible pairs · {1} missing runs · {2} mismatched pairs": "{0} gruppi di sessione con coppie valide · {1} esecuzioni mancanti · {2} coppie discordanti"
 }

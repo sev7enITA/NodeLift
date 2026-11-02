@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "evidence": "retrospective decomposition of previously published physical pilot; not new phone runs",
+  "causal_limit": "Remote wait combines transport, polling and phone compute. Subtracting it is bookkeeping, not a physically measured zero-latency experiment. No worker timing or power telemetry was recorded.",
+  "rows": [
+    {
+      "pair_id": "0",
+      "source_run_id": "e512f319cd5e4d1477d8aa36",
+      "host_ms": 300.591666,
+      "candidate_ms": 34099.60125,
+      "candidate_ttft_ms": 3809.73575,
+      "host_ttft_ms": 46.884791,
+      "fallback": false,
+      "accepted": 21,
+      "proposed": 41,
+      "remote_wait_ms": 33716.41900006216,
+      "remote_wait_fraction": 0.9887628524706623,
+      "native_ms_sum": 325.48075,
+      "blocks": 11,
+      "residual_after_subtracting_remote_wait_ms": 383.1822499378395,
+      "hypothetical_remote_budget_ms": -82.59058393783954
+    },
+    {
+      "pair_id": "1",
+      "source_run_id": "a444fcd6fa694434208bfae2",
+      "host_ms": 413.672334,
+      "candidate_ms": 10298.359375,
+      "candidate_ttft_ms": 10088.200667,
+      "host_ttft_ms": 79.385417,
+      "fallback": true,
+      "accepted": 0,
+      "proposed": 0,
+      "remote_wait_ms": 10005.096415989101,
+      "remote_wait_fraction": 0.9715233321801902,
+      "native_ms_sum": 220.317208,
+      "blocks": 32,
+      "residual_after_subtracting_remote_wait_ms": 293.26295901089907,
+      "hypothetical_remote_budget_ms": 120.40937498910091
+    },
+    {
+      "pair_id": "2",
+      "source_run_id": "45f89e4738739c73ece1362e",
+      "host_ms": 384.032083,
+      "candidate_ms": 48589.176833,
+      "candidate_ttft_ms": 9758.050292,
+      "host_ttft_ms": 57.886916,
+      "fallback": false,
+      "accepted": 20,
+      "proposed": 50,
+      "remote_wait_ms": 48145.88541601552,
+      "remote_wait_fraction": 0.9908767456895171,
+      "native_ms_sum": 376.669833,
+      "blocks": 13,
+      "residual_after_subtracting_remote_wait_ms": 443.29141698448075,
+      "hypothetical_remote_budget_ms": -59.25933398448075
+    }
+  ]
+}

@@ -1154,7 +1154,14 @@ const NodeLiftChinese = {
   "meter scope differs": "仪表测量范围不同",
   "Candidate device": "候选设备",
   "Connection label": "连接标签",
-  "Labels identify the recorded setup. Exact hashes and configuration in the comparison scope remain authoritative.": "标签用于识别记录的设置。比较范围中的精确哈希值和配置仍是权威依据。"
+  "Labels identify the recorded setup. Exact hashes and configuration in the comparison scope remain authoritative.": "标签用于识别记录的设置。比较范围中的精确哈希值和配置仍是权威依据。",
+  "Completed service including fallback": "已完成服务（包括回退）",
+  "These timings include fallback in completed service. They are not proof of phone acceleration. Primary timing metrics above exclude fallback pairs.": "这些时间包含已完成服务中的回退，不能证明手机带来了加速。上方主要时间指标排除了发生回退的配对。",
+  "Service time saved": "服务节省时间",
+  "Service TTFT change": "服务首字延迟变化",
+  "Pairs included: {0}": "包含的配对：{0}",
+  "{0} missing · {1} fallbacks · {2} matched outputs without fallback": "缺失 {0} · 回退 {1} · 无回退的匹配输出 {2}",
+  "{0} session clusters with eligible pairs · {1} missing runs · {2} mismatched pairs": "含有效配对的会话簇 {0} · 缺失运行 {1} · 不匹配配对 {2}"
 };
 const NodeLiftItalian = {
   "0 layers uses CPU. 999 requests the maximum GPU offload supported by the backend. Compatibility depends on the model.": "0 livelli usa la CPU. 999 richiede il massimo numero di livelli sulla GPU supportato dal backend. La compatibilità dipende dal modello.",
@@ -2310,7 +2317,14 @@ const NodeLiftItalian = {
   "meter scope differs": "ambito dello strumento diverso",
   "Candidate device": "Dispositivo candidato",
   "Connection label": "Etichetta della connessione",
-  "Labels identify the recorded setup. Exact hashes and configuration in the comparison scope remain authoritative.": "Le etichette identificano la configurazione registrata. Fanno fede gli hash esatti e la configurazione riportati nell’ambito del confronto."
+  "Labels identify the recorded setup. Exact hashes and configuration in the comparison scope remain authoritative.": "Le etichette identificano la configurazione registrata. Fanno fede gli hash esatti e la configurazione riportati nell’ambito del confronto.",
+  "Completed service including fallback": "Servizio completato, inclusi i fallback",
+  "These timings include fallback in completed service. They are not proof of phone acceleration. Primary timing metrics above exclude fallback pairs.": "Questi tempi includono il fallback nel servizio completato. Non dimostrano un’accelerazione dovuta al telefono. Le metriche temporali principali sopra escludono le coppie con fallback.",
+  "Service time saved": "Tempo risparmiato nel servizio",
+  "Service TTFT change": "Variazione TTFT del servizio",
+  "Pairs included: {0}": "Coppie incluse: {0}",
+  "{0} missing · {1} fallbacks · {2} matched outputs without fallback": "{0} mancanti · {1} fallback · {2} output corrispondenti senza fallback",
+  "{0} session clusters with eligible pairs · {1} missing runs · {2} mismatched pairs": "{0} gruppi di sessione con coppie valide · {1} esecuzioni mancanti · {2} coppie discordanti"
 };
 const NodeLiftCatalogs = {"zh-Hans": NodeLiftChinese, it: NodeLiftItalian};
 'use strict';

@@ -147,6 +147,15 @@ Every published companion build has an entry below. Android packages are laborat
 
 ## Host, documentation and tooling updates
 
+### 2026-11-02: Physical Xiaomi trade-offs: latency loss and adaptive containment
+
+- Run 18 new physical Xiaomi-versus-Mac pairs plus 3 local-draft control pairs with matching outputs. Fixed phone drafting at a 32-token budget showed a median 134.949x slowdown in this model/hotspot scope.
+- Adaptive phone probing returned to the host in all 12 adaptive requests. Median paired overhead was 43.738 ms at a 32-token budget and 87.604 ms at 128 tokens; no phone tokens were used. This contains loss and does not demonstrate acceleration.
+- Retain policy/width fingerprints, decision blocks and contextual telemetry. Fix the collector clock boundary and show fallback-inclusive completed-service timing separately in Measurements.
+- A separate post-hoc network diagnostic timed out without samples. Energy, sustained thermals, larger targets and other phones/transports remain unqualified. Full protocol, raw records and trade-off matrix: research/phone-tradeoffs-2026-11-02/REPORT.md.
+- Validation: 138 host tests, seven desktop JavaScript suites, generated localization checks and 95-page documentation validation passed. All saved reports reproduce from raw sessions; fallback-inclusive timing is visible in the live dashboard.
+- Host tooling and desktop update only. Native inference engine and companion binaries are unchanged; public Android/iOS packages remain 0.2.11/build 13.
+
 ### 2026-11-02: NodeLift Impact v1: scoped time, TTFT, reliability, energy and uncertainty
 
 - Add an explicit paired native SSE collector, local impact-analysis API and Measurements import/export panel in English, Simplified Chinese and Italian. Reports retain fallback, missing and mismatched attempts for one model/device/connection scope.

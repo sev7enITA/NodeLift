@@ -1,0 +1,733 @@
+{
+  "schema_version": 1,
+  "scope": "exploratory cells, never pooled as independent sessions",
+  "cells": {
+    "local-fixed-32": {
+      "scope": {
+        "target_sha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+        "draft_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+        "native_sha256": "4aa209157112cdb4189e6a6b9d3d3d448fafb003aeb1eef8eba13c8efbaa0239",
+        "config_sha256": "ef6fe3b7a22b7cab08c918cd05d382539564a3006f675f4a4f5445d5f946e30f",
+        "host_id": "9912ede02932e2a7b32eff11d43588da5e67b8963acaa904eda22861964c776f",
+        "node_id": "host",
+        "connection": "6e624ef43e5906658aa5112eebf95526e6a58a7dc0ed0afe0766b54115d05c4e",
+        "candidate": "local_draft",
+        "warmup_policy": "one-unscored-pair; shared-residency-uncontrolled"
+      },
+      "display": {
+        "target_model": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+        "draft_model": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+        "candidate_device": "local host",
+        "connection_label": "host-local-speculation-control"
+      },
+      "configuration": {
+        "n_ctx": 2048,
+        "threads": 8,
+        "gpu_layers": 999,
+        "max_tokens": 32,
+        "draft_k": 4,
+        "remote_timeout_ms": 10000,
+        "draft_policy": "fixed",
+        "temperature": 0
+      },
+      "recorded_sessions": 1,
+      "independence_qualified": false,
+      "counts": {
+        "planned_pairs": 3,
+        "observed_host": 3,
+        "observed_candidate": 3,
+        "completed_host": 3,
+        "completed_candidate": 3,
+        "equivalent_pairs": 3,
+        "fallbacks": 0,
+        "accepted": 64,
+        "proposed": 123
+      },
+      "delivered_service_including_fallback": {
+        "host_ms": {
+          "n": 3,
+          "median": 233.5405,
+          "minimum": 224.945917,
+          "maximum": 273.787958
+        },
+        "candidate_ms": {
+          "n": 3,
+          "median": 338.393167,
+          "minimum": 328.190333,
+          "maximum": 467.449791
+        },
+        "added_ms": {
+          "n": 3,
+          "median": 113.44725,
+          "minimum": 94.649833,
+          "maximum": 193.661833
+        },
+        "slowdown_ratio": {
+          "n": 3,
+          "median": 1.5043312255363142,
+          "minimum": 1.4052823086359754,
+          "maximum": 1.7073424061988878
+        },
+        "ttft_change_ms": {
+          "n": 3,
+          "median": 31.050124999999998,
+          "minimum": 14.458416000000007,
+          "maximum": 35.69166700000001
+        },
+        "remote_wait_ms": {
+          "n": 3,
+          "median": 0,
+          "minimum": 0,
+          "maximum": 0
+        }
+      },
+      "accepted_fraction_of_proposals": 0.5203252032520326,
+      "disabled_reasons": {},
+      "reported_thermal_categories": [],
+      "battery_percent_snapshots": {
+        "n": 0,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "companion_process_bytes_snapshots": {
+        "n": 0,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "host_load_one_minute_snapshots": {
+        "n": 6,
+        "median": 7.18603515625,
+        "minimum": 6.9306640625,
+        "maximum": 7.18603515625
+      },
+      "energy": "unmeasured",
+      "pairs": [
+        {
+          "pair_id": "0",
+          "session": "7e5ae5659e664e419f5eb18c11da8552",
+          "order": "AB",
+          "equivalent": true,
+          "fallback": false,
+          "host_ms": 224.945917,
+          "candidate_ms": 338.393167,
+          "added_ms": 113.44725,
+          "slowdown_ratio": 1.5043312255363142,
+          "ttft_change_ms": 31.050124999999998,
+          "remote_wait_ms": 0,
+          "generated_tokens": 32
+        },
+        {
+          "pair_id": "1",
+          "session": "7e5ae5659e664e419f5eb18c11da8552",
+          "order": "BA",
+          "equivalent": true,
+          "fallback": false,
+          "host_ms": 233.5405,
+          "candidate_ms": 328.190333,
+          "added_ms": 94.649833,
+          "slowdown_ratio": 1.4052823086359754,
+          "ttft_change_ms": 14.458416000000007,
+          "remote_wait_ms": 0,
+          "generated_tokens": 32
+        },
+        {
+          "pair_id": "2",
+          "session": "7e5ae5659e664e419f5eb18c11da8552",
+          "order": "AB",
+          "equivalent": true,
+          "fallback": false,
+          "host_ms": 273.787958,
+          "candidate_ms": 467.449791,
+          "added_ms": 193.661833,
+          "slowdown_ratio": 1.7073424061988878,
+          "ttft_change_ms": 35.69166700000001,
+          "remote_wait_ms": 0,
+          "generated_tokens": 32
+        }
+      ]
+    },
+    "remote-adaptive-32": {
+      "scope": {
+        "target_sha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+        "draft_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+        "native_sha256": "4aa209157112cdb4189e6a6b9d3d3d448fafb003aeb1eef8eba13c8efbaa0239",
+        "config_sha256": "dd9054abc29dbedf0fc28a063f2810a783bae14aaf5440297d294fcfec84659d",
+        "host_id": "9912ede02932e2a7b32eff11d43588da5e67b8963acaa904eda22861964c776f",
+        "node_id": "c76a26bf8645bdfb773cfa37d96308acd4e8fad8512ca24857e09473e9def2bf",
+        "connection": "335d2e4ecfee4ea33578458ba4067588f50fbab85d0f9f90d64b09cb1ceef0f5",
+        "candidate": "remote_draft",
+        "warmup_policy": "one-unscored-pair; shared-residency-uncontrolled"
+      },
+      "display": {
+        "target_model": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+        "draft_model": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+        "candidate_device": "Xiaomi 25128PNA1C",
+        "connection_label": "xiaomi-hotspot-mac"
+      },
+      "configuration": {
+        "n_ctx": 2048,
+        "threads": 8,
+        "gpu_layers": 999,
+        "max_tokens": 32,
+        "draft_k": 4,
+        "remote_timeout_ms": 10000,
+        "draft_policy": "adaptive",
+        "temperature": 0
+      },
+      "recorded_sessions": 1,
+      "independence_qualified": false,
+      "counts": {
+        "planned_pairs": 6,
+        "observed_host": 6,
+        "observed_candidate": 6,
+        "completed_host": 6,
+        "completed_candidate": 6,
+        "equivalent_pairs": 6,
+        "fallbacks": 6,
+        "accepted": 0,
+        "proposed": 0
+      },
+      "delivered_service_including_fallback": {
+        "host_ms": {
+          "n": 6,
+          "median": 229.201792,
+          "minimum": 208.317542,
+          "maximum": 288.358584
+        },
+        "candidate_ms": {
+          "n": 6,
+          "median": 289.7624585,
+          "minimum": 266.746458,
+          "maximum": 305.39275
+        },
+        "added_ms": {
+          "n": 6,
+          "median": 43.73820800000003,
+          "minimum": 2.953708000000006,
+          "maximum": 97.07520799999998
+        },
+        "slowdown_ratio": {
+          "n": 6,
+          "median": 1.195595264590673,
+          "minimum": 1.0102431769466589,
+          "maximum": 1.465996320175475
+        },
+        "ttft_change_ms": {
+          "n": 6,
+          "median": 3.104896,
+          "minimum": -2.187166999999995,
+          "maximum": 4.078666999999996
+        },
+        "remote_wait_ms": {
+          "n": 6,
+          "median": 61.45033301436342,
+          "minimum": 56.91779201151803,
+          "maximum": 69.6555000031367
+        }
+      },
+      "accepted_fraction_of_proposals": null,
+      "disabled_reasons": {
+        "remote_probe_timeout": 6
+      },
+      "reported_thermal_categories": [
+        "nominal"
+      ],
+      "battery_percent_snapshots": {
+        "n": 12,
+        "median": 85.0,
+        "minimum": 85,
+        "maximum": 85
+      },
+      "companion_process_bytes_snapshots": {
+        "n": 12,
+        "median": 687776768.0,
+        "minimum": 687776768,
+        "maximum": 687776768
+      },
+      "host_load_one_minute_snapshots": {
+        "n": 12,
+        "median": 6.556640625,
+        "minimum": 6.556640625,
+        "maximum": 6.60546875
+      },
+      "energy": "unmeasured",
+      "pairs": [
+        {
+          "pair_id": "0",
+          "session": "63e6b5c0d61a4c58bee4e489e19522a8",
+          "order": "AB",
+          "equivalent": true,
+          "fallback": true,
+          "host_ms": 288.358584,
+          "candidate_ms": 291.312292,
+          "added_ms": 2.953708000000006,
+          "slowdown_ratio": 1.0102431769466589,
+          "ttft_change_ms": 4.078666999999996,
+          "remote_wait_ms": 69.6555000031367,
+          "generated_tokens": 32
+        },
+        {
+          "pair_id": "1",
+          "session": "63e6b5c0d61a4c58bee4e489e19522a8",
+          "order": "AB",
+          "equivalent": true,
+          "fallback": true,
+          "host_ms": 259.901084,
+          "candidate_ms": 288.212625,
+          "added_ms": 28.311540999999977,
+          "slowdown_ratio": 1.10893198506244,
+          "ttft_change_ms": 3.775374999999997,
+          "remote_wait_ms": 63.543374999426305,
+          "generated_tokens": 32
+        },
+        {
+          "pair_id": "2",
+          "session": "63e6b5c0d61a4c58bee4e489e19522a8",
+          "order": "AB",
+          "equivalent": true,
+          "fallback": true,
+          "host_ms": 208.317542,
+          "candidate_ms": 305.39275,
+          "added_ms": 97.07520799999998,
+          "slowdown_ratio": 1.465996320175475,
+          "ttft_change_ms": -2.187166999999995,
+          "remote_wait_ms": 65.90854201931506,
+          "generated_tokens": 32
+        },
+        {
+          "pair_id": "3",
+          "session": "63e6b5c0d61a4c58bee4e489e19522a8",
+          "order": "BA",
+          "equivalent": true,
+          "fallback": true,
+          "host_ms": 235.514042,
+          "candidate_ms": 272.043084,
+          "added_ms": 36.52904200000003,
+          "slowdown_ratio": 1.1551034566338088,
+          "ttft_change_ms": 2.4344170000000034,
+          "remote_wait_ms": 56.91779201151803,
+          "generated_tokens": 32
+        },
+        {
+          "pair_id": "4",
+          "session": "63e6b5c0d61a4c58bee4e489e19522a8",
+          "order": "BA",
+          "equivalent": true,
+          "fallback": true,
+          "host_ms": 215.799084,
+          "candidate_ms": 266.746458,
+          "added_ms": 50.947374000000025,
+          "slowdown_ratio": 1.236087072547537,
+          "ttft_change_ms": 3.830333000000003,
+          "remote_wait_ms": 59.35729102930054,
+          "generated_tokens": 32
+        },
+        {
+          "pair_id": "5",
+          "session": "63e6b5c0d61a4c58bee4e489e19522a8",
+          "order": "BA",
+          "equivalent": true,
+          "fallback": true,
+          "host_ms": 222.889542,
+          "candidate_ms": 303.466542,
+          "added_ms": 80.577,
+          "slowdown_ratio": 1.3615109048050356,
+          "ttft_change_ms": 1.3691239999999993,
+          "remote_wait_ms": 59.05195797095075,
+          "generated_tokens": 32
+        }
+      ]
+    },
+    "remote-fixed-32": {
+      "scope": {
+        "target_sha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+        "draft_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+        "native_sha256": "4aa209157112cdb4189e6a6b9d3d3d448fafb003aeb1eef8eba13c8efbaa0239",
+        "config_sha256": "ef6fe3b7a22b7cab08c918cd05d382539564a3006f675f4a4f5445d5f946e30f",
+        "host_id": "9912ede02932e2a7b32eff11d43588da5e67b8963acaa904eda22861964c776f",
+        "node_id": "c76a26bf8645bdfb773cfa37d96308acd4e8fad8512ca24857e09473e9def2bf",
+        "connection": "335d2e4ecfee4ea33578458ba4067588f50fbab85d0f9f90d64b09cb1ceef0f5",
+        "candidate": "remote_draft",
+        "warmup_policy": "one-unscored-pair; shared-residency-uncontrolled"
+      },
+      "display": {
+        "target_model": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+        "draft_model": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+        "candidate_device": "Xiaomi 25128PNA1C",
+        "connection_label": "xiaomi-hotspot-mac"
+      },
+      "configuration": {
+        "n_ctx": 2048,
+        "threads": 8,
+        "gpu_layers": 999,
+        "max_tokens": 32,
+        "draft_k": 4,
+        "remote_timeout_ms": 10000,
+        "draft_policy": "fixed",
+        "temperature": 0
+      },
+      "recorded_sessions": 1,
+      "independence_qualified": false,
+      "counts": {
+        "planned_pairs": 6,
+        "observed_host": 6,
+        "observed_candidate": 6,
+        "completed_host": 6,
+        "completed_candidate": 6,
+        "equivalent_pairs": 6,
+        "fallbacks": 0,
+        "accepted": 128,
+        "proposed": 250
+      },
+      "delivered_service_including_fallback": {
+        "host_ms": {
+          "n": 6,
+          "median": 251.61895850000002,
+          "minimum": 233.27975,
+          "maximum": 342.710292
+        },
+        "candidate_ms": {
+          "n": 6,
+          "median": 35068.131042,
+          "minimum": 29543.396375,
+          "maximum": 46274.517166
+        },
+        "added_ms": {
+          "n": 6,
+          "median": 34763.883521,
+          "minimum": 29282.59325,
+          "maximum": 46038.171375
+        },
+        "slowdown_ratio": {
+          "n": 6,
+          "median": 134.9489324562732,
+          "minimum": 95.8498686085564,
+          "maximum": 195.79158558402253
+        },
+        "ttft_change_ms": {
+          "n": 6,
+          "median": 8321.120707999999,
+          "minimum": 2626.494958,
+          "maximum": 9022.288875
+        },
+        "remote_wait_ms": {
+          "n": 6,
+          "median": 34740.971040941076,
+          "minimum": 29206.267292029224,
+          "maximum": 45853.92158391187
+        }
+      },
+      "accepted_fraction_of_proposals": 0.512,
+      "disabled_reasons": {},
+      "reported_thermal_categories": [
+        "nominal"
+      ],
+      "battery_percent_snapshots": {
+        "n": 12,
+        "median": 84.0,
+        "minimum": 83,
+        "maximum": 84
+      },
+      "companion_process_bytes_snapshots": {
+        "n": 12,
+        "median": 695878656.0,
+        "minimum": 689048576,
+        "maximum": 712951808
+      },
+      "host_load_one_minute_snapshots": {
+        "n": 12,
+        "median": 8.0146484375,
+        "minimum": 6.3876953125,
+        "maximum": 9.47314453125
+      },
+      "energy": "unmeasured",
+      "pairs": [
+        {
+          "pair_id": "0",
+          "session": "68dbb03d625340ffacd22fcef3d75cd3",
+          "order": "AB",
+          "equivalent": true,
+          "fallback": false,
+          "host_ms": 260.803125,
+          "candidate_ms": 29543.396375,
+          "added_ms": 29282.59325,
+          "slowdown_ratio": 113.27853673149046,
+          "ttft_change_ms": 2626.494958,
+          "remote_wait_ms": 29206.267292029224,
+          "generated_tokens": 32
+        },
+        {
+          "pair_id": "1",
+          "session": "68dbb03d625340ffacd22fcef3d75cd3",
+          "order": "BA",
+          "equivalent": true,
+          "fallback": false,
+          "host_ms": 233.27975,
+          "candidate_ms": 30234.378583,
+          "added_ms": 30001.098833,
+          "slowdown_ratio": 129.60567122950022,
+          "ttft_change_ms": 8398.0625,
+          "remote_wait_ms": 29929.947583004832,
+          "generated_tokens": 32
+        },
+        {
+          "pair_id": "2",
+          "session": "68dbb03d625340ffacd22fcef3d75cd3",
+          "order": "AB",
+          "equivalent": true,
+          "fallback": false,
+          "host_ms": 242.434792,
+          "candidate_ms": 42383.561833,
+          "added_ms": 42141.127041,
+          "slowdown_ratio": 174.82458471967178,
+          "ttft_change_ms": 7757.647708,
+          "remote_wait_ms": 41961.971874174196,
+          "generated_tokens": 32
+        },
+        {
+          "pair_id": "3",
+          "session": "68dbb03d625340ffacd22fcef3d75cd3",
+          "order": "BA",
+          "equivalent": true,
+          "fallback": false,
+          "host_ms": 265.78475,
+          "candidate_ms": 37287.525625,
+          "added_ms": 37021.740875,
+          "slowdown_ratio": 140.29219368304618,
+          "ttft_change_ms": 8446.4275,
+          "remote_wait_ms": 36915.39345891215,
+          "generated_tokens": 32
+        },
+        {
+          "pair_id": "4",
+          "session": "68dbb03d625340ffacd22fcef3d75cd3",
+          "order": "AB",
+          "equivalent": true,
+          "fallback": false,
+          "host_ms": 342.710292,
+          "candidate_ms": 32848.736459,
+          "added_ms": 32506.026167,
+          "slowdown_ratio": 95.8498686085564,
+          "ttft_change_ms": 9022.288875,
+          "remote_wait_ms": 32566.548622970004,
+          "generated_tokens": 32
+        },
+        {
+          "pair_id": "5",
+          "session": "68dbb03d625340ffacd22fcef3d75cd3",
+          "order": "BA",
+          "equivalent": true,
+          "fallback": false,
+          "host_ms": 236.345791,
+          "candidate_ms": 46274.517166,
+          "added_ms": 46038.171375,
+          "slowdown_ratio": 195.79158558402253,
+          "ttft_change_ms": 8244.178915999999,
+          "remote_wait_ms": 45853.92158391187,
+          "generated_tokens": 32
+        }
+      ]
+    },
+    "remote-adaptive-128": {
+      "scope": {
+        "target_sha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+        "draft_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+        "native_sha256": "4aa209157112cdb4189e6a6b9d3d3d448fafb003aeb1eef8eba13c8efbaa0239",
+        "config_sha256": "49b77371d9ecb1e9e0b6dd1c4accbae40b94c19d46d8d9356558fef7d085659b",
+        "host_id": "9912ede02932e2a7b32eff11d43588da5e67b8963acaa904eda22861964c776f",
+        "node_id": "c76a26bf8645bdfb773cfa37d96308acd4e8fad8512ca24857e09473e9def2bf",
+        "connection": "335d2e4ecfee4ea33578458ba4067588f50fbab85d0f9f90d64b09cb1ceef0f5",
+        "candidate": "remote_draft",
+        "warmup_policy": "one-unscored-pair; shared-residency-uncontrolled"
+      },
+      "display": {
+        "target_model": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+        "draft_model": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+        "candidate_device": "Xiaomi 25128PNA1C",
+        "connection_label": "xiaomi-hotspot-mac"
+      },
+      "configuration": {
+        "n_ctx": 2048,
+        "threads": 8,
+        "gpu_layers": 999,
+        "max_tokens": 128,
+        "draft_k": 4,
+        "remote_timeout_ms": 10000,
+        "draft_policy": "adaptive",
+        "temperature": 0
+      },
+      "recorded_sessions": 1,
+      "independence_qualified": false,
+      "counts": {
+        "planned_pairs": 6,
+        "observed_host": 6,
+        "observed_candidate": 6,
+        "completed_host": 6,
+        "completed_candidate": 6,
+        "equivalent_pairs": 6,
+        "fallbacks": 6,
+        "accepted": 0,
+        "proposed": 0
+      },
+      "delivered_service_including_fallback": {
+        "host_ms": {
+          "n": 6,
+          "median": 791.5073955,
+          "minimum": 316.193458,
+          "maximum": 922.920125
+        },
+        "candidate_ms": {
+          "n": 6,
+          "median": 898.5556455,
+          "minimum": 340.465875,
+          "maximum": 974.205584
+        },
+        "added_ms": {
+          "n": 6,
+          "median": 87.60429200000004,
+          "minimum": 24.27241699999996,
+          "maximum": 108.77954199999999
+        },
+        "slowdown_ratio": {
+          "n": 6,
+          "median": 1.1208053158734292,
+          "minimum": 1.0488733605196874,
+          "maximum": 1.2334397658168474
+        },
+        "ttft_change_ms": {
+          "n": 6,
+          "median": -4.788791,
+          "minimum": -18.256166999999998,
+          "maximum": 7.380041999999996
+        },
+        "remote_wait_ms": {
+          "n": 6,
+          "median": 61.386457993648946,
+          "minimum": 55.419125012122095,
+          "maximum": 62.2356659732759
+        }
+      },
+      "accepted_fraction_of_proposals": null,
+      "disabled_reasons": {
+        "remote_probe_timeout": 6
+      },
+      "reported_thermal_categories": [
+        "nominal"
+      ],
+      "battery_percent_snapshots": {
+        "n": 12,
+        "median": 83.0,
+        "minimum": 83,
+        "maximum": 83
+      },
+      "companion_process_bytes_snapshots": {
+        "n": 12,
+        "median": 717596672.0,
+        "minimum": 717596672,
+        "maximum": 717596672
+      },
+      "host_load_one_minute_snapshots": {
+        "n": 12,
+        "median": 7.962890625,
+        "minimum": 7.56982421875,
+        "maximum": 8.044921875
+      },
+      "energy": "unmeasured",
+      "pairs": [
+        {
+          "pair_id": "0",
+          "session": "ad800070df8b4146ac3c0a8557139c17",
+          "order": "AB",
+          "equivalent": true,
+          "fallback": true,
+          "host_ms": 338.70925,
+          "candidate_ms": 417.777458,
+          "added_ms": 79.06820800000003,
+          "slowdown_ratio": 1.2334397658168474,
+          "ttft_change_ms": 7.380041999999996,
+          "remote_wait_ms": 62.2356659732759,
+          "generated_tokens": 46
+        },
+        {
+          "pair_id": "1",
+          "session": "ad800070df8b4146ac3c0a8557139c17",
+          "order": "BA",
+          "equivalent": true,
+          "fallback": true,
+          "host_ms": 878.065208,
+          "candidate_ms": 974.205584,
+          "added_ms": 96.14037600000006,
+          "slowdown_ratio": 1.1094911575177684,
+          "ttft_change_ms": -3.905832999999994,
+          "remote_wait_ms": 60.901957971509546,
+          "generated_tokens": 128
+        },
+        {
+          "pair_id": "2",
+          "session": "ad800070df8b4146ac3c0a8557139c17",
+          "order": "BA",
+          "equivalent": true,
+          "fallback": true,
+          "host_ms": 797.13425,
+          "candidate_ms": 902.451208,
+          "added_ms": 105.316958,
+          "slowdown_ratio": 1.13211947422909,
+          "ttft_change_ms": -10.301834,
+          "remote_wait_ms": 62.120791990309954,
+          "generated_tokens": 110
+        },
+        {
+          "pair_id": "3",
+          "session": "ad800070df8b4146ac3c0a8557139c17",
+          "order": "BA",
+          "equivalent": true,
+          "fallback": true,
+          "host_ms": 316.193458,
+          "candidate_ms": 340.465875,
+          "added_ms": 24.27241699999996,
+          "slowdown_ratio": 1.0767644503258507,
+          "ttft_change_ms": -5.6717490000000055,
+          "remote_wait_ms": 55.77195901423693,
+          "generated_tokens": 46
+        },
+        {
+          "pair_id": "4",
+          "session": "ad800070df8b4146ac3c0a8557139c17",
+          "order": "AB",
+          "equivalent": true,
+          "fallback": true,
+          "host_ms": 922.920125,
+          "candidate_ms": 968.026333,
+          "added_ms": 45.10620800000004,
+          "slowdown_ratio": 1.0488733605196874,
+          "ttft_change_ms": 1.9605830000000068,
+          "remote_wait_ms": 61.87095801578835,
+          "generated_tokens": 128
+        },
+        {
+          "pair_id": "5",
+          "session": "ad800070df8b4146ac3c0a8557139c17",
+          "order": "AB",
+          "equivalent": true,
+          "fallback": true,
+          "host_ms": 785.880541,
+          "candidate_ms": 894.660083,
+          "added_ms": 108.77954199999999,
+          "slowdown_ratio": 1.1384174010232937,
+          "ttft_change_ms": -18.256166999999998,
+          "remote_wait_ms": 55.419125012122095,
+          "generated_tokens": 110
+        }
+      ]
+    },
+    "remote-fixed-128": {
+      "status": "not_scheduled",
+      "rule": "Run only if fixed-32 delivered-service median slowdown <=5 and at least half requests finish without fallback.",
+      "observed_slowdown_ratio": 134.9489324562732,
+      "observed_without_fallback_fraction": 1.0,
+      "reason": "32-token fixed delegation exceeded the predeclared slowdown threshold. No 128-token fixed performance is inferred."
+    }
+  }
+}

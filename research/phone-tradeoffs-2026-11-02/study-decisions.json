@@ -1,0 +1,9 @@
+{
+  "remote-fixed-128": {
+    "status": "not_scheduled",
+    "rule": "Run only if fixed-32 delivered-service median slowdown <=5 and at least half requests finish without fallback.",
+    "observed_slowdown_ratio": 134.9489324562732,
+    "observed_without_fallback_fraction": 1.0,
+    "reason": "32-token fixed delegation exceeded the predeclared slowdown threshold. No 128-token fixed performance is inferred."
+  }
+}

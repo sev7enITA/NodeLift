@@ -237,6 +237,14 @@
 <p><strong>Limits:</strong> The remote test node was emulated. Physical-phone inference/speedup, sustained thermals, capacity sharding, hybrid speculative checkpoints, HarmonyOS native worker and installed LM Studio GUI qualification remained open. The 27B upstream kernel result is not NodeLift hybrid-model support.</p>
 <p><a href="https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.1" target="_blank" rel="noopener noreferrer">Release assets and original notes ↗</a></p></div></details>
 <details class="release-entry"><summary><strong>Host, documentation and tooling updates</strong></summary><div class="release-body">
+<h3>2026-11-02: Physical Xiaomi trade-offs: latency loss and adaptive containment</h3><ul>
+<li>Run 18 new physical Xiaomi-versus-Mac pairs plus 3 local-draft control pairs with matching outputs. Fixed phone drafting at a 32-token budget showed a median 134.949x slowdown in this model/hotspot scope.</li>
+<li>Adaptive phone probing returned to the host in all 12 adaptive requests. Median paired overhead was 43.738 ms at a 32-token budget and 87.604 ms at 128 tokens; no phone tokens were used. This contains loss and does not demonstrate acceleration.</li>
+<li>Retain policy/width fingerprints, decision blocks and contextual telemetry. Fix the collector clock boundary and show fallback-inclusive completed-service timing separately in Measurements.</li>
+<li>A separate post-hoc network diagnostic timed out without samples. Energy, sustained thermals, larger targets and other phones/transports remain unqualified. Full protocol, raw records and trade-off matrix: research/phone-tradeoffs-2026-11-02/REPORT.md.</li>
+<li>Validation: 138 host tests, seven desktop JavaScript suites, generated localization checks and 95-page documentation validation passed. All saved reports reproduce from raw sessions; fallback-inclusive timing is visible in the live dashboard.</li>
+<li>Host tooling and desktop update only. Native inference engine and companion binaries are unchanged; public Android/iOS packages remain 0.2.11/build 13.</li>
+</ul>
 <h3>2026-11-02: NodeLift Impact v1: scoped time, TTFT, reliability, energy and uncertainty</h3><ul>
 <li>Add an explicit paired native SSE collector, local impact-analysis API and Measurements import/export panel in English, Simplified Chinese and Italian. Reports retain fallback, missing and mismatched attempts for one model/device/connection scope.</li>
 <li>Implement whole-session bootstrap uncertainty, full-coverage instrumented-energy integration and explicit qualification gates. Missing energy remains unavailable; effective offload, residency and independent-session attestation remain incomplete, so automatic routing promotion is disabled.</li>

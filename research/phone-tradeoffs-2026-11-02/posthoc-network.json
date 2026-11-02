@@ -1,0 +1,12 @@
+{
+  "scope": "post-hoc standalone diagnostic after LLM cells; not synchronized with inference",
+  "job": {
+    "id": "202afec95f32f208c41e2d01",
+    "kind": "network",
+    "state": "timed_out",
+    "created": 1793594280.401522,
+    "started": 1793594283.890818,
+    "finished": 1793594405.121645,
+    "result": null
+  }
+}

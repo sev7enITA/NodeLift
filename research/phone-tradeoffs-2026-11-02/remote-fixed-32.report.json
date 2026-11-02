@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "algorithm": "nodelift-impact-v1",
+  "scope": {
+    "target_sha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+    "draft_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+    "native_sha256": "4aa209157112cdb4189e6a6b9d3d3d448fafb003aeb1eef8eba13c8efbaa0239",
+    "config_sha256": "ef6fe3b7a22b7cab08c918cd05d382539564a3006f675f4a4f5445d5f946e30f",
+    "host_id": "9912ede02932e2a7b32eff11d43588da5e67b8963acaa904eda22861964c776f",
+    "node_id": "c76a26bf8645bdfb773cfa37d96308acd4e8fad8512ca24857e09473e9def2bf",
+    "connection": "335d2e4ecfee4ea33578458ba4067588f50fbab85d0f9f90d64b09cb1ceef0f5",
+    "candidate": "remote_draft",
+    "warmup_policy": "one-unscored-pair; shared-residency-uncontrolled"
+  },
+  "display": {
+    "target_model": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+    "draft_model": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+    "candidate_device": "Xiaomi 25128PNA1C",
+    "connection_label": "xiaomi-hotspot-mac"
+  },
+  "verdict": "insufficient_evidence",
+  "reasons": [
+    "At least 10 independent sessions and 30 eligible pairs are required for the descriptive decision rule."
+  ],
+  "counts": {
+    "planned_pairs": 6,
+    "eligible_pairs": 6,
+    "clusters": 1,
+    "mismatched_pairs": 0,
+    "missing_runs": 0,
+    "invalid_pairs": 0
+  },
+  "time_saved_ms": {
+    "estimate": -34763.883521,
+    "ci95": null,
+    "n": 6,
+    "clusters": 1
+  },
+  "time_saved_percent": {
+    "estimate": -13394.893245627318,
+    "ci95": null,
+    "n": 6,
+    "clusters": 1
+  },
+  "ttft_change_ms": {
+    "estimate": 8321.120707999999,
+    "ci95": null,
+    "n": 6,
+    "clusters": 1
+  },
+  "energy_saved_joules": null,
+  "service_time_saved_ms": {
+    "estimate": -34763.883521,
+    "ci95": null,
+    "n": 6,
+    "clusters": 1
+  },
+  "service_ttft_change_ms": {
+    "estimate": 8321.120707999999,
+    "ci95": null,
+    "n": 6,
+    "clusters": 1
+  },
+  "service_scope": "Completed output-equivalent pairs including fallback; missing/failed attempts remain in reliability, with no imputed duration.",
+  "reliability": {
+    "host": {
+      "planned": 6,
+      "observed": 6,
+      "completed": 6,
+      "correct": 6,
+      "missing": 0,
+      "fallback": 0,
+      "strict_success": 6,
+      "failed": 0,
+      "cancelled": 0,
+      "completion_rate": 1.0,
+      "strict_success_rate": 1.0,
+      "wilson95": [
+        0.6096657120978346,
+        1
+      ],
+      "wilson_scope": "IID descriptive only; session correlation is not modeled"
+    },
+    "candidate": {
+      "planned": 6,
+      "observed": 6,
+      "completed": 6,
+      "correct": 6,
+      "missing": 0,
+      "fallback": 0,
+      "strict_success": 6,
+      "failed": 0,
+      "cancelled": 0,
+      "completion_rate": 1.0,
+      "strict_success_rate": 1.0,
+      "wilson95": [
+        0.6096657120978346,
+        1
+      ],
+      "wilson_scope": "IID descriptive only; session correlation is not modeled"
+    },
+    "completion_change": {
+      "estimate": 0,
+      "ci95": null,
+      "n": 6,
+      "clusters": 1
+    },
+    "strict_success_change": {
+      "estimate": 0,
+      "ci95": null,
+      "n": 6,
+      "clusters": 1
+    },
+    "completion_change_definition": "candidate minus host completed fraction, all planned pairs; fallback may have completed"
+  },
+  "energy": {
+    "status": "unavailable",
+    "valid_pairs": 0,
+    "planned_pairs": 6,
+    "reasons": [
+      "energy absent"
+    ]
+  },
+  "evidence": {
+    "kind": "physical",
+    "clock": "client_sse_first_nonempty_text",
+    "confidence_method": "session_cluster_percentile_bootstrap",
+    "confidence_scope": "Approximate sampling uncertainty only; not measurement uncertainty or a guarantee."
+  },
+  "qualified_recommendation": false,
+  "statistical_signal": "insufficient_evidence",
+  "gates": {
+    "output_equivalence": "pass",
+    "sample_size": "blocked",
+    "execution_attestation": "blocked",
+    "residency_control": "blocked",
+    "session_independence": "unverified",
+    "energy_coverage": "blocked",
+    "routing_promotion": "disabled"
+  },
+  "policy": {
+    "minimum_sessions": 10,
+    "minimum_pairs": 30,
+    "time_margin_percent": 5,
+    "ttft_regression_tolerance_ms": 0,
+    "bootstrap_replicates": 2000,
+    "seed": 731921
+  },
+  "exclusions": [],
+  "paired_observations": [
+    {
+      "session": "68dbb03d625340ffacd22fcef3d75cd3",
+      "pair_id": "0",
+      "order": "AB",
+      "time_saved_ms": -29282.59325,
+      "ttft_change_ms": 2626.494958
+    },
+    {
+      "session": "68dbb03d625340ffacd22fcef3d75cd3",
+      "pair_id": "1",
+      "order": "BA",
+      "time_saved_ms": -30001.098833,
+      "ttft_change_ms": 8398.0625
+    },
+    {
+      "session": "68dbb03d625340ffacd22fcef3d75cd3",
+      "pair_id": "2",
+      "order": "AB",
+      "time_saved_ms": -42141.127041,
+      "ttft_change_ms": 7757.647708
+    },
+    {
+      "session": "68dbb03d625340ffacd22fcef3d75cd3",
+      "pair_id": "3",
+      "order": "BA",
+      "time_saved_ms": -37021.740875,
+      "ttft_change_ms": 8446.4275
+    },
+    {
+      "session": "68dbb03d625340ffacd22fcef3d75cd3",
+      "pair_id": "4",
+      "order": "AB",
+      "time_saved_ms": -32506.026167,
+      "ttft_change_ms": 9022.288875
+    },
+    {
+      "session": "68dbb03d625340ffacd22fcef3d75cd3",
+      "pair_id": "5",
+      "order": "BA",
+      "time_saved_ms": -46038.171375,
+      "ttft_change_ms": 8244.178915999999
+    }
+  ],
+  "limitations": [
+    "Imported records are not independent hardware attestation.",
+    "Time and TTFT estimates are conditional on complete, identical-output, fallback-free pairs.",
+    "Sessions must be independently collected; changing a session ID does not create independence.",
+    "Confidence intervals describe sampling variability, not systematic or meter uncertainty.",
+    "No effective GPU-offload or memory-residency attestation: no qualified routing recommendation.",
+    "No automatic scheduler promotion; results apply only to the recorded scope."
+  ]
+}

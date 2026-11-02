@@ -100,3 +100,9 @@ See [initial physical observations and model-review adjudication](../research/im
 - [MLCommons edge inference](https://mlcommons.org/benchmarks/inference-edge/): whole-system measured power reference. NodeLift is not MLPerf-certified.
 
 Project and policy author: [Fabrizio Degni](https://www.fabriziodegni.com/). GLM 5.3 Max and Gemini 4 Argon with High reasoning provided methodology reviews; they did not independently operate the physical phones or validate the measurements.
+
+## Physical trade-off follow-up
+
+The collector now accepts `--policy fixed|adaptive` and `--draft-k 1..16`. Both values enter the configuration fingerprint, so different policies cannot be pooled into one comparison. Decision blocks preserve accepted/rejected proposals, effective route, native host timing and remote wait. Remote wait includes transport, polling and worker computation; it is not pure network latency. Out-of-band before/after snapshots retain OS load and reported phone thermal, battery and memory context, without turning these into energy measurements.
+
+See the [frozen physical trade-off plan](../research/phone-tradeoffs-2026-11-02/PLAN.md) and [observations](../research/phone-tradeoffs-2026-11-02/REPORT.md). Current instrumentation also fixes a clock-boundary error: final admin lookup time is excluded from the wall/monotonic discontinuity check. Earlier recorded client durations are not rewritten.

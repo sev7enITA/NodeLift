@@ -1152,5 +1152,12 @@
   "meter scope differs": "仪表测量范围不同",
   "Candidate device": "候选设备",
   "Connection label": "连接标签",
-  "Labels identify the recorded setup. Exact hashes and configuration in the comparison scope remain authoritative.": "标签用于识别记录的设置。比较范围中的精确哈希值和配置仍是权威依据。"
+  "Labels identify the recorded setup. Exact hashes and configuration in the comparison scope remain authoritative.": "标签用于识别记录的设置。比较范围中的精确哈希值和配置仍是权威依据。",
+  "Completed service including fallback": "已完成服务（包括回退）",
+  "These timings include fallback in completed service. They are not proof of phone acceleration. Primary timing metrics above exclude fallback pairs.": "这些时间包含已完成服务中的回退，不能证明手机带来了加速。上方主要时间指标排除了发生回退的配对。",
+  "Service time saved": "服务节省时间",
+  "Service TTFT change": "服务首字延迟变化",
+  "Pairs included: {0}": "包含的配对：{0}",
+  "{0} missing · {1} fallbacks · {2} matched outputs without fallback": "缺失 {0} · 回退 {1} · 无回退的匹配输出 {2}",
+  "{0} session clusters with eligible pairs · {1} missing runs · {2} mismatched pairs": "含有效配对的会话簇 {0} · 缺失运行 {1} · 不匹配配对 {2}"
 }

@@ -63,11 +63,11 @@ class Client:
         finally:
             c.close()
 
-    def capture(self, prompt, mode, node, budget, timeout_ms):
+    def capture(self, prompt, mode, node, budget, timeout_ms, policy="fixed", draft_k=4):
         body = {'model': 'nodelift', 'messages': [{'role': 'user', 'content': prompt}],
                 'stream': True, 'temperature': 0, 'max_tokens': budget,
-                'nodelift_mode': mode, 'nodelift_draft_k': 4,
-                'nodelift_draft_policy': 'fixed', 'nodelift_remote_timeout_ms': timeout_ms}
+                'nodelift_mode': mode, 'nodelift_draft_k': draft_k,
+                'nodelift_draft_policy': policy, 'nodelift_remote_timeout_ms': timeout_ms}
         if mode == 'remote_draft':
             body['nodelift_node_id'] = node
         c = http.client.HTTPConnection('127.0.0.1', self.port, timeout=30)
@@ -119,6 +119,7 @@ class Client:
             error = 'cancelled'
         finally:
             ended = time.perf_counter_ns()
+            wall_ended = time.time_ns()
             c.close()
             if not done and run_id:
                 try:
@@ -133,7 +134,7 @@ class Client:
                 if final and final['status'] in ('completed', 'failed', 'cancelled'):
                     break
                 time.sleep(.1)
-        clock_drift_ms = abs((time.time_ns()-wall_started)-(ended-started))/1e6
+        clock_drift_ms = abs((wall_ended-wall_started)-(ended-started))/1e6
         if clock_drift_ms > 1000:
             error = 'clock_discontinuity'
         good = bool(done and not error and first is not None and final and final['status'] == 'completed')
@@ -146,9 +147,22 @@ class Client:
                   'tokens_sha256': digest(tokens) if tokens else None, 'token_count': len(tokens),
                   'finish_reason': finish, 'fallback': bool(metrics.get('fallbacks') or (final or {}).get('fallback_reason')),
                   'chunk_arrivals': arrivals, 'stream_text_sha256': digest(''.join(text)),
-                  'metrics': {k: metrics.get(k) for k in ('load_ms', 'prefill_ms', 'request_total_ms', 'remote_wait_ms', 'accepted_tokens', 'proposed_tokens', 'fallbacks')},
+                  'metrics': {k: metrics.get(k) for k in ('load_ms', 'prefill_ms', 'request_total_ms', 'remote_wait_ms', 'accepted_tokens', 'proposed_tokens', 'fallbacks', 'draft_disabled_reason')},
+                  'blocks': [{k: b.get(k) for k in ('generated','accepted','proposed','draft_ms','block_ms','effective_mode','verification_batch_width','native_ms','effective_timeout_ms','decision','round_ms')} for b in (final or {}).get('blocks', [])],
                   'identity': (final or {}).get('identity', {})}
         return result
+
+
+
+def telemetry(node):
+    """Out-of-band snapshots, not power measurements or continuous monitoring."""
+    caps = (node or {}).get('capabilities', {})
+    return {'host_load_average': list(os.getloadavg()) if hasattr(os, 'getloadavg') else None,
+            'observed_at_unix': time.time(),
+            'companion': {k: caps.get(k) for k in ('thermal', 'battery_percent', 'available_memory_bytes',
+                         'process_memory_bytes', 'app_version', 'lifecycle', 'transport')},
+            'capabilities_updated_at': (node or {}).get('capabilities_updated_at'),
+            'evidence': 'OS load averages and self-reported companion snapshots; not measured energy'}
 
 
 def collect(args):
@@ -172,8 +186,8 @@ def collect(args):
                          'peer': (node or {}).get('ip_address')})
     # Paths and LAN addresses are never exported. Hashes identify exact artifacts.
     config_public = {k: v for k, v in config.items() if k not in ('target_model', 'draft_model')}
-    config_public.update(max_tokens=args.tokens, draft_k=4, remote_timeout_ms=args.remote_timeout_ms,
-                         draft_policy='fixed', temperature=0)
+    config_public.update(max_tokens=args.tokens, draft_k=args.draft_k, remote_timeout_ms=args.remote_timeout_ms,
+                         draft_policy=args.policy, temperature=0)
     scope = {'target_sha256': target, 'draft_sha256': draft, 'native_sha256': native,
              'config_sha256': digest(config_public), 'host_id': digest(platform.node()),
              'node_id': digest(args.node) if args.node else 'host', 'connection': connection,
@@ -185,7 +199,7 @@ def collect(args):
     plan = [{'id': str(i), 'prompt_sha256': digest(PROMPTS[i%3]), 'order': orders[i], 'max_tokens': args.tokens}
             for i in range(3*args.repetitions)]
     session = {'id': sid, 'plan': plan, 'plan_sha256': digest(plan), 'scope_sha256': digest(scope),
-               'attempts': [], 'seed': args.seed, 'warmup': [], 'started_at_utc': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}
+               'attempts': [], 'configuration': config_public, 'seed': args.seed, 'warmup': [], 'started_at_utc': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}
     data = {'schema_version': 1, 'runner': VERSION, 'collector_sha256': file_hash(__file__), 'scope': scope,
             'evidence_kind': 'control' if args.candidate == 'host' else 'physical' if args.candidate == 'remote_draft' else 'local',
             'display': {'target_model': Path(config['target_model']).name, 'draft_model': Path(config['draft_model']).name if config.get('draft_model') else 'none', 'candidate_device': str((node or {}).get('capabilities', {}).get('model', 'local host')), 'connection_label': args.connection},
@@ -212,11 +226,15 @@ def collect(args):
                 not peer['capabilities'].get('engine_ready') or peer['capabilities'].get('draft_sha256') != draft or
                 peer.get('session_started_at') != initial_epoch or peer.get('ip_address') != node.get('ip_address')):
             raise ValueError('Companion offline or connection epoch changed')
+        if peer and peer.get('capabilities', {}).get('thermal') in ('severe','critical','emergency','shutdown'):
+            raise ValueError('Companion thermal condition unsuitable for further load')
+        if peer and isinstance(peer.get('capabilities', {}).get('battery_percent'), (int,float)) and peer['capabilities']['battery_percent'] < 20:
+            raise ValueError('Companion battery below 20 percent')
         return peer
 
     for mode in ('host', args.candidate):
         check_scope()
-        warm = client.capture(PROMPTS[0], mode, args.node, args.tokens, args.remote_timeout_ms)
+        warm = client.capture(PROMPTS[0], mode, args.node, args.tokens, args.remote_timeout_ms, args.policy, args.draft_k)
         warm.pop('identity', None)
         session['warmup'].append(warm)
         atomic(args.output, data)
@@ -225,16 +243,19 @@ def collect(args):
     for p in plan:
         for arm in ('host', 'candidate') if p['order'] == 'AB' else ('candidate', 'host'):
             try:
-                check_scope()
+                peer_before = check_scope()
+                before_telemetry = telemetry(peer_before)
                 result = client.capture(PROMPTS[int(p['id'])%3], 'host' if arm == 'host' else args.candidate,
-                                        args.node, args.tokens, args.remote_timeout_ms)
+                                        args.node, args.tokens, args.remote_timeout_ms, args.policy, args.draft_k)
                 identity = result.pop('identity')
                 identity_ok = (identity.get('target_sha256') == target and
                                (identity.get('draft_sha256') or 'none') == (draft if arm == 'candidate' and args.candidate != 'host' else 'none') and identity.get('config') == config)
                 if not identity_ok:
                     result['status'], result['error_code'] = 'invalid', 'run_identity_mismatch'
                 try:
-                    check_scope()
+                    peer_after = check_scope()
+                    result['telemetry_before'] = before_telemetry
+                    result['telemetry_after'] = telemetry(peer_after)
                 except ValueError:
                     result['status'], result['error_code'] = 'invalid', 'post_run_scope_drift'
             except (ValueError, OSError, KeyboardInterrupt) as exc:
@@ -270,6 +291,8 @@ def main():
     c.add_argument('--repetitions', type=int, choices=range(1, 11), default=1)
     c.add_argument('--tokens', type=int, choices=range(1, 513), default=64)
     c.add_argument('--remote-timeout-ms', type=int, choices=range(500, 60001), default=10000)
+    c.add_argument('--policy', choices=('fixed','adaptive'), default='fixed')
+    c.add_argument('--draft-k', type=int, choices=range(1,17), default=4)
     c.add_argument('--seed', type=int, default=731921)
     c.add_argument('--output', type=Path, required=True)
     args = p.parse_args()
