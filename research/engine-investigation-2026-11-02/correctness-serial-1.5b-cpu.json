@@ -1,0 +1,192 @@
+{
+  "native_library_sha256": "ed236eb324b35a099d893d85831ffbcf6596df1d000170ffa2f4d67648ae423c",
+  "test_source_sha256": "e4f0c9909f1ab4d63a511cd6de50ab50754da68229c0619eb3824eae8ea7c9e0",
+  "model": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+  "gpu_layers_requested": 0,
+  "info": {
+    "gpu_layers_requested": 0,
+    "n_ctx": 512,
+    "runtime": "0.8.0-dev",
+    "tokenizer_fingerprint": "795dc470607fd5b32608b81d408164ed663e8020a3044cbef97ce9939508c016",
+    "vocab_size": 151936
+  },
+  "checks": [
+    {
+      "case": "perfect proposals",
+      "prompt": "Say hello briefly.",
+      "k": 1,
+      "tokens": 10,
+      "passed": true
+    },
+    {
+      "case": "perfect proposals",
+      "prompt": "Say hello briefly.",
+      "k": 4,
+      "tokens": 10,
+      "passed": true
+    },
+    {
+      "case": "perfect proposals",
+      "prompt": "Say hello briefly.",
+      "k": 16,
+      "tokens": 10,
+      "passed": true
+    },
+    {
+      "case": "all rejected",
+      "prompt": "Say hello briefly.",
+      "tokens": 10,
+      "passed": true
+    },
+    {
+      "case": "randomized partial acceptance",
+      "prompt": "Say hello briefly.",
+      "tokens": 10,
+      "passed": true
+    },
+    {
+      "case": "prefix rollback",
+      "prompt": "Say hello briefly.",
+      "passed": true
+    },
+    {
+      "case": "perfect proposals",
+      "prompt": "Return exactly the integers from 1 to 12, separated by commas.",
+      "k": 1,
+      "tokens": 38,
+      "passed": true
+    },
+    {
+      "case": "perfect proposals",
+      "prompt": "Return exactly the integers from 1 to 12, separated by commas.",
+      "k": 4,
+      "tokens": 38,
+      "passed": true
+    },
+    {
+      "case": "perfect proposals",
+      "prompt": "Return exactly the integers from 1 to 12, separated by commas.",
+      "k": 16,
+      "tokens": 38,
+      "passed": true
+    },
+    {
+      "case": "all rejected",
+      "prompt": "Return exactly the integers from 1 to 12, separated by commas.",
+      "tokens": 24,
+      "passed": true
+    },
+    {
+      "case": "randomized partial acceptance",
+      "prompt": "Return exactly the integers from 1 to 12, separated by commas.",
+      "tokens": 38,
+      "passed": true
+    },
+    {
+      "case": "prefix rollback",
+      "prompt": "Return exactly the integers from 1 to 12, separated by commas.",
+      "passed": true
+    },
+    {
+      "case": "perfect proposals",
+      "prompt": "Write a Python function adding two numbers.",
+      "k": 1,
+      "tokens": 64,
+      "passed": true
+    },
+    {
+      "case": "perfect proposals",
+      "prompt": "Write a Python function adding two numbers.",
+      "k": 4,
+      "tokens": 64,
+      "passed": true
+    },
+    {
+      "case": "perfect proposals",
+      "prompt": "Write a Python function adding two numbers.",
+      "k": 16,
+      "tokens": 64,
+      "passed": true
+    },
+    {
+      "case": "all rejected",
+      "prompt": "Write a Python function adding two numbers.",
+      "tokens": 24,
+      "passed": true
+    },
+    {
+      "case": "randomized partial acceptance",
+      "prompt": "Write a Python function adding two numbers.",
+      "tokens": 64,
+      "passed": true
+    },
+    {
+      "case": "prefix rollback",
+      "prompt": "Write a Python function adding two numbers.",
+      "passed": true
+    },
+    {
+      "case": "perfect proposals",
+      "prompt": "Rispondi con una frase: perché il cielo appare blu?",
+      "k": 1,
+      "tokens": 56,
+      "passed": true
+    },
+    {
+      "case": "perfect proposals",
+      "prompt": "Rispondi con una frase: perché il cielo appare blu?",
+      "k": 4,
+      "tokens": 56,
+      "passed": true
+    },
+    {
+      "case": "perfect proposals",
+      "prompt": "Rispondi con una frase: perché il cielo appare blu?",
+      "k": 16,
+      "tokens": 56,
+      "passed": true
+    },
+    {
+      "case": "all rejected",
+      "prompt": "Rispondi con una frase: perché il cielo appare blu?",
+      "tokens": 24,
+      "passed": true
+    },
+    {
+      "case": "randomized partial acceptance",
+      "prompt": "Rispondi con una frase: perché il cielo appare blu?",
+      "tokens": 56,
+      "passed": true
+    },
+    {
+      "case": "prefix rollback",
+      "prompt": "Rispondi con una frase: perché il cielo appare blu?",
+      "passed": true
+    },
+    {
+      "case": "invalid token rejected",
+      "token": -1,
+      "passed": true
+    },
+    {
+      "case": "invalid token rejected",
+      "token": 151936,
+      "passed": true
+    },
+    {
+      "case": "context overflow rejected",
+      "passed": true
+    },
+    {
+      "case": "cancel/close during native call",
+      "passed": true,
+      "outcome": "cancelled"
+    },
+    {
+      "case": "close alone during native call",
+      "passed": true,
+      "outcome": "cancelled"
+    }
+  ],
+  "time": 1793638404.818105
+}

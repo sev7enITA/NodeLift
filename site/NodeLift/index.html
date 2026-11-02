@@ -93,6 +93,9 @@
 </figure></details>
 <p data-en="Energy and sustained thermal performance are unmeasured. Points are observed pairs, not confidence intervals." data-it="Energia e prestazioni termiche prolungate non sono misurate. I punti sono coppie osservate, non intervalli di confidenza." data-zh="未测量能耗及持续热性能。点表示观测配对，不是置信区间。" >Energy and sustained thermal performance are unmeasured. Points are observed pairs, not confidence intervals.</p>
 <a data-en="Read the source data and full reports" data-it="Leggi dati e report completi" data-zh="查看源数据与完整报告" class="text-link" href="https://github.com/sev7enITA/NodeLift/blob/main/research/visual-benchmarks-2026-11-02/README.md" target="_blank" rel="noopener">Read the source data and full reports</a>
+<h3 data-en="New engine investigation" data-it="Nuova analisi del motore" data-zh="最新引擎研究">New engine investigation</h3>
+<p data-en="Exploratory Mac tests found a verification mismatch in the existing batched path. An opt-in serial verifier matched the tested reference but was slower; draft cache improvements remain experimental. These are native microbenchmarks, not phone or end-to-end speedups." data-it="Test esplorativi sul Mac hanno rilevato una differenza nel verificatore a batch esistente. Un verificatore seriale opzionale coincide con il riferimento nei casi provati, ma è più lento; le ottimizzazioni della cache restano sperimentali. Sono microbenchmark nativi, non accelerazioni del telefono o dell'intera richiesta." data-zh="Mac 探索性测试发现现有批处理验证路径与参考结果存在差异。可选的串行验证器在测试案例中与参考结果一致，但速度较慢；草稿缓存优化仍处于实验阶段。这些是原生微基准，不代表手机或端到端加速。">Exploratory Mac tests found a verification mismatch in the existing batched path. An opt-in serial verifier matched the tested reference but was slower; draft cache improvements remain experimental. These are native microbenchmarks, not phone or end-to-end speedups.</p>
+<a data-en="Read the investigation and measurements" data-it="Leggi l'analisi e le misure" data-zh="阅读研究与测量结果" class="text-link" href="https://github.com/sev7enITA/NodeLift/blob/main/research/engine-investigation-2026-11-02/README.md" target="_blank" rel="noopener">Read the investigation and measurements</a>
 </div>
 </section>
 <section id="atlas" class="chapter atlas-section" aria-labelledby="atlas-title">
@@ -288,6 +291,10 @@
 <p><strong>Limits:</strong> The remote test node was emulated. Physical-phone inference/speedup, sustained thermals, capacity sharding, hybrid speculative checkpoints, HarmonyOS native worker and installed LM Studio GUI qualification remained open. The 27B upstream kernel result is not NodeLift hybrid-model support.</p>
 <p><a href="https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.1" target="_blank" rel="noopener noreferrer">Release assets and original notes ↗</a></p></div></details>
 <details class="release-entry"><summary><strong>Host, documentation and tooling updates</strong></summary><div class="release-body">
+<h3>2026-11-02: Native engine investigation</h3><ul>
+<li>Correct the native verification context limit and add a boundary regression check. Add opt-in serial verification and retain deferred draft/KV changes behind an experimental build option.</li>
+<li>Record controlled Mac microbenchmarks and a reproduced pre-existing batch versus single-token output difference. No phone speedup, new mobile package or distributed memory qualification is claimed.</li>
+</ul>
 <h3>2026-11-02: Standalone macOS host preview and startup verification</h3><ul>
 <li>Add an experimental Apple silicon host bundle with embedded Python, the desktop dashboard, native library, local startup checks and a launcher. System macOS frameworks and OpenSSL remain required; models are supplied separately.</li>
 <li>Validate dashboard, branding, authenticated inventory and a native eight-token GGUF generation on an M3 Max using temporary loopback state. The first bundle failed on a missing provenance file; the corrected bundle passed.</li>

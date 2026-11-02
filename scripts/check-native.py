@@ -15,6 +15,7 @@ from nodelift.native import Native, library_path
 parser=argparse.ArgumentParser()
 parser.add_argument('--model',default=str(ROOT/'.models/qwen2.5-0.5b-instruct-q4_k_m.gguf'))
 parser.add_argument('--gpu-layers',type=int,default=999)
+parser.add_argument('--strict',action='store_true',help='Verify tokens one at a time using the experimental serial path')
 parser.add_argument('--output',default=str(ROOT/'artifacts/native-correctness.json'))
 args=parser.parse_args()
 checks=[]
@@ -30,7 +31,7 @@ with Native() as reference, Native() as verifier:
             while len(actual)<len(expected):
                 # Perfect proposals from the separately computed target oracle.
                 proposals=expected[len(actual):len(actual)+k]
-                result=verifier.call('verify',prefix=prefix+actual,proposal=proposals,remaining=len(expected)-len(actual))
+                result=verifier.call('verify',strict=args.strict,prefix=prefix+actual,proposal=proposals,remaining=len(expected)-len(actual))
                 actual+=result['tokens'];accepted+=result['accepted']
                 if result['eos']:break
             assert actual==expected, f'greedy batch drift or verification error at k={k}: {prompt}'
@@ -38,7 +39,7 @@ with Native() as reference, Native() as verifier:
         verifier.call('reset');actual=[]
         while len(actual)<min(len(expected),24):
             wrong=(expected[len(actual)]+1)%info['vocab_size']
-            result=verifier.call('verify',prefix=prefix+actual,proposal=[wrong]*4,remaining=min(len(expected),24)-len(actual))
+            result=verifier.call('verify',strict=args.strict,prefix=prefix+actual,proposal=[wrong]*4,remaining=min(len(expected),24)-len(actual))
             assert result['accepted']==0 and len(result['tokens'])==1
             actual+=result['tokens']
             if result['eos']:break
@@ -52,7 +53,7 @@ with Native() as reference, Native() as verifier:
             if proposals:
                 reject=rng.randrange(len(proposals))
                 proposals[reject]=(proposals[reject]+1)%info['vocab_size']
-            result=verifier.call('verify',prefix=prefix+actual,proposal=proposals,remaining=len(expected)-len(actual))
+            result=verifier.call('verify',strict=args.strict,prefix=prefix+actual,proposal=proposals,remaining=len(expected)-len(actual))
             actual+=result['tokens']
             assert actual==expected[:len(actual)], 'partial acceptance/rollback drift'
             if result['eos']:break
@@ -65,12 +66,29 @@ with Native() as reference, Native() as verifier:
         checks.append({'case':'prefix rollback','prompt':prompt,'passed':True})
     prefix=reference.call('tokenize',text='Hello',chat=True)['tokens']
     for bad in (-1,info['vocab_size']):
-        try:verifier.call('verify',prefix=prefix,proposal=[bad],remaining=4)
+        try:verifier.call('verify',strict=args.strict,prefix=prefix,proposal=[bad],remaining=4)
         except RuntimeError:checks.append({'case':'invalid token rejected','token':bad,'passed':True})
         else:raise AssertionError('invalid token accepted')
-    try:verifier.call('verify',prefix=[prefix[0]]*510,proposal=[prefix[0]]*16,remaining=16)
+    try:verifier.call('verify',strict=args.strict,prefix=[prefix[0]]*510,proposal=[prefix[0]]*16,remaining=16)
     except RuntimeError:checks.append({'case':'context overflow rejected','passed':True})
     else:raise AssertionError('context overflow accepted')
+    # The final context slot may hold an accepted proposal, but not a bonus.
+    # Search a few deterministic contexts so the test covers actual acceptance,
+    # even when batched logits differ from the one-token path for one context.
+    edge=None
+    for text in ('count the words','hello world','test','one two three','cache'):
+        pattern=verifier.call('tokenize',text=text,chat=False)['tokens']
+        edge_prefix=(pattern*((info['n_ctx']+len(pattern)-2)//len(pattern)))[:info['n_ctx']-1]
+        verifier.call('reset')
+        last=verifier.call('draft',prefix=edge_prefix,count=1)['tokens']
+        edge=verifier.call('verify',strict=args.strict,prefix=edge_prefix,proposal=last,remaining=4)
+        assert len(edge['tokens'])==1, 'verification emitted beyond context'
+        if edge['accepted']==1:break
+    assert edge['accepted']==1, 'no accepted boundary proposal was exercised'
+    checks.append({'case':'accepted boundary proposal excludes bonus','passed':True})
+    try:verifier.call('verify',strict=args.strict,prefix=edge_prefix+last,proposal=[],remaining=1)
+    except RuntimeError:checks.append({'case':'full context rejected','passed':True})
+    else:raise AssertionError('full context accepted')
     # Both explicit cancellation and teardown alone must stop/retain active calls safely.
     for explicit_cancel in (True,False):
         raced=Native();raced.call('load',path=args.model,n_ctx=1024,threads=2,gpu_layers=args.gpu_layers)
@@ -87,6 +105,6 @@ with Native() as reference, Native() as verifier:
                        'passed':True,'outcome':outcome.get('error','completed before close')})
     output={'native_library_sha256':hashlib.sha256(library_path().read_bytes()).hexdigest(),
             'test_source_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
-            'model':Path(args.model).name,'gpu_layers_requested':args.gpu_layers,'info':info,'checks':checks,'time':time.time()}
+            'model':Path(args.model).name,'gpu_layers_requested':args.gpu_layers,'strict':args.strict,'info':info,'checks':checks,'time':time.time()}
     Path(args.output).write_text(json.dumps(output,indent=2,ensure_ascii=False)+'\n')
     print(f'{len(checks)} real-model correctness checks passed; {args.output}')

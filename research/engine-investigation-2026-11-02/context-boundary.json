@@ -1,0 +1,19 @@
+{
+  "description": "Context boundary case in separate CPU processes, real 0.5B model; same 255-token prefix, accepted one-token proposal and remaining budget 9. Old and fixed standard builds.",
+  "before": {
+    "native_sha256": "274cd3e5f7439dd632d6f2d3bc553a3933eecda830550e4c7fb320a098c276d9",
+    "prefix_length": 255,
+    "context_size": 256,
+    "proposal_length": 1,
+    "accepted": 1,
+    "returned_tokens": 2
+  },
+  "after": {
+    "native_sha256": "5debe9c93858b1eba12f9ef658e8403e75806db3ccde59d63745ebdf9c72b8d9",
+    "prefix_length": 255,
+    "context_size": 256,
+    "proposal_length": 1,
+    "accepted": 1,
+    "returned_tokens": 1
+  }
+}

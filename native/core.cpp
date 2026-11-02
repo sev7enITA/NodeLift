@@ -112,8 +112,13 @@ struct Engine {
         check(); valid(prefix);require(!prefix.empty() && prefix.size()<size_t(nctx),"prefix must be nonempty and leave context room");
         if(prefix==cached && next>=0)return;
         size_t keep=0;while(keep<prefix.size() && keep<cached.size() && prefix[keep]==cached[keep])++keep;
+#ifdef NODELIFT_EXPERIMENTAL_DEFERRED_DRAFT
+        // Only replay the anchor when no new suffix will provide fresh logits.
+        if(keep>0 && keep==prefix.size())--keep;
+#else
         // Re-evaluate the last retained token to recover the correct next-token logits.
         if(keep>0 && (keep<cached.size() || keep==prefix.size() || next<0))--keep;
+#endif
         if(keep<cached.size() && !llama_memory_seq_rm(llama_get_memory(ctx.get()),0,int(keep),-1)) {reset();keep=0;}
         cached.resize(keep);next=-1;
         while(keep<prefix.size()) {
@@ -124,13 +129,50 @@ struct Engine {
     tokens draft(const tokens & prefix,int count) {
         require(count>=1 && count<=512,"invalid draft budget");sync(prefix);tokens output;
         for(int i=0;i<count && cached.size()<size_t(nctx);++i) {
-            check();require(next>=0,"missing next token");auto id=next;output.push_back(id);decode({id},false);
+            check();require(next>=0,"missing next token");auto id=next;output.push_back(id);
+#ifdef NODELIFT_EXPERIMENTAL_DEFERRED_DRAFT
+            // The final prediction is already known. Evaluate it only if a later
+            // request commits it; rejected draft tails never enter the KV cache.
+            if(llama_vocab_is_eog(vocab,id) || i+1==count)break;
+            decode({id},false);
+#else
+            decode({id},false);
             if(llama_vocab_is_eog(vocab,id))break;
+#endif
         } return output;
+    }
+    // Serial verification is deliberately opt-in: it prioritizes matching
+    // the one-token decode path over batch throughput. It cannot accelerate
+    // autoregressive generation and does not replace hardware qualification.
+    json verify_serial(const tokens & prefix, const tokens & proposal, int remaining) {
+        require(proposal.size()<=16 && remaining>=1 && remaining<=512,"invalid verification budget");
+        valid(proposal);valid(prefix);
+        require(!prefix.empty() && prefix.size()<size_t(nctx) && prefix.size()+proposal.size()<=size_t(nctx),"verification would exceed context");
+        // A fully accepted proposal may add a bonus token. Never emit beyond
+        // the context, even when the caller supplies a larger output budget.
+        remaining=std::min(remaining,nctx-int(prefix.size()));
+        sync(prefix);tokens output;int accepted=0;
+        if(proposal.empty()) output.push_back(next);
+        else for(size_t i=0;i<proposal.size();++i) {
+            check();require(next>=0,"missing next token");auto expected=next;
+            if(proposal[i]!=expected){output.push_back(expected);break;}
+            output.push_back(expected);++accepted;
+            if(llama_vocab_is_eog(vocab,expected) || int(output.size())>=remaining)break;
+            decode({expected},false);
+            if(i+1==proposal.size())output.push_back(next);
+        }
+        if(output.size()>size_t(remaining))output.resize(remaining);
+        for(size_t i=0;i<output.size();++i)if(llama_vocab_is_eog(vocab,output[i])){output.resize(i+1);break;}
+        accepted=std::min(accepted,int(output.size()));
+        return {{"tokens",output},{"accepted",accepted},{"proposed",proposal.size()},
+                {"eos",!output.empty() && llama_vocab_is_eog(vocab,output.back())},{"verification_mode","serial"}};
     }
     json verify(const tokens & prefix,tokens proposal,int remaining) {
         require(proposal.size()<=16 && remaining>=1 && remaining<=512,"invalid verification budget");
-        valid(proposal);valid(prefix);require(!prefix.empty() && prefix.size()+proposal.size()<=size_t(nctx),"verification would exceed context");
+        valid(proposal);valid(prefix);require(!prefix.empty() && prefix.size()<size_t(nctx) && prefix.size()+proposal.size()<=size_t(nctx),"verification would exceed context");
+        // A fully accepted proposal may add a bonus token. Clamp the output to
+        // the actual context space instead of trusting the caller's budget.
+        remaining=std::min(remaining,nctx-int(prefix.size()));
         // One verification pass: retain KV before the committed anchor and
         // evaluate [anchor, proposal...] together. No per-block logit repair pass.
         tokens before(prefix.begin(),prefix.end()-1);
@@ -195,7 +237,11 @@ struct Engine {
         auto prefix=req.at("prefix").get<tokens>();auto start=clock_type::now();
         if(op=="prefill"){sync(prefix);return {{"ms",elapsed(start)}};}
         if(op=="draft"){auto ids=draft(prefix,req.value("count",4));return {{"tokens",ids},{"ms",elapsed(start)},{"eos",!ids.empty()&&llama_vocab_is_eog(vocab,ids.back())},{"tokenizer_fingerprint",fingerprint}};}
-        if(op=="verify"){auto value=verify(prefix,req.at("proposal").get<tokens>(),req.value("remaining",512));value["ms"]=elapsed(start);return value;}
+        if(op=="verify"){
+            auto proposal=req.at("proposal").get<tokens>();int remaining=req.value("remaining",512);
+            auto value=req.value("strict",false)?verify_serial(prefix,proposal,remaining):verify(prefix,proposal,remaining);
+            value["ms"]=elapsed(start);return value;
+        }
         throw std::runtime_error("unknown native operation");
     }
 };

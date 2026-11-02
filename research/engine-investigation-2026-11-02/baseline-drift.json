@@ -1,0 +1,53 @@
+{
+  "description": "Baseline 1.5B batched verifier vs its own single-token draft oracle. First mismatch is zero-based. The baseline and experimental library both failed the full check on the Italian prompt at k=4. CPU baseline additionally failed the greeting at k=1. These are observed failures, not a proven root cause.",
+  "gpu_layers_requested": 999,
+  "model_filename": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+  "model_sha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+  "results": [
+    {
+      "prompt": "Say hello briefly.",
+      "k": 1,
+      "first_mismatch": null,
+      "reference_length": 10,
+      "actual_length": 10
+    },
+    {
+      "prompt": "Say hello briefly.",
+      "k": 4,
+      "first_mismatch": null,
+      "reference_length": 10,
+      "actual_length": 10
+    },
+    {
+      "prompt": "Say hello briefly.",
+      "k": 16,
+      "first_mismatch": null,
+      "reference_length": 10,
+      "actual_length": 10
+    },
+    {
+      "prompt": "Rispondi con una frase: perché il cielo appare blu?",
+      "k": 1,
+      "first_mismatch": null,
+      "reference_length": 53,
+      "actual_length": 53
+    },
+    {
+      "prompt": "Rispondi con una frase: perché il cielo appare blu?",
+      "k": 4,
+      "first_mismatch": 23,
+      "reference_length": 53,
+      "actual_length": 53
+    },
+    {
+      "prompt": "Rispondi con una frase: perché il cielo appare blu?",
+      "k": 16,
+      "first_mismatch": 23,
+      "reference_length": 53,
+      "actual_length": 53
+    }
+  ],
+  "baseline_gpu_check_failure": "k=4, Italian prompt",
+  "experimental_gpu_check_failure": "k=4, Italian prompt",
+  "baseline_cpu_check_failure": "k=1, greeting"
+}
