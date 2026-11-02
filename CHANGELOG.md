@@ -147,6 +147,13 @@ Every published companion build has an entry below. Android packages are laborat
 
 ## Host, documentation and tooling updates
 
+### 2026-11-02: iOS draft setup: private development build 0.2.12 (14)
+
+- Add the missing iOS download-from-Mac action, progress, cancellation and an explicit development-transfer import action in English, Simplified Chinese and Italian. Setup verifies the paired host hash before enabling proposals; resume the session to load the engine.
+- Use pinned authenticated TLS, fixed endpoints, bounded streamed transfer and integrity checks before replacement. Add integration coverage for transfer failure, certificate mismatch and cancellation cleanup.
+- Sign and install private iOS build 0.2.12 (14) over 0.2.8 on the owner's physical iPhone. Copy and import the selected draft. Native inference readiness and performance results remain separate from installation and import.
+- Public downloads remain 0.2.11 (13). This development installation is not a public, TestFlight or App Store release. See docs/IOS_DRAFT_SETUP.md for setup steps, validation and limitations.
+
 ### 2026-11-02: Physical Xiaomi trade-offs: latency loss and adaptive containment
 
 - Run 18 new physical Xiaomi-versus-Mac pairs plus 3 local-draft control pairs with matching outputs. Fixed phone drafting at a 32-token budget showed a median 134.949x slowdown in this model/hotspot scope.

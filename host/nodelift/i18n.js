@@ -1161,7 +1161,13 @@ const NodeLiftChinese = {
   "Service TTFT change": "服务首字延迟变化",
   "Pairs included: {0}": "包含的配对：{0}",
   "{0} missing · {1} fallbacks · {2} matched outputs without fallback": "缺失 {0} · 回退 {1} · 无回退的匹配输出 {2}",
-  "{0} session clusters with eligible pairs · {1} missing runs · {2} mismatched pairs": "含有效配对的会话簇 {0} · 缺失运行 {1} · 不匹配配对 {2}"
+  "{0} session clusters with eligible pairs · {1} missing runs · {2} mismatched pairs": "含有效配对的会话簇 {0} · 缺失运行 {1} · 不匹配配对 {2}",
+  "Invalid draft metadata": "草稿模型元数据无效",
+  "Use transferred draft and enable": "使用已传输的草稿模型并启用",
+  "The session pauses during setup. The draft is verified against your paired Mac. Resume after verification and keep the app open.": "设置期间会暂停会话。草稿模型将与已配对的 Mac 进行校验。校验完成后恢复会话，并保持应用在前台。",
+  "Draft verified · proposals enabled · resume the session": "草稿模型已校验 · 建议已启用 · 请恢复会话",
+  "Draft transfer cancelled": "草稿模型传输已取消",
+  "Cancel draft transfer": "取消草稿模型传输"
 };
 const NodeLiftItalian = {
   "0 layers uses CPU. 999 requests the maximum GPU offload supported by the backend. Compatibility depends on the model.": "0 livelli usa la CPU. 999 richiede il massimo numero di livelli sulla GPU supportato dal backend. La compatibilità dipende dal modello.",
@@ -1670,7 +1676,7 @@ const NodeLiftItalian = {
   "Model hash mismatch: download the draft again": "Hash del modello non corrispondente: scarica di nuovo il draft",
   "Model imported. Select it as target or draft, then apply configuration.": "Modello importato. Selezionalo come target o draft, poi applica la configurazione.",
   "Model inspection failed. Check the repository and try again.": "Ispezione non riuscita. Controlla il repository e riprova.",
-  "Model integrity check failed": "Verifica dell’integrità del modello non riuscita",
+  "Model integrity check failed": "Verifica di integrità del modello non riuscita",
   "Model library": "Libreria modelli",
   "Model name": "Nome del modello",
   "Model or tokenizer mismatch": "Modello o tokenizer non corrispondente",
@@ -2324,7 +2330,13 @@ const NodeLiftItalian = {
   "Service TTFT change": "Variazione TTFT del servizio",
   "Pairs included: {0}": "Coppie incluse: {0}",
   "{0} missing · {1} fallbacks · {2} matched outputs without fallback": "{0} mancanti · {1} fallback · {2} output corrispondenti senza fallback",
-  "{0} session clusters with eligible pairs · {1} missing runs · {2} mismatched pairs": "{0} gruppi di sessione con coppie valide · {1} esecuzioni mancanti · {2} coppie discordanti"
+  "{0} session clusters with eligible pairs · {1} missing runs · {2} mismatched pairs": "{0} gruppi di sessione con coppie valide · {1} esecuzioni mancanti · {2} coppie discordanti",
+  "Invalid draft metadata": "Metadati del draft non validi",
+  "Use transferred draft and enable": "Usa il draft trasferito e abilitalo",
+  "The session pauses during setup. The draft is verified against your paired Mac. Resume after verification and keep the app open.": "La sessione viene sospesa durante la configurazione. Il draft viene verificato rispetto al Mac abbinato. Riprendi dopo la verifica e lascia aperta l’app.",
+  "Draft verified · proposals enabled · resume the session": "Draft verificato · proposte abilitate · riprendi la sessione",
+  "Draft transfer cancelled": "Trasferimento del draft annullato",
+  "Cancel draft transfer": "Annulla trasferimento draft"
 };
 const NodeLiftCatalogs = {"zh-Hans": NodeLiftChinese, it: NodeLiftItalian};
 'use strict';

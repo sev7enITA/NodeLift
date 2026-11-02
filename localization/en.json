@@ -1159,5 +1159,11 @@
   "Service TTFT change": "Service TTFT change",
   "Pairs included: {0}": "Pairs included: {0}",
   "{0} missing · {1} fallbacks · {2} matched outputs without fallback": "{0} missing · {1} fallbacks · {2} matched outputs without fallback",
-  "{0} session clusters with eligible pairs · {1} missing runs · {2} mismatched pairs": "{0} session clusters with eligible pairs · {1} missing runs · {2} mismatched pairs"
+  "{0} session clusters with eligible pairs · {1} missing runs · {2} mismatched pairs": "{0} session clusters with eligible pairs · {1} missing runs · {2} mismatched pairs",
+  "Invalid draft metadata": "Invalid draft metadata",
+  "Use transferred draft and enable": "Use transferred draft and enable",
+  "The session pauses during setup. The draft is verified against your paired Mac. Resume after verification and keep the app open.": "The session pauses during setup. The draft is verified against your paired Mac. Resume after verification and keep the app open.",
+  "Draft verified · proposals enabled · resume the session": "Draft verified · proposals enabled · resume the session",
+  "Draft transfer cancelled": "Draft transfer cancelled",
+  "Cancel draft transfer": "Cancel draft transfer"
 }

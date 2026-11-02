@@ -506,7 +506,7 @@ export const italianMessages: Record<string, string> = {
   "Model hash mismatch: download the draft again": "Hash del modello non corrispondente: scarica di nuovo il draft",
   "Model imported. Select it as target or draft, then apply configuration.": "Modello importato. Selezionalo come target o draft, poi applica la configurazione.",
   "Model inspection failed. Check the repository and try again.": "Ispezione non riuscita. Controlla il repository e riprova.",
-  "Model integrity check failed": "Verifica dell’integrità del modello non riuscita",
+  "Model integrity check failed": "Verifica di integrità del modello non riuscita",
   "Model library": "Libreria modelli",
   "Model name": "Nome del modello",
   "Model or tokenizer mismatch": "Modello o tokenizer non corrispondente",
@@ -1160,5 +1160,11 @@ export const italianMessages: Record<string, string> = {
   "Service TTFT change": "Variazione TTFT del servizio",
   "Pairs included: {0}": "Coppie incluse: {0}",
   "{0} missing · {1} fallbacks · {2} matched outputs without fallback": "{0} mancanti · {1} fallback · {2} output corrispondenti senza fallback",
-  "{0} session clusters with eligible pairs · {1} missing runs · {2} mismatched pairs": "{0} gruppi di sessione con coppie valide · {1} esecuzioni mancanti · {2} coppie discordanti"
+  "{0} session clusters with eligible pairs · {1} missing runs · {2} mismatched pairs": "{0} gruppi di sessione con coppie valide · {1} esecuzioni mancanti · {2} coppie discordanti",
+  "Invalid draft metadata": "Metadati del draft non validi",
+  "Use transferred draft and enable": "Usa il draft trasferito e abilitalo",
+  "The session pauses during setup. The draft is verified against your paired Mac. Resume after verification and keep the app open.": "La sessione viene sospesa durante la configurazione. Il draft viene verificato rispetto al Mac abbinato. Riprendi dopo la verifica e lascia aperta l’app.",
+  "Draft verified · proposals enabled · resume the session": "Draft verificato · proposte abilitate · riprendi la sessione",
+  "Draft transfer cancelled": "Trasferimento del draft annullato",
+  "Cancel draft transfer": "Annulla trasferimento draft"
 };

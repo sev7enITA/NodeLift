@@ -1,0 +1,34 @@
+{
+  "ios_development_build": "0.2.12 (14)",
+  "public_packages_changed": false,
+  "signed_installed_version_readback": true,
+  "temporary_draft_transferred_bytes": 491400032,
+  "native_library_changed": false,
+  "swift_transfer_integration": "passed on macOS, synthetic pinned TLS",
+  "swift_protocol_integration": "passed on macOS",
+  "ios_arm64_release_build": "passed",
+  "physical_wireless_download": "not tested",
+  "physical_inference_readiness": "pending",
+  "swift_support_and_release_policies": "passed",
+  "localization": "passed EN / zh-Hans / IT",
+  "docs": {
+    "pages": 97,
+    "local_targets": 400,
+    "errors": []
+  },
+  "ios_source_sha256": {
+    "apps/ios/NodeLift/ChineseMessages.swift": "b32a9523475301b95f60085a21438a6e566ad293734ed66936116a0c35b85dd7",
+    "apps/ios/NodeLift/DiagnosticJournal.swift": "68b14d9b6c30d6fa77e8a4dc1fafa3e4921d30981a3c6d8c5f2ed859f45520e8",
+    "apps/ios/NodeLift/Diagnostics.swift": "6592963f8af198b67ed2886c70187b8a0484b8a496e279eea2534fb3969960ba",
+    "apps/ios/NodeLift/DraftTransfer.swift": "c516ce39efde90e33f43ef87c37b6a22b734e4bcd712301f2a637c9926882b6f",
+    "apps/ios/NodeLift/ItalianMessages.swift": "0b0edeb7cb451cb381876ef35d90f56f3ba34e2260c9b0a9a728296192a96c3f",
+    "apps/ios/NodeLift/Localization.swift": "ebbce7a2f634de7139694f6b142bf8693ecc7acb3ed3551122c0f16af04cc8d8",
+    "apps/ios/NodeLift/NativeDraft.swift": "a8d0f3ef9c70d01975ee2ce31cda5616b7c2e8cf8732cd060482206a5b483ac6",
+    "apps/ios/NodeLift/NodeLiftApp.swift": "4148429f3426b42eb18be505717ffe030454a4fed94c8b42d187ccc208c05f3e",
+    "apps/ios/NodeLift/NodeModel.swift": "0c0334adbfb72d704345139648019a0e8f406d226157eea379da503bd7bd2e97",
+    "apps/ios/NodeLift/Protocol.swift": "a2005921301b57894f3808a349ea8c71f77c85e756a01dc050f968d55eb9344c",
+    "apps/ios/NodeLift/QRScanner.swift": "d1bc4ded0a203ed350a4cd63f38788c70a1d065f7de396bfe638167bd5517deb",
+    "apps/ios/NodeLift/UpdateMonitor.swift": "df67b8b8fee295a387fcedbbdfd7ba7afee4fa16a0da8056c288ba3eb883a0f3",
+    "apps/ios/NodeLift/UpdatePolicy.swift": "9ded61521cf8fdc17693e2bc7831a5dc0ef4645c9335d54c6f3426f9c96b7208"
+  }
+}

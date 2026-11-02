@@ -1160,5 +1160,11 @@ export const chineseMessages: Record<string, string> = {
   "Service TTFT change": "服务首字延迟变化",
   "Pairs included: {0}": "包含的配对：{0}",
   "{0} missing · {1} fallbacks · {2} matched outputs without fallback": "缺失 {0} · 回退 {1} · 无回退的匹配输出 {2}",
-  "{0} session clusters with eligible pairs · {1} missing runs · {2} mismatched pairs": "含有效配对的会话簇 {0} · 缺失运行 {1} · 不匹配配对 {2}"
+  "{0} session clusters with eligible pairs · {1} missing runs · {2} mismatched pairs": "含有效配对的会话簇 {0} · 缺失运行 {1} · 不匹配配对 {2}",
+  "Invalid draft metadata": "草稿模型元数据无效",
+  "Use transferred draft and enable": "使用已传输的草稿模型并启用",
+  "The session pauses during setup. The draft is verified against your paired Mac. Resume after verification and keep the app open.": "设置期间会暂停会话。草稿模型将与已配对的 Mac 进行校验。校验完成后恢复会话，并保持应用在前台。",
+  "Draft verified · proposals enabled · resume the session": "草稿模型已校验 · 建议已启用 · 请恢复会话",
+  "Draft transfer cancelled": "草稿模型传输已取消",
+  "Cancel draft transfer": "取消草稿模型传输"
 };

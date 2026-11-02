@@ -31,6 +31,14 @@ import CryptoKit
     @Published var engineMetal = true
     @Published var minimumBattery = 25.0
     @Published var importingModel = false
+    @Published var downloadProgress = 0.0
+    @Published private(set) var downloadingDraft = false
+    private var modelTransfer: Task<Void, Never>?
+    private var transferID = UUID()
+    var transferredDraftURL: URL {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0].appendingPathComponent("NodeLift-draft.gguf")
+    }
+    var hasTransferredDraft: Bool { FileManager.default.fileExists(atPath: transferredDraftURL.path) }
     private var draft: NativeDraft?
     private var draftSHA = ""
     private var draftFingerprint = ""
@@ -117,6 +125,55 @@ import CryptoKit
             importingModel=false
         }
     }
+    func downloadDraft(useTransferred: Bool = false) {
+        guard !importingModel, !diagnosticRunning, let saved = Vault.load() else { return }
+        pause()
+        engineEnabled = false
+        importingModel = true; downloadingDraft = true; downloadProgress = 0
+        let identifier = UUID(); transferID = identifier
+        engineStatus = "Downloading draft from your computer…"
+        let transferred = transferredDraftURL
+        Diagnostics.shared.record(.modelLoading)
+        modelTransfer = Task {
+            do {
+                let c = try NodeClient(ticket: saved.pairing, token: saved.token)
+                defer { c.cancel() }
+                let offer = try await c.draftOffer()
+                let transfer = Task.detached(priority: .utility) { [self] () throws -> Void in
+                    let source: URL
+                    if useTransferred { source = transferred }
+                    else {
+                        source = try await c.downloadDraft(offer) { fraction in
+                            await self.setDownloadProgress(fraction, identifier: identifier)
+                        }
+                    }
+                    defer { if !useTransferred { try? FileManager.default.removeItem(at: source) } }
+                    try Task.checkCancellation()
+                    _ = try await NativeDraft.importFile(source, expectedSHA: offer.sha256)
+                }
+                try await withTaskCancellationHandler(operation: { try await transfer.value }, onCancel: { transfer.cancel() })
+                try Task.checkCancellation()
+                guard transferID == identifier else { return }
+                if useTransferred { try? FileManager.default.removeItem(at: transferred) }
+                engineEnabled = true
+                engineStatus = "Draft verified · proposals enabled · resume the session"
+            } catch {
+                guard transferID == identifier else { return }
+                Diagnostics.shared.record(.modelFailed, error: error)
+                engineStatus = Task.isCancelled ? "Draft transfer cancelled" : Message(error.localizedDescription)
+            }
+            if transferID == identifier { importingModel = false; downloadingDraft = false; modelTransfer = nil }
+        }
+    }
+    private func setDownloadProgress(_ value: Double, identifier: UUID) {
+        guard transferID == identifier else { return }
+        downloadProgress = value
+    }
+    func cancelDraftTransfer() {
+        guard modelTransfer != nil else { return }
+        modelTransfer?.cancel()
+        // Keep setup locked until the stream and partial-file cleanup have finished.
+    }
     private func prepareDraft() async throws {
         if !engineEnabled {draft?.cancel();draft=nil;return}
         guard draft == nil && permitsDraft else {return}
@@ -152,7 +209,7 @@ import CryptoKit
         return result
     }
     func connect(newTicket: Bool) {
-        guard !running else { return }
+        guard !running && !importingModel else { return }
         Diagnostics.shared.record(.sessionStart)
         running = true; connected = false; status = "Connecting to your computer…"
         let current = UUID(); generation = current
@@ -231,6 +288,7 @@ import CryptoKit
         }
     }
     func pause() {
+        cancelDraftTransfer()
         if running {Diagnostics.shared.record(.sessionStop)}
         generation = UUID()
         task?.cancel();draft?.cancel();draft=nil;client?.cancel();client=nil;running=false;connected=false;diagnosticRunning=false;assessmentStatus=""

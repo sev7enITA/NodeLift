@@ -20,6 +20,10 @@ jobs:
           /tmp/nodelift-release-check
       - name: Compile the pinned native core
         run: ./scripts/build-native.sh
+      - name: Check iOS pinned draft transfers on macOS
+        run: |
+          swiftc -O apps/ios/NodeLift/Protocol.swift apps/ios/NodeLift/DraftTransfer.swift scripts/swift-draft-transfer-check.swift -o /tmp/nodelift-draft-check
+          python3 scripts/run-swift-draft-transfer-check.py --binary /tmp/nodelift-draft-check
       - name: Record the build environment
         run: |
           mkdir -p artifacts

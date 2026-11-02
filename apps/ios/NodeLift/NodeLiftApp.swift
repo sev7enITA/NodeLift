@@ -284,14 +284,33 @@ struct ContentView: View {
                 }
             note(T("Changing permission pauses an active session. Resume when you want to participate."))
             Divider().overlay(lineColor)
+            Button { model.downloadDraft() } label: {
+                Label(T("Download draft from Mac and enable"), systemImage: "arrow.down.circle")
+                    .frame(maxWidth: .infinity)
+            }.buttonStyle(NodeLiftButtonStyle(primary: true))
+                .disabled(!model.hasSavedSession || model.importingModel || model.diagnosticRunning)
+                .accessibilityIdentifier("download-draft")
+            if model.hasTransferredDraft {
+                Button(T("Use transferred draft and enable")) { model.downloadDraft(useTransferred: true) }
+                    .buttonStyle(NodeLiftButtonStyle())
+                    .disabled(!model.hasSavedSession || model.importingModel || model.diagnosticRunning)
+                    .accessibilityIdentifier("use-transferred-draft")
+            }
+            note(T("The session pauses during setup. The draft is verified against your paired Mac. Resume after verification and keep the app open."))
             Button { importError = nil; showModelImporter = true } label: {
                 Label(model.importingModel ? T("Importing…") : T("Import GGUF draft"), systemImage: "square.and.arrow.down")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(NodeLiftButtonStyle()).disabled(settingsLocked)
             if model.importingModel {
-                ProgressView().tint(aquaColor).frame(maxWidth: .infinity)
+              if model.downloadingDraft {
+                ProgressView(value: model.downloadProgress).tint(aquaColor).frame(maxWidth: .infinity)
                     .accessibilityLabel(T("Importing model"))
+                Button(T("Cancel draft transfer")) { model.cancelDraftTransfer() }
+                    .buttonStyle(NodeLiftButtonStyle())
+              } else {
+                ProgressView().tint(aquaColor).accessibilityLabel(T("Importing model"))
+              }
             }
             if let importError {
                 Text(T(importError)).font(.footnote).foregroundStyle(amberColor)

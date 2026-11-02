@@ -39,7 +39,7 @@ final class NativeDraft: @unchecked Sendable {
         }
         return digest.finalize().map{String(format:"%02x",$0)}.joined()
     }
-    static func importFile(_ source:URL) async throws -> String {
+    static func importFile(_ source:URL, expectedSHA:String? = nil) async throws -> String {
         let task=Task.detached(priority:.utility) { () throws -> String in
             let scoped=source.startAccessingSecurityScopedResource()
             defer { if scoped {source.stopAccessingSecurityScopedResource()} }
@@ -57,6 +57,8 @@ final class NativeDraft: @unchecked Sendable {
             let magic=try file.read(upToCount:4);try file.close()
             guard magic==Data("GGUF".utf8) else {throw NodeError.message("This is not a GGUF file")}
             let sha=try hash(partial)
+            guard expectedSHA == nil || sha == expectedSHA else {throw NodeError.message("Model integrity check failed")}
+            try Task.checkCancellation()
             if FileManager.default.fileExists(atPath:destination.path) {
                 _ = try FileManager.default.replaceItemAt(destination,withItemAt:partial)
             } else {try FileManager.default.moveItem(at:partial,to:destination)}

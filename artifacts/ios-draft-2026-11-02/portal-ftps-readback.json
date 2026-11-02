@@ -1,0 +1,10 @@
+{
+  "secure_ftps": true,
+  "published": [
+    "data/changelog.md",
+    "data/changelog.json",
+    "index.html"
+  ],
+  "remote_readback_verified": true,
+  "mobile_packages_changed": false
+}

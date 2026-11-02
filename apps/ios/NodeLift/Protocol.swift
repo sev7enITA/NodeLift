@@ -57,6 +57,10 @@ enum NodeError: LocalizedError {
 final class PinnedDelegate: NSObject, URLSessionDelegate, URLSessionTaskDelegate, @unchecked Sendable {
     let ticket: Ticket
     init(_ ticket: Ticket) { self.ticket = ticket }
+    func urlSession(_ session: URLSession, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        // Async byte streams deliver authentication through their task delegate.
+        urlSession(session, didReceive: challenge, completionHandler: completionHandler)
+    }
     func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         guard challenge.protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust,
               challenge.protectionSpace.host == URL(string: ticket.url)?.host,
