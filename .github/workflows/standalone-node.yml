@@ -1,0 +1,78 @@
+name: Standalone node probe
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/standalone-node.yml'
+      - 'scripts/standalone-node.py'
+      - 'scripts/build-standalone-node.py'
+      - 'host/nodelift/probe.py'
+      - 'native/llama.lock'
+permissions:
+  contents: read
+jobs:
+  package:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-22.04
+            artifact: linux-x64
+            python_arch: x64
+          - runner: ubuntu-22.04-arm
+            artifact: linux-arm64
+            python_arch: arm64
+          - runner: windows-2022
+            artifact: windows-x64
+            python_arch: x64
+          - runner: windows-11-arm
+            artifact: windows-arm64
+            python_arch: arm64
+          - runner: macos-15-intel
+            artifact: macos-x64
+            python_arch: x64
+          - runner: macos-15
+            artifact: macos-arm64
+            python_arch: arm64
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 40
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: ggml-org/llama.cpp
+          ref: ddf48f85c933c1f438212a02eb21e7b001d2d37d
+          path: vendor/llama.cpp
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          architecture: ${{ matrix.python_arch }}
+      - name: Install the pinned packaging tool on the build runner
+        run: python -m pip install 'pyinstaller==6.22.3'
+      - name: Build a portable CPU benchmark and platform backend
+        run: |
+          test "$(cat native/llama.lock)" = "$(git -C vendor/llama.cpp rev-parse HEAD)"
+          cmake -S vendor/llama.cpp -B build/standalone-llama -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DGGML_NATIVE=OFF -DLLAMA_CURL=OFF -DLLAMA_OPENSSL=OFF -DGGML_METAL_EMBED_LIBRARY=ON -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF -DLLAMA_BUILD_SERVER=OFF -DLLAMA_BUILD_COMMIT="$(cat native/llama.lock)"
+          cmake --build build/standalone-llama --config Release --target llama-bench --parallel 3
+      - name: Bundle and run startup verification
+        run: |
+          if [ "$RUNNER_OS" = Windows ]; then
+            BENCH=build/standalone-llama/bin/Release/llama-bench.exe
+            NODE=build/node/NodeLift-node.exe
+          else
+            BENCH=build/standalone-llama/bin/llama-bench
+            NODE=build/node/NodeLift-node
+          fi
+          python scripts/build-standalone-node.py --llama-bench "$BENCH" --llama-license vendor/llama.cpp/LICENSE --output-dir build/node
+          "$NODE" --self-check
+          "$NODE" inventory --output build/node-smoke.json
+          python -c "import json; d=json.load(open('build/node-smoke.json')); assert d['schema']=='nodelift.node-probe.v1'; assert not d['llm_speedup_qualified']"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: NodeLift-node-${{ matrix.artifact }}
+          path: build/node/NodeLift-node*
+          if-no-files-found: error
+          retention-days: 14
