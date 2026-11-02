@@ -147,6 +147,12 @@ Every published companion build has an entry below. Android packages are laborat
 
 ## Host, documentation and tooling updates
 
+### 2026-11-02: Desktop contextual help and explicit engine capability boundaries
+
+- Add contextual explanations beside desktop controls and a browser-local Options preference to disable or restore them. Essential limitations remain visible.
+- Document native generation, local and phone drafting, prompt lookup, adaptive control and external text routes separately from unimplemented capacity sharding and unqualified physical-phone speedup. See docs/ENGINE_STATUS.md in the repository.
+- Desktop and documentation update only. Android and iOS packages remain 0.2.11/build 13; no new native inference benchmark is claimed.
+
 ### 2026-11-02: Execution backend catalog controls and model-selection guidance
 
 - Add catalog loading and matching provider configuration next to Execution backend, with inline errors, empty-catalog guidance and immediate model-selection readiness. Native target/draft controls are disabled for external execution.

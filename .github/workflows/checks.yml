@@ -40,3 +40,5 @@ jobs:
         working-directory: .
       - run: node scripts/check-model-library.cjs
         working-directory: .
+      - run: node scripts/check-context-help.cjs
+        working-directory: .

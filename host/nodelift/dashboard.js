@@ -537,4 +537,156 @@ document.addEventListener('nodelift-languagechange',()=>{
   for(const id of ['error','engine-error'])if($(id).dataset.message)$(id).textContent=t($(id).dataset.message);
   refreshEngine();
 });
+
+// Contextual explanations are independent of authentication and inference controls.
+const contextHelpTopics = {
+  "target-model": {
+    "title": "Main model",
+    "body": "The target model generates the final answer and verifies any proposed tokens. It must fit on the host with its context state. The list is an inventory, not a recommendation or a compatibility guarantee."
+  },
+  "draft-model": {
+    "title": "Draft model",
+    "body": "An optional smaller model proposes token blocks for the target to check. Compatible token vocabularies are required. A rejected proposal costs work; adding a draft model can make generation slower."
+  },
+  "run-backend": {
+    "title": "Execution backend",
+    "body": "Native uses NodeLift’s local target and optional draft path. Local API forwards text to a separate server such as LM Studio. OpenRouter sends the request to a cloud provider and may incur charges. External routes do not use phone drafting."
+  },
+  "provider-model": {
+    "title": "Provider model",
+    "body": "Choose a model from the selected backend’s loaded catalog. Availability and context limits belong to that provider. This choice does not load a GGUF into NodeLift or distribute its weights across devices."
+  },
+  "run-mode": {
+    "title": "Strategy",
+    "body": "Computer only is the baseline. Local proposals use a draft on the host; Phone proposals use one ready companion. Context reuse proposes repeated token sequences without a draft model. The target verifies proposals in every proposal mode."
+  },
+  "remote-node": {
+    "title": "Draft node",
+    "body": "Select one connected companion with a loaded compatible draft and proposals enabled. Its memory holds its own draft model; it is not additional shared RAM for the host. Readiness alone does not prove a speed gain."
+  },
+  "context-size": {
+    "title": "Context",
+    "body": "The native context budget holds the prompt and generated tokens. Larger contexts need more memory and can increase prefill cost. This control does not change an external provider’s context limit."
+  },
+  "threads": {
+    "title": "CPU threads",
+    "body": "Sets the native CPU worker count. More threads can compete with other applications and are not always faster. Compare the same model and workload before choosing a value."
+  },
+  "gpu-layers": {
+    "title": "GPU layers",
+    "body": "Requests native GPU offload: 0 uses CPU, while 999 requests the maximum supported offload. Actual placement depends on the backend, architecture and available memory; it does not enable a phone GPU remotely."
+  },
+  "max-tokens": {
+    "title": "Maximum tokens",
+    "body": "Caps generated output, not the prompt length. Generation can finish earlier at an end token. Use the same budget when comparing runs, and compare actual output lengths too."
+  },
+  "draft-k": {
+    "title": "Draft block",
+    "body": "Maximum proposed tokens per draft round. Larger blocks may amortize verification but also increase rejected work and transfer cost. The best value depends on this model pair and connection."
+  },
+  "draft-policy": {
+    "title": "Delegation control",
+    "body": "Fixed keeps the chosen proposal route for comparison. Adaptive probes host and draft costs and returns to host-only when observed delegation is not beneficial. Probe cost still counts, so this experimental policy cannot guarantee a speedup."
+  },
+  "remote-timeout": {
+    "title": "Remote timeout (seconds · optional)",
+    "body": "Maximum wait for one remote proposal. After the deadline the host continues alone and records a fallback. A shorter timeout can discard useful work; a longer one can make a slow connection more noticeable."
+  },
+  "prompt": {
+    "title": "Test prompt",
+    "body": "Keep the prompt, model, context and output budget unchanged for a fair comparison. Native and local API requests stay on their configured local route; choosing OpenRouter sends the prompt to the cloud."
+  },
+  "access-backend": {
+    "title": "Backend access",
+    "body": "Configure access separately for each external backend, then load its model catalog. Selecting a backend does not start inference or automatically choose a paid cloud route."
+  },
+  "provider-key": {
+    "title": "API key",
+    "body": "External provider credentials stay in the host process and are lost when it restarts. Use only the key for the selected provider. This is separate from the local NodeLift client key."
+  },
+  "local-provider-url": {
+    "title": "Local server URL",
+    "body": "Address of an already running compatible server on this computer, ending in /v1. NodeLift bridges requests to it; it does not start LM Studio or add phone RAM to that server."
+  },
+  "import-path": {
+    "title": "Existing model path (no copy)",
+    "body": "Registers an existing complete GGUF without copying it. Keep the file at this path. Header validation is not proof that the native runtime supports its architecture."
+  },
+  "model-file": {
+    "title": "Choose a GGUF file",
+    "body": "Copies a complete GGUF into the host library. Check free disk space and the model license first. Split GGUF sets are not supported by this import flow."
+  },
+  "hf-query": {
+    "title": "Search public GGUF models",
+    "body": "Searches public Hugging Face repositories. Dates refer to repository commits, and parameters/context are reported metadata. Inspect exact files before downloading; popularity does not establish quality or memory fit."
+  },
+  "hf-repo": {
+    "title": "Repository owner/name",
+    "body": "Inspect a public owner/repository to select a complete GGUF file and its exact revision. Download verification checks the published file hash; runtime loading is a separate compatibility check."
+  },
+  "graph-run": {
+    "title": "Run evidence",
+    "body": "Choose a recorded run or follow the latest one. Link colors and widths show accepted mobile draft token share for that run, not CPU use, available RAM or live packet traffic."
+  },
+  "graph-share-title": {
+    "title": "Accepted mobile draft share",
+    "body": "Share of committed token IDs originating from accepted phone proposals in the selected run. The host verifies all output. This is output attribution, not a measured speedup or a sum of device memory."
+  },
+  "graph-title": {
+    "title": "Device assessment",
+    "body": "Pairing establishes access. A basic assessment measures the actual HTTPS connection and a synthetic CPU workload when the node is eligible. It does not measure LLM tokens per second; model-specific usefulness needs matched inference runs."
+  },
+  "output-title": {
+    "title": "Output and evidence",
+    "body": "Compare time to first token, prefill, decode throughput and total completion time on the backend actually used. Also inspect accepted/rejected proposals, fallback and output length. Native time to first token excludes model loading, tokenization and setup; it is not total user-perceived latency. External provider timings have a different scope."
+  },
+  "client-title": {
+    "title": "Local API access",
+    "body": "Lets a compatible client call the local OpenAI-style text endpoint with its NodeLift key. It is an explicit API integration, not a system-wide extension that accelerates every AI app or website."
+  },
+  "invite": {
+    "title": "Add device",
+    "body": "Creates a short-lived pairing QR for the companion. Keep host and phone on a reachable local network and confirm the host identity on the phone. Pairing authorizes a device; it does not load a draft or prove acceleration."
+  },
+  "export": {
+    "title": "Export JSON",
+    "body": "Exports the recorded network and synthetic CPU diagnostic results for analysis. These measurements are not an inference benchmark and cannot establish the benefit of phone delegation on their own."
+  }
+};
+function installContextHelp() {
+  const triggers=[...document.querySelectorAll('[data-context-help]')];
+  if(!triggers.length)return;
+  const options=$('dashboard-options'),toggle=$('context-help-enabled'),dialog=$('context-help-dialog');
+  const close=$('close-context-help'),storageNote=$('context-help-storage');
+  let opener=null,topic=null,enabled=true;
+  try{enabled=localStorage.getItem('nodelift-context-help')!=='off';}catch(_){}
+  function labels(){
+    for(const trigger of triggers){const info=contextHelpTopics[trigger.dataset.contextHelp];if(info)trigger.setAttribute('aria-label',t('Help: {0}',t(info.title)));}
+    if(topic){$('context-help-title').textContent=t(topic.title);$('context-help-body').textContent=t(topic.body);}
+  }
+  function dismiss(restore=true){
+    const previous=opener;opener=null;topic=null;
+    if(dialog.open)dialog.close();
+    if(previous){previous.setAttribute('aria-expanded','false');if(restore&&!previous.hidden&&previous.isConnected)previous.focus({preventScroll:true});}
+  }
+  function apply(){toggle.checked=enabled;for(const trigger of triggers)trigger.hidden=!enabled;if(!enabled)dismiss(false);}
+  for(const trigger of triggers)trigger.addEventListener('click',()=>{
+    if(!enabled)return;
+    const info=contextHelpTopics[trigger.dataset.contextHelp];if(!info)return;
+    dismiss(false);opener=trigger;topic=info;options.open=false;labels();
+    trigger.setAttribute('aria-expanded','true');dialog.showModal();close.focus({preventScroll:true});
+  });
+  toggle.addEventListener('change',()=>{enabled=toggle.checked;apply();try{localStorage.setItem('nodelift-context-help',enabled?'on':'off');storageNote.hidden=true;}catch(_){storageNote.hidden=false;}});
+  close.addEventListener('click',()=>dismiss());
+  dialog.addEventListener('cancel',event=>{event.preventDefault();dismiss();});
+  dialog.addEventListener('close',()=>{if(opener)dismiss();});
+  dialog.addEventListener('click',event=>{if(event.target!==dialog)return;const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dismiss();});
+  document.addEventListener('click',event=>{if(options.open&&!options.contains(event.target))options.open=false;});
+  document.addEventListener('keydown',event=>{if(event.key==='Escape'&&options.open){options.open=false;options.querySelector('summary').focus();}});
+  document.addEventListener('nodelift-languagechange',labels);
+  window.addEventListener('storage',event=>{if(event.key==='nodelift-context-help'||event.key===null){try{enabled=localStorage.getItem('nodelift-context-help')!=='off';apply();}catch(_){}}});
+  labels();apply();
+}
+installContextHelp();
+
 sessionReady(false);refresh();setInterval(refresh,3000);

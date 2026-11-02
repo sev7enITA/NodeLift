@@ -1,5 +1,7 @@
 # Engine architecture
 
+For a direct implemented-versus-missing assessment, see [what NodeLift executes today](ENGINE_STATUS.md).
+
 NodeLift's target architecture is a shared local execution service that brings device RAM and compute to existing AI interfaces. The desktop application manages that service. Memory-capacity execution and compute acceleration are core workstreams; the diagram below describes the current implemented drafting path. See the [product roadmap](ROADMAP.md) for the intended architecture, interface routes and capacity milestones.
 
 ```mermaid
@@ -25,7 +27,7 @@ Worker-owned run records are published as locked snapshots. Prompts/results rema
 
 The full prefix is sent each round: explicit recovery is simple, but serialization/retransmission grow with context. A future delta protocol needs acknowledged cursors, epoch recovery and measured benefit.
 
-## Measured control and context reuse (unreleased source update)
+## Implemented measured control and context reuse
 
 The greedy core caches one finite-checked argmax token instead of copying a full vocabulary logit vector. This does not change the verifier or establish numerical equivalence across batch shapes.
 

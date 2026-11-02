@@ -44,3 +44,5 @@ Repository documentation is maintained in English. Application and showcase lang
 - [Exploratory QA with GLM and Gemini, including physical-device failures](EXPLORATORY_QA_2026_11_01.md)
 
 - [Device assessment, connection history and KPI definitions](DEVICE_ASSESSMENT_AND_KPIS.md)
+
+[Current engine capabilities, limits and evidence](ENGINE_STATUS.md) explains the distinction between phone drafting and unimplemented memory-capacity execution.
