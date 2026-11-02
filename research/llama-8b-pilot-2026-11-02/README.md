@@ -40,3 +40,7 @@ The [pinned upstream llama.cpp server control](PLAN-UPSTREAM.md) completed 36/36
 This server restarts and warms per arm, while NodeLift's controller uses a different path and both models are kept resident. HTTP overhead, process behavior, batching and residency differ. The two speedup ratios therefore do not establish a fair product ranking or explain the gap. Server TTFT was not measured because this control used non-streaming responses. A same-path, matched-residency investigation is needed before attributing a cause or claiming NodeLift superiority.
 
 The later Lenovo test must first probe its actual hardware and link, then compare a strong local baseline with the remote configuration and account for transfer, thermal state, fallback and discarded work.
+
+## Publication verification
+
+The showcase was published on 2 November 2026. Authenticated FTPS readback and anonymous HTTPS readback matched the local bytes for the page, script and all three localized charts. The English, Simplified Chinese and Italian chart selection was also checked in the live browser. The [FTPS receipt](site-ftps-readback.json) and [HTTPS receipt](site-http-readback.json) contain file hashes and statuses, not credentials.

@@ -1,0 +1,41 @@
+{
+  "time_utc": "2026-11-02T17:49:53Z",
+  "files": [
+    {
+      "path": "index.html",
+      "http_status": 200,
+      "bytes": 149459,
+      "sha256": "cc6bdbbec1754595583ac75aa345a39332c55658e279e6ae23c7125baa5071bb",
+      "match": true
+    },
+    {
+      "path": "assets/showcase.js",
+      "http_status": 200,
+      "bytes": 23956,
+      "sha256": "8599830432e1802defb6a27913d18aa88378b2fd1f465aa1e57cc6ce284978c1",
+      "match": true
+    },
+    {
+      "path": "assets/local-8b-pairs.en.png",
+      "http_status": 200,
+      "bytes": 139533,
+      "sha256": "cace7c048853a289df4e8cfad0f04490d8b9a1f5c2760a44d3f32fba49c3fa0b",
+      "match": true
+    },
+    {
+      "path": "assets/local-8b-pairs.it.png",
+      "http_status": 200,
+      "bytes": 151534,
+      "sha256": "3f8808261aba2d43c9f9a60176ed83c539ccf810ddf7b71d81bd6f08f90d1471",
+      "match": true
+    },
+    {
+      "path": "assets/local-8b-pairs.zh-Hans.png",
+      "http_status": 200,
+      "bytes": 163404,
+      "sha256": "2242a2ce5c1533e35c6f7e0358f3949db9264156c198225a13291693fb3194c5",
+      "match": true
+    }
+  ],
+  "all_matched": true
+}
