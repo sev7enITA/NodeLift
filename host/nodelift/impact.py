@@ -151,6 +151,10 @@ def analyze(data):
         raise ValueError('evidence kind required')
     if scope['candidate'] == 'host' and kind != 'control':
         raise ValueError('host versus host must be control evidence')
+    display = data.get('display', {})
+    if not isinstance(display, dict) or any(k not in ('target_model', 'draft_model', 'candidate_device', 'connection_label') for k in display):
+        raise ValueError('invalid display labels')
+    display = {k: label(v, k) for k, v in display.items()}
     scope_hash = digest(scope)
     sessions = data.get('sessions')
     if not isinstance(sessions, list) or not 1 <= len(sessions) <= 100:
@@ -347,7 +351,7 @@ def analyze(data):
         'energy_coverage': 'pass' if len(energy_rows) == counts['planned_pairs'] else 'blocked',
         'routing_promotion': 'disabled',
     }
-    return dict(schema_version=1, algorithm=VERSION, scope=scope, verdict=verdict, reasons=reasons,
+    return dict(schema_version=1, algorithm=VERSION, scope=scope, display=display, verdict=verdict, reasons=reasons,
                 counts=counts, time_saved_ms=saved, time_saved_percent=percent, ttft_change_ms=ttft,
                 energy_saved_joules=estimate(energy_rows) if energy_rows else None,
                 service_time_saved_ms=estimate(service_time_rows), service_ttft_change_ms=estimate(service_ttft_rows),

@@ -12,6 +12,12 @@
     "candidate": "host",
     "warmup_policy": "one-unscored-pair; shared-residency-uncontrolled"
   },
+  "display": {
+    "target_model": "Qwen2.5 1.5B Instruct Q4_K_M",
+    "draft_model": "Qwen2.5 0.5B Instruct Q4_K_M",
+    "candidate_device": "Mac host control",
+    "connection_label": "Local loopback control"
+  },
   "verdict": "control_only",
   "reasons": [
     "Control or synthetic evidence cannot establish device acceleration."
@@ -25,32 +31,32 @@
     "invalid_pairs": 0
   },
   "time_saved_ms": {
-    "estimate": 9.938000000000017,
+    "estimate": -9.824708999999984,
     "ci95": null,
     "n": 3,
     "clusters": 1
   },
   "time_saved_percent": {
-    "estimate": 4.074618657944524,
+    "estimate": -3.1761990877666584,
     "ci95": null,
     "n": 3,
     "clusters": 1
   },
   "ttft_change_ms": {
-    "estimate": -0.0480839999999958,
+    "estimate": 24.005874999999996,
     "ci95": null,
     "n": 3,
     "clusters": 1
   },
   "energy_saved_joules": null,
   "service_time_saved_ms": {
-    "estimate": 9.938000000000017,
+    "estimate": -9.824708999999984,
     "ci95": null,
     "n": 3,
     "clusters": 1
   },
   "service_ttft_change_ms": {
-    "estimate": -0.0480839999999958,
+    "estimate": 24.005874999999996,
     "ci95": null,
     "n": 3,
     "clusters": 1
@@ -143,25 +149,25 @@
   "exclusions": [],
   "paired_observations": [
     {
-      "session": "6af799f6be584cdda21d9c9b2b6c5906",
+      "session": "fdd45352ce7c48a1a88f3c7cce36276d",
       "pair_id": "0",
       "order": "BA",
-      "time_saved_ms": -21.26237499999999,
-      "ttft_change_ms": 2.071957999999995
+      "time_saved_ms": 9.583291999999972,
+      "ttft_change_ms": 24.498874999999998
     },
     {
-      "session": "6af799f6be584cdda21d9c9b2b6c5906",
+      "session": "fdd45352ce7c48a1a88f3c7cce36276d",
       "pair_id": "1",
       "order": "AB",
-      "time_saved_ms": 9.938000000000017,
-      "ttft_change_ms": -21.38325
+      "time_saved_ms": -21.10708299999999,
+      "ttft_change_ms": 1.9967910000000018
     },
     {
-      "session": "6af799f6be584cdda21d9c9b2b6c5906",
+      "session": "fdd45352ce7c48a1a88f3c7cce36276d",
       "pair_id": "2",
       "order": "AB",
-      "time_saved_ms": 16.639251,
-      "ttft_change_ms": -0.0480839999999958
+      "time_saved_ms": -9.824708999999984,
+      "ttft_change_ms": 24.005874999999996
     }
   ],
   "limitations": [

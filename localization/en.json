@@ -1149,5 +1149,8 @@
   "energy absent": "energy absent",
   "invalid energy object": "invalid energy object",
   "invalid or incomplete energy coverage": "invalid or incomplete energy coverage",
-  "meter scope differs": "meter scope differs"
+  "meter scope differs": "meter scope differs",
+  "Candidate device": "Candidate device",
+  "Connection label": "Connection label",
+  "Labels identify the recorded setup. Exact hashes and configuration in the comparison scope remain authoritative.": "Labels identify the recorded setup. Exact hashes and configuration in the comparison scope remain authoritative."
 }

@@ -1151,7 +1151,10 @@ const NodeLiftChinese = {
   "energy absent": "缺少能量测量",
   "invalid energy object": "能量数据无效",
   "invalid or incomplete energy coverage": "能量测量覆盖无效或不完整",
-  "meter scope differs": "仪表测量范围不同"
+  "meter scope differs": "仪表测量范围不同",
+  "Candidate device": "候选设备",
+  "Connection label": "连接标签",
+  "Labels identify the recorded setup. Exact hashes and configuration in the comparison scope remain authoritative.": "标签用于识别记录的设置。比较范围中的精确哈希值和配置仍是权威依据。"
 };
 const NodeLiftItalian = {
   "0 layers uses CPU. 999 requests the maximum GPU offload supported by the backend. Compatibility depends on the model.": "0 livelli usa la CPU. 999 richiede il massimo numero di livelli sulla GPU supportato dal backend. La compatibilità dipende dal modello.",
@@ -2304,7 +2307,10 @@ const NodeLiftItalian = {
   "energy absent": "misura energetica assente",
   "invalid energy object": "dati energetici non validi",
   "invalid or incomplete energy coverage": "copertura energetica non valida o incompleta",
-  "meter scope differs": "ambito dello strumento diverso"
+  "meter scope differs": "ambito dello strumento diverso",
+  "Candidate device": "Dispositivo candidato",
+  "Connection label": "Etichetta della connessione",
+  "Labels identify the recorded setup. Exact hashes and configuration in the comparison scope remain authoritative.": "Le etichette identificano la configurazione registrata. Fanno fede gli hash esatti e la configurazione riportati nell’ambito del confronto."
 };
 const NodeLiftCatalogs = {"zh-Hans": NodeLiftChinese, it: NodeLiftItalian};
 'use strict';

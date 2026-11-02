@@ -679,5 +679,11 @@
       ],
       "started_at_utc": "2026-11-02T03:22:50Z"
     }
-  ]
+  ],
+  "display": {
+    "target_model": "Qwen2.5 1.5B Instruct Q4_K_M",
+    "draft_model": "Qwen2.5 0.5B Instruct Q4_K_M",
+    "candidate_device": "Xiaomi 25128PNA1C",
+    "connection_label": "Xiaomi hotspot to Mac"
+  }
 }

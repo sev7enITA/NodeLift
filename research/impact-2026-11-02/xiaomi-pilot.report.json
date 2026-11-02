@@ -12,6 +12,12 @@
     "candidate": "remote_draft",
     "warmup_policy": "one-unscored-pair; shared-residency-uncontrolled"
   },
+  "display": {
+    "target_model": "Qwen2.5 1.5B Instruct Q4_K_M",
+    "draft_model": "Qwen2.5 0.5B Instruct Q4_K_M",
+    "candidate_device": "Xiaomi 25128PNA1C",
+    "connection_label": "Xiaomi hotspot to Mac"
+  },
   "verdict": "insufficient_evidence",
   "reasons": [
     "At least 10 independent sessions and 30 eligible pairs are required for the descriptive decision rule."

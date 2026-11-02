@@ -576,6 +576,14 @@ function renderImpactReport(){
   const r=impactState.report;if(!r)return;
   const root=$('impact-report');root.replaceChildren();root.hidden=false;
   const headline=el('div',undefined,'impact-result-heading');headline.append(el('span',t(impactKinds[r.evidence.kind]),'impact-evidence'),el('h4',t(impactVerdicts[r.verdict])));root.append(headline);
+  if(r.display&&typeof r.display==='object'&&!Array.isArray(r.display)){
+    const labels=el('dl',undefined,'impact-display');let count=0;
+    for(const [name,label] of [['target_model','Main model'],['draft_model','Draft model'],['candidate_device','Candidate device'],['connection_label','Connection label']]){
+      const value=r.display[name];if(typeof value!=='string'||!value.trim())continue;
+      const field=el('div');field.append(el('dt',t(label)),el('dd',value.slice(0,256)));labels.append(field);count++;
+    }
+    if(count)root.append(labels,el('p',t('Labels identify the recorded setup. Exact hashes and configuration in the comparison scope remain authoritative.'),'impact-note'));
+  }
   root.append(el('p',t('This result describes the imported model and connection only. It does not automatically enable delegation.'),'impact-note'));
   if(r.qualified_recommendation===false)root.append(el('p',t('Not qualified for a delegation recommendation. A directional sample signal does not establish a verified device benefit.'),'impact-qualification'));
   const grid=el('div',undefined,'impact-metrics');const time=impactMetric('Time saved',r.time_saved_ms,'ms','Positive means faster completion than the host alone.');time.append(el('p',t('Relative change: {0}',impactNumber(r.time_saved_percent?.estimate,'%')),'impact-relative'));grid.append(time,impactMetric('TTFT change',r.ttft_change_ms,'ms','Negative means the first response text arrived earlier.'));

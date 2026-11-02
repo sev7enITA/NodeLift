@@ -1150,5 +1150,8 @@ let italianMessages: [String: String] = [
     "energy absent": "misura energetica assente",
     "invalid energy object": "dati energetici non validi",
     "invalid or incomplete energy coverage": "copertura energetica non valida o incompleta",
-    "meter scope differs": "ambito dello strumento diverso"
+    "meter scope differs": "ambito dello strumento diverso",
+    "Candidate device": "Dispositivo candidato",
+    "Connection label": "Etichetta della connessione",
+    "Labels identify the recorded setup. Exact hashes and configuration in the comparison scope remain authoritative.": "Le etichette identificano la configurazione registrata. Fanno fede gli hash esatti e la configurazione riportati nell’ambito del confronto."
 ]

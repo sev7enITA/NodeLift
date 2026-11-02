@@ -1149,5 +1149,8 @@
   "energy absent": "缺少能量测量",
   "invalid energy object": "能量数据无效",
   "invalid or incomplete energy coverage": "能量测量覆盖无效或不完整",
-  "meter scope differs": "仪表测量范围不同"
+  "meter scope differs": "仪表测量范围不同",
+  "Candidate device": "候选设备",
+  "Connection label": "连接标签",
+  "Labels identify the recorded setup. Exact hashes and configuration in the comparison scope remain authoritative.": "标签用于识别记录的设置。比较范围中的精确哈希值和配置仍是权威依据。"
 }

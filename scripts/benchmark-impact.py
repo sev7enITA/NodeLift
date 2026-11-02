@@ -188,6 +188,7 @@ def collect(args):
                'attempts': [], 'seed': args.seed, 'warmup': [], 'started_at_utc': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime())}
     data = {'schema_version': 1, 'runner': VERSION, 'collector_sha256': file_hash(__file__), 'scope': scope,
             'evidence_kind': 'control' if args.candidate == 'host' else 'physical' if args.candidate == 'remote_draft' else 'local',
+            'display': {'target_model': Path(config['target_model']).name, 'draft_model': Path(config['draft_model']).name if config.get('draft_model') else 'none', 'candidate_device': str((node or {}).get('capabilities', {}).get('model', 'local host')), 'connection_label': args.connection},
             'sessions': [session]}
     if args.output.exists():
         raise ValueError('Output already exists; use a fresh file to retain previous evidence.')
