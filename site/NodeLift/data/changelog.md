@@ -4,6 +4,18 @@
 
 Every published companion build has an entry below. Android packages are laboratory builds; iOS packages require Apple signing and provisioning. Historical validation belongs to the named version and does not establish current physical-device performance.
 
+## [0.2.11](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.11): build 13 · 2026-11-02
+
+**Model metadata and transparent companion updates** · experimental-prerelease
+
+- Show Hugging Face repository update and creation dates, task, reported parameters, context, license, languages, base models, gated access and popularity when supplied. Missing metadata stays unknown. Repository dates are not original model release dates.
+- Show matching release notes before an explicit direct APK or unsigned IPA download. Validate version, build, publication date and artifact metadata; invalidate stale details after failed checks. Current releases can also be reviewed.
+- Allow an explicitly confirmed legacy enrollment to be retired into a stable enrollment while retaining assessment and job history. Established identities are never merged by device name or IP address.
+
+**Validation:** 118 host tests, five desktop JavaScript suites, 21 Android JVM tests, Android lint (0 errors, 17 warnings), both Swift policy suites and unsigned iOS ARM64 build passed. Live Hugging Face metadata rendering and one retained legacy/stable enrollment were verified on the local dashboard. Gemini 4 Argon High supplied a textual UX review. Physical device installation, accessibility and browser download handoff remain unqualified.
+
+**Limits:** Android remains debug-signed with the existing laboratory signer. iOS requires Apple signing and provisioning; downloading an IPA cannot install it. Browser downloads are not hash-verified by the companion. No new inference speedup or shared-memory capability is claimed. HarmonyOS/NEXT builds remain deferred.
+
 ## [0.2.10](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.10): build 12 · 2026-11-01
 
 **Backend selection fixes and synchronized companion builds** · experimental-prerelease

@@ -22,7 +22,7 @@
 | Find app information and updates | [About, references and updates](ABOUT_AND_UPDATES.md) |
 | Identify authorship and dependencies | [Credits](wiki/About-and-credits.md) |
 
-The current companions are 0.2.10/build 12. Host sources include the 0.3.0 integration preview. Historical reports are dated evidence, not automatically current support claims.
+The current companions are 0.2.11/build 13. Host sources include the 0.3.0 integration preview. Historical reports are dated evidence, not automatically current support claims.
 
 Repository documentation is maintained in English. Application and showcase languages remain English (default), Simplified Chinese and Italian.
 
