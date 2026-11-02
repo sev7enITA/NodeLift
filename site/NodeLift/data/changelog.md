@@ -147,6 +147,12 @@ Every published companion build has an entry below. Android packages are laborat
 
 ## Host, documentation and tooling updates
 
+### 2026-11-02: Standalone Windows and Linux node-probe previews
+
+- Publish self-contained CPU-only Windows and Linux x64/ARM64 probe archives with embedded Python, native benchmark, startup checks, licenses and hashes. Models and GPU drivers remain external.
+- Startup and local inventory were checked on hosted CI runners; no physical Windows/Linux, GPU or NPU device is qualified. Windows ARM64 uses a baseline Clang build; Linux packages target Ubuntu 22.04.
+- These are command-line probes rather than the full desktop host or distributed workers. The Mac Apple silicon preview was physically smoke-tested separately.
+
 ### 2026-11-02: Standalone node probe 0.1.1 and startup checks
 
 - Add a self-contained local probe executable containing Python, standard libraries and llama-bench. Startup checks the bundled benchmark without installing system packages, uploading telemetry or modifying GPU drivers.

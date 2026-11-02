@@ -38,6 +38,19 @@ Running it without arguments checks the bundled components and writes a uniquely
 
 This specific Mac package was tested on Apple M3 Max with macOS 27.2. It is ad-hoc signed and not notarized; another Mac may refuse to launch it. [Physical validation](../research/standalone-node-2026-11-02/README.md) describes the no-system-Python sentinel test and GGUF smoke test. A workflow builds separate platform binaries on their respective OSs; successful CI does not replace physical qualification or guarantee compatibility with all GPU drivers and operating-system versions.
 
+## Windows and Linux standalone previews
+
+[Windows x64](https://github.com/sev7enITA/NodeLift/releases/download/node-probe-v0.1.1/NodeLift-node-probe-0.1.1-windows-x64.zip), [Windows ARM64](https://github.com/sev7enITA/NodeLift/releases/download/node-probe-v0.1.1/NodeLift-node-probe-0.1.1-windows-arm64.zip), [Linux x64](https://github.com/sev7enITA/NodeLift/releases/download/node-probe-v0.1.1/NodeLift-node-probe-0.1.1-linux-x64.zip) and [Linux ARM64](https://github.com/sev7enITA/NodeLift/releases/download/node-probe-v0.1.1/NodeLift-node-probe-0.1.1-linux-arm64.zip) include their own Python and CPU benchmark. Use the [platform manifest](../releases/node-probe-platforms.json) to verify the hashes.
+
+```powershell
+# Windows PowerShell, from the extracted folder
+.\NodeLift-node.exe --self-check
+.\NodeLift-node.exe inventory --output node-profile.json
+.\NodeLift-node.exe benchmark --model C:\path\model.gguf --output model-benchmark.json
+```
+
+Without arguments the program checks its bundled benchmark and creates an inventory in Downloads, or in the home directory if Downloads does not exist. It does not upload reports, change drivers or install packages globally. Specify a local GGUF for an explicit benchmark. These four CI builds use the CPU backend only; they cannot benchmark an NPU or GPU. Standard operating-system libraries are still required. Linux binaries built on Ubuntu 22.04 may not run on older distributions. They are unsigned and may be blocked by the OS. Startup and inventory passed on hosted runners; no physical Windows/Linux machine, P16, Snapdragon, Kirin or accelerator has been qualified. The downloadable probe is not a desktop inference worker or the NodeLift host.
+
 ## Python zipapp alternative
 
 Download [NodeLift node probe 0.1.0](https://www.fabriziodegni.com/NodeLift/assets/NodeLift-node-probe-0.1.0.pyz). Verify its hash against the [package manifest](../releases/node-probe.json). Python runs the same package on supported desktop OSs; a native interpreter for the machine is preferred. Physical Windows/Linux qualification is still pending.

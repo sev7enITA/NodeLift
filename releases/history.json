@@ -180,6 +180,15 @@
   "documentation_updates": [
     {
       "date": "2026-11-02",
+      "title": "Standalone Windows and Linux node-probe previews",
+      "changes": [
+        "Publish self-contained CPU-only Windows and Linux x64/ARM64 probe archives with embedded Python, native benchmark, startup checks, licenses and hashes. Models and GPU drivers remain external.",
+        "Startup and local inventory were checked on hosted CI runners; no physical Windows/Linux, GPU or NPU device is qualified. Windows ARM64 uses a baseline Clang build; Linux packages target Ubuntu 22.04.",
+        "These are command-line probes rather than the full desktop host or distributed workers. The Mac Apple silicon preview was physically smoke-tested separately."
+      ]
+    },
+    {
+      "date": "2026-11-02",
       "title": "Standalone node probe 0.1.1 and startup checks",
       "changes": [
         "Add a self-contained local probe executable containing Python, standard libraries and llama-bench. Startup checks the bundled benchmark without installing system packages, uploading telemetry or modifying GPU drivers.",

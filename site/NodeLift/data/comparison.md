@@ -75,10 +75,10 @@ ID: `nodelift`
 | Category | distributed |
 | Ecosystem | western |
 | Documented origin | Fabrizio Degni, Italy; this project. |
-| Readiness | Experimental host and companion; public mobile 0.2.11/build 13; node probe 0.1.0 preview. Private iOS 0.2.12 development builds were tested. |
+| Readiness | Experimental host and companion; public mobile 0.2.11/build 13; standalone node probe 0.1.1 previews. Private iOS 0.2.12 development builds were tested. |
 | License | MIT; native dependencies retain their licenses. |
 | Architecture | Phone drafts candidate tokens; host verifies greedily with a pinned llama.cpp core and bounded fallback. Generic local desktop/server probe is available; remote PC workers are planned. |
-| Host | Mac M3 Max inference and portable node-probe kernels physically measured. Windows/Linux probe adapters are fixture-tested, not physically qualified. |
+| Host | Mac M3 Max inference and standalone probe physically measured. Windows/Linux x64/ARM64 standalone probe startup and inventory pass hosted CI; physical PC qualification is pending. |
 | Android | Xiaomi native draft work tested with companion 0.2.8. Its native build was unoptimized; the corrected build was compiled but not physically benchmarked. |
 | iOS | iPhone 15 Pro Max draft work tested with privately signed 0.2.12 development builds 14 and 15. Public 0.2.11 IPA remains unsigned. |
 | Mobile compute | Physical Xiaomi and iPhone supplied accepted draft tokens in fixed-mode tests; both measured paths were slower than their paired host baselines. |
@@ -87,13 +87,13 @@ ID: `nodelift`
 | Transport | Pinned TLS; prefix/epoch leases; bounded deadlines. |
 | Integration | Restricted OpenAI-style gateway; LM Studio SDK handler tested, full plugin runtime pending. |
 | Security / trust | Separate admin/client keys; TLS pinning; local trust boundary. No independent security certification. |
-| Evidence | Physical paired Xiaomi and iPhone sessions, retained failures and raw outputs, plus separate local Mac kernel-probe samples. No general phone speedup or physical Windows/Linux probe qualification. |
+| Evidence | Physical paired Xiaomi and iPhone sessions, retained failures and raw outputs, local Mac probe tests, plus Windows/Linux x64/ARM64 probe CI smoke checks. No general phone speedup or physical Windows/Linux qualification. |
 | Limits | Greedy-only verifier, hybrid models rejected; no independently qualified GPU allocation, sustained thermal/energy study, desktop worker enrollment or capacity sharding. |
 | Lesson for NodeLift | Select routes only after model- and connection-specific end-to-end comparisons including fallback, uncertainty and strongest local baseline. |
 | Source revision | 3e7016a7c51d2bdedee0e9427e9e009aee09f3a2 |
 | Checked | 2026-11-02 |
 
-Sources: [Current public companion release 0.2.11](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.11); [Physical Xiaomi results](https://github.com/sev7enITA/NodeLift/blob/3e7016a7c51d2bdedee0e9427e9e009aee09f3a2/research/phone-tradeoffs-2026-11-02/REPORT.md); [Physical iPhone results](https://github.com/sev7enITA/NodeLift/blob/3e7016a7c51d2bdedee0e9427e9e009aee09f3a2/research/iphone-tradeoffs-2026-11-02/REPORT.md); [Performance diagnosis](https://github.com/sev7enITA/NodeLift/blob/3e7016a7c51d2bdedee0e9427e9e009aee09f3a2/research/performance-diagnosis-2026-11-02/REPORT.md); [Generic node probe](https://github.com/sev7enITA/NodeLift/blob/3e7016a7c51d2bdedee0e9427e9e009aee09f3a2/docs/NODE_PROBE.md)
+Sources: [Current public companion release 0.2.11](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.11); [Physical Xiaomi results](https://github.com/sev7enITA/NodeLift/blob/3e7016a7c51d2bdedee0e9427e9e009aee09f3a2/research/phone-tradeoffs-2026-11-02/REPORT.md); [Physical iPhone results](https://github.com/sev7enITA/NodeLift/blob/3e7016a7c51d2bdedee0e9427e9e009aee09f3a2/research/iphone-tradeoffs-2026-11-02/REPORT.md); [Performance diagnosis](https://github.com/sev7enITA/NodeLift/blob/3e7016a7c51d2bdedee0e9427e9e009aee09f3a2/research/performance-diagnosis-2026-11-02/REPORT.md); [Generic node probe](https://github.com/sev7enITA/NodeLift/blob/3e7016a7c51d2bdedee0e9427e9e009aee09f3a2/docs/NODE_PROBE.md); [Standalone probe CI run](https://github.com/sev7enITA/NodeLift/actions/runs/41480938483)
 
 ## DistAI
 
