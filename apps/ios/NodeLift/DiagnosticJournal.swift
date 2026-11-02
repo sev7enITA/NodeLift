@@ -4,6 +4,7 @@ enum DiagnosticEvent:String {
     case appStart, previousInterruptionUnknown, sessionStart, sessionConnected, sessionRetry, sessionFailed, sessionStop
     case cameraOpen, cameraReady, cameraFailed, cameraResult, modelLoading, modelReady, modelFailed, jobFailed, thermalPause
     case updateCheck, updateAvailable, updateCurrent, updateFailed, exportFailed, systemCrash, systemHang
+    case draftDiscarded
 }
 
 /// Only stable event names and numeric OS codes can enter the journal. No arbitrary text.

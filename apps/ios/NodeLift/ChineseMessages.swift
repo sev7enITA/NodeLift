@@ -1166,5 +1166,6 @@ let chineseMessages: [String: String] = [
     "The session pauses during setup. The draft is verified against your paired Mac. Resume after verification and keep the app open.": "设置期间会暂停会话。草稿模型将与已配对的 Mac 进行校验。校验完成后恢复会话，并保持应用在前台。",
     "Draft verified · proposals enabled · resume the session": "草稿模型已校验 · 建议已启用 · 请恢复会话",
     "Draft transfer cancelled": "草稿模型传输已取消",
-    "Cancel draft transfer": "取消草稿模型传输"
+    "Cancel draft transfer": "取消草稿模型传输",
+    "Draft proposal expired or superseded": "草稿建议已过期或已被取代"
 ]

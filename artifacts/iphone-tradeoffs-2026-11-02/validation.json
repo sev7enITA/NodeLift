@@ -1,0 +1,22 @@
+{
+  "original_build": 14,
+  "installed_fix_build": 15,
+  "companion_version": "0.2.12",
+  "completed_original_pairs": 18,
+  "completed_primary_attempts": 36,
+  "invalid_primary_attempts": 1,
+  "missing_primary_attempts": 5,
+  "output_equivalent_completed_pairs": 18,
+  "reports_recomputed": 4,
+  "energy": "unmeasured",
+  "independent_confidence": "unqualified",
+  "physical_fix_validation": "pending readiness",
+  "tests": {
+    "ios_arm64_release": "passed build15",
+    "swift_transfer_integration": "passed on macOS synthetic TLS including repeated obsolete result handling",
+    "swift_protocol_integration": "passed on macOS",
+    "swift_support_policy": "passed",
+    "localization": "passed"
+  },
+  "native_library_changed": false
+}

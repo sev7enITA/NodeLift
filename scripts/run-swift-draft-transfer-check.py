@@ -18,6 +18,11 @@ class Handler(BaseHTTPRequestHandler):
     def handle(self):
         try: super().handle()
         except (BrokenPipeError, ConnectionResetError, ssl.SSLError): pass
+    def do_POST(self):
+        body = json.loads(self.rfile.read(int(self.headers['Content-Length'])))
+        data = json.dumps({'error': body['error']}).encode()
+        self.send_response(body['status']); self.send_header('Content-Length', str(len(data)))
+        self.end_headers(); self.wfile.write(data)
     def do_GET(self):
         if self.headers.get('Authorization') != 'Bearer synthetic-draft-test':
             self.send_error(401); return

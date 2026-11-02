@@ -1167,7 +1167,8 @@ const NodeLiftChinese = {
   "The session pauses during setup. The draft is verified against your paired Mac. Resume after verification and keep the app open.": "设置期间会暂停会话。草稿模型将与已配对的 Mac 进行校验。校验完成后恢复会话，并保持应用在前台。",
   "Draft verified · proposals enabled · resume the session": "草稿模型已校验 · 建议已启用 · 请恢复会话",
   "Draft transfer cancelled": "草稿模型传输已取消",
-  "Cancel draft transfer": "取消草稿模型传输"
+  "Cancel draft transfer": "取消草稿模型传输",
+  "Draft proposal expired or superseded": "草稿建议已过期或已被取代"
 };
 const NodeLiftItalian = {
   "0 layers uses CPU. 999 requests the maximum GPU offload supported by the backend. Compatibility depends on the model.": "0 livelli usa la CPU. 999 richiede il massimo numero di livelli sulla GPU supportato dal backend. La compatibilità dipende dal modello.",
@@ -2336,7 +2337,8 @@ const NodeLiftItalian = {
   "The session pauses during setup. The draft is verified against your paired Mac. Resume after verification and keep the app open.": "La sessione viene sospesa durante la configurazione. Il draft viene verificato rispetto al Mac abbinato. Riprendi dopo la verifica e lascia aperta l’app.",
   "Draft verified · proposals enabled · resume the session": "Draft verificato · proposte abilitate · riprendi la sessione",
   "Draft transfer cancelled": "Trasferimento del draft annullato",
-  "Cancel draft transfer": "Annulla trasferimento draft"
+  "Cancel draft transfer": "Annulla trasferimento draft",
+  "Draft proposal expired or superseded": "Proposta draft scaduta o superata"
 };
 const NodeLiftCatalogs = {"zh-Hans": NodeLiftChinese, it: NodeLiftItalian};
 'use strict';

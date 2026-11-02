@@ -51,7 +51,13 @@ struct Ticket: Codable, Sendable {
 struct Credentials: Codable { var pairing: Ticket; let token: String; let node_id: String }
 enum NodeError: LocalizedError {
     case message(String)
-    var errorDescription: String? { if case .message(let m) = self { return m }; return nil }
+    case discardedDraft
+    var errorDescription: String? {
+        switch self {
+        case .message(let m): return m
+        case .discardedDraft: return "Draft proposal expired or superseded"
+        }
+    }
 }
 
 final class PinnedDelegate: NSObject, URLSessionDelegate, URLSessionTaskDelegate, @unchecked Sendable {
@@ -111,7 +117,18 @@ final class NodeClient: @unchecked Sendable {
             request.setValue(raw ? "application/octet-stream" : "application/json", forHTTPHeaderField: "Content-Type")
         }
         let (data, response) = try await session.data(for: request)
-        guard let response = response as? HTTPURLResponse, (200...299).contains(response.statusCode) else { throw NodeError.message("Request rejected: check connection and pairing") }
+        guard let response = response as? HTTPURLResponse else { throw NodeError.message("Request rejected: check connection and pairing") }
+        guard data.count <= 1048576 else { throw NodeError.message("Response too large") }
+        if path == "/v1/engine/result", response.statusCode == 400,
+           let value = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+           let reason = value["error"] as? String,
+           ["unknown, expired or replayed inference lease", "stale or mismatched draft identity"].contains(reason) {
+            // Host rejection is final: never retry or count these tokens as accepted.
+            // A completed obsolete job does not imply a broken authenticated session.
+            recordResponse()
+            throw NodeError.discardedDraft
+        }
+        guard (200...299).contains(response.statusCode) else { throw NodeError.message("Request rejected: check connection and pairing") }
         lastConnectionId = response.value(forHTTPHeaderField:"X-NodeLift-Connection-ID") ?? ""
         guard data.count <= 1048576 else { throw NodeError.message("Response too large") }
         if !token.isEmpty { recordResponse() }

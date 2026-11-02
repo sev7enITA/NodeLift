@@ -1,0 +1,83 @@
+{
+  "source": "physical iPhone allowlisted journal",
+  "build": 14,
+  "events": [
+    {
+      "event": "sessionStart",
+      "reporter_build": 14,
+      "time": 1793597450.15455
+    },
+    {
+      "event": "modelLoading",
+      "reporter_build": 14,
+      "time": 1793597450.193869
+    },
+    {
+      "event": "modelReady",
+      "reporter_build": 14,
+      "time": 1793597461.125791
+    },
+    {
+      "event": "sessionConnected",
+      "reporter_build": 14,
+      "time": 1793597461.2768888
+    },
+    {
+      "code": 0,
+      "event": "sessionRetry",
+      "reporter_build": 14,
+      "time": 1793597482.089808
+    },
+    {
+      "event": "sessionConnected",
+      "reporter_build": 14,
+      "time": 1793597485.601156
+    },
+    {
+      "code": 0,
+      "event": "sessionRetry",
+      "reporter_build": 14,
+      "time": 1793597486.828007
+    },
+    {
+      "event": "sessionConnected",
+      "reporter_build": 14,
+      "time": 1793597489.890839
+    },
+    {
+      "code": 0,
+      "event": "sessionRetry",
+      "reporter_build": 14,
+      "time": 1793597525.0073872
+    },
+    {
+      "event": "sessionConnected",
+      "reporter_build": 14,
+      "time": 1793597528.244179
+    },
+    {
+      "code": 0,
+      "event": "sessionRetry",
+      "reporter_build": 14,
+      "time": 1793597528.3995671
+    },
+    {
+      "event": "sessionConnected",
+      "reporter_build": 14,
+      "time": 1793597531.5575461
+    },
+    {
+      "code": 0,
+      "event": "sessionRetry",
+      "reporter_build": 14,
+      "time": 1793597532.029632
+    },
+    {
+      "code": 0,
+      "event": "sessionFailed",
+      "reporter_build": 14,
+      "time": 1793597532.0339952
+    }
+  ],
+  "interpretation": "Session retries and failure observed. Numeric code 0 does not identify a unique failure cause. Current source counts expired-result HTTP rejections as connection errors; this is a candidate mechanism, not an exact error-body observation."
+}

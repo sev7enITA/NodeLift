@@ -1165,5 +1165,6 @@
   "The session pauses during setup. The draft is verified against your paired Mac. Resume after verification and keep the app open.": "The session pauses during setup. The draft is verified against your paired Mac. Resume after verification and keep the app open.",
   "Draft verified · proposals enabled · resume the session": "Draft verified · proposals enabled · resume the session",
   "Draft transfer cancelled": "Draft transfer cancelled",
-  "Cancel draft transfer": "Cancel draft transfer"
+  "Cancel draft transfer": "Cancel draft transfer",
+  "Draft proposal expired or superseded": "Draft proposal expired or superseded"
 }

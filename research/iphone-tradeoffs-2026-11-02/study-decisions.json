@@ -1,0 +1,39 @@
+{
+  "remote-fixed-128": {
+    "decision": "scheduled",
+    "rule": "fixed-32 median paired completed-service ratio <=5x and >=half planned requests complete without fallback",
+    "observed_median_paired_ratio": 4.656829477871195,
+    "completed_equivalent_no_fallback_pairs": 6,
+    "planned_fixed32_pairs": 6,
+    "fixed128_pairs": 3,
+    "outcome": "stopped_after_first_primary_attempt",
+    "reason": "post_run_scope_drift; companion session failed and became offline",
+    "primary_attempts_observed": 1,
+    "primary_attempts_invalid": 1,
+    "primary_attempts_missing": 5,
+    "retry": "no replacement in original cell"
+  },
+  "build15-followup": {
+    "status": "planned_before_measurement",
+    "purpose": "check session continuity after obsolete-result handling fix; do not replace build14 failures",
+    "cells": [
+      {
+        "name": "build15-adaptive-32",
+        "pairs": 3,
+        "policy": "adaptive",
+        "tokens": 32,
+        "seed": 731934
+      },
+      {
+        "name": "build15-fixed-128",
+        "pairs": 3,
+        "policy": "fixed",
+        "tokens": 128,
+        "seed": 731935
+      }
+    ],
+    "same_host_model_and_connection_required": true,
+    "app_build": 15,
+    "scope": "separate post-fix exploratory periods, not independent confidence evidence"
+  }
+}

@@ -38,6 +38,25 @@ import Foundation
         } catch let error as NSError { pinRejected = error.domain == NSURLErrorDomain && [-1200, -1202, -999].contains(error.code) }
         precondition(pinRejected, "Unpinned server was not rejected by TLS")
         print("PASS: download TLS pin mismatch rejected")
+        let expired = "unknown, expired or replayed inference lease"
+        let cases: [(String, Int, String, Bool)] = [
+            (expired, 400, "/v1/engine/result", true),
+            (expired, 400, "/v1/engine/result", true),
+            (expired, 400, "/v1/engine/result", true),
+            ("stale or mismatched draft identity", 400, "/v1/engine/result", true),
+            ("invalid draft token IDs", 400, "/v1/engine/result", false),
+            (expired, 401, "/v1/engine/result", false),
+            (expired, 400, "/v1/heartbeat", false)
+        ]
+        for (reason, status, path, expectedDiscard) in cases {
+            var discarded = false
+            do { _ = try await client.json(path, body: ["error": reason, "status": status]); preconditionFailure("Rejected result accepted") }
+            catch NodeError.discardedDraft { discarded = true }
+            catch { }
+            precondition(discarded == expectedDiscard)
+        }
+        _ = try await client.json("/v1/engine/result", body: ["error": "synthetic", "status": 200])
+        print("PASS: obsolete results discarded without retry; other errors remain errors; session reusable")
         let after = Set(try FileManager.default.contentsOfDirectory(atPath: NSTemporaryDirectory()).filter { $0.hasSuffix(".gguf.partial") })
         precondition(before == after, "Temporary transfer files leaked")
         print("PASS: metadata bounds and partial-file cleanup")

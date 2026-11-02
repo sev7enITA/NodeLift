@@ -270,7 +270,11 @@ import CryptoKit
                             if let work=polled?["work"] as? [String:Any] {
                                 let result=await draftResult(work)
                                 try Task.checkCancellation()
-                                _ = try await c.json("/v1/engine/result",body:result)
+                                do { _ = try await c.json("/v1/engine/result",body:result) }
+                                catch NodeError.discardedDraft {
+                                    Diagnostics.shared.record(.draftDiscarded)
+                                    lastResult = "Draft proposal expired or superseded"
+                                }
                             }
                             errors=0;continue
                         }
