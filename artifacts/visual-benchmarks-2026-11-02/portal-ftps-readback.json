@@ -1,0 +1,24 @@
+{
+  "secure_ftps": true,
+  "published": [
+    "assets/benchmarks-2026-11-02/01-total-time.en.png",
+    "assets/benchmarks-2026-11-02/01-total-time.it.png",
+    "assets/benchmarks-2026-11-02/01-total-time.zh-Hans.png",
+    "assets/benchmarks-2026-11-02/02-first-token.en.png",
+    "assets/benchmarks-2026-11-02/02-first-token.it.png",
+    "assets/benchmarks-2026-11-02/02-first-token.zh-Hans.png",
+    "assets/benchmarks-2026-11-02/03-adaptive-fallback.en.png",
+    "assets/benchmarks-2026-11-02/03-adaptive-fallback.it.png",
+    "assets/benchmarks-2026-11-02/03-adaptive-fallback.zh-Hans.png",
+    "assets/benchmarks-2026-11-02/04-contribution-outcomes.en.png",
+    "assets/benchmarks-2026-11-02/04-contribution-outcomes.it.png",
+    "assets/benchmarks-2026-11-02/04-contribution-outcomes.zh-Hans.png",
+    "assets/showcase.css",
+    "assets/showcase.js",
+    "data/changelog.md",
+    "data/changelog.json",
+    "index.html"
+  ],
+  "remote_readback_verified": true,
+  "mobile_packages_changed": false
+}

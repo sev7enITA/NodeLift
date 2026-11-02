@@ -15,3 +15,9 @@ Record device/OS, NodeLift revision, native pin, battery, thermal status, foregr
 The initial small-pair trials found local drafting slower than the same host-only path. The phone’s existing hotspot measurements cover application HTTPS and synthetic CPU, not native mobile LLM inference. A CI correctness pass establishes neither physical-phone acceleration nor thermal endurance.
 
 [Benchmark protocol](https://github.com/sev7enITA/NodeLift/blob/main/BENCHMARK_PROTOCOL.md) · [Published results](https://github.com/sev7enITA/NodeLift/blob/main/research/measurements/ENGINE_RESULTS.md) · [Contribution requirements](https://github.com/sev7enITA/NodeLift/blob/main/CONTRIBUTING.md)
+
+## Visual comparisons
+
+[Open the localized benchmark gallery](https://www.fabriziodegni.com/NodeLift/#benchmark-charts) or [read the reproducible visual report](https://github.com/sev7enITA/NodeLift/blob/main/research/visual-benchmarks-2026-11-02/README.md). Four chart families show paired total duration, first-token delay, fallback-inclusive adaptive timing and proposal acceptance with incomplete requests retained. Individual observations and sample sizes accompany medians; no confidence interval or energy result is inferred.
+
+![Measured fixed-delegation duration ratios](https://raw.githubusercontent.com/sev7enITA/NodeLift/main/site/NodeLift/assets/benchmarks-2026-11-02/01-total-time.en.png)

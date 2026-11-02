@@ -180,6 +180,16 @@
   "documentation_updates": [
     {
       "date": "2026-11-02",
+      "title": "Visual phone benchmarks in English, Simplified Chinese and Italian",
+      "changes": [
+        "Publish four reproducible chart families from existing physical Xiaomi and iPhone raw sessions: fixed-delegation duration ratios, added first-token delay, adaptive fallback timing, and proposal acceptance with candidate-request outcomes.",
+        "Show individual paired observations, sample sizes, median definitions, the logarithmic ratio axis and an explicitly labelled TTFT detail scale. Retain invalid and missing candidate requests; do not convert absent measurements to zero.",
+        "Add a localized expandable gallery to the public evidence section and embed canonical English figures in the research documentation. Exact rows, source hashes and the rendering script are versioned.",
+        "Presentation-only update. No new inference runs or companion builds; no confidence, energy, sustained thermal or general hardware-ranking claim is introduced."
+      ]
+    },
+    {
+      "date": "2026-11-02",
       "title": "Physical iPhone results and private iOS build 0.2.12 (15)",
       "changes": [
         "Complete 18 original iPhone-versus-Mac pairs with matching outputs. Fixed phone delegation at a 32-token budget has a median paired 4.657x slowdown, +1040.652 ms total and +109.299 ms TTFT, with 128/246 proposals accepted. The iPhone route has a smaller observed penalty than the earlier Xiaomi route, but the backend and topology differ.",

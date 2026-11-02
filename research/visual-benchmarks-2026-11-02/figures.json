@@ -1,0 +1,53 @@
+{
+  "matplotlib": "3.11.2",
+  "figures": {
+    "site/NodeLift/assets/benchmarks-2026-11-02/01-total-time.en.png": {
+      "bytes": 137438,
+      "sha256": "3cf0723412edef8c7bbe70ccd6d00e47bc6577bbf4fb07ce33e6bd428aa6dbdb"
+    },
+    "site/NodeLift/assets/benchmarks-2026-11-02/01-total-time.it.png": {
+      "bytes": 130898,
+      "sha256": "1956c161edecfed2d3f3e5089a9d62059e4bc9955bc515001447a2b338de883c"
+    },
+    "site/NodeLift/assets/benchmarks-2026-11-02/01-total-time.zh-Hans.png": {
+      "bytes": 158720,
+      "sha256": "432ece154df44a79896bd7aa0861f5cbdec348fb04d3806d6446baedfb11d064"
+    },
+    "site/NodeLift/assets/benchmarks-2026-11-02/02-first-token.en.png": {
+      "bytes": 169079,
+      "sha256": "3354640a63ab3457210a512abf053600b55ff7f0ef7afd44bbb374ddd1686ce0"
+    },
+    "site/NodeLift/assets/benchmarks-2026-11-02/02-first-token.it.png": {
+      "bytes": 165381,
+      "sha256": "ae1286cab26b3b6e58358b60b06185e8682bc97526d903af878a2936eca79970"
+    },
+    "site/NodeLift/assets/benchmarks-2026-11-02/02-first-token.zh-Hans.png": {
+      "bytes": 202880,
+      "sha256": "ddfa5ab1f914591a25f313e2ed6d35ebd15ef06c521ef887e7136c3a4e2fdce8"
+    },
+    "site/NodeLift/assets/benchmarks-2026-11-02/03-adaptive-fallback.en.png": {
+      "bytes": 167640,
+      "sha256": "dc5cb070b7e68f499a681e14f32ae1bc5e4a18a0ba5e8656e8332379af836d30"
+    },
+    "site/NodeLift/assets/benchmarks-2026-11-02/03-adaptive-fallback.it.png": {
+      "bytes": 160804,
+      "sha256": "472d87b8b4afd16b908debc470155939bfe24eefac9b523fcc95dba53b5bb9ad"
+    },
+    "site/NodeLift/assets/benchmarks-2026-11-02/03-adaptive-fallback.zh-Hans.png": {
+      "bytes": 193654,
+      "sha256": "80dec9cfd480eea9bf173eaec736de128b282ae383b1152e54743041dc4d4c2d"
+    },
+    "site/NodeLift/assets/benchmarks-2026-11-02/04-contribution-outcomes.en.png": {
+      "bytes": 211915,
+      "sha256": "3aeee70d44c9b61ff1808cca1a65634b9539de4311a8cf7dde3a68e3a794115b"
+    },
+    "site/NodeLift/assets/benchmarks-2026-11-02/04-contribution-outcomes.it.png": {
+      "bytes": 196620,
+      "sha256": "341c00c79f22355ef231259e85b240f9323887ff728788b870d93813e5fe08e7"
+    },
+    "site/NodeLift/assets/benchmarks-2026-11-02/04-contribution-outcomes.zh-Hans.png": {
+      "bytes": 236223,
+      "sha256": "10c15190ca8b52632ec1021f9b7d09b47ff7e5079b7f355ac8db1efef4d130fd"
+    }
+  }
+}

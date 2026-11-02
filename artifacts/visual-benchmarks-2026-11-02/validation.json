@@ -1,0 +1,85 @@
+{
+  "raw_reconciliation": "passed; independently calculated without importing renderer or summary helper",
+  "cells": [
+    {
+      "cell": "x:remote-fixed-32",
+      "pairs": 6,
+      "median_ratio": 134.9489324562732,
+      "candidate_observed": 6,
+      "candidate_planned": 6
+    },
+    {
+      "cell": "x:remote-adaptive-32",
+      "pairs": 6,
+      "median_ratio": 1.195595264590673,
+      "candidate_observed": 6,
+      "candidate_planned": 6
+    },
+    {
+      "cell": "x:remote-adaptive-128",
+      "pairs": 6,
+      "median_ratio": 1.1208053158734292,
+      "candidate_observed": 6,
+      "candidate_planned": 6
+    },
+    {
+      "cell": "i:remote-fixed-32",
+      "pairs": 6,
+      "median_ratio": 4.656829477871195,
+      "candidate_observed": 6,
+      "candidate_planned": 6
+    },
+    {
+      "cell": "i:remote-adaptive-32",
+      "pairs": 6,
+      "median_ratio": 0.8656373027152333,
+      "candidate_observed": 6,
+      "candidate_planned": 6
+    },
+    {
+      "cell": "i:remote-adaptive-128",
+      "pairs": 6,
+      "median_ratio": 1.0875561915007048,
+      "candidate_observed": 6,
+      "candidate_planned": 6
+    },
+    {
+      "cell": "i:build15-fixed-128",
+      "pairs": 3,
+      "median_ratio": 4.562156161718982,
+      "candidate_observed": 3,
+      "candidate_planned": 3
+    },
+    {
+      "cell": "i:build15-adaptive-32",
+      "pairs": 3,
+      "median_ratio": 1.246754584837735,
+      "candidate_observed": 3,
+      "candidate_planned": 3
+    },
+    {
+      "cell": "i:remote-fixed-128",
+      "pairs": 0,
+      "median_ratio": null,
+      "candidate_observed": 1,
+      "candidate_planned": 3
+    }
+  ],
+  "image_hashes_verified": 12,
+  "visual_review": [
+    "Italian figures 1 and 2",
+    "English figures 3 and 4",
+    "Chinese figure 4",
+    "Italian desktop gallery",
+    "Chinese gallery and 390 px iframe layout"
+  ],
+  "mobile_scope": "Browser layout only; wide figures scroll horizontally or open at full size, not a native-device test",
+  "new_benchmark_runs": 0,
+  "documentation_check": {
+    "pages": 100,
+    "local_targets_checked": 423,
+    "errors": []
+  },
+  "release_history_check": "passed; no public mobile version change",
+  "javascript_syntax": "passed"
+}

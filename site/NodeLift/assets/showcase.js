@@ -6,8 +6,8 @@
   let savedLanguage = null;
   try { savedLanguage = localStorage.getItem('nodelift-site-language'); } catch (_) {}
   let language = locale.resolveLanguage(params.get('lang'), savedLanguage);
-  const textNodes = [...document.querySelectorAll('[data-en]')].map(node => ({node,it:node.dataset.it,en:node.dataset.en}));
-  const labelNodes = [...document.querySelectorAll('[data-en-label]')].map(node => ({node,it:node.dataset.itLabel,en:node.dataset.enLabel}));
+  const textNodes = [...document.querySelectorAll('[data-en]')].map(node => ({node,it:node.dataset.it,en:node.dataset.en,zh:node.dataset.zh}));
+  const labelNodes = [...document.querySelectorAll('[data-en-label]')].map(node => ({node,it:node.dataset.itLabel,en:node.dataset.enLabel,zh:node.dataset.zhLabel}));
   const tr = (it,en,...args) => locale.translate(it,en,language,args);
   const make = (tag,text,className) => { const node=document.createElement(tag); if(text!==undefined)node.textContent=String(text); if(className)node.className=className; return node; };
   const safeText = value => typeof value === 'string' && value.trim() ? value : tr('Non documentato nel dataset.','Not documented in the dataset.');
@@ -47,8 +47,8 @@
   ];
   function applyLanguage() {
     document.documentElement.lang=language;
-    for(const item of textNodes)item.node.textContent=tr(item.it,item.en);
-    for(const item of labelNodes)item.node.setAttribute('aria-label',tr(item.it,item.en));
+    for(const item of textNodes)item.node.textContent=language==='zh-Hans'&&item.zh?item.zh:tr(item.it,item.en);
+    for(const item of labelNodes)item.node.setAttribute('aria-label',language==='zh-Hans'&&item.zh?item.zh:tr(item.it,item.en));
     for(const lang of locale.languages)$('lang-'+lang).setAttribute('aria-pressed',String(language===lang));
     document.title=tr('NodeLift: Il tuo hardware ha ancora un futuro.','NodeLift: Your hardware still has a future.');
     document.querySelector('meta[name="description"]').content=tr('NodeLift: un laboratorio open source per delegare inferenza AI a dispositivi locali. Architettura, risultati riproducibili e atlante comparativo dei sistemi distribuiti.','NodeLift: an open-source laboratory for delegating AI inference to local devices. Architecture, reproducible results and a comparison atlas of distributed systems.');
@@ -59,6 +59,11 @@
     document.querySelectorAll('meta[property="og:locale:alternate"]').forEach((node,i)=>node.content=locale.languages.filter(lang=>lang!==language).map(lang=>localeCodes[lang])[i]);
     document.querySelector('.hero-emblem').alt=tr('Emblema originale NodeLift: una N luminosa composta da nodi interconnessi','Original NodeLift emblem: a luminous N formed from interconnected nodes');
     $('project-search').placeholder=tr('llama.cpp, Android, speculazione…','llama.cpp, Android, speculation…');
+    document.querySelectorAll('[data-benchmark-image]').forEach(img=>{
+      img.src='assets/benchmarks-2026-11-02/'+img.dataset.benchmarkImage+'.'+language+'.png';
+      img.alt=language==='zh-Hans'?img.dataset.zhAlt:language==='it'?img.dataset.itAlt:img.dataset.enAlt;
+    });
+    document.querySelectorAll('[data-benchmark-open]').forEach(a=>{a.href='assets/benchmarks-2026-11-02/'+a.dataset.benchmarkOpen+'.'+language+'.png';});
     renderStep();
     if(dataset)renderAtlas();
     else if(!fetching&&!$('atlas-error').hidden)$('atlas-status').textContent=tr('Dataset non disponibile · nessuna riga simulata','Dataset unavailable · no simulated entries');

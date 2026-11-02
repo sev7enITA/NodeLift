@@ -1,0 +1,106 @@
+{
+  "verified": [
+    {
+      "path": "assets/benchmarks-2026-11-02/01-total-time.en.png",
+      "status": 200,
+      "sha256": "3cf0723412edef8c7bbe70ccd6d00e47bc6577bbf4fb07ce33e6bd428aa6dbdb",
+      "bytes": 137438
+    },
+    {
+      "path": "assets/benchmarks-2026-11-02/01-total-time.it.png",
+      "status": 200,
+      "sha256": "1956c161edecfed2d3f3e5089a9d62059e4bc9955bc515001447a2b338de883c",
+      "bytes": 130898
+    },
+    {
+      "path": "assets/benchmarks-2026-11-02/01-total-time.zh-Hans.png",
+      "status": 200,
+      "sha256": "432ece154df44a79896bd7aa0861f5cbdec348fb04d3806d6446baedfb11d064",
+      "bytes": 158720
+    },
+    {
+      "path": "assets/benchmarks-2026-11-02/02-first-token.en.png",
+      "status": 200,
+      "sha256": "3354640a63ab3457210a512abf053600b55ff7f0ef7afd44bbb374ddd1686ce0",
+      "bytes": 169079
+    },
+    {
+      "path": "assets/benchmarks-2026-11-02/02-first-token.it.png",
+      "status": 200,
+      "sha256": "ae1286cab26b3b6e58358b60b06185e8682bc97526d903af878a2936eca79970",
+      "bytes": 165381
+    },
+    {
+      "path": "assets/benchmarks-2026-11-02/02-first-token.zh-Hans.png",
+      "status": 200,
+      "sha256": "ddfa5ab1f914591a25f313e2ed6d35ebd15ef06c521ef887e7136c3a4e2fdce8",
+      "bytes": 202880
+    },
+    {
+      "path": "assets/benchmarks-2026-11-02/03-adaptive-fallback.en.png",
+      "status": 200,
+      "sha256": "dc5cb070b7e68f499a681e14f32ae1bc5e4a18a0ba5e8656e8332379af836d30",
+      "bytes": 167640
+    },
+    {
+      "path": "assets/benchmarks-2026-11-02/03-adaptive-fallback.it.png",
+      "status": 200,
+      "sha256": "472d87b8b4afd16b908debc470155939bfe24eefac9b523fcc95dba53b5bb9ad",
+      "bytes": 160804
+    },
+    {
+      "path": "assets/benchmarks-2026-11-02/03-adaptive-fallback.zh-Hans.png",
+      "status": 200,
+      "sha256": "80dec9cfd480eea9bf173eaec736de128b282ae383b1152e54743041dc4d4c2d",
+      "bytes": 193654
+    },
+    {
+      "path": "assets/benchmarks-2026-11-02/04-contribution-outcomes.en.png",
+      "status": 200,
+      "sha256": "3aeee70d44c9b61ff1808cca1a65634b9539de4311a8cf7dde3a68e3a794115b",
+      "bytes": 211915
+    },
+    {
+      "path": "assets/benchmarks-2026-11-02/04-contribution-outcomes.it.png",
+      "status": 200,
+      "sha256": "341c00c79f22355ef231259e85b240f9323887ff728788b870d93813e5fe08e7",
+      "bytes": 196620
+    },
+    {
+      "path": "assets/benchmarks-2026-11-02/04-contribution-outcomes.zh-Hans.png",
+      "status": 200,
+      "sha256": "10c15190ca8b52632ec1021f9b7d09b47ff7e5079b7f355ac8db1efef4d130fd",
+      "bytes": 236223
+    },
+    {
+      "path": "assets/showcase.css",
+      "status": 200,
+      "sha256": "e602538388a5147e4d865d6ed0f3c4e611d63cc68870141371b90bf06c4110ff",
+      "bytes": 72047
+    },
+    {
+      "path": "assets/showcase.js",
+      "status": 200,
+      "sha256": "a546303e8699c730985be36f51e08368e23fe524b3d479c8f7305382384e0a54",
+      "bytes": 23229
+    },
+    {
+      "path": "data/changelog.md",
+      "status": 200,
+      "sha256": "2f36a3927806cf9fa07ab5e1dc0a457c785dd912d289254cf44dd4083d80e32f",
+      "bytes": 28969
+    },
+    {
+      "path": "data/changelog.json",
+      "status": 200,
+      "sha256": "649fd3b14328d2c250f781d3184e92261100ab1f683aef61330867c12cb48464",
+      "bytes": 31778
+    },
+    {
+      "path": "index.html",
+      "status": 200,
+      "sha256": "323ff74cb09c7497e61d6ef827b39ecbc461c5cb189836013a51ee4207aac548",
+      "bytes": 121572
+    }
+  ]
+}

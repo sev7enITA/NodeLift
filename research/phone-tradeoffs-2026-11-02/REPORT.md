@@ -1,5 +1,7 @@
 # Physical phone performance and trade-offs
 
+[Visual benchmark gallery](../visual-benchmarks-2026-11-02/README.md): paired timing, first-token delay, adaptive fallback and contribution charts.
+
 2026-11-02. **The current Xiaomi draft-delegation path did not improve response speed in the tested model/connection scope.** Adaptive control contained the penalty by abandoning remote proposals, not by accelerating generation.
 
 This phase consolidates [Impact v1](../../docs/IMPACT_BENCHMARK.md) at baseline commit `740705183028b57038b5b414a968dabb8de77f48`, extends its collector and executes the [frozen exploratory plan](PLAN.md). The native engine and mobile binaries were not changed. Results describe the current NodeLift route on one phone, not the maximum AI capability of the phone's hardware.

@@ -1,0 +1,121 @@
+{
+  "base_url": "https://www.fabriziodegni.com/NodeLift/",
+  "files": {
+    "assets/nodelift-emblem.png": {
+      "bytes": 1077866,
+      "sha256": "377278075d7b2718ea72d9d74d20455ae2a90cad0d772807ee59c2c9afafb46d"
+    },
+    "assets/nodelift-mark.svg": {
+      "bytes": 349,
+      "sha256": "882967df9afbd509ac5633c8cf2d1d693d6fd73c2b2f85a49da845fda93404ca"
+    },
+    "assets/showcase.css": {
+      "bytes": 72047,
+      "sha256": "e602538388a5147e4d865d6ed0f3c4e611d63cc68870141371b90bf06c4110ff"
+    },
+    "assets/showcase.js": {
+      "bytes": 23229,
+      "sha256": "a546303e8699c730985be36f51e08368e23fe524b3d479c8f7305382384e0a54"
+    },
+    "data/assessment.md": {
+      "bytes": 8584,
+      "sha256": "82837cb6324fa9ef0ddd691274049b3b7006ef1b5fb66349190e5d251a6d8c44"
+    },
+    "data/comparison.csv": {
+      "bytes": 62238,
+      "sha256": "e268b281659dfb73715e611c931205d93e2655e38e8429069b7a6c01a983af7d"
+    },
+    "data/comparison.json": {
+      "bytes": 95698,
+      "sha256": "d3f3d69319b5947e91aaddd8c32b7b81a131073a6337457ed8b037c7172d769e"
+    },
+    "data/comparison.md": {
+      "bytes": 90943,
+      "sha256": "78ba1ba61a54a0cb5ce1867bfe2d3466b004747634c82aa766c7622925700900"
+    },
+    "data/manifest.json": {
+      "bytes": 925,
+      "sha256": "b1b1ffeb65188236a8bce2ff524949664b1a552333da1bdf6b98df218c1076aa"
+    },
+    "data/methodology.md": {
+      "bytes": 5660,
+      "sha256": "9232557f8bfb7b4885986a3ddb882e210ad63c2dfb82746f86463024e690aa5b"
+    },
+    "data/mobile-downloads.json": {
+      "bytes": 3518,
+      "sha256": "b86b102a37e93e552d02a9cd03a0de2dbd33fc85cee9dcda9ed4fda94c9431cb"
+    },
+    "data/mobile-installation.md": {
+      "bytes": 8098,
+      "sha256": "fdd7fd0fcd1b44bc8709554567dd26a487a53b3f62a15e1233cddcdf335d8334"
+    },
+    "data/source-inventory.json": {
+      "bytes": 14950,
+      "sha256": "d8fd90027152f1ff1af89fc975230440419566d38f1dc8f63ebbddb9a8647067"
+    },
+    "index.html": {
+      "bytes": 121572,
+      "sha256": "323ff74cb09c7497e61d6ef827b39ecbc461c5cb189836013a51ee4207aac548"
+    },
+    "assets/site-locales.js": {
+      "bytes": 34187,
+      "sha256": "577be3bc598ffa19c789f9b5b260ec90ffe0db66a95a862369c6436023b0e422"
+    },
+    "data/changelog.md": {
+      "bytes": 28969,
+      "sha256": "2f36a3927806cf9fa07ab5e1dc0a457c785dd912d289254cf44dd4083d80e32f"
+    },
+    "data/changelog.json": {
+      "bytes": 31778,
+      "sha256": "649fd3b14328d2c250f781d3184e92261100ab1f683aef61330867c12cb48464"
+    },
+    "assets/benchmarks-2026-11-02/01-total-time.en.png": {
+      "bytes": 137438,
+      "sha256": "3cf0723412edef8c7bbe70ccd6d00e47bc6577bbf4fb07ce33e6bd428aa6dbdb"
+    },
+    "assets/benchmarks-2026-11-02/01-total-time.it.png": {
+      "bytes": 130898,
+      "sha256": "1956c161edecfed2d3f3e5089a9d62059e4bc9955bc515001447a2b338de883c"
+    },
+    "assets/benchmarks-2026-11-02/01-total-time.zh-Hans.png": {
+      "bytes": 158720,
+      "sha256": "432ece154df44a79896bd7aa0861f5cbdec348fb04d3806d6446baedfb11d064"
+    },
+    "assets/benchmarks-2026-11-02/02-first-token.en.png": {
+      "bytes": 169079,
+      "sha256": "3354640a63ab3457210a512abf053600b55ff7f0ef7afd44bbb374ddd1686ce0"
+    },
+    "assets/benchmarks-2026-11-02/02-first-token.it.png": {
+      "bytes": 165381,
+      "sha256": "ae1286cab26b3b6e58358b60b06185e8682bc97526d903af878a2936eca79970"
+    },
+    "assets/benchmarks-2026-11-02/02-first-token.zh-Hans.png": {
+      "bytes": 202880,
+      "sha256": "ddfa5ab1f914591a25f313e2ed6d35ebd15ef06c521ef887e7136c3a4e2fdce8"
+    },
+    "assets/benchmarks-2026-11-02/03-adaptive-fallback.en.png": {
+      "bytes": 167640,
+      "sha256": "dc5cb070b7e68f499a681e14f32ae1bc5e4a18a0ba5e8656e8332379af836d30"
+    },
+    "assets/benchmarks-2026-11-02/03-adaptive-fallback.it.png": {
+      "bytes": 160804,
+      "sha256": "472d87b8b4afd16b908debc470155939bfe24eefac9b523fcc95dba53b5bb9ad"
+    },
+    "assets/benchmarks-2026-11-02/03-adaptive-fallback.zh-Hans.png": {
+      "bytes": 193654,
+      "sha256": "80dec9cfd480eea9bf173eaec736de128b282ae383b1152e54743041dc4d4c2d"
+    },
+    "assets/benchmarks-2026-11-02/04-contribution-outcomes.en.png": {
+      "bytes": 211915,
+      "sha256": "3aeee70d44c9b61ff1808cca1a65634b9539de4311a8cf7dde3a68e3a794115b"
+    },
+    "assets/benchmarks-2026-11-02/04-contribution-outcomes.it.png": {
+      "bytes": 196620,
+      "sha256": "341c00c79f22355ef231259e85b240f9323887ff728788b870d93813e5fe08e7"
+    },
+    "assets/benchmarks-2026-11-02/04-contribution-outcomes.zh-Hans.png": {
+      "bytes": 236223,
+      "sha256": "10c15190ca8b52632ec1021f9b7d09b47ff7e5079b7f355ac8db1efef4d130fd"
+    }
+  }
+}

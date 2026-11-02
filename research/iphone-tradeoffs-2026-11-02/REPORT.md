@@ -1,5 +1,7 @@
 # Physical iPhone draft-delegation results
 
+[Visual benchmark gallery](../visual-benchmarks-2026-11-02/README.md): paired timing, first-token delay, adaptive fallback and contribution charts.
+
 2026-11-02. **The iPhone supplied usable draft tokens, but fixed phone delegation was slower than the Mac alone for the tested small target.** The original build also lost its session after repeated errors. An iOS correction and its subsequent evidence must be kept separate from that failure.
 
 ## Scope
