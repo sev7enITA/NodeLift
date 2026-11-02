@@ -98,6 +98,24 @@
       "signature": "unsigned",
       "ci_run": "https://github.com/sev7enITA/NodeLift/actions/runs/41480938483",
       "download": "https://github.com/sev7enITA/NodeLift/releases/download/node-probe-v0.1.1/NodeLift-node-probe-0.1.1-linux-arm64.zip"
+    },
+    {
+      "component": "NodeLift node probe standalone",
+      "version": "0.1.1",
+      "platform": "macos-x64",
+      "archive": "NodeLift-node-probe-0.1.1-macos-x64.zip",
+      "archive_bytes": 12869937,
+      "archive_sha256": "99359d02955aeb27ca13a1ea1bc5eb1bf95a25c08afd796314d0fedc0216e3ef",
+      "executable_sha256": "d867de68b8c09c00baaa776ce1353f354a74ae902adec622488ad0be9310e06d",
+      "build_source_commit": "61302ddc5c4d9b02d52f32ace9e3e4b9f06450f4",
+      "llama_cpp_revision": "ddf48f85c933c1f438212a02eb21e7b001d2d37d",
+      "benchmark_backend": "CPU only",
+      "built_and_smoke_tested": "GitHub-hosted runner",
+      "physical_device_tested": false,
+      "model_included": false,
+      "signature": "ad-hoc; not notarized",
+      "ci_run": "https://github.com/sev7enITA/NodeLift/actions/runs/41480938483",
+      "download": "https://github.com/sev7enITA/NodeLift/releases/download/node-probe-v0.1.1/NodeLift-node-probe-0.1.1-macos-x64.zip"
     }
   ]
 }

@@ -123,6 +123,10 @@ The full-color [NodeLift emblem and asset guide](assets/brand/README.md) is shar
 
 **Device assessment and companion navigation:** observed IP/session history, automatic basic diagnostics for new enrollments, explicit host responsibilities and Home / Activity / Settings on mobile. [KPI definitions and limits](docs/DEVICE_ASSESSMENT_AND_KPIS.md).
 
+### Standalone macOS host preview
+
+The [standalone Apple silicon host](docs/STANDALONE_HOST.md) bundles Python, the desktop dashboard and the native inference library. It checks its local prerequisites and opens a private local dashboard; no system Python installation is required. It is an ad-hoc signed, non-notarized laboratory build tested on one Mac.
+
 ### Generic node probe
 
 The [standalone macOS Apple silicon preview](docs/NODE_PROBE.md#standalone-package-without-system-python) bundles Python and a native benchmark, performs startup checks and does not upload the inventory. This is a local probe, not the desktop host or a distributed PC worker.

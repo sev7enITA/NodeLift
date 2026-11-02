@@ -57,3 +57,7 @@ The desktop control room provides explicit information buttons beside the main c
 ## Scoped impact measurement
 
 [NodeLift Impact v1](IMPACT_BENCHMARK.md) now collects paired native SSE sessions and analyzes time saved, TTFT change, full-denominator reliability, instrumented energy availability and uncertainty for one model/device/connection scope. The dashboard imports recorded sessions in Measurements. This is an explicit benchmark collector and evidence analyzer, not automatic routing or qualified mobile acceleration. The [initial physical pilot](../research/impact-2026-11-02/REPORT.md) found no speed benefit; energy and independent-session confidence remain unavailable.
+
+## Standalone macOS host preview
+
+The [standalone Apple silicon host](STANDALONE_HOST.md) bundles Python, dashboard assets and the native inference library. A local startup check verifies its core resources and system OpenSSL. One M3 Max passed a loopback UI, inventory and native GGUF generation smoke test. The build is ad-hoc signed, not notarized; it is not a qualified distribution for all Macs or a Windows/Linux inference worker.

@@ -1,6 +1,10 @@
 # First local run
 
-Start with the computer alone. The tested host is Apple Silicon macOS; another OS or backend needs separate qualification. Install Python 3.12+, Git, CMake 3.22+, a C++17 toolchain and OpenSSL. The build command fetches the locked llama.cpp revision and compiles it locally.
+Start with the computer alone. On Apple silicon, the [standalone host preview](https://github.com/sev7enITA/NodeLift/blob/main/docs/STANDALONE_HOST.md) includes Python, dashboard assets and the native inference library. Extract it and open **Start NodeLift.command**. It checks the host prerequisites and opens a private local dashboard; a GGUF model is still needed for inference. It is ad-hoc signed, not notarized, and has been tested on one M3 Max.
+
+## Build from source
+
+The source build requires Python 3.12+, Git, CMake 3.22+, a C++17 toolchain and OpenSSL. The build command fetches the locked llama.cpp revision and compiles it locally. Another OS or backend needs separate qualification.
 
 ```sh
 git clone https://github.com/sev7enITA/NodeLift.git

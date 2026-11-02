@@ -38,6 +38,8 @@ Running it without arguments checks the bundled components and writes a uniquely
 
 This specific Mac package was tested on Apple M3 Max with macOS 27.2. It is ad-hoc signed and not notarized; another Mac may refuse to launch it. [Physical validation](../research/standalone-node-2026-11-02/README.md) describes the no-system-Python sentinel test and GGUF smoke test. A workflow builds separate platform binaries on their respective OSs; successful CI does not replace physical qualification or guarantee compatibility with all GPU drivers and operating-system versions.
 
+The [macOS Intel standalone probe](https://github.com/sev7enITA/NodeLift/releases/download/node-probe-v0.1.1/NodeLift-node-probe-0.1.1-macos-x64.zip) is a separate CPU-only build that passed startup and inventory checks on a hosted runner. It has not been tested on a physical Intel Mac and is not notarized.
+
 ## Windows and Linux standalone previews
 
 [Windows x64](https://github.com/sev7enITA/NodeLift/releases/download/node-probe-v0.1.1/NodeLift-node-probe-0.1.1-windows-x64.zip), [Windows ARM64](https://github.com/sev7enITA/NodeLift/releases/download/node-probe-v0.1.1/NodeLift-node-probe-0.1.1-windows-arm64.zip), [Linux x64](https://github.com/sev7enITA/NodeLift/releases/download/node-probe-v0.1.1/NodeLift-node-probe-0.1.1-linux-x64.zip) and [Linux ARM64](https://github.com/sev7enITA/NodeLift/releases/download/node-probe-v0.1.1/NodeLift-node-probe-0.1.1-linux-arm64.zip) include their own Python and CPU benchmark. Use the [platform manifest](../releases/node-probe-platforms.json) to verify the hashes.

@@ -1,0 +1,24 @@
+{
+  "component": "NodeLift standalone host",
+  "version": "0.3.0-preview",
+  "platform": "macOS arm64",
+  "archive": "NodeLift-host-0.3.0-preview-macos-arm64.zip",
+  "archive_bytes": 13620787,
+  "archive_sha256": "1891a43d3b2c21f6f1c8505c20379a570f6db01b1aaeb854e46fe1579b8819d2",
+  "executable_sha256": "20bf0501b88cf880f02c373159090c8a82ec5119c82b0a85b7e3d83a4b8add9b",
+  "native_library_sha256": "4aa209157112cdb4189e6a6b9d3d3d448fafb003aeb1eef8eba13c8efbaa0239",
+  "source_commit": "049ae74c20455541420af7340e43065249120704",
+  "llama_cpp_revision": "ddf48f85c933c1f438212a02eb21e7b001d2d37d",
+  "python": "embedded 3.14.6",
+  "signature": "ad-hoc; not notarized",
+  "external_requirements": [
+    "macOS system frameworks",
+    "/usr/bin/openssl",
+    "user-supplied GGUF for inference"
+  ],
+  "physical_validation": "M3 Max, macOS 27.2; loopback dashboard, branding, authenticated inventory and native eight-token generation",
+  "other_macs": "not qualified",
+  "automatic_runtime_download": false,
+  "native_desktop_worker": false,
+  "download": "https://github.com/sev7enITA/NodeLift/releases/download/host-standalone-v0.3.0-preview.1/NodeLift-host-0.3.0-preview-macos-arm64.zip"
+}

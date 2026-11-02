@@ -147,6 +147,13 @@ Every published companion build has an entry below. Android packages are laborat
 
 ## Host, documentation and tooling updates
 
+### 2026-11-02: Standalone macOS host preview and startup verification
+
+- Add an experimental Apple silicon host bundle with embedded Python, the desktop dashboard, native library, local startup checks and a launcher. System macOS frameworks and OpenSSL remain required; models are supplied separately.
+- Validate dashboard, branding, authenticated inventory and a native eight-token GGUF generation on an M3 Max using temporary loopback state. The first bundle failed on a missing provenance file; the corrected bundle passed.
+- The host is ad-hoc signed, not notarized, and has not been qualified on other Macs or for physical peer pairing. Windows/Linux downloads are separate CPU-only probes, not full hosts.
+- All six standalone probe platform builds passed hosted CI startup and inventory checks. The Mac Intel probe is CPU-only and not physically qualified.
+
 ### 2026-11-02: Standalone Windows and Linux node-probe previews
 
 - Publish self-contained CPU-only Windows and Linux x64/ARM64 probe archives with embedded Python, native benchmark, startup checks, licenses and hashes. Models and GPU drivers remain external.
