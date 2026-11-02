@@ -1,0 +1,46 @@
+{
+  "android_native_cross_compile": "passed; AArch64 shared library, not an APK",
+  "optimization_audit_tests": {
+    "passed": 5
+  },
+  "physical_iphone_primary_pairs": 9,
+  "physical_iphone_matching_pairs": 9,
+  "physical_iphone_fallbacks": 0,
+  "retained_cost_reproduction": "three new cells reproduce exactly",
+  "documentation": {
+    "pages": 104,
+    "local_targets_checked": 441,
+    "errors": 0
+  },
+  "release_history_consistency": "passed",
+  "new_mobile_release": false,
+  "optimized_android_physical_result": null,
+  "chart": {
+    "path": "iphone-width-comparison.png",
+    "sha256": "95d908c1e327c01363c7db289edfbc5e453f061c052df891c2ff7ec2415bdf49",
+    "visually_inspected": true
+  },
+  "public_portal": {
+    "verified": [
+      {
+        "path": "data/changelog.md",
+        "status": 200,
+        "sha256": "0fce92dd64ba045bdf4df5a38a05ad2b7ba233886db66201e531479b018fb193",
+        "bytes": 30036
+      },
+      {
+        "path": "data/changelog.json",
+        "status": 200,
+        "sha256": "428e64d717d221a753da3316f4ce18cfc20b96222ec25fa7bd97971f6a23ecff",
+        "bytes": 32948
+      },
+      {
+        "path": "index.html",
+        "status": 200,
+        "sha256": "e113086e29780f3d2d990b94cedaf683302510c9b0269292ec380999eeb863f9",
+        "bytes": 123900
+      }
+    ]
+  },
+  "git_main_initial_commit": "41d91eb5b7eb919caae77ae0cd9bcf26002ee5f1"
+}
