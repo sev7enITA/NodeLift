@@ -48,3 +48,9 @@ This is a smaller observed penalty than the Xiaomi route, not a controlled SoC r
 ## Performance diagnosis
 
 [Read the measured cost analysis](https://github.com/sev7enITA/NodeLift/blob/main/research/performance-diagnosis-2026-11-02/REPORT.md). The Android 0.2.8 binary was built without native optimization; the corrected native library cross-compiles with `-O3`, but has not been installed or benchmarked on a phone. Nine new iPhone pairs with draft widths 1, 4 and 8 remain approximately five times slower than the Mac. Remote wait includes computation and communication; it is not network RTT. The report gives a break-even budget, external-review adjudication and a bounded asynchronous experiment proposal.
+
+## Generic desktop and server probe
+
+[Node probe 0.1.0](https://github.com/sev7enITA/NodeLift/blob/main/docs/NODE_PROBE.md) collects an allowlisted local hardware/software profile and can explicitly run a separately supplied `llama-bench` executable on a chosen GGUF. [Download the Python 3.10+ package](https://www.fabriziodegni.com/NodeLift/assets/NodeLift-node-probe-0.1.0.pyz) and verify its [manifest](https://github.com/sev7enITA/NodeLift/blob/main/releases/node-probe.json). The dashboard can probe and export its own host; remote PC enrollment is not implemented.
+
+[Physical Mac inventory and short local kernel records](https://github.com/sev7enITA/NodeLift/blob/main/research/node-probe-2026-11-02/README.md) are available. Windows/Linux ARM and x86 adapters have fixture tests only. Kernel rates do not include client TTFT, connection cost, verified accelerator allocation, energy or distributed speedup. Run the separate paired Impact protocol before recommending a real model/device/connection route.

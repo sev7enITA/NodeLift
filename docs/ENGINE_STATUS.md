@@ -40,7 +40,7 @@ The frozen small-model study found local drafting slower than target-only execut
 
 A longer-output test also exposed a numerical batch-versus-single decoding mismatch at token 75. Target verification is implemented, but universal exact token equality with host-only generation is not established. There is no demonstrated physical-phone inference speedup. The published [engine measurements](../research/measurements/ENGINE_RESULTS.md) retain both the negative results and the correctness limitation.
 
-The existing automated tests establish specific protocol and application behaviors. They do not prove sustained phone performance, battery benefit, thermal stability or a successful matched Mac-only/Mac-plus-phone benchmark. The separate benchmark-runner changes in the local workspace remain unfinished and are not treated as released functionality.
+The existing automated tests establish specific protocol and application behaviors, not physical performance. Matched [Xiaomi](../research/phone-tradeoffs-2026-11-02/REPORT.md) and [iPhone](../research/iphone-tradeoffs-2026-11-02/REPORT.md) sessions completed: their tested fixed phone routes were slower than their paired Mac baselines. Some iPhone attempts were invalid or missing after session loss and remain recorded. Sustained thermal stability, battery benefit and a general phone speedup remain unqualified. The separate benchmark-runner changes in the local workspace remain unfinished and are not treated as released functionality.
 
 ## Next engine gates
 

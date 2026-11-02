@@ -2,6 +2,8 @@
 
 **Sources frozen on 31 October 2026 · 55 entries · experimental NodeLift 0.2.1 checkpoint**
 
+**Update, 2 November 2026:** Only the NodeLift row in the comparison atlas has been refreshed. Physical [Xiaomi](https://github.com/sev7enITA/NodeLift/blob/3e7016a7c51d2bdedee0e9427e9e009aee09f3a2/research/phone-tradeoffs-2026-11-02/REPORT.md) and [iPhone](https://github.com/sev7enITA/NodeLift/blob/3e7016a7c51d2bdedee0e9427e9e009aee09f3a2/research/iphone-tradeoffs-2026-11-02/REPORT.md) trials supplied draft tokens but were slower than their matched Mac controls in the measured fixed-mode scope. The [generic desktop/server probe](https://github.com/sev7enITA/NodeLift/blob/3e7016a7c51d2bdedee0e9427e9e009aee09f3a2/docs/NODE_PROBE.md) has physical Mac evidence and Windows/Linux fixtures; it is not a remote worker or proof of pooled RAM. The other 54 project entries and the historical analysis below retain the 31 October source freeze.
+
 Other projects already demonstrate phone reuse for distributed inference. NodeLift's useful contribution would be making the decision to involve them measurable and reliable, with verifiable integration and failure recovery. There is no evidence to call NodeLift the first, fastest or superior to every alternative. This is a dated research snapshot; see the [current changelog](https://github.com/sev7enITA/NodeLift/blob/main/CHANGELOG.md) for later releases.
 
 The [detailed matrix](comparison.md), [JSON](comparison.json), [CSV](comparison.csv) and [method](methodology.md) share one source. Public showcase: [fabriziodegni.com/NodeLift](https://www.fabriziodegni.com/NodeLift/).
@@ -66,7 +68,7 @@ Preregister a practical candidate threshold, for example at least 10% median imp
 
 ## NodeLift evidence at this checkpoint
 
-[Public results](https://github.com/sev7enITA/NodeLift/blob/main/research/measurements/ENGINE_RESULTS.md) include 156 comparison runs overall, but only 60 belong to the frozen NodeLift 0.2.1 repeat. That group uses Qwen2.5 1.5B/0.5B on M3 Max: all 48 output pairs match, while median speedup is below one in every arm. The 36 upstream trials use different timing paths and do not establish a direct NodeLift/llama.cpp ranking.
+[Public results](https://github.com/sev7enITA/NodeLift/blob/c7a41e25aaa6a9bea52ab27a12a652c7a5e71054/research/measurements/ENGINE_RESULTS.md) include 156 comparison runs overall, but only 60 belong to the frozen NodeLift 0.2.1 repeat. That group uses Qwen2.5 1.5B/0.5B on M3 Max: all 48 output pairs match, while median speedup is below one in every arm. The 36 upstream trials use different timing paths and do not establish a direct NodeLift/llama.cpp ranking.
 
 The Xiaomi pilot measures networking/protocol. The emulated TLS node tests integration/recovery. iOS is unsigned. The 27B kernel benchmark does not establish NodeLift support for that hybrid architecture. Keeping these evidence classes separate makes the project assessable and prevents claiming an improvement not yet achieved.
 

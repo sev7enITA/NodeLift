@@ -1,8 +1,8 @@
 # NodeLift: Detailed comparison atlas
 
-**2026-10-31 · 55 selected entries · Dataset v1**
+**Other entries checked 2026-10-31 · NodeLift updated 2026-11-02 · 55 selected entries · Dataset v1**
 
-55 selected entries across distributed systems, mobile apps, runtimes, serving, baselines and research. Uniform criteria and primary sources; broad but non-exhaustive coverage, without a universal ranking.
+55 selected entries across distributed systems, mobile apps, runtimes, serving, baselines and research. Uniform criteria and primary sources; broad but non-exhaustive coverage, without a universal ranking. Other entries retain the 31 October source freeze; the NodeLift row alone was updated on 2 November.
 
 [Method / Metodo](methodology.md)
 
@@ -10,7 +10,7 @@ Technical descriptions are canonical English. Upstream results are not NodeLift 
 
 | Project | Category | Mobile compute | Memory / capacity |
 |---|---|---|---|
-| NodeLift | distributed | Implemented draft worker; Xiaomi evidence currently covers network/protocol only. | No target-weight sharding or shared RAM pool in 0.2.1. |
+| NodeLift | distributed | Physical Xiaomi and iPhone supplied accepted draft tokens in fixed-mode tests; both measured paths were slower than their paired host baselines. | Target-weight sharding and a shared RAM pool are not implemented. A phone can hold its own draft. |
 | DistAI | distributed | Yes: model layers and independent jobs. | Yes: distributed layer placement. |
 | PhoneBorg | distributed | Yes: independent inference and BigBrain shards. | Yes: BigBrain model partitioning. |
 | InferRing | distributed | Yes: Apple-device model execution. | Yes: memory distributed across devices. |
@@ -75,25 +75,25 @@ ID: `nodelift`
 | Category | distributed |
 | Ecosystem | western |
 | Documented origin | Fabrizio Degni, Italy; this project. |
-| Readiness | 0.2.1 experimental prerelease. |
+| Readiness | Experimental host and companion; public mobile 0.2.11/build 13; node probe 0.1.0 preview. Private iOS 0.2.12 development builds were tested. |
 | License | MIT; native dependencies retain their licenses. |
-| Architecture | Phone drafts candidate tokens; the host verifies greedily with a pinned llama.cpp core and bounded fallback. |
-| Host | macOS M3 Max measured; portable host paths require qualification. |
-| Android | Native ARM64 CPU worker built; physical native drafting not yet qualified. |
-| iOS | Metal/CPU companion built unsigned; physical installation pending. |
-| Mobile compute | Implemented draft worker; Xiaomi evidence currently covers network/protocol only. |
-| Memory / capacity | No target-weight sharding or shared RAM pool in 0.2.1. |
-| Single-chat latency | 60 frozen local runs: paired median speedup 0.425–0.719×; all 48 output pairs matched. No physical-phone speedup. |
+| Architecture | Phone drafts candidate tokens; host verifies greedily with a pinned llama.cpp core and bounded fallback. Generic local desktop/server probe is available; remote PC workers are planned. |
+| Host | Mac M3 Max inference and portable node-probe kernels physically measured. Windows/Linux probe adapters are fixture-tested, not physically qualified. |
+| Android | Xiaomi native draft work tested with companion 0.2.8. Its native build was unoptimized; the corrected build was compiled but not physically benchmarked. |
+| iOS | iPhone 15 Pro Max draft work tested with privately signed 0.2.12 development builds 14 and 15. Public 0.2.11 IPA remains unsigned. |
+| Mobile compute | Physical Xiaomi and iPhone supplied accepted draft tokens in fixed-mode tests; both measured paths were slower than their paired host baselines. |
+| Memory / capacity | Target-weight sharding and a shared RAM pool are not implemented. A phone can hold its own draft. |
+| Single-chat latency | Fixed 32-token budgets: median paired candidate/host duration 134.949x for Xiaomi build 0.2.8 and 4.657x for iPhone private build 14. Different builds, backends and hotspot roles preclude a hardware ranking. |
 | Transport | Pinned TLS; prefix/epoch leases; bounded deadlines. |
 | Integration | Restricted OpenAI-style gateway; LM Studio SDK handler tested, full plugin runtime pending. |
 | Security / trust | Separate admin/client keys; TLS pinning; local trust boundary. No independent security certification. |
-| Evidence | Real-weight controls, public raw runs, 29 native checks; TLS node emulated locally. |
-| Limits | Greedy only; hybrid architectures rejected; thermal/battery/native phone trials pending. |
-| Lesson for NodeLift | Keep host-only default until end-to-end benefit is measured against a strong local baseline. |
-| Source revision | c7a41e25aaa6a9bea52ab27a12a652c7a5e71054 |
-| Checked | 2026-10-31 |
+| Evidence | Physical paired Xiaomi and iPhone sessions, retained failures and raw outputs, plus separate local Mac kernel-probe samples. No general phone speedup or physical Windows/Linux probe qualification. |
+| Limits | Greedy-only verifier, hybrid models rejected; no independently qualified GPU allocation, sustained thermal/energy study, desktop worker enrollment or capacity sharding. |
+| Lesson for NodeLift | Select routes only after model- and connection-specific end-to-end comparisons including fallback, uncertainty and strongest local baseline. |
+| Source revision | 3e7016a7c51d2bdedee0e9427e9e009aee09f3a2 |
+| Checked | 2026-11-02 |
 
-Sources: [Release 0.2.1](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.1); [Measurements and limitations](https://github.com/sev7enITA/NodeLift/blob/c7a41e25aaa6a9bea52ab27a12a652c7a5e71054/research/measurements/ENGINE_RESULTS.md); [Engine contract](https://github.com/sev7enITA/NodeLift/blob/c7a41e25aaa6a9bea52ab27a12a652c7a5e71054/docs/ENGINE_0_2.md)
+Sources: [Current public companion release 0.2.11](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.11); [Physical Xiaomi results](https://github.com/sev7enITA/NodeLift/blob/3e7016a7c51d2bdedee0e9427e9e009aee09f3a2/research/phone-tradeoffs-2026-11-02/REPORT.md); [Physical iPhone results](https://github.com/sev7enITA/NodeLift/blob/3e7016a7c51d2bdedee0e9427e9e009aee09f3a2/research/iphone-tradeoffs-2026-11-02/REPORT.md); [Performance diagnosis](https://github.com/sev7enITA/NodeLift/blob/3e7016a7c51d2bdedee0e9427e9e009aee09f3a2/research/performance-diagnosis-2026-11-02/REPORT.md); [Generic node probe](https://github.com/sev7enITA/NodeLift/blob/3e7016a7c51d2bdedee0e9427e9e009aee09f3a2/docs/NODE_PROBE.md)
 
 ## DistAI
 

@@ -1,6 +1,6 @@
 # NodeLift: comparison methodology
 
-Source freeze: **31 October 2026**. Dataset version: **1**. Curator: Fabrizio Degni / NodeLift project. The evidence snapshot remains unchanged by later documentation translations or companion releases.
+Source freeze: **31 October 2026**. Dataset version: **1**. Curator: Fabrizio Degni / NodeLift project. Other projects retain that source snapshot. The NodeLift row alone was updated on 2 November 2026 using separately linked evidence; no other row was rechecked.
 
 ## Scope
 
@@ -33,7 +33,7 @@ External performance is attributed to its authors, not reproduced on NodeLift's 
 
 Do not directly compare tokens/s from different models, prompts, quantization, hardware or metrics. “Up to” is not typical performance. GitHub stars, downloads and marketing do not establish correctness or maturity.
 
-For this snapshot, NodeLift's public reference is experimental 0.2.1. The 60 frozen runs are local on M3 Max, Qwen2.5 1.5B target/0.5B draft, maximum 64 tokens, six prompts and two repetitions per arm. All 48 paired token comparisons agree, but median speedups remain 0.425–0.719×: **no acceleration demonstrated**. The emulated TLS node and physical Xiaomi network pilot are separate evidence. Distributed inference speed on a physical phone remains unqualified.
+At the original source freeze, NodeLift's public reference was experimental 0.2.1. The 60 frozen runs are local on M3 Max, Qwen2.5 1.5B target/0.5B draft, maximum 64 tokens, six prompts and two repetitions per arm. All 48 paired token comparisons agree, but median speedups remain 0.425–0.719×: **no acceleration demonstrated**. The emulated TLS node and original Xiaomi network pilot were separate evidence. Later physical Xiaomi and iPhone draft-delegation results are linked in the updated NodeLift row; the measured fixed routes were slower than their matched Mac controls. No general phone acceleration is established. The 2 November desktop probe measures local kernels, not a distributed route.
 
 ## Revisions and aliases
 

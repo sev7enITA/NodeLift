@@ -4,6 +4,7 @@ import csv
 import hashlib
 import json
 from pathlib import Path
+from datetime import date
 from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -32,7 +33,9 @@ def main():
         assert project["ecosystem"] in {"western", "asia", "international", "unverified"}
         assert all(isinstance(project[k], str) and project[k].strip() for k in FIELDS)
         assert project["sources"], project["id"]
-        assert project["checked"] == dataset["updated"]
+        expected = dataset.get("nodelift_updated", dataset["updated"]) if project["id"] == "nodelift" else dataset["updated"]
+        assert project["checked"] == expected
+        assert date.fromisoformat(expected) >= date.fromisoformat(dataset["updated"])
         for source in project["sources"]:
             url = urlparse(source["url"])
             assert url.scheme == "https" and url.hostname in {
@@ -49,7 +52,7 @@ def main():
             row["sources"] = " | ".join(f"{s['label']}: {s['url']}" for s in project["sources"])
             writer.writerow(row)
     text = ["# NodeLift: Detailed comparison atlas", "",
-            f"**{dataset['updated']} · {len(projects)} selected entries · Dataset v{dataset['schema_version']}**", "",
+            f"**Other entries checked {dataset['updated']} · NodeLift updated {dataset.get('nodelift_updated', dataset['updated'])} · {len(projects)} selected entries · Dataset v{dataset['schema_version']}**", "",
             dataset["scope"]["en"], "", "[Method / Metodo](methodology.md)", "",
             "Technical descriptions are canonical English. Upstream results are not NodeLift replications.", "",
             "| Project | Category | Mobile compute | Memory / capacity |",
@@ -71,12 +74,12 @@ def main():
     inventory = ROOT / "research/comparison-2026-10-31/source-inventory.json"
     (DATA / "source-inventory.json").write_bytes(inventory.read_bytes())
     assessment = (ROOT / "research/comparison-2026-10-31/ASSESSMENT.md").read_text()
-    assessment = assessment.replace("../../site/NodeLift/data/", "").replace(
+    assessment = assessment.replace("../../site/NodeLift/data/", "").replace("../../CHANGELOG.md", "https://github.com/sev7enITA/NodeLift/blob/main/CHANGELOG.md").replace(
         "../measurements/ENGINE_RESULTS.md",
         "https://github.com/sev7enITA/NodeLift/blob/c7a41e25aaa6a9bea52ab27a12a652c7a5e71054/research/measurements/ENGINE_RESULTS.md")
     (DATA / "assessment.md").write_text(assessment)
     files = ["comparison.json", "comparison.csv", "comparison.md", "methodology.md", "source-inventory.json", "assessment.md"]
-    manifest = {"updated": dataset["updated"], "entries": len(projects), "files": {
+    manifest = {"updated": dataset["updated"], "nodelift_updated": dataset.get("nodelift_updated", dataset["updated"]), "entries": len(projects), "files": {
         name: {"bytes": (DATA / name).stat().st_size,
                "sha256": hashlib.sha256((DATA / name).read_bytes()).hexdigest()} for name in files}}
     (DATA / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")

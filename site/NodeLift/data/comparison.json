@@ -2,8 +2,9 @@
   "schema_version": 1,
   "updated": "2026-10-31",
   "scope": {
-    "it": "55 schede selezionate: sistemi distribuiti, app mobili, runtime, server, riferimenti e ricerca. Criteri uniformi e fonti primarie; censimento ampio ma non esaustivo, senza graduatoria universale.",
-    "en": "55 selected entries across distributed systems, mobile apps, runtimes, serving, baselines and research. Uniform criteria and primary sources; broad but non-exhaustive coverage, without a universal ranking."
+    "it": "55 schede selezionate: sistemi distribuiti, app mobili, runtime, server, riferimenti e ricerca. Criteri uniformi e fonti primarie; censimento ampio ma non esaustivo, senza graduatoria universale. Le altre schede mantengono le fonti del 31 ottobre; solo la scheda NodeLift è aggiornata al 2 novembre.",
+    "en": "55 selected entries across distributed systems, mobile apps, runtimes, serving, baselines and research. Uniform criteria and primary sources; broad but non-exhaustive coverage, without a universal ranking. Other entries retain the 31 October source freeze; the NodeLift row alone was updated on 2 November.",
+    "zh": "55 个精选条目涵盖分布式系统、移动应用、运行时、服务、基准及研究。并非完整清单，也不存在通用排名。其他条目保留 10 月 31 日的来源快照；仅 NodeLift 条目更新至 11 月 2 日。"
   },
   "methodology_url": "data/methodology.md",
   "projects": [
@@ -13,23 +14,23 @@
       "category": "distributed",
       "ecosystem": "western",
       "origin": "Fabrizio Degni, Italy; this project.",
-      "stage": "0.2.1 experimental prerelease.",
+      "stage": "Experimental host and companion; public mobile 0.2.11/build 13; node probe 0.1.0 preview. Private iOS 0.2.12 development builds were tested.",
       "license": "MIT; native dependencies retain their licenses.",
-      "architecture": "Phone drafts candidate tokens; the host verifies greedily with a pinned llama.cpp core and bounded fallback.",
-      "host": "macOS M3 Max measured; portable host paths require qualification.",
-      "android": "Native ARM64 CPU worker built; physical native drafting not yet qualified.",
-      "ios": "Metal/CPU companion built unsigned; physical installation pending.",
-      "mobile_compute": "Implemented draft worker; Xiaomi evidence currently covers network/protocol only.",
-      "capacity": "No target-weight sharding or shared RAM pool in 0.2.1.",
-      "single_chat": "60 frozen local runs: paired median speedup 0.425–0.719×; all 48 output pairs matched. No physical-phone speedup.",
+      "architecture": "Phone drafts candidate tokens; host verifies greedily with a pinned llama.cpp core and bounded fallback. Generic local desktop/server probe is available; remote PC workers are planned.",
+      "host": "Mac M3 Max inference and portable node-probe kernels physically measured. Windows/Linux probe adapters are fixture-tested, not physically qualified.",
+      "android": "Xiaomi native draft work tested with companion 0.2.8. Its native build was unoptimized; the corrected build was compiled but not physically benchmarked.",
+      "ios": "iPhone 15 Pro Max draft work tested with privately signed 0.2.12 development builds 14 and 15. Public 0.2.11 IPA remains unsigned.",
+      "mobile_compute": "Physical Xiaomi and iPhone supplied accepted draft tokens in fixed-mode tests; both measured paths were slower than their paired host baselines.",
+      "capacity": "Target-weight sharding and a shared RAM pool are not implemented. A phone can hold its own draft.",
+      "single_chat": "Fixed 32-token budgets: median paired candidate/host duration 134.949x for Xiaomi build 0.2.8 and 4.657x for iPhone private build 14. Different builds, backends and hotspot roles preclude a hardware ranking.",
       "transport": "Pinned TLS; prefix/epoch leases; bounded deadlines.",
       "api": "Restricted OpenAI-style gateway; LM Studio SDK handler tested, full plugin runtime pending.",
       "security": "Separate admin/client keys; TLS pinning; local trust boundary. No independent security certification.",
-      "evidence": "Real-weight controls, public raw runs, 29 native checks; TLS node emulated locally.",
-      "limitations": "Greedy only; hybrid architectures rejected; thermal/battery/native phone trials pending.",
-      "lesson": "Keep host-only default until end-to-end benefit is measured against a strong local baseline.",
-      "revision": "c7a41e25aaa6a9bea52ab27a12a652c7a5e71054",
-      "checked": "2026-10-31",
+      "evidence": "Physical paired Xiaomi and iPhone sessions, retained failures and raw outputs, plus separate local Mac kernel-probe samples. No general phone speedup or physical Windows/Linux probe qualification.",
+      "limitations": "Greedy-only verifier, hybrid models rejected; no independently qualified GPU allocation, sustained thermal/energy study, desktop worker enrollment or capacity sharding.",
+      "lesson": "Select routes only after model- and connection-specific end-to-end comparisons including fallback, uncertainty and strongest local baseline.",
+      "revision": "3e7016a7c51d2bdedee0e9427e9e009aee09f3a2",
+      "checked": "2026-11-02",
       "tags": [
         "remote_draft",
         "android_compute",
@@ -37,16 +38,24 @@
       ],
       "sources": [
         {
-          "label": "Release 0.2.1",
-          "url": "https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.1"
+          "label": "Current public companion release 0.2.11",
+          "url": "https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.11"
         },
         {
-          "label": "Measurements and limitations",
-          "url": "https://github.com/sev7enITA/NodeLift/blob/c7a41e25aaa6a9bea52ab27a12a652c7a5e71054/research/measurements/ENGINE_RESULTS.md"
+          "label": "Physical Xiaomi results",
+          "url": "https://github.com/sev7enITA/NodeLift/blob/3e7016a7c51d2bdedee0e9427e9e009aee09f3a2/research/phone-tradeoffs-2026-11-02/REPORT.md"
         },
         {
-          "label": "Engine contract",
-          "url": "https://github.com/sev7enITA/NodeLift/blob/c7a41e25aaa6a9bea52ab27a12a652c7a5e71054/docs/ENGINE_0_2.md"
+          "label": "Physical iPhone results",
+          "url": "https://github.com/sev7enITA/NodeLift/blob/3e7016a7c51d2bdedee0e9427e9e009aee09f3a2/research/iphone-tradeoffs-2026-11-02/REPORT.md"
+        },
+        {
+          "label": "Performance diagnosis",
+          "url": "https://github.com/sev7enITA/NodeLift/blob/3e7016a7c51d2bdedee0e9427e9e009aee09f3a2/research/performance-diagnosis-2026-11-02/REPORT.md"
+        },
+        {
+          "label": "Generic node probe",
+          "url": "https://github.com/sev7enITA/NodeLift/blob/3e7016a7c51d2bdedee0e9427e9e009aee09f3a2/docs/NODE_PROBE.md"
         }
       ]
     },
@@ -1921,5 +1930,6 @@
         }
       ]
     }
-  ]
+  ],
+  "nodelift_updated": "2026-11-02"
 }

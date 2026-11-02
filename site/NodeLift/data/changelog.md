@@ -147,6 +147,13 @@ Every published companion build has an entry below. Android packages are laborat
 
 ## Host, documentation and tooling updates
 
+### 2026-11-02: Synchronize showcase and comparison with physical evidence
+
+- Refresh the Android and iOS cards with the actual physical draft trials, distinguish privately signed iOS development builds from the unsigned public IPA, and retain negative paired outcomes.
+- Add the desktop/server probe, first physical Mac kernel controls and an explicit roadmap for physical Windows/Linux qualification and future PC/server workers.
+- Update only the NodeLift atlas row to the 2 November evidence; retain the 31 October source freeze for all 54 other entries and show both dates. Regenerate the matching CSV, Markdown and integrity manifest.
+- Correct the showcase packager to include the published node-probe package. No companion binary, distributed speedup or target-memory sharding is added by this documentation update.
+
 ### 2026-11-02: Generic node probe 0.1.0 and native model microbenchmarks
 
 - Add a reusable local hardware/software probe for macOS, Windows and Linux, including ARM64 detection and explicit unknown states for unsupported accelerators. No machine-specific Lenovo profile is required.

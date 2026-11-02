@@ -12,7 +12,7 @@ OUT = ROOT / "artifacts/showcase"
 OUT.mkdir(parents=True, exist_ok=True)
 files = sorted(p for p in SITE.rglob("*") if p.is_file())
 assert files and (SITE / "index.html") in files
-assert all(not p.is_symlink() and p.suffix in {".html", ".css", ".js", ".json", ".csv", ".md", ".png", ".svg", ".woff2", ".txt"} for p in files)
+assert all(not p.is_symlink() and (p.suffix in {".html", ".css", ".js", ".json", ".csv", ".md", ".png", ".svg", ".woff2", ".txt"} or p.relative_to(SITE).as_posix() == "assets/NodeLift-node-probe-0.1.0.pyz") for p in files)
 manifest = {"created_utc": datetime.now(timezone.utc).isoformat(),
             "base_url": "https://www.fabriziodegni.com/NodeLift/", "files": {}}
 for path in files:

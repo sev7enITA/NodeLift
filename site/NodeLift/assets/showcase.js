@@ -113,10 +113,11 @@
     $('atlas-error').hidden=true;$('atlas-empty').hidden=filtered.length>0;
     document.querySelector('.table-scroll').hidden=filtered.length===0;
     $('table-instruction').hidden=filtered.length===0;
-    $('atlas-status').textContent=tr('{0} di {1} progetti · verifica {2}','{0} of {1} projects · checked {2}',filtered.length,dataset.projects.length,dataset.updated);
+    const nodeUpdated=dataset.nodelift_updated || dataset.updated;
+    $('atlas-status').textContent=language==='zh-Hans' ? `${filtered.length} / ${dataset.projects.length} 个项目 · 其他项目核查 ${dataset.updated} · NodeLift 更新 ${nodeUpdated}` : tr('{0} di {1} progetti · altre schede verificate {2} · NodeLift aggiornato {3}','{0} of {1} projects · other entries checked {2} · NodeLift updated {3}',filtered.length,dataset.projects.length,dataset.updated,nodeUpdated);
     $('page-summary').textContent=filtered.length?tr('{0}–{1} di {2} risultati','{0}–{1} of {2} results',start+1,end,filtered.length):tr('0 risultati','0 results');
     $('previous-page').disabled=page===0;$('next-page').disabled=end>=filtered.length;
-    const scope=dataset.scope ? tr(dataset.scope.it || dataset.scope.en || '',dataset.scope.en || '') : '';
+    const scope=dataset.scope ? (language==='zh-Hans' && dataset.scope.zh ? dataset.scope.zh : tr(dataset.scope.it || dataset.scope.en || '',dataset.scope.en || '')) : '';
     $('dataset-scope').textContent=scope;
     for(const project of rows){
       const row=make('tr');const name=make('th');name.scope='row';name.append(projectButton(project),make('span',uiLabel('category',project.category),'project-category'));row.append(name);
@@ -212,7 +213,7 @@
   },{passive:true});
   function buildPrintDetails(){
     document.querySelector('.print-projects')?.remove();if(!dataset)return;
-    const appendix=make('section',undefined,'print-projects print-only');appendix.append(make('h2',tr('Atlante completo · campi e fonti','Full atlas · fields and sources')),make('p',tr('Schede canoniche in inglese. Verifica: ','Canonical entries in English. Checked: ')+dataset.updated));
+    const appendix=make('section',undefined,'print-projects print-only');appendix.append(make('h2',tr('Atlante completo · campi e fonti','Full atlas · fields and sources')),make('p',language==='zh-Hans' ? `条目为英文。其他项目核查：${dataset.updated}；NodeLift 更新：${dataset.nodelift_updated || dataset.updated}` : tr('Schede in inglese. Altre schede verificate: ','Entries in English. Other entries checked: ')+dataset.updated+' · NodeLift: '+(dataset.nodelift_updated || dataset.updated)));
     for(const project of dataset.projects){const article=make('article',undefined,'print-project');article.append(make('h3',project.name),make('p',uiLabel('category',project.category)+' / '+uiLabel('ecosystem',project.ecosystem)));const fields=make('dl');for(const [key,labels] of Object.entries(fieldLabels)){const item=make('div');item.append(make('dt',tr(...labels)),make('dd',safeText(project[key])));fields.append(item);}article.append(fields);const sources=make('ul');for(const source of project.sources||[]){const link=sourceLink(source);if(link){const item=make('li');item.append(link);sources.append(item);}}article.append(sources);appendix.append(article);}
     $('main').append(appendix);
   }

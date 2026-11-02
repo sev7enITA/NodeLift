@@ -2,6 +2,8 @@
 
 **Sources frozen on 31 October 2026 · 55 entries · experimental NodeLift 0.2.1 checkpoint**
 
+**Update, 2 November 2026:** Only the NodeLift row in the comparison atlas has been refreshed. Physical [Xiaomi](https://github.com/sev7enITA/NodeLift/blob/3e7016a7c51d2bdedee0e9427e9e009aee09f3a2/research/phone-tradeoffs-2026-11-02/REPORT.md) and [iPhone](https://github.com/sev7enITA/NodeLift/blob/3e7016a7c51d2bdedee0e9427e9e009aee09f3a2/research/iphone-tradeoffs-2026-11-02/REPORT.md) trials supplied draft tokens but were slower than their matched Mac controls in the measured fixed-mode scope. The [generic desktop/server probe](https://github.com/sev7enITA/NodeLift/blob/3e7016a7c51d2bdedee0e9427e9e009aee09f3a2/docs/NODE_PROBE.md) has physical Mac evidence and Windows/Linux fixtures; it is not a remote worker or proof of pooled RAM. The other 54 project entries and the historical analysis below retain the 31 October source freeze.
+
 Other projects already demonstrate phone reuse for distributed inference. NodeLift's useful contribution would be making the decision to involve them measurable and reliable, with verifiable integration and failure recovery. There is no evidence to call NodeLift the first, fastest or superior to every alternative. This is a dated research snapshot; see the [current changelog](../../CHANGELOG.md) for later releases.
 
 The [detailed matrix](../../site/NodeLift/data/comparison.md), [JSON](../../site/NodeLift/data/comparison.json), [CSV](../../site/NodeLift/data/comparison.csv) and [method](../../site/NodeLift/data/methodology.md) share one source. Public showcase: [fabriziodegni.com/NodeLift](https://www.fabriziodegni.com/NodeLift/).
