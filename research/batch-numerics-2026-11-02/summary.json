@@ -1,0 +1,505 @@
+{
+  "scope": "targeted single-session windows, not population rates",
+  "runs": [
+    {
+      "raw_file": "metal-flash-on-1.5b.json",
+      "raw_sha256": "0696aa7a779b152334e4a0e6c823498a8c4e933fc53d738a0b607372f952078e",
+      "gpu_layers_requested": 999,
+      "flash_attention_requested": true,
+      "threads": 8,
+      "counts": {
+        "windows": 39,
+        "positions": 140,
+        "serial_batch_top1_flips": 7
+      },
+      "by_width": {
+        "1": {
+          "windows": 16,
+          "positions": 16
+        },
+        "4": {
+          "windows": 15,
+          "positions": 60,
+          "serial_batch_top1_flips": 3
+        },
+        "8": {
+          "windows": 8,
+          "positions": 64,
+          "serial_batch_top1_flips": 4
+        }
+      },
+      "max_abs_serial_batch": {
+        "gap": 0.3638038635253906,
+        "case": "italian_sky",
+        "offset": 22,
+        "width": 4,
+        "window_position": 3
+      },
+      "max_abs_serial_repeat": {
+        "gap": 0,
+        "case": null
+      },
+      "flips": [
+        {
+          "case": "italian_sky",
+          "offset": 16,
+          "width": 8,
+          "window_position": 7,
+          "serial_margin": 0.026754379272460938,
+          "batch_margin": 0.04594612121582031,
+          "max_abs_serial_batch": 0.13869428634643555
+        },
+        {
+          "case": "italian_sky",
+          "offset": 20,
+          "width": 4,
+          "window_position": 3,
+          "serial_margin": 0.025251388549804688,
+          "batch_margin": 0.04438018798828125,
+          "max_abs_serial_batch": 0.1325511932373047
+        },
+        {
+          "case": "italian_sky",
+          "offset": 20,
+          "width": 8,
+          "window_position": 3,
+          "serial_margin": 0.025251388549804688,
+          "batch_margin": 0.04438018798828125,
+          "max_abs_serial_batch": 0.1325511932373047
+        },
+        {
+          "case": "italian_sky",
+          "offset": 22,
+          "width": 4,
+          "window_position": 1,
+          "serial_margin": 0.029079437255859375,
+          "batch_margin": 0.044963836669921875,
+          "max_abs_serial_batch": 0.13384199142456055
+        },
+        {
+          "case": "italian_sky",
+          "offset": 22,
+          "width": 8,
+          "window_position": 1,
+          "serial_margin": 0.029079437255859375,
+          "batch_margin": 0.044963836669921875,
+          "max_abs_serial_batch": 0.13384199142456055
+        },
+        {
+          "case": "italian_sky",
+          "offset": 23,
+          "width": 4,
+          "window_position": 0,
+          "serial_margin": 0.026519775390625,
+          "batch_margin": 0.04172515869140625,
+          "max_abs_serial_batch": 0.13062047958374023
+        },
+        {
+          "case": "italian_sky",
+          "offset": 23,
+          "width": 8,
+          "window_position": 0,
+          "serial_margin": 0.026519775390625,
+          "batch_margin": 0.04172515869140625,
+          "max_abs_serial_batch": 0.13062047958374023
+        }
+      ]
+    },
+    {
+      "raw_file": "metal-flash-off-1.5b.json",
+      "raw_sha256": "2ed62104b2954aec6efda65052e923f40664245cead59928b095234b73260dd6",
+      "gpu_layers_requested": 999,
+      "flash_attention_requested": false,
+      "threads": 8,
+      "counts": {
+        "windows": 39,
+        "positions": 140,
+        "serial_batch_top1_flips": 7
+      },
+      "by_width": {
+        "1": {
+          "windows": 16,
+          "positions": 16
+        },
+        "4": {
+          "windows": 15,
+          "positions": 60,
+          "serial_batch_top1_flips": 3
+        },
+        "8": {
+          "windows": 8,
+          "positions": 64,
+          "serial_batch_top1_flips": 4
+        }
+      },
+      "max_abs_serial_batch": {
+        "gap": 0.37360572814941406,
+        "case": "italian_sky",
+        "offset": 20,
+        "width": 8,
+        "window_position": 5
+      },
+      "max_abs_serial_repeat": {
+        "gap": 0,
+        "case": null
+      },
+      "flips": [
+        {
+          "case": "italian_sky",
+          "offset": 16,
+          "width": 8,
+          "window_position": 7,
+          "serial_margin": 0.03002166748046875,
+          "batch_margin": 0.042827606201171875,
+          "max_abs_serial_batch": 0.13964176177978516
+        },
+        {
+          "case": "italian_sky",
+          "offset": 20,
+          "width": 4,
+          "window_position": 3,
+          "serial_margin": 0.02378082275390625,
+          "batch_margin": 0.04284095764160156,
+          "max_abs_serial_batch": 0.13101887702941895
+        },
+        {
+          "case": "italian_sky",
+          "offset": 20,
+          "width": 8,
+          "window_position": 3,
+          "serial_margin": 0.02378082275390625,
+          "batch_margin": 0.04284095764160156,
+          "max_abs_serial_batch": 0.13101887702941895
+        },
+        {
+          "case": "italian_sky",
+          "offset": 22,
+          "width": 4,
+          "window_position": 1,
+          "serial_margin": 0.030076980590820312,
+          "batch_margin": 0.04021644592285156,
+          "max_abs_serial_batch": 0.13364291191101074
+        },
+        {
+          "case": "italian_sky",
+          "offset": 22,
+          "width": 8,
+          "window_position": 1,
+          "serial_margin": 0.030076980590820312,
+          "batch_margin": 0.04021644592285156,
+          "max_abs_serial_batch": 0.13364291191101074
+        },
+        {
+          "case": "italian_sky",
+          "offset": 23,
+          "width": 4,
+          "window_position": 0,
+          "serial_margin": 0.028072357177734375,
+          "batch_margin": 0.03919219970703125,
+          "max_abs_serial_batch": 0.13022685050964355
+        },
+        {
+          "case": "italian_sky",
+          "offset": 23,
+          "width": 8,
+          "window_position": 0,
+          "serial_margin": 0.028072357177734375,
+          "batch_margin": 0.03919219970703125,
+          "max_abs_serial_batch": 0.13022685050964355
+        }
+      ]
+    },
+    {
+      "raw_file": "cpu-flash-on-1.5b.json",
+      "raw_sha256": "aee2f6cf4d3742ba7405aa9bf5f12d6400a5f9772cb7fc39eb2e8bc4dd47d075",
+      "gpu_layers_requested": 0,
+      "flash_attention_requested": true,
+      "threads": 8,
+      "counts": {
+        "windows": 39,
+        "positions": 140,
+        "serial_batch_top1_flips": 4
+      },
+      "by_width": {
+        "1": {
+          "windows": 16,
+          "positions": 16
+        },
+        "4": {
+          "windows": 15,
+          "positions": 60,
+          "serial_batch_top1_flips": 1
+        },
+        "8": {
+          "windows": 8,
+          "positions": 64,
+          "serial_batch_top1_flips": 3
+        }
+      },
+      "max_abs_serial_batch": {
+        "gap": 1.3027198314666748,
+        "case": "python_add",
+        "offset": 0,
+        "width": 4,
+        "window_position": 1
+      },
+      "max_abs_serial_repeat": {
+        "gap": 0,
+        "case": null
+      },
+      "flips": [
+        {
+          "case": "italian_sky",
+          "offset": 0,
+          "width": 4,
+          "window_position": 0,
+          "serial_margin": 0.07707786560058594,
+          "batch_margin": 0.08041763305664062,
+          "max_abs_serial_batch": 0.7883248329162598
+        },
+        {
+          "case": "italian_sky",
+          "offset": 0,
+          "width": 8,
+          "window_position": 0,
+          "serial_margin": 0.07707786560058594,
+          "batch_margin": 0.08041763305664062,
+          "max_abs_serial_batch": 0.7883248329162598
+        },
+        {
+          "case": "italian_sky",
+          "offset": 16,
+          "width": 8,
+          "window_position": 5,
+          "serial_margin": 0.047924041748046875,
+          "batch_margin": 0.06498908996582031,
+          "max_abs_serial_batch": 0.7755379676818848
+        },
+        {
+          "case": "italian_sky",
+          "offset": 16,
+          "width": 8,
+          "window_position": 7,
+          "serial_margin": 0.041988372802734375,
+          "batch_margin": 0.11310386657714844,
+          "max_abs_serial_batch": 0.8184185028076172
+        }
+      ]
+    },
+    {
+      "raw_file": "cpu-flash-off-1.5b.json",
+      "raw_sha256": "f9c208d434fcbc6be3dec89c5f496456510ee8ece9a7f3b28decf65961056ee3",
+      "gpu_layers_requested": 0,
+      "flash_attention_requested": false,
+      "threads": 8,
+      "counts": {
+        "windows": 39,
+        "positions": 140,
+        "serial_batch_top1_flips": 7
+      },
+      "by_width": {
+        "1": {
+          "windows": 16,
+          "positions": 16
+        },
+        "4": {
+          "windows": 15,
+          "positions": 60,
+          "serial_batch_top1_flips": 4
+        },
+        "8": {
+          "windows": 8,
+          "positions": 64,
+          "serial_batch_top1_flips": 3
+        }
+      },
+      "max_abs_serial_batch": {
+        "gap": 1.2355637550354004,
+        "case": "python_add",
+        "offset": 0,
+        "width": 4,
+        "window_position": 1
+      },
+      "max_abs_serial_repeat": {
+        "gap": 0,
+        "case": null
+      },
+      "flips": [
+        {
+          "case": "italian_sky",
+          "offset": 0,
+          "width": 4,
+          "window_position": 0,
+          "serial_margin": 0.15618515014648438,
+          "batch_margin": 0.43492698669433594,
+          "max_abs_serial_batch": 0.9373607635498047
+        },
+        {
+          "case": "italian_sky",
+          "offset": 0,
+          "width": 8,
+          "window_position": 0,
+          "serial_margin": 0.15618515014648438,
+          "batch_margin": 0.3214130401611328,
+          "max_abs_serial_batch": 0.9044599533081055
+        },
+        {
+          "case": "italian_sky",
+          "offset": 8,
+          "width": 8,
+          "window_position": 7,
+          "serial_margin": 0.10546875,
+          "batch_margin": 0.008821487426757812,
+          "max_abs_serial_batch": 1.1260557174682617
+        },
+        {
+          "case": "italian_sky",
+          "offset": 16,
+          "width": 4,
+          "window_position": 1,
+          "serial_margin": 0.22527694702148438,
+          "batch_margin": 0.32927894592285156,
+          "max_abs_serial_batch": 0.864159107208252
+        },
+        {
+          "case": "italian_sky",
+          "offset": 16,
+          "width": 8,
+          "window_position": 1,
+          "serial_margin": 0.22527694702148438,
+          "batch_margin": 0.4479942321777344,
+          "max_abs_serial_batch": 0.8356118202209473
+        },
+        {
+          "case": "italian_sky",
+          "offset": 22,
+          "width": 4,
+          "window_position": 1,
+          "serial_margin": 0.17803955078125,
+          "batch_margin": 0.1082916259765625,
+          "max_abs_serial_batch": 0.8955693244934082
+        },
+        {
+          "case": "italian_sky",
+          "offset": 23,
+          "width": 4,
+          "window_position": 0,
+          "serial_margin": 0.07269287109375,
+          "batch_margin": 0.028314590454101562,
+          "max_abs_serial_batch": 0.8589878082275391
+        }
+      ]
+    },
+    {
+      "raw_file": "metal-flash-on-0.5b.json",
+      "raw_sha256": "d4f32965b07c8cac36b40e3a99d613a02197e1932161d0d6a2c1bcb6f8396e60",
+      "gpu_layers_requested": 999,
+      "flash_attention_requested": true,
+      "threads": 8,
+      "counts": {
+        "windows": 38,
+        "positions": 132
+      },
+      "by_width": {
+        "1": {
+          "windows": 16,
+          "positions": 16
+        },
+        "4": {
+          "windows": 15,
+          "positions": 60
+        },
+        "8": {
+          "windows": 7,
+          "positions": 56
+        }
+      },
+      "max_abs_serial_batch": {
+        "gap": 0.21059226989746094,
+        "case": "italian_sky",
+        "offset": 32,
+        "width": 4,
+        "window_position": 0
+      },
+      "max_abs_serial_repeat": {
+        "gap": 0,
+        "case": null
+      },
+      "flips": []
+    },
+    {
+      "raw_file": "cpu-flash-on-0.5b.json",
+      "raw_sha256": "c279db7b3898e4750a9ca5ceba963cf99422281db9d7818a44f2d54250dd2999",
+      "gpu_layers_requested": 0,
+      "flash_attention_requested": true,
+      "threads": 8,
+      "counts": {
+        "windows": 38,
+        "positions": 132
+      },
+      "by_width": {
+        "1": {
+          "windows": 16,
+          "positions": 16
+        },
+        "4": {
+          "windows": 15,
+          "positions": 60
+        },
+        "8": {
+          "windows": 7,
+          "positions": 56
+        }
+      },
+      "max_abs_serial_batch": {
+        "gap": 0.8624135255813599,
+        "case": "brief_greeting",
+        "offset": 0,
+        "width": 4,
+        "window_position": 3
+      },
+      "max_abs_serial_repeat": {
+        "gap": 0,
+        "case": null
+      },
+      "flips": []
+    },
+    {
+      "raw_file": "metal-flash-on-8b.json",
+      "raw_sha256": "6d11b2bb04cf9b38d084554b275a9b3aa7abde962e409377df8b48184d0f20de",
+      "gpu_layers_requested": 999,
+      "flash_attention_requested": true,
+      "threads": 8,
+      "counts": {
+        "windows": 38,
+        "positions": 139
+      },
+      "by_width": {
+        "1": {
+          "windows": 15,
+          "positions": 15
+        },
+        "4": {
+          "windows": 15,
+          "positions": 60
+        },
+        "8": {
+          "windows": 8,
+          "positions": 64
+        }
+      },
+      "max_abs_serial_batch": {
+        "gap": 0.28357648849487305,
+        "case": "italian_sky",
+        "offset": 16,
+        "width": 4,
+        "window_position": 1
+      },
+      "max_abs_serial_repeat": {
+        "gap": 0,
+        "case": null
+      },
+      "flips": []
+    }
+  ]
+}

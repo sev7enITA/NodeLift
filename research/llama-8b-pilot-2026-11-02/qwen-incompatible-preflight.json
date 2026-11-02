@@ -1,0 +1,11 @@
+{
+  "target_fingerprint": "062669d6ad7d409ea9b186126163940d073b02bd0282e7d06c54cf49e4e900a3",
+  "draft_fingerprint": "795dc470607fd5b32608b81d408164ed663e8020a3044cbef97ce9939508c016",
+  "same": false,
+  "target_runtime": "0.8.0-dev",
+  "vocab_target": 152064,
+  "vocab_draft": 151936,
+  "target": "Qwen2.5 7B Ollama",
+  "draft": "Qwen2.5 0.5B GGUF",
+  "decision": "rejected: fingerprint and vocabulary sizes differ"
+}

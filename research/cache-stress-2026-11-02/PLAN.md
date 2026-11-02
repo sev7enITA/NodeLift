@@ -1,0 +1,5 @@
+# Experimental KV reuse stress plan
+
+Frozen before running this comparison. Compare the current default native library and the experimental deferred-draft library, built from the same source and compiler settings except the experimental compile option. Use real Qwen2.5 0.5B and 1.5B Q4_K_M weights, both CPU and requested Metal, context 1024, eight requested threads, 80 transitions per model/backend, seed 20261102.
+
+Each transition supplies the same authoritative prefix to both engines. Vary draft budget 1, 2, 4 or 8, partial retention, no retention, full retention, small backtracks, explicit prefill and resets. Append deterministic valid vocabulary tokens, not random bytes. Compare all output token IDs and EOS, record mismatches and errors, and separately retry mismatched prefixes after an explicit reset to distinguish history dependence from persistent cross-build differences. Do not abort or omit a sample just because it differs. This is targeted stress of logical cache state, not an exhaustive proof or a phone performance test. The target verification path and production setting remain unchanged.

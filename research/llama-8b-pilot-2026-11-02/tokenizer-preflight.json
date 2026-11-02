@@ -1,0 +1,10 @@
+{
+  "target": "llama3.1:8b",
+  "draft": "llama3.2:latest",
+  "target_fingerprint": "cf0f6b7f9a6901172aa8262026fe173d120614fcfd452d91d31d602454466c07",
+  "draft_fingerprint": "cf0f6b7f9a6901172aa8262026fe173d120614fcfd452d91d31d602454466c07",
+  "same": true,
+  "target_vocab": 128256,
+  "draft_vocab": 128256,
+  "model_files_distributed": false
+}

@@ -41,3 +41,10 @@ if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
     PUBLIC_HEADER core.h MACOSX_FRAMEWORK_SHORT_VERSION_STRING 0.2.1
     MACOSX_FRAMEWORK_BUNDLE_VERSION 3)
 endif()
+
+option(NODELIFT_BUILD_SHAPE_PROBE "Build experimental batch shape numerical probe" OFF)
+if(NODELIFT_BUILD_SHAPE_PROBE AND NOT ANDROID AND NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
+  add_executable(nodelift-shape-probe experiments/shape_probe.cpp)
+  target_include_directories(nodelift-shape-probe PRIVATE "${LLAMA_SOURCE_DIR}/vendor")
+  target_link_libraries(nodelift-shape-probe PRIVATE llama)
+endif()

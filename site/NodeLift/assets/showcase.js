@@ -64,6 +64,7 @@
       img.alt=language==='zh-Hans'?img.dataset.zhAlt:language==='it'?img.dataset.itAlt:img.dataset.enAlt;
     });
     document.querySelectorAll('[data-benchmark-open]').forEach(a=>{a.href='assets/benchmarks-2026-11-02/'+a.dataset.benchmarkOpen+'.'+language+'.png';});
+    document.querySelectorAll('[data-local8-image]').forEach(img=>{img.src='assets/local-8b-pairs.'+language+'.png';});
     renderStep();
     if(dataset)renderAtlas();
     else if(!fetching&&!$('atlas-error').hidden)$('atlas-status').textContent=tr('Dataset non disponibile · nessuna riga simulata','Dataset unavailable · no simulated entries');

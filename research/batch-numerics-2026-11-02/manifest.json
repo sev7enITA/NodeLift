@@ -1,0 +1,22 @@
+{
+  "probe_sha256": "5b7a2cad8172f4ada6950bfd5769feb7baad0e2ee3fa19f531419907b22dabd9",
+  "probe_source_sha256": "87f6f1b3630be8d87606d80d64c347b211df1e4984385188631741f64598f070",
+  "llama_lock": "ddf48f85c933c1f438212a02eb21e7b001d2d37d",
+  "llama_source_archive_sha256": "48ec81d2f8c7019b8660ce50b2a6b7b889cc983b4846f3b09afff37b4d0474a0",
+  "case_file_sha256": {
+    "cases-1.5b.json": "9c96ae576fef638796f961a8e547572479c427a41a57e92788b0609a84889345",
+    "cases-0.5b.json": "fe2724205105b9561fec06860af038c2c1d67056b5403cc50e0c822d5b6888b0",
+    "cases-8b.json": "38c030ea1b81cca192973218c711a690c6d391c7b4ff5776ab9da7143f5e5885"
+  },
+  "model_sha256": {
+    "0.5b": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+    "1.5b": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+    "llama3.1-8b": "667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29"
+  },
+  "platform": "macOS-27.2-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "cpu_brand": "Apple M3 Max",
+  "threads_requested": 8,
+  "model_weights_in_repository": false,
+  "sample_warmup": "Fresh identical prefill per window; outputs are position-matched. Shape-probe timing is ordered and not a performance benchmark."
+}

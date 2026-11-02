@@ -1,0 +1,14 @@
+{
+  "phase": "before warmup or measured runs",
+  "interruptions": [
+    {
+      "reason": "macOS /tmp resolves to /private/tmp; script used an unresolved __file__",
+      "outcome": "No inference samples collected."
+    },
+    {
+      "reason": "Ollama model blobs have no .gguf suffix and were not in the isolated catalog",
+      "outcome": "No inference samples collected. Added two symlinks in the temporary checkout catalog; source code and model contents unchanged."
+    }
+  ],
+  "plan": "The predeclared model pair and measurement plan remain unchanged."
+}
