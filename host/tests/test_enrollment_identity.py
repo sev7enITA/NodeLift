@@ -105,6 +105,29 @@ class EnrollmentIdentityTests(unittest.TestCase):
         with self.assertRaises(PermissionError): self.state.authenticate(old['token'])
         with self.assertRaises(PermissionError): self.enroll(self.key,old)
 
+    def test_owner_can_retire_legacy_record_into_stable_enrollment(self):
+        old=self.enroll();current=self.enroll(self.key)
+        with self.state.db() as db:
+            db.execute("INSERT INTO assessments (id,node,created) VALUES ('assessment',?,1)",(old['node_id'],))
+            db.execute("INSERT INTO jobs (id,node,kind,state,created,assessment_id) VALUES ('test',?,'cpu','completed',1,'assessment')",(old['node_id'],))
+        self.state.merge_nodes(old['node_id'],current['node_id'],'Owner confirmed legacy duplicate')
+        self.assertEqual(len(self.state.snapshot()['nodes']),1)
+        self.assertEqual(self.state.authenticate(current['token']),current['node_id'])
+        with self.assertRaises(PermissionError):self.state.authenticate(old['token'])
+        repaired=self.enroll(self.key,current)
+        self.assertEqual(repaired['node_id'],current['node_id'])
+        with self.state.db() as db:
+            self.assertEqual(db.execute("SELECT node FROM assessments WHERE id='assessment'").fetchone()[0],current['node_id'])
+            self.assertEqual(db.execute("SELECT original_node FROM jobs WHERE id='test'").fetchone()[0],old['node_id'])
+
+    def test_merge_cannot_retire_established_identity_or_keep_revoked_target(self):
+        first=self.enroll(self.key);second=self.enroll(secrets.token_hex(32))
+        with self.assertRaises(ValueError):self.state.merge_nodes(first['node_id'],second['node_id'],'Same model name is insufficient')
+        old=self.enroll()
+        self.state.revoke(second['node_id'])
+        with self.assertRaises(ValueError):self.state.merge_nodes(old['node_id'],second['node_id'],'Revoked target')
+        self.assertEqual(len(self.state.snapshot()['nodes']),3)
+
     def test_identity_cannot_be_used_without_valid_invite(self):
         self.enroll(self.key)
         with self.assertRaises(PermissionError): self.state.pair('missing','Fake',{},self.key)

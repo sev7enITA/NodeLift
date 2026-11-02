@@ -4,6 +4,7 @@ No model code is executed here. A valid header is only an import check: the
 pinned native runtime still decides whether a model architecture can load.
 """
 import copy
+from datetime import datetime
 import hashlib
 import json
 import os
@@ -20,6 +21,39 @@ from urllib.request import Request, HTTPRedirectHandler, build_opener
 
 MAX_MODEL = 512 * 1024**3
 CHUNK = 1024**2
+
+
+def model_metadata(row):
+    """Allowlisted Hub observations, never a model-quality or RAM-fit judgment."""
+    identity = repo_id(row.get('id'))
+    def text(value):
+        return value[:240] if isinstance(value,str) and value.strip() else None
+    def count(value):
+        return value if type(value) is int and 0 <= value <= 2**53 else None
+    def values(value):
+        raw = [value] if isinstance(value,str) else value if isinstance(value,list) else []
+        return [v[:240] for v in raw[:12] if isinstance(v,str) and v.strip()]
+    def date(value):
+        if not isinstance(value,str) or len(value)>40:return None
+        try:
+            parsed=datetime.fromisoformat(value.replace('Z','+00:00'))
+            return value if parsed.tzinfo else None
+        except ValueError:return None
+    card = row.get('cardData') if isinstance(row.get('cardData'),dict) else {}
+    gguf = row.get('gguf') if isinstance(row.get('gguf'),dict) else {}
+    tensors = row.get('safetensors') if isinstance(row.get('safetensors'),dict) else {}
+    config = row.get('config') if isinstance(row.get('config'),dict) else {}
+    return {'id':identity,'author':text(row.get('author')) or identity.split('/')[0],
+            'model_card':'https://huggingface.co/'+identity,
+            'last_modified':date(row.get('lastModified')),'created_at':date(row.get('createdAt')),
+            'downloads':count(row.get('downloads')),'downloads_30d':count(row.get('downloads')),
+            'likes':count(row.get('likes')),'task':text(row.get('pipeline_tag')) or text(card.get('pipeline_tag')),
+            'license':text(card.get('license')),'languages':values(card.get('language')),
+            'base_models':values(card.get('base_model')),
+            'parameters':count(gguf.get('total')) or count(tensors.get('total')),
+            'architecture':text(gguf.get('architecture')) or text(config.get('model_type')),
+            'context_length':count(gguf.get('context_length')) or count(config.get('max_position_embeddings')),
+            'gated':row.get('gated') in (True,'auto','manual') if 'gated' in row else None}
 
 
 class HubRedirect(HTTPRedirectHandler):
@@ -138,9 +172,13 @@ class ModelLibrary:
 
     def search(self, query):
         if not isinstance(query, str) or not 1 <= len(query.strip()) <= 160: raise ValueError('Enter a model search')
-        rows = hub_json('https://huggingface.co/api/models?' + urlencode({'search': query.strip(), 'filter': 'gguf', 'limit': 12, 'sort': 'downloads', 'direction': -1}))
+        rows = hub_json('https://huggingface.co/api/models?' + urlencode({'search': query.strip(), 'filter': 'gguf', 'limit': 12, 'sort': 'downloads', 'direction': -1, 'expand':['author','createdAt','lastModified','downloads','likes','pipeline_tag','cardData','gguf','safetensors','gated','config']}, doseq=True))
         if not isinstance(rows,list) or any(not isinstance(r,dict) for r in rows): raise ValueError('Hugging Face returned invalid model metadata')
-        return {'models': [{'id': r['id'], 'downloads': r.get('downloads', 0)} for r in rows if isinstance(r.get('id'), str)]}
+        models=[]
+        for row in rows[:12]:
+            try:models.append(model_metadata(row))
+            except ValueError:continue
+        return {'models':models}
 
     def inspect(self, repo, revision='main'):
         repo = repo_id(repo)

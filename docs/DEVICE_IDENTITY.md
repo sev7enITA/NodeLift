@@ -18,7 +18,7 @@ Once established, the installation key supports retry with another QR after a lo
 
 ## Older duplicates and limitations
 
-Legacy records have no installation identity. They must not be automatically merged by name, model, RAM or IP address. The owner can confirm a specific historical duplicate for local maintenance. `State.merge_nodes` preserves the retired record, revokes its credential, retains an audit entry and moves completed jobs to the retained node while recording `original_node`. A private SQLite backup should be made first. Active jobs and already established identities prevent this legacy-only operation.
+Legacy records have no installation identity. They must not be automatically merged by name, model, RAM or IP address. The owner can confirm a specific historical duplicate for local maintenance. `State.merge_nodes` preserves the retired record, revokes its credential, retains an audit entry and moves completed jobs to the retained node while recording `original_node`. A private SQLite backup should be made first. Active jobs prevent this operation. The retired source must have no established identity; the retained active enrollment may already have one. Established identities are never retired by this maintenance path. Assessment associations are transferred alongside their completed jobs.
 
 Deleting app data, losing secure storage or reinstalling can create a new installation. Physical-device identity after such a reset is not guaranteed. This is credential continuity, not hardware attestation or proof against a compromised companion. HarmonyOS/NEXT remains a source candidate without this persistent identity flow; do not assume parity with Android/iOS.
 

@@ -16,6 +16,8 @@ jobs:
         run: |
           swiftc apps/ios/NodeLift/DiagnosticJournal.swift apps/ios/NodeLift/UpdatePolicy.swift apps/ios/Tests/SupportPolicyCheck.swift -o /tmp/nodelift-support-check
           /tmp/nodelift-support-check
+          swiftc apps/ios/NodeLift/UpdatePolicy.swift apps/ios/Tests/ReleaseMetadataCheck.swift -o /tmp/nodelift-release-check
+          /tmp/nodelift-release-check
       - name: Compile the pinned native core
         run: ./scripts/build-native.sh
       - name: Record the build environment

@@ -99,6 +99,11 @@ fun showAbout(activity: Activity): Dialog {
         }
     }
     content.addView(checkUpdates, LinearLayout.LayoutParams(-1, -2))
+    val viewRelease = Button(activity).apply {
+        text = t("View release notes & download"); ControlUI.style(this, ControlUI.Tone.PRIMARY)
+        setOnClickListener { UpdateMonitor.details?.let { showReleaseDetails(activity, it) } }
+    }
+    content.addView(viewRelease, LinearLayout.LayoutParams(-1, -2))
     link("Check releases on GitHub", "https://github.com/sev7enITA/NodeLift/releases")
     link("Official downloads & installation", "https://www.fabriziodegni.com/NodeLift/#downloads")
     content.addView(text("Diagnostics", 18f, ink))
@@ -167,6 +172,7 @@ fun showAbout(activity: Activity): Dialog {
         override fun run() {
             val currentMessage = UpdateMonitor.message.render(activity)
             if (updateState.text.toString() != currentMessage) updateState.text = currentMessage
+            viewRelease.isEnabled = !UpdateMonitor.checking && UpdateMonitor.details != null
             checkUpdates.isEnabled = !UpdateMonitor.checking
             checkUpdates.text = t(if (UpdateMonitor.checking) "Checking for updates…" else "Check now")
             ControlUI.describe(checkUpdates, checkUpdates.text.toString())
@@ -180,5 +186,58 @@ fun showAbout(activity: Activity): Dialog {
         setBackgroundDrawable(ColorDrawable(bg))
         setLayout(ViewGroup.LayoutParams.MATCH_PARENT, (activity.resources.displayMetrics.heightPixels * 0.88).toInt())
     }
+    return dialog
+}
+
+/** Review is local and cancellable. Only the explicit final button opens the exact public asset. */
+fun showReleaseDetails(activity:Activity, details:ReleaseDetails):Dialog {
+    fun t(key:String)=L10n.text(activity,key)
+    fun dp(n:Int)=(n*activity.resources.displayMetrics.density).toInt()
+    val dialog=Dialog(activity);dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    val root=LinearLayout(activity).apply { orientation=LinearLayout.VERTICAL;setPadding(dp(22),dp(18),dp(22),dp(12));setBackgroundColor(ControlUI.canvas) }
+    val content=LinearLayout(activity).apply { orientation=LinearLayout.VERTICAL }
+    fun text(value:String,heading:Boolean=false) {
+        content.addView(TextView(activity).apply {
+            text=value;textSize=if(heading)20f else 16f;setTextColor(ControlUI.ink);setPadding(0,dp(8),0,dp(8))
+            if(heading){setTypeface(null,Typeface.BOLD);if(Build.VERSION.SDK_INT>=28)isAccessibilityHeading=true}
+            else setTextIsSelectable(true)
+        },LinearLayout.LayoutParams(-1,-2))
+    }
+    text(t("Release notes"),true)
+    text(L10n.text(activity,"Version {0} · build {1}",details.release.version,details.release.build))
+    text(t("Published (UTC)")+": "+details.date)
+    text(details.title,true)
+    text(t("Release notes are published in English."))
+    details.changes.forEach { text("• $it") }
+    text(t("Validation"),true);text(details.validation)
+    text(t("Limitations"),true);text(details.limitations)
+    text(t("Download details"),true);text(details.artifact)
+    text(L10n.text(activity,"Artifact size: {0} bytes",details.bytes))
+    text("SHA-256\n"+details.sha256)
+    text(t("This hash is published metadata. NodeLift does not verify the downloaded file when your browser downloads it."))
+    text(t("The APK download opens in your browser. Android asks you before installation; NodeLift does not install it automatically."))
+    val action=Button(activity).apply {
+        text=t("Download APK in browser");ControlUI.style(this,ControlUI.Tone.PRIMARY)
+        setOnClickListener {
+            if(UpdateMonitor.checking || UpdateMonitor.details !== details)return@setOnClickListener
+            try {activity.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(details.url)).addCategory(Intent.CATEGORY_BROWSABLE))}
+            catch(_:ActivityNotFoundException){Toast.makeText(activity,t("Unable to open this link. Open the official website in your browser."),Toast.LENGTH_LONG).show()}
+            catch(_:SecurityException){Toast.makeText(activity,t("Unable to open this link. Open the official website in your browser."),Toast.LENGTH_LONG).show()}
+        }
+    }
+    content.addView(action,LinearLayout.LayoutParams(-1,-2))
+    val expired=TextView(activity).apply {text=t("Release details need a new check. Close this view and choose Check now.");setTextColor(ControlUI.amber);textSize=16f;accessibilityLiveRegion=android.view.View.ACCESSIBILITY_LIVE_REGION_POLITE}
+    content.addView(expired)
+    root.addView(ScrollView(activity).apply{addView(content)},LinearLayout.LayoutParams(-1,0,1f))
+    root.addView(Button(activity).apply{text=t("Close");ControlUI.style(this,ControlUI.Tone.SECONDARY);setOnClickListener{dialog.dismiss()}},LinearLayout.LayoutParams(-1,-2))
+    dialog.setContentView(root)
+    val handler=android.os.Handler(android.os.Looper.getMainLooper())
+    val refresh=object:Runnable {override fun run(){
+        val valid=!UpdateMonitor.checking && UpdateMonitor.details === details
+        action.isEnabled=valid;expired.visibility=if(valid)android.view.View.GONE else android.view.View.VISIBLE
+        if(dialog.isShowing)handler.postDelayed(this,500)
+    }}
+    dialog.setOnDismissListener{handler.removeCallbacks(refresh)};dialog.show();handler.post(refresh)
+    dialog.window?.apply{setBackgroundDrawable(ColorDrawable(ControlUI.canvas));setLayout(-1,(activity.resources.displayMetrics.heightPixels*0.90).toInt())}
     return dialog
 }

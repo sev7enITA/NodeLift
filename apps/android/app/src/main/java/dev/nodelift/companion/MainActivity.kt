@@ -63,9 +63,11 @@ class MainActivity : Activity() {
             handler.postDelayed(this, 1000)
         }
     }
+    private lateinit var releaseButton:Button
     private fun updateState() {
         val notices = mutableListOf<String>()
         if (UpdateMonitor.available) notices += UpdateMonitor.message.render(this)
+        if(::releaseButton.isInitialized) releaseButton.visibility=if(UpdateMonitor.available && !UpdateMonitor.checking && UpdateMonitor.details!=null)View.VISIBLE else View.GONE
         if (Diagnostics.hasPreviousIncident) notices += t("A previous interruption was recorded. Export diagnostics from About & References.")
         val noticeText = notices.joinToString("\n\n")
         if (supportNotice.text.toString() != noticeText) supportNotice.text = noticeText
@@ -195,6 +197,8 @@ class MainActivity : Activity() {
         })
         home.addView(text("Your phone, ready to help",18f,muted))
         supportNotice=text("",15f,ControlUI.amber).apply {visibility=View.GONE;accessibilityLiveRegion=View.ACCESSIBILITY_LIVE_REGION_POLITE};home.addView(supportNotice)
+        releaseButton=button("View release notes & download"){UpdateMonitor.details?.let{showReleaseDetails(this,it)}}.apply{visibility=View.GONE}
+        home.addView(releaseButton)
         val statusCard=card()
         statusCard.addView(text("Computer connection",16f,muted))
         sessionBadge=text("SESSION",18f,mint).apply {setTypeface(null,Typeface.BOLD);accessibilityLiveRegion=View.ACCESSIBILITY_LIVE_REGION_POLITE};statusCard.addView(sessionBadge)

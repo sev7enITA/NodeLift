@@ -9,13 +9,14 @@ import java.net.URL
 import java.util.concurrent.Executors
 import javax.net.ssl.HttpsURLConnection
 
-/** One public manifest request; never attaches node credentials or device identifiers. */
+/** Bounded public manifest and changelog requests; never attaches node credentials or device identifiers. */
 object UpdateMonitor {
     private const val ENDPOINT="https://www.fabriziodegni.com/NodeLift/data/mobile-downloads.json"
     private val handler=Handler(Looper.getMainLooper())
     private val executor=Executors.newSingleThreadExecutor()
     @Volatile var checking=false;private set
     @Volatile var available=false;private set
+    @Volatile var details:ReleaseDetails?=null;private set
     @Volatile var message:UiText=ui("Updates have not been checked yet.");private set
     private var started=false
     private var context:Context?=null
@@ -43,29 +44,49 @@ object UpdateMonitor {
         val app=context.applicationContext
         val prefs=app.getSharedPreferences("updates",0)
         // A manual action may retry immediately, but cannot fan out parallel requests.
-        checking=true;message=ui("Checking for updates…")
+        checking=true;available=false;details=null;message=ui("Checking for updates…")
         prefs.edit().putLong("attempt",System.currentTimeMillis()).apply()
         Diagnostics.record(DiagnosticEvent.UPDATE_CHECK)
         executor.execute {
-            var connection:HttpsURLConnection?=null
             try {
-                connection=URL(ENDPOINT).openConnection() as HttpsURLConnection
-                connection.apply {connectTimeout=10000;readTimeout=10000;instanceFollowRedirects=false;useCaches=false;setRequestProperty("Accept","application/json");setRequestProperty("User-Agent","NodeLift-update-check")}
-                require(connection.responseCode==200)
-                val bytes=connection.inputStream.use{it.readBytesBounded(131072)}
-                val manifest=JSONObject(String(bytes,Charsets.UTF_8))
-                val release=CompanionRelease(manifest.getString("version"),manifest.get("build").toString().toLongOrNull() ?: error("Invalid build"))
+                val manifest=fetch(ENDPOINT)
+                val changelog=fetch("https://www.fabriziodegni.com/NodeLift/data/changelog.json")
                 val info=app.packageManager.getPackageInfo(app.packageName,0)
                 val current=CompanionRelease(info.versionName ?: error("Version unavailable"),if(Build.VERSION.SDK_INT>=28)info.longVersionCode else @Suppress("DEPRECATION") info.versionCode.toLong())
+                val verified=ReleaseMetadata.parse(manifest,changelog,current)
+                val release=verified.release
+                details=verified
                 available=release>current
                 message=if(available)ui("Update available: {0} · build {1}",release.version,release.build) else ui("No newer companion release was found.")
                 prefs.edit().putLong("success",System.currentTimeMillis()).apply()
                 Diagnostics.record(if(available)DiagnosticEvent.UPDATE_AVAILABLE else DiagnosticEvent.UPDATE_CURRENT)
             } catch(error:Exception) {
+                available=false;details=null
                 message=ui("Update check unavailable. Check your connection or try again later.")
                 Diagnostics.record(DiagnosticEvent.UPDATE_FAILED,error)
-            } finally {connection?.disconnect();checking=false;schedule(app)}
+            } finally {checking=false;schedule(app)}
         }
+    }
+    private fun fetch(endpoint:String):Map<*,*> {
+        val connection=URL(endpoint).openConnection() as HttpsURLConnection
+        try {
+            connection.apply {connectTimeout=10000;readTimeout=10000;instanceFollowRedirects=false;useCaches=false;setRequestProperty("Accept","application/json");setRequestProperty("User-Agent","NodeLift-update-check")}
+            require(connection.responseCode==200)
+            require(connection.contentType?.substringBefore(';')?.trim()?.lowercase()=="application/json")
+            val data=connection.inputStream.use{it.readBytesBounded(524288)}
+            // Bound nesting before the platform JSON parser to avoid stack exhaustion.
+            var depth=0;var quoted=false;var escaped=false
+            for(byte in data){val c=byte.toInt().toChar();if(quoted){if(escaped)escaped=false else if(c=='\\')escaped=true else if(c=='"')quoted=false}
+                else if(c=='"')quoted=true else if(c=='{' || c=='['){depth++;require(depth<=16)} else if(c=='}' || c==']'){depth--;require(depth>=0)}}
+            require(!quoted && depth==0)
+            fun value(raw:Any?):Any?=when(raw){
+                is JSONObject -> raw.keys().asSequence().associateWith{value(raw.get(it))}
+                is org.json.JSONArray -> (0 until raw.length()).map{value(raw.get(it))}
+                JSONObject.NULL -> null
+                else -> raw
+            }
+            return value(JSONObject(String(data,Charsets.UTF_8))) as Map<*,*>
+        } finally {connection.disconnect()}
     }
     private fun java.io.InputStream.readBytesBounded(limit:Int):ByteArray {
         val out=java.io.ByteArrayOutputStream();val buffer=ByteArray(4096)

@@ -180,12 +180,15 @@ class State:
             rows = {r["id"]: r for r in db.execute("SELECT * FROM nodes WHERE id IN (?,?)", (source, target))}
             if len(rows) != 2 or any(r["merged_into"] for r in rows.values()):
                 raise ValueError("two unconsolidated nodes required")
-            if rows[source]["identity_hash"] or rows[target]["identity_hash"]:
-                raise ValueError("only legacy enrollments may be manually consolidated")
+            if rows[source]["identity_hash"]:
+                raise ValueError("only a legacy source enrollment may be manually consolidated")
+            if rows[target]["revoked"]:
+                raise ValueError("retain an active enrollment")
             if db.execute("SELECT 1 FROM jobs WHERE node IN (?,?) AND state IN ('queued','running')", (source, target)).fetchone():
                 raise ValueError("wait for active device jobs to finish")
             db.execute("UPDATE nodes SET merged_into=?,revoked=1 WHERE id=?", (target, source))
             db.execute("UPDATE jobs SET original_node=COALESCE(original_node,node),node=? WHERE node=?", (target, source))
+            db.execute("UPDATE assessments SET node=? WHERE node=?", (target, source))
             db.execute("INSERT INTO node_merges VALUES (?,?,?,?)", (source, target, time.time(), reason[:500]))
 
     def authenticate(self, token, peer_address=None):

@@ -65,12 +65,50 @@ function configureRunProvider(){
   renderModelLibrary();$('provider-settings').scrollIntoView({block:'center'});
   $(backend==='local_api'?'local-provider-url':'provider-key').focus({preventScroll:true});
 }
+function hubRepositoryUrl(id){
+  return typeof id==='string'&&/^[A-Za-z0-9][A-Za-z0-9_.-]{0,95}\/[A-Za-z0-9][A-Za-z0-9_.-]{0,95}$/.test(id)?'https://huggingface.co/'+id:null;
+}
+function hubText(value){return typeof value==='string'&&value.trim()?value.trim().slice(0,240):null;}
+function hubCount(value){return Number.isSafeInteger(value)&&value>=0?value:null;}
+function hubDate(value){
+  if(typeof value!=='string'||value.length>80||!/^\d{4}-\d{2}-\d{2}(?:T|$)/.test(value))return t('Unknown');
+  const date=new Date(value);return Number.isFinite(date.getTime())?date.toLocaleDateString(NodeLiftI18n.locale,{year:'numeric',month:'short',day:'numeric'}):t('Unknown');
+}
+function hubList(value){return Array.isArray(value)?value.map(hubText).filter(Boolean).slice(0,12):[];}
+function hubField(list,label,value){const item=el('div',undefined,'hf-model-field');item.append(el('dt',t(label)),el('dd',value??t('Unknown')));list.append(item);}
+function hubLink(label,repo){const url=hubRepositoryUrl(repo);if(!url)return el('span',label);const link=el('a',label);link.href=url;link.target='_blank';link.rel='noopener noreferrer';return link;}
+function renderHubCard(row){
+  const card=el('article',undefined,'hf-model-card'),header=el('div',undefined,'hf-model-heading');
+  const heading=el('h4');heading.append(hubLink(row.id,row.id));header.append(heading);
+  if(row.gated===true)header.append(el('span',t('Gated access'),'hf-access-badge'));
+  card.append(header,el('p',t('Repository updated: {0}',hubDate(row.last_modified)),'hf-model-updated'));
+  const specs=el('dl',undefined,'hf-model-specs'),parameters=hubCount(row.parameters),context=hubCount(row.context_length);
+  hubField(specs,'Task',hubText(row.task));hubField(specs,'Parameters',parameters===null?null:new Intl.NumberFormat(NodeLiftI18n.locale,{notation:'compact',maximumFractionDigits:1}).format(parameters));
+  hubField(specs,'Context length',context===null?null:t('{0} tokens',number(context,0)));hubField(specs,'License',hubText(row.license));card.append(specs);
+  const downloads=hubCount(row.downloads_30d),likes=hubCount(row.likes),popularity=el('div',undefined,'hf-model-popularity');
+  if(downloads!==null)popularity.append(el('span',t('Downloads · last 30 days: {0}',number(downloads,0))));
+  if(likes!==null)popularity.append(el('span',t('Likes: {0}',number(likes,0))));
+  if(popularity.children.length)card.append(popularity);
+  const languages=hubList(row.languages),bases=hubList(row.base_models),architecture=hubText(row.architecture)||hubList(row.architecture).join(' · ');
+  if(languages.length||bases.length||architecture||hubDate(row.created_at)!==t('Unknown')){
+    const more=el('details',undefined,'hf-model-more');more.append(el('summary',t('More repository metadata')));const metadata=el('dl',undefined,'hf-model-specs');
+    if(architecture)hubField(metadata,'Architecture',architecture);
+    if(languages.length)hubField(metadata,'Languages',languages.join(' · '));
+    if(hubDate(row.created_at)!==t('Unknown'))hubField(metadata,'Repository created',hubDate(row.created_at));
+    if(bases.length){const item=el('div',undefined,'hf-model-field hf-model-bases');item.append(el('dt',t('Base models')));const value=el('dd');for(const base of bases)value.append(hubLink(base,base));item.append(value);metadata.append(item);}
+    more.append(metadata);card.append(more);
+  }
+  const inspect=libraryAction('Inspect GGUF files',()=>modelTask(async()=>{$('hf-repo').value=row.id;await inspectHub();},'hub'));
+  inspect.setAttribute('aria-label',t('Inspect GGUF files for {0}',row.id));inspect.dataset.repo=row.id;
+  card.append(inspect);return card;
+}
 function renderHub(){
-  $('hf-results').replaceChildren();
-  for(const row of hubRows)$('hf-results').append(libraryAction(row.id,()=>modelTask(async()=>{$('hf-repo').value=row.id;await inspectHub();},'hub')));
+  const results=$('hf-results');results.replaceChildren();results.setAttribute('role','region');results.setAttribute('aria-label',t('Hugging Face model results'));results.tabIndex=hubRows.length?0:-1;
+  if(hubRows.length)results.append(el('p',t('Repository dates are not original model release dates. Popularity does not establish quality or runtime compatibility.'),'hf-catalog-note'));
+  for(const row of hubRows)if(hubRepositoryUrl(row?.id))results.append(renderHubCard(row));
   const chosen=$('hf-file')?.value;
   const box=$('hf-details');box.replaceChildren();if(!hubInfo)return;
-  const card=el('a',t('Model card and license'));card.href=hubInfo.model_card;card.target='_blank';card.rel='noopener noreferrer';box.append(card,el('p',t('License: {0} · revision: {1}',String(hubInfo.license),hubInfo.revision),'field-note'));
+  const card=hubLink(t('Model card and license'),hubInfo.repo);box.append(card,el('p',t('License: {0} · revision: {1}',String(hubInfo.license),hubInfo.revision),'field-note'));
   if(hubInfo.gated){box.append(el('p',t('Gated repository: download manually after accepting its terms.')));return;}
   if(!hubInfo.files.length){box.append(el('p',t('No supported single GGUF files with SHA-256 were found.')));return;}
   const select=el('select');select.id='hf-file';select.setAttribute('aria-label',t('Choose a GGUF file'));
@@ -111,7 +149,7 @@ $('import-form').onsubmit=event=>{event.preventDefault();return modelTask(async(
 $('hf-search-form').onsubmit=event=>{event.preventDefault();return modelTask(async()=>{
   hubInfo=null;hubRows=[];renderHub();hubStatus='Searching Hugging Face…';updateLibraryControls();
   try{const result=await api('models/search?q='+encodeURIComponent($('hf-query').value.trim()));
-    if(!Array.isArray(result?.models))throw Error('Hugging Face returned invalid model metadata');
+    if(!Array.isArray(result?.models)||result.models.some(row=>!hubRepositoryUrl(row?.id)))throw Error('Hugging Face returned invalid model metadata');
     hubRows=result.models;hubStatus=hubRows.length?'Select a repository to inspect its GGUF files.':'No matching public GGUF repositories found.';renderHub();
   }catch(error){hubStatus='Search failed. Check the connection and try again.';throw error;}
 },'hub');};

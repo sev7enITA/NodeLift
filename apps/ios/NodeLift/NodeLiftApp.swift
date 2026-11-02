@@ -79,6 +79,7 @@ struct ContentView: View {
     @State private var diagnosticShare: DiagnosticShare?
     @State private var diagnosticFeedback = ""
     @State private var showAbout = false
+    @State private var releaseDetails:ReleaseDetails?
     @State private var showScanner = false
     @State private var scannedCode: String?
     @State private var pairingCode: String?
@@ -129,6 +130,8 @@ struct ContentView: View {
             if updates.available {
                 Text(updates.message.resolve(model.language)).font(.subheadline)
                     .foregroundStyle(amberColor).accessibilityIdentifier("update-notice")
+                Button(T("View release notes & download")) { releaseDetails=updates.details }
+                    .buttonStyle(NodeLiftButtonStyle()).disabled(updates.checking || updates.details == nil)
             }
             if incidentNotice {
                 Button { selectedTab = 1 } label: {
@@ -409,6 +412,7 @@ struct ContentView: View {
         .onChange(of:primaryActionLabel) {_,value in announce(value)}
         .sheet(item:$diagnosticShare) { item in DiagnosticShareSheet(url:item.url) }
         .onAppear { incidentNotice = Diagnostics.shared.hasPreviousIncident }
+        .sheet(item: $releaseDetails) { ReleaseNotesView(details:$0,language:model.language) }
         .sheet(isPresented: $showAbout, onDismiss: { incidentNotice = Diagnostics.shared.hasPreviousIncident }) { AboutView(language: model.language) }
         .sheet(isPresented: $showScanner, onDismiss: {
             if let value = scannedCode { scannedCode = nil; acceptPairingCode(value) }
@@ -467,6 +471,7 @@ private struct AboutView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
     @State private var linkError = false
+    @State private var releaseDetails:ReleaseDetails?
     @ObservedObject private var updates = UpdateMonitor.shared
     @State private var diagnosticFeedback = ""
     @State private var diagnosticFailed = false
@@ -536,6 +541,9 @@ private struct AboutView: View {
                                 .frame(maxWidth: .infinity)
                         }.buttonStyle(NodeLiftButtonStyle()).disabled(updates.checking)
                             .accessibilityIdentifier("check-updates")
+                        Button(T("View release notes & download")) { releaseDetails=updates.details }
+                            .buttonStyle(NodeLiftButtonStyle()).disabled(updates.checking || updates.details == nil)
+                            .accessibilityIdentifier("view-release-notes")
                         link("Check releases on GitHub", "https://github.com/sev7enITA/NodeLift/releases")
                         link("Official downloads & installation", "https://www.fabriziodegni.com/NodeLift/#downloads")
                     }
@@ -591,6 +599,7 @@ private struct AboutView: View {
                     Text("© 2026 Fabrizio Degni").font(.caption).foregroundStyle(.secondary)
                 }.padding(22).frame(maxWidth: 700)
             }.frame(maxWidth: .infinity).background(canvasColor)
+                .sheet(item: $releaseDetails) { ReleaseNotesView(details:$0,language:language) }
                 .navigationTitle(T("About & References")).navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .confirmationAction) { Button(T("Close")) { dismiss() }.tint(aquaColor) } }
         }.preferredColorScheme(.dark)
@@ -622,3 +631,43 @@ private struct DiagnosticShareSheet: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }
 
+
+
+private struct ReleaseNotesView:View {
+    let details:ReleaseDetails
+    let language:String
+    @ObservedObject private var updates=UpdateMonitor.shared
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
+    @State private var linkError=false
+    private var valid:Bool { !updates.checking && updates.details?.id==details.id }
+    private func T(_ key:String)->String {Message(key).resolve(language)}
+    private func heading(_ key:String)->some View {Text(T(key)).font(.title3.weight(.semibold)).accessibilityAddTraits(.isHeader)}
+    var body:some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment:.leading,spacing:16) {
+                    Text(Message("Version {0} · build {1}",details.release.version,details.release.build).resolve(language)).font(.headline).foregroundStyle(aquaColor)
+                    Text(T("Published (UTC)")+": "+details.date).font(.subheadline)
+                    Text(details.title).font(.title2.weight(.semibold))
+                    Text(T("Release notes are published in English.")).font(.footnote).foregroundStyle(.secondary)
+                    ForEach(Array(details.changes.enumerated()),id:\.offset){_,value in Text("• "+value).fixedSize(horizontal:false,vertical:true)}
+                    heading("Validation");Text(details.validation)
+                    heading("Limitations");Text(details.limitations)
+                    heading("Download details");Text(details.artifact).font(.subheadline.monospaced())
+                    Text(Message("Artifact size: {0} bytes",details.bytes).resolve(language))
+                    Text("SHA-256\n"+details.sha256).font(.footnote.monospaced()).textSelection(.enabled)
+                    Text(T("This hash is published metadata. NodeLift does not verify the downloaded file when your browser downloads it.")).font(.footnote)
+                    Text(T("This IPA is unsigned. Download it to your Mac, then sign and provision it for your iPhone with Xcode. A browser download cannot install it. No automatic installation is available."))
+                    Button(T("Download unsigned IPA in browser")) {
+                        guard valid else{return}
+                        linkError=false;openURL(details.url){accepted in linkError = !accepted}
+                    }.buttonStyle(NodeLiftButtonStyle()).disabled(!valid).accessibilityIdentifier("download-release")
+                    if !valid {Text(T("Release details need a new check. Close this view and choose Check now.")).foregroundStyle(amberColor)}
+                    if linkError {Text(T("Unable to open this link. Open the official website in your browser.")).foregroundStyle(amberColor)}
+                }.frame(maxWidth:.infinity,alignment:.leading).padding(20)
+            }.background(canvasColor).navigationTitle(T("Release notes")).navigationBarTitleDisplayMode(.inline)
+                .toolbar{ToolbarItem(placement:.confirmationAction){Button(T("Close")){dismiss()}}}
+        }.preferredColorScheme(.dark)
+    }
+}

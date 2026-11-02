@@ -28,6 +28,14 @@ class LibraryTests(unittest.TestCase):
             time.sleep(.01)
         return self.library.status()['transfer']
     def start(self):return self.library.upload_start({'name':'test.gguf','bytes':len(GGUF)})['id']
+    def test_search_metadata_is_bounded_and_unknown_is_not_zero(self):
+        data=[{'id':'owner/repo','lastModified':'2026-11-01T10:00:00Z','createdAt':'2025-01-01T00:00:00Z','downloads':123,'likes':4,'cardData':{'license':'mit','language':['en','it'],'base_model':'owner/base'},'gguf':{'total':500000000,'architecture':'qwen2','context_length':32768},'gated':'manual'},
+              {'id':'owner/unknown','downloads':True,'likes':-1,'lastModified':'not a date','cardData':[]}, {'id':'https://invalid.example/x'}]
+        with patch('nodelift.model_library.hub_json',return_value=data) as get:result=self.library.search('model')['models']
+        self.assertEqual(len(result),2);self.assertIn('expand=lastModified',get.call_args.args[0])
+        row=result[0];self.assertEqual(row['downloads_30d'],123);self.assertEqual(row['parameters'],500000000);self.assertEqual(row['base_models'],['owner/base']);self.assertTrue(row['gated']);self.assertEqual(row['model_card'],'https://huggingface.co/owner/repo')
+        missing=result[1];self.assertIsNone(missing['downloads_30d']);self.assertIsNone(missing['likes']);self.assertIsNone(missing['last_modified']);self.assertIsNone(missing['license']);self.assertEqual(missing['languages'],[])
+
     def test_local_import_without_copy_survives_restart(self):
         p=self.root/'test.gguf';p.write_bytes(GGUF)
         self.library.import_path(str(p));self.assertEqual(ModelLibrary(self.root).paths(),[p.resolve()])
