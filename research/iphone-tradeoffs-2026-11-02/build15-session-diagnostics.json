@@ -1,0 +1,77 @@
+{
+  "source": "physical iPhone allowlisted journal",
+  "events": [
+    {
+      "event": "appStart",
+      "reporter_build": 15,
+      "time": 1793598043.987561
+    },
+    {
+      "event": "updateCheck",
+      "reporter_build": 15,
+      "time": 1793598043.990735
+    },
+    {
+      "code": 0,
+      "event": "updateFailed",
+      "reporter_build": 15,
+      "time": 1793598045.2879992
+    },
+    {
+      "event": "sessionStart",
+      "reporter_build": 15,
+      "time": 1793598045.8604321
+    },
+    {
+      "event": "sessionConnected",
+      "reporter_build": 15,
+      "time": 1793598046.41341
+    },
+    {
+      "event": "sessionStop",
+      "reporter_build": 15,
+      "time": 1793598067.369647
+    },
+    {
+      "event": "sessionStart",
+      "reporter_build": 15,
+      "time": 1793598077.359237
+    },
+    {
+      "event": "modelLoading",
+      "reporter_build": 15,
+      "time": 1793598077.396893
+    },
+    {
+      "event": "modelReady",
+      "reporter_build": 15,
+      "time": 1793598077.8798451
+    },
+    {
+      "event": "sessionConnected",
+      "reporter_build": 15,
+      "time": 1793598079.38926
+    },
+    {
+      "event": "draftDiscarded",
+      "reporter_build": 15,
+      "time": 1793598096.614431
+    },
+    {
+      "event": "draftDiscarded",
+      "reporter_build": 15,
+      "time": 1793598097.407165
+    },
+    {
+      "event": "draftDiscarded",
+      "reporter_build": 15,
+      "time": 1793598097.619102
+    },
+    {
+      "event": "draftDiscarded",
+      "reporter_build": 15,
+      "time": 1793598098.741912
+    }
+  ],
+  "scope": "Four draftDiscarded events, no sessionRetry or sessionFailed after the ready event and through the two planned follow-up cells. Phone online and ready at final host check. Short observation only."
+}

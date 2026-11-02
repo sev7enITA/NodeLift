@@ -39,7 +39,22 @@ This cell was scheduled because the predeclared fixed-32 median paired ratio was
 
 The [allowlisted physical journal](session-diagnostics.json) records repeated session retries and a final failure. Its numeric error code 0 does not identify the exact HTTP error. Code inspection found a concrete failure mechanism: expected rejection of expired or superseded draft results was treated as a network error, and repeated rejections could exhaust the connection retry budget. This is consistent with the observed failure, but the journal alone does not prove every retry had that cause.
 
-Private development build 15 distinguishes the two existing obsolete-lease rejection messages on the authenticated result endpoint. It records `draftDiscarded`, never retries or accepts that obsolete output, and continues polling. Unauthorized requests, invalid tokens, other endpoints and unknown errors retain their error handling. No host validation is relaxed. Swift integration tests exercise repeated obsolete results and a subsequent usable session. Physical follow-up results, if present, are reported separately below and cannot erase build 14's failure.
+Private development build 15 distinguishes the two existing obsolete-lease rejection messages on the authenticated result endpoint. It records `draftDiscarded`, never retries or accepts that obsolete output, and continues polling. Unauthorized requests, invalid tokens, other endpoints and unknown errors retain their error handling. No host validation is relaxed. Swift integration tests exercise repeated obsolete results and a subsequent usable session. Physical follow-up results are reported separately below and cannot erase build 14's failure.
+
+## Separate build 15 follow-up
+
+The two follow-up cells were planned after the failure and before new measurement. They are kept separate from build 14, with the same target, draft, connection label, width and configured deadline. No failed original attempt is replaced.
+
+| Build 15 condition | Completed pairs / planned | Median added total time | Median TTFT change | Median paired ratio | Fallbacks | Accepted / proposed |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Adaptive, 32-token budget | 3/3 | +61.822 ms | -4.912 ms | 1.247x | 3 | 0/0 |
+| Fixed, 128-token budget | 3/3 | +2,555.739 ms | +109.809 ms | 4.562x | 0 | 204/328 |
+
+All six paired outputs match. The [physical journal](build15-session-diagnostics.json) records four discarded obsolete proposals, with no session retry/failure after readiness during these cells. The host still saw the phone online and draft-ready at the final check. This supports the fix in this short physical sequence; it does not establish sustained reliability or prove the cause of every original retry.
+
+Fixed-128 accepted 62.2% of received proposals and completed without fallback, but remained slower than its paired host baseline. The median accumulated remote wait was 3,003.828 ms. Adaptive again abandoned the phone in every measured request. Neither mode demonstrates an acceleration in this model/connection scope.
+
+Across original and follow-up evidence there are **24 completed pairs**, plus the retained interrupted cell with one invalid and five missing primary attempts. These periods and builds are not pooled for confidence estimates. [Build identity](build-identity.json) is recorded separately because the heartbeat and original collector scope contain version but not build number.
 
 ## Comparison with Xiaomi
 

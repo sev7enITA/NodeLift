@@ -1,0 +1,56 @@
+{
+  "remote-adaptive-32.json": {
+    "session_ids": [
+      "165c8eeff2a34ee3b241c23bcf69a23c"
+    ],
+    "installed_build": 14,
+    "version": "0.2.12",
+    "evidence": "devicectl installed app version/build readback plus matching reporter_build in physical journal",
+    "qualification": "Build is externally recorded here; heartbeat and original collector scope do not encode build number. Do not merge across builds."
+  },
+  "build15-adaptive-32.json": {
+    "session_ids": [
+      "1ab254e861b5485b866cef61d3923274"
+    ],
+    "installed_build": 15,
+    "version": "0.2.12",
+    "evidence": "devicectl installed app version/build readback plus matching reporter_build in physical journal",
+    "qualification": "Build is externally recorded here; heartbeat and original collector scope do not encode build number. Do not merge across builds."
+  },
+  "build15-fixed-128.json": {
+    "session_ids": [
+      "0bcb6200acef47ae87f985d711b21fe7"
+    ],
+    "installed_build": 15,
+    "version": "0.2.12",
+    "evidence": "devicectl installed app version/build readback plus matching reporter_build in physical journal",
+    "qualification": "Build is externally recorded here; heartbeat and original collector scope do not encode build number. Do not merge across builds."
+  },
+  "remote-fixed-32.json": {
+    "session_ids": [
+      "c7e10fde3b1b4db6bd37f87651e076ec"
+    ],
+    "installed_build": 14,
+    "version": "0.2.12",
+    "evidence": "devicectl installed app version/build readback plus matching reporter_build in physical journal",
+    "qualification": "Build is externally recorded here; heartbeat and original collector scope do not encode build number. Do not merge across builds."
+  },
+  "remote-fixed-128.json": {
+    "session_ids": [
+      "4c7ecad2e3094951ba5ef69dce388b25"
+    ],
+    "installed_build": 14,
+    "version": "0.2.12",
+    "evidence": "devicectl installed app version/build readback plus matching reporter_build in physical journal",
+    "qualification": "Build is externally recorded here; heartbeat and original collector scope do not encode build number. Do not merge across builds."
+  },
+  "remote-adaptive-128.json": {
+    "session_ids": [
+      "90c7cbcc0c9d4a56814a47093ebe21be"
+    ],
+    "installed_build": 14,
+    "version": "0.2.12",
+    "evidence": "devicectl installed app version/build readback plus matching reporter_build in physical journal",
+    "qualification": "Build is externally recorded here; heartbeat and original collector scope do not encode build number. Do not merge across builds."
+  }
+}

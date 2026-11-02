@@ -678,6 +678,304 @@
       },
       "energy": "unmeasured",
       "pairs": []
+    },
+    "build15-adaptive-32": {
+      "scope": {
+        "target_sha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+        "draft_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+        "native_sha256": "4aa209157112cdb4189e6a6b9d3d3d448fafb003aeb1eef8eba13c8efbaa0239",
+        "config_sha256": "dd9054abc29dbedf0fc28a063f2810a783bae14aaf5440297d294fcfec84659d",
+        "host_id": "9912ede02932e2a7b32eff11d43588da5e67b8963acaa904eda22861964c776f",
+        "node_id": "c63ddfcb035094a6ff2cabbcfab19be0bbddd84114b0ebcce1bb1cc9b674272d",
+        "connection": "ef158c8e9436683a5772eb570bb63e3482defacb50913df576b6a00bc8a37ada",
+        "candidate": "remote_draft",
+        "warmup_policy": "one-unscored-pair; shared-residency-uncontrolled"
+      },
+      "display": {
+        "target_model": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+        "draft_model": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+        "candidate_device": "iPhone16,2",
+        "connection_label": "iphone-and-mac-on-xiaomi-hotspot"
+      },
+      "configuration": {
+        "n_ctx": 2048,
+        "threads": 8,
+        "gpu_layers": 999,
+        "max_tokens": 32,
+        "draft_k": 4,
+        "remote_timeout_ms": 10000,
+        "draft_policy": "adaptive",
+        "temperature": 0
+      },
+      "recorded_sessions": 1,
+      "independence_qualified": false,
+      "counts": {
+        "planned_pairs": 3,
+        "observed_host": 3,
+        "observed_candidate": 3,
+        "completed_host": 3,
+        "completed_candidate": 3,
+        "equivalent_pairs": 3,
+        "fallbacks": 3,
+        "accepted": 0,
+        "proposed": 0
+      },
+      "delivered_service_including_fallback": {
+        "host_ms": {
+          "n": 3,
+          "median": 242.306042,
+          "minimum": 235.636417,
+          "maximum": 250.542291
+        },
+        "candidate_ms": {
+          "n": 3,
+          "median": 312.36475,
+          "minimum": 282.27375,
+          "maximum": 342.885542
+        },
+        "added_ms": {
+          "n": 3,
+          "median": 61.82245900000001,
+          "minimum": 46.63733300000001,
+          "maximum": 100.5795
+        },
+        "slowdown_ratio": {
+          "n": 3,
+          "median": 1.246754584837735,
+          "minimum": 1.197920735656068,
+          "maximum": 1.4150928271115915
+        },
+        "ttft_change_ms": {
+          "n": 3,
+          "median": -4.9120829999999955,
+          "minimum": -5.901125,
+          "maximum": 23.84858299999999
+        },
+        "remote_wait_ms": {
+          "n": 3,
+          "median": 63.97937500150874,
+          "minimum": 58.838042023126036,
+          "maximum": 68.17562505602837
+        }
+      },
+      "accepted_fraction_of_proposals": null,
+      "disabled_reasons": {
+        "remote_probe_timeout": 3
+      },
+      "reported_thermal_categories": [
+        "nominal"
+      ],
+      "battery_percent_snapshots": {
+        "n": 6,
+        "median": 100.0,
+        "minimum": 100,
+        "maximum": 100
+      },
+      "companion_process_bytes_snapshots": {
+        "n": 0,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "host_load_one_minute_snapshots": {
+        "n": 6,
+        "median": 22.25439453125,
+        "minimum": 22.25439453125,
+        "maximum": 22.25439453125
+      },
+      "energy": "unmeasured",
+      "pairs": [
+        {
+          "pair_id": "0",
+          "session": "1ab254e861b5485b866cef61d3923274",
+          "order": "AB",
+          "equivalent": true,
+          "fallback": true,
+          "host_ms": 250.542291,
+          "candidate_ms": 312.36475,
+          "added_ms": 61.82245900000001,
+          "slowdown_ratio": 1.246754584837735,
+          "ttft_change_ms": -4.9120829999999955,
+          "remote_wait_ms": 58.838042023126036,
+          "generated_tokens": 32
+        },
+        {
+          "pair_id": "1",
+          "session": "1ab254e861b5485b866cef61d3923274",
+          "order": "BA",
+          "equivalent": true,
+          "fallback": true,
+          "host_ms": 242.306042,
+          "candidate_ms": 342.885542,
+          "added_ms": 100.5795,
+          "slowdown_ratio": 1.4150928271115915,
+          "ttft_change_ms": 23.84858299999999,
+          "remote_wait_ms": 68.17562505602837,
+          "generated_tokens": 32
+        },
+        {
+          "pair_id": "2",
+          "session": "1ab254e861b5485b866cef61d3923274",
+          "order": "AB",
+          "equivalent": true,
+          "fallback": true,
+          "host_ms": 235.636417,
+          "candidate_ms": 282.27375,
+          "added_ms": 46.63733300000001,
+          "slowdown_ratio": 1.197920735656068,
+          "ttft_change_ms": -5.901125,
+          "remote_wait_ms": 63.97937500150874,
+          "generated_tokens": 32
+        }
+      ]
+    },
+    "build15-fixed-128": {
+      "scope": {
+        "target_sha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+        "draft_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+        "native_sha256": "4aa209157112cdb4189e6a6b9d3d3d448fafb003aeb1eef8eba13c8efbaa0239",
+        "config_sha256": "2d911652a200a65c1118a39dae2b9e67a6203080c1bff07226fc8921485add7f",
+        "host_id": "9912ede02932e2a7b32eff11d43588da5e67b8963acaa904eda22861964c776f",
+        "node_id": "c63ddfcb035094a6ff2cabbcfab19be0bbddd84114b0ebcce1bb1cc9b674272d",
+        "connection": "ef158c8e9436683a5772eb570bb63e3482defacb50913df576b6a00bc8a37ada",
+        "candidate": "remote_draft",
+        "warmup_policy": "one-unscored-pair; shared-residency-uncontrolled"
+      },
+      "display": {
+        "target_model": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+        "draft_model": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+        "candidate_device": "iPhone16,2",
+        "connection_label": "iphone-and-mac-on-xiaomi-hotspot"
+      },
+      "configuration": {
+        "n_ctx": 2048,
+        "threads": 8,
+        "gpu_layers": 999,
+        "max_tokens": 128,
+        "draft_k": 4,
+        "remote_timeout_ms": 10000,
+        "draft_policy": "fixed",
+        "temperature": 0
+      },
+      "recorded_sessions": 1,
+      "independence_qualified": false,
+      "counts": {
+        "planned_pairs": 3,
+        "observed_host": 3,
+        "observed_candidate": 3,
+        "completed_host": 3,
+        "completed_candidate": 3,
+        "equivalent_pairs": 3,
+        "fallbacks": 0,
+        "accepted": 204,
+        "proposed": 328
+      },
+      "delivered_service_including_fallback": {
+        "host_ms": {
+          "n": 3,
+          "median": 809.208208,
+          "minimum": 372.080625,
+          "maximum": 1015.723625
+        },
+        "candidate_ms": {
+          "n": 3,
+          "median": 3571.462167,
+          "minimum": 1697.489916,
+          "maximum": 4373.775375
+        },
+        "added_ms": {
+          "n": 3,
+          "median": 2555.738542,
+          "minimum": 1325.409291,
+          "maximum": 3564.567167
+        },
+        "slowdown_ratio": {
+          "n": 3,
+          "median": 4.562156161718982,
+          "minimum": 3.5161751475456726,
+          "maximum": 5.405006192176439
+        },
+        "ttft_change_ms": {
+          "n": 3,
+          "median": 109.80854200000002,
+          "minimum": 66.083333,
+          "maximum": 141.50650100000001
+        },
+        "remote_wait_ms": {
+          "n": 3,
+          "median": 3003.8284990005195,
+          "minimum": 1374.2603730061091,
+          "maximum": 3681.6292937728576
+        }
+      },
+      "accepted_fraction_of_proposals": 0.6219512195121951,
+      "disabled_reasons": {},
+      "reported_thermal_categories": [
+        "nominal"
+      ],
+      "battery_percent_snapshots": {
+        "n": 6,
+        "median": 100.0,
+        "minimum": 100,
+        "maximum": 100
+      },
+      "companion_process_bytes_snapshots": {
+        "n": 0,
+        "median": null,
+        "minimum": null,
+        "maximum": null
+      },
+      "host_load_one_minute_snapshots": {
+        "n": 6,
+        "median": 17.68701171875,
+        "minimum": 17.27685546875,
+        "maximum": 18.4326171875
+      },
+      "energy": "unmeasured",
+      "pairs": [
+        {
+          "pair_id": "0",
+          "session": "0bcb6200acef47ae87f985d711b21fe7",
+          "order": "BA",
+          "equivalent": true,
+          "fallback": false,
+          "host_ms": 372.080625,
+          "candidate_ms": 1697.489916,
+          "added_ms": 1325.409291,
+          "slowdown_ratio": 4.562156161718982,
+          "ttft_change_ms": 66.083333,
+          "remote_wait_ms": 1374.2603730061091,
+          "generated_tokens": 46
+        },
+        {
+          "pair_id": "1",
+          "session": "0bcb6200acef47ae87f985d711b21fe7",
+          "order": "AB",
+          "equivalent": true,
+          "fallback": false,
+          "host_ms": 1015.723625,
+          "candidate_ms": 3571.462167,
+          "added_ms": 2555.738542,
+          "slowdown_ratio": 3.5161751475456726,
+          "ttft_change_ms": 141.50650100000001,
+          "remote_wait_ms": 3003.8284990005195,
+          "generated_tokens": 128
+        },
+        {
+          "pair_id": "2",
+          "session": "0bcb6200acef47ae87f985d711b21fe7",
+          "order": "AB",
+          "equivalent": true,
+          "fallback": false,
+          "host_ms": 809.208208,
+          "candidate_ms": 4373.775375,
+          "added_ms": 3564.567167,
+          "slowdown_ratio": 5.405006192176439,
+          "ttft_change_ms": 109.80854200000002,
+          "remote_wait_ms": 3681.6292937728576,
+          "generated_tokens": 110
+        }
+      ]
     }
   }
 }

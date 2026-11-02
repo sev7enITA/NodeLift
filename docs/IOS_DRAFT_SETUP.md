@@ -31,10 +31,10 @@ python3 scripts/run-swift-draft-transfer-check.py --binary /tmp/nodelift-draft-c
 
 The private development app was built from the current iOS source with the existing pinned iOS native framework and Xcode overrides `MARKETING_VERSION=0.2.12 CURRENT_PROJECT_VERSION=14`. Repository release defaults remain 0.2.11 (13) until a public release is prepared. Private provisioning profiles and signed development packages are not published.
 
-The physical phone has received and imported the staging file. Host-observed native readiness and the planned [iPhone performance comparison](../research/iphone-tradeoffs-2026-11-02/PLAN.md) remain separate acceptance checks.
+The physical phone has received and imported the staging file. Host-observed native readiness and the [physical iPhone performance comparison](../research/iphone-tradeoffs-2026-11-02/REPORT.md) were subsequently recorded, separately from the transfer checks.
 
 ## Build 15 follow-up
 
 Private development build **0.2.12 (15)** was installed after the physical build-14 benchmark. It handles authenticated HTTP 400 rejections for expired/replayed leases or superseded draft identity as discarded job output, rather than escalating them into connection retries. Rejected tokens are never accepted or resubmitted. The local journal now records `draftDiscarded`. Other request failures retain their error handling.
 
-The transfer/protocol integration suites and iOS ARM64 build passed again. Physical post-fix readiness and inference remain separate from installation. The original benchmark, including the interrupted fixed-128 cell, is retained in the [iPhone report](../research/iphone-tradeoffs-2026-11-02/REPORT.md). Public binary downloads remain 0.2.11 (13).
+The transfer/protocol integration suites and iOS ARM64 build passed again. Physical post-fix readiness was verified and six follow-up pairs completed with matching outputs. Four obsolete proposals were discarded without losing the session. This is a short physical check, not sustained reliability or acceleration. The original benchmark, including the interrupted fixed-128 cell, is retained in the [iPhone report](../research/iphone-tradeoffs-2026-11-02/REPORT.md). Public binary downloads remain 0.2.11 (13).

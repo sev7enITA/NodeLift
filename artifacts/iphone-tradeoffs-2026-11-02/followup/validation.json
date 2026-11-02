@@ -1,0 +1,13 @@
+{
+  "build": 15,
+  "planned_pairs": 6,
+  "completed_pairs": 6,
+  "output_equivalent_pairs": 6,
+  "adaptive_fallbacks": 3,
+  "fixed_fallbacks": 0,
+  "physical_discard_events": 4,
+  "post_ready_session_errors_in_journal": 0,
+  "host_online_ready_after": true,
+  "scope": "short physical validation only; no sustained reliability or acceleration claim",
+  "native_library_changed": false
+}

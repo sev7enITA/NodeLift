@@ -4,7 +4,7 @@ import statistics
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parent
-CELLS=('remote-adaptive-32','remote-fixed-32','remote-adaptive-128','remote-fixed-128')
+CELLS=('remote-adaptive-32','remote-fixed-32','remote-adaptive-128','remote-fixed-128','build15-adaptive-32','build15-fixed-128')
 
 
 # Reuse the same descriptive accounting used for Xiaomi; do not pool the sessions.

@@ -14,7 +14,7 @@
     "retry": "no replacement in original cell"
   },
   "build15-followup": {
-    "status": "planned_before_measurement",
+    "status": "completed",
     "purpose": "check session continuity after obsolete-result handling fix; do not replace build14 failures",
     "cells": [
       {
@@ -34,6 +34,13 @@
     ],
     "same_host_model_and_connection_required": true,
     "app_build": 15,
-    "scope": "separate post-fix exploratory periods, not independent confidence evidence"
+    "scope": "separate post-fix exploratory periods, not independent confidence evidence",
+    "completed_pairs": 6,
+    "equivalent_pairs": 6,
+    "adaptive_fallbacks": 3,
+    "fixed_fallbacks": 0,
+    "phone_online_ready_after": true,
+    "physical_discard_events": 4,
+    "qualification": "short post-fix session only; not sustained reliability or independent confidence"
   }
 }
