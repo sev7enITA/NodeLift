@@ -12,6 +12,7 @@ import signal
 import socket
 import ssl
 import subprocess
+import sys
 import threading
 from urllib.parse import parse_qs, urlsplit
 
@@ -218,7 +219,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
             return self.send(200, (Path(__file__).parent / name).read_bytes(), kind)
         if method == "GET" and path.startswith('/brand/'):
             name = path.removeprefix('/brand/')
-            folder = Path(__file__).resolve().parents[2]/'assets/brand'
+            source_root = Path(getattr(sys, '_MEIPASS', Path(__file__).resolve().parents[2]))
+            folder = source_root/'assets/brand'
             if name in ('nodelift-emblem.png','nodelift-mark.svg','nodelift-lockup.png') and (folder/name).is_file():
                 return self.send(200,(folder/name).read_bytes(),'image/svg+xml' if name.endswith('.svg') else 'image/png')
             return self.send(404,{'error':'brand asset unavailable'})
