@@ -1,0 +1,415 @@
+{
+  "cells": {
+    "small_full": {
+      "attempted": 12,
+      "completed": 12,
+      "correct": 0,
+      "schema_valid": 0,
+      "median_completed_task_ms": 237.38525051157922,
+      "median_completed_first_token_ms": 52.268416999140754,
+      "median_completed_prefill_ms": 46.15904201637022,
+      "median_request_payload_bytes": 1510.0,
+      "median_output_tokens": 50.0,
+      "posthoc_correct_after_fence_removal": 6,
+      "posthoc_diagnostic": [
+        {
+          "record_id": "R103",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": false
+        },
+        {
+          "record_id": "R103",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": false
+        },
+        {
+          "record_id": "R105",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": false
+        },
+        {
+          "record_id": "R106",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R104",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R101",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R102",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": false
+        },
+        {
+          "record_id": "R106",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R102",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": false
+        },
+        {
+          "record_id": "R104",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R101",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R105",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": false
+        }
+      ]
+    },
+    "small_segment": {
+      "attempted": 12,
+      "completed": 12,
+      "correct": 0,
+      "schema_valid": 0,
+      "median_completed_task_ms": 211.42570849042386,
+      "median_completed_first_token_ms": 30.701041454449296,
+      "median_completed_prefill_ms": 25.038646504981443,
+      "median_request_payload_bytes": 633.0,
+      "median_output_tokens": 50.0,
+      "posthoc_correct_after_fence_removal": 10,
+      "posthoc_diagnostic": [
+        {
+          "record_id": "R103",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R103",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R105",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": false
+        },
+        {
+          "record_id": "R106",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R104",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R101",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R102",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R106",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R102",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R104",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R101",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R105",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": false
+        }
+      ]
+    },
+    "target_full": {
+      "attempted": 12,
+      "completed": 12,
+      "correct": 0,
+      "schema_valid": 0,
+      "median_completed_task_ms": 469.70218801288866,
+      "median_completed_first_token_ms": 148.92931299982592,
+      "median_completed_prefill_ms": 139.94049999746494,
+      "median_request_payload_bytes": 1510.0,
+      "median_output_tokens": 50.0,
+      "posthoc_correct_after_fence_removal": 8,
+      "posthoc_diagnostic": [
+        {
+          "record_id": "R103",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R103",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R105",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": false
+        },
+        {
+          "record_id": "R106",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R104",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R101",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R102",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": false,
+          "correct": false
+        },
+        {
+          "record_id": "R106",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R102",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": false,
+          "correct": false
+        },
+        {
+          "record_id": "R104",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R101",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R105",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": false
+        }
+      ]
+    },
+    "target_segment": {
+      "attempted": 12,
+      "completed": 12,
+      "correct": 0,
+      "schema_valid": 0,
+      "median_completed_task_ms": 378.5209579800721,
+      "median_completed_first_token_ms": 72.37387547502294,
+      "median_completed_prefill_ms": 62.12933303322643,
+      "median_request_payload_bytes": 633.0,
+      "median_output_tokens": 50.0,
+      "posthoc_correct_after_fence_removal": 12,
+      "posthoc_diagnostic": [
+        {
+          "record_id": "R103",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R103",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R105",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R106",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R104",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R101",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R102",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R106",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R102",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R104",
+          "repetition": 0,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R101",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        },
+        {
+          "record_id": "R105",
+          "repetition": 1,
+          "removed_one_markdown_fence": true,
+          "schema_valid": true,
+          "correct": true
+        }
+      ]
+    }
+  },
+  "pairs": {
+    "small": {
+      "planned_pairs": 12,
+      "complete_pairs": 12,
+      "strictly_correct_pairs": 0,
+      "median_raw_time_ratio_full_over_segment": 1.153583818740234,
+      "median_request_payload_reduction": 0.580794701986755,
+      "valid_workflow_speedup": null
+    },
+    "target": {
+      "planned_pairs": 12,
+      "complete_pairs": 12,
+      "strictly_correct_pairs": 0,
+      "median_raw_time_ratio_full_over_segment": 1.228108143364712,
+      "median_request_payload_reduction": 0.580794701986755,
+      "valid_workflow_speedup": null
+    }
+  },
+  "posthoc_warning": "Fence removal was added after seeing outputs. Primary strict scores stay unchanged. Six unique fixtures repeated twice, no held-out quality estimate. Times include invalid outputs and different output lengths; no usable workflow speedup."
+}

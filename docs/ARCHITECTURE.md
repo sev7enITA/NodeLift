@@ -50,6 +50,8 @@ The sought contribution is usable heterogeneous-device orchestration with reprod
 
 The [next distributed execution RFC](RFC_DISTRIBUTED_EXECUTION.md) specifies proposed control, data and evidence boundaries, capacity recovery, context deltas and benchmark gates. It is a design contract, not a description of capabilities already shipped.
 
+The [resident-task pilot](../research/resident-tasks-2026-11-02/README.md) tests a separate hypothesis: complete independent tasks with only their necessary source context. The local native experiment is implemented; a mobile whole-task protocol, scheduler and semantic validation are proposed. Existing mobile workers still accept draft proposals only. This path does not combine RAM for a single larger model.
+
 ## Desktop and server expansion
 
 The [desktop/server deployment contract](RFC_DESKTOP_SERVER_DEPLOYMENT.md) adds Windows/Linux workstations, GPU servers, approved office pools and site-local operation to the target architecture. It separates coordinator from executor, stable required partitions from opportunistic assistance, and whole-request routing from combined inference. A [generic node probe](NODE_PROBE.md) is implemented for local inventory and explicit native-model kernel tests, with physical Mac evidence and Windows/Linux adapter fixtures. The Lenovo P16 is one possible future test machine; no physical Windows/Linux worker or remote PC enrollment is qualified. The distributed executor remains design scope.

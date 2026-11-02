@@ -83,6 +83,8 @@ The optional control-model download is approximately 1.61 GB, with fixed [revisi
 
 ## Evidence before acceleration claims
 
+[Resident models and independent tasks](research/resident-tasks-2026-11-02/README.md): a 48-attempt local pilot compared complete versus relevant-record context on two resident models. Smaller segments reduced serialized request size, but every raw output failed the strict format contract. The report includes a chart, retained failures and a proposed whole-task protocol. No phone execution or distributed speedup is claimed.
+
 [Experimental llama.cpp community fork](https://github.com/sev7enITA/llama.cpp): NodeLift research wrapper, prefix-reuse measurements and a macOS arm64 prerelease. Prefix caching is an existing llama.cpp capability, not a new upstream optimization. The binary passed 31 strict real-model checks on the build Mac; it is ad hoc signed and not notarized.
 
 [Local 8B/3B experiments](research/llama-8b-pilot-2026-11-02/README.md): two exploratory same-Mac sessions, a fixed versus adaptive follow-up, and a separate upstream server control. Width 4 showed a small median total-time benefit in the first two NodeLift periods, alongside a later first token; these results do not establish a phone or distributed speedup. [Batch-shape diagnostics](research/batch-numerics-2026-11-02/README.md) and [cache-state stress](research/cache-stress-2026-11-02/README.md) retain the negative and positive controls.
