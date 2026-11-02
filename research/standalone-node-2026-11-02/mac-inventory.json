@@ -1,0 +1,114 @@
+{
+  "schema": "nodelift.node-probe.v1",
+  "observed_at": "2026-11-02T16:14:47.336241+00:00",
+  "system": "Darwin",
+  "os_version": "27.2.0",
+  "process_architecture": "arm64",
+  "native_architecture": "arm64",
+  "cpu_name": "Apple M3 Max",
+  "physical_cores": 16,
+  "logical_cores": 16,
+  "cpu_features": [],
+  "model": "Mac15,9",
+  "ram_bytes": 68719476736,
+  "available_ram_bytes": null,
+  "accelerators": [
+    {
+      "name": "Apple M3 Max",
+      "kind": "gpu",
+      "memory_bytes": null,
+      "memory_kind": "shared_system",
+      "driver_version": null,
+      "source": "system_profiler",
+      "execution_verified": false
+    }
+  ],
+  "python_version": "3.14.6",
+  "sources": [
+    {
+      "name": "hw.model",
+      "status": "ok"
+    },
+    {
+      "name": "machdep.cpu.brand_string",
+      "status": "ok"
+    },
+    {
+      "name": "hw.memsize",
+      "status": "ok"
+    },
+    {
+      "name": "hw.physicalcpu",
+      "status": "ok"
+    },
+    {
+      "name": "hw.optional.arm64",
+      "status": "ok"
+    },
+    {
+      "name": "display_inventory",
+      "status": "ok"
+    }
+  ],
+  "hardware_status": "observed",
+  "runtime_execution": "not_tested",
+  "llm_speedup_qualified": false,
+  "energy": null,
+  "connection": null,
+  "tools": {
+    "llama-bench": {
+      "found": false,
+      "execution_verified": false
+    },
+    "nvidia-smi": {
+      "found": false,
+      "execution_verified": false
+    },
+    "vulkaninfo": {
+      "found": false,
+      "execution_verified": false
+    },
+    "rocminfo": {
+      "found": false,
+      "execution_verified": false
+    },
+    "sycl-ls": {
+      "found": false,
+      "execution_verified": false
+    }
+  },
+  "python_packages": {
+    "mlx": {
+      "version": null,
+      "execution_verified": false
+    },
+    "mlx-lm": {
+      "version": null,
+      "execution_verified": false
+    },
+    "llama-cpp-python": {
+      "version": null,
+      "execution_verified": false
+    },
+    "onnxruntime": {
+      "version": null,
+      "execution_verified": false
+    },
+    "onnxruntime-qnn": {
+      "version": null,
+      "execution_verified": false
+    }
+  },
+  "limitations": [
+    "Inventory does not attest backend execution, allocatable memory or LLM speed.",
+    "Accelerator enumeration may be incomplete, especially non-PCI SoCs. Absence is not proof of no accelerator.",
+    "NPU support must be tested with a compatible runtime; chip branding is insufficient.",
+    "No network benchmark, thermal endurance, power measurement or remote enrollment performed."
+  ],
+  "assessment": {
+    "state": "needs_model_benchmark",
+    "eligible_roles": [],
+    "next_step": "Run an explicit local model benchmark, then a matched connection-specific impact session."
+  },
+  "configuration_sha256": "dee15b2a514da20b0fd31ca9dbfe8ec0205ff60965f379741265560d5f42798e"
+}

@@ -125,4 +125,6 @@ The full-color [NodeLift emblem and asset guide](assets/brand/README.md) is shar
 
 ### Generic node probe
 
+The [standalone macOS Apple silicon preview](docs/NODE_PROBE.md#standalone-package-without-system-python) bundles Python and a native benchmark, performs startup checks and does not upload the inventory. This is a local probe, not the desktop host or a distributed PC worker.
+
 [Probe hardware/software and benchmark an existing local model](docs/NODE_PROBE.md). The portable Python module includes macOS, Windows and Linux collectors, ARM64/x86-64 handling, and explicit prefill/decode microbenchmarks. Mac execution is physically verified; other platform adapters have synthetic tests. No universal acceleration score, new desktop inference worker or NPU support is claimed.

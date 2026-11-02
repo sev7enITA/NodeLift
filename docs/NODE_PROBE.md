@@ -1,6 +1,6 @@
 # Generic node probing and model benchmarks
 
-Source preview 0.1.0, 2 November 2026. This is an implemented reusable Python module and command-line package, not a Windows/Linux inference worker installer. It needs Python 3.10 or later. No GPU runtime, model, privilege escalation, enrollment or automatic upload is bundled.
+Updated 2 November 2026. The standalone probe 0.1.1 bundles Python, its standard library and a native benchmark for the platform in each built package. The older cross-platform 0.1.0 Python zipapp remains available for users who already have Python 3.10 or later. Neither package is a Windows/Linux inference-worker installer. No model, driver installation, enrollment or automatic upload is included.
 
 ## What runs now
 
@@ -23,7 +23,22 @@ In **Devices**, choose **Probe this computer**. The authenticated local endpoint
 
 The route accepts only an empty request. Browser requests cannot supply an executable, shell command or model path to this endpoint. The host process must load the updated source for the new endpoint to exist. Remote desktop enrollment and automatic ingestion of another computer's profile are not implemented by this change.
 
-## Portable package
+## Standalone package without system Python
+
+Download the experimental [macOS Apple silicon standalone ZIP](https://github.com/sev7enITA/NodeLift/releases/download/node-probe-v0.1.1/NodeLift-node-probe-0.1.1-macos-arm64.zip) and compare its SHA-256 with the [manifest](../releases/node-probe-standalone.json). The archive contains the native executable, usage instructions and dependency licenses. On launch, the executable extracts its bundled runtime and performs a bounded startup check of the native benchmark. It does not install Python globally, download packages or upload the profile.
+
+```sh
+# macOS, after extracting the archive
+./NodeLift-node --self-check
+./NodeLift-node inventory --output node-profile.json
+./NodeLift-node benchmark --model /path/to/model.gguf --output model-benchmark.json
+```
+
+Running it without arguments checks the bundled components and writes a uniquely named local inventory to Downloads, or the home directory if Downloads is absent. The model is user-supplied. The benchmark defaults to CPU; `--gpu-layers 999` requests offload but does not attest GPU execution. OS GPU drivers and OS system frameworks are neither bundled nor silently changed. A failed startup check is reported; inventory can still run if the benchmark is unavailable.
+
+This specific Mac package was tested on Apple M3 Max with macOS 27.2. It is ad-hoc signed and not notarized; another Mac may refuse to launch it. [Physical validation](../research/standalone-node-2026-11-02/README.md) describes the no-system-Python sentinel test and GGUF smoke test. A workflow builds separate platform binaries on their respective OSs; successful CI does not replace physical qualification or guarantee compatibility with all GPU drivers and operating-system versions.
+
+## Python zipapp alternative
 
 Download [NodeLift node probe 0.1.0](https://www.fabriziodegni.com/NodeLift/assets/NodeLift-node-probe-0.1.0.pyz). Verify its hash against the [package manifest](../releases/node-probe.json). Python runs the same package on supported desktop OSs; a native interpreter for the machine is preferred. Physical Windows/Linux qualification is still pending.
 

@@ -147,6 +147,13 @@ Every published companion build has an entry below. Android packages are laborat
 
 ## Host, documentation and tooling updates
 
+### 2026-11-02: Standalone node probe 0.1.1 and startup checks
+
+- Add a self-contained local probe executable containing Python, standard libraries and llama-bench. Startup checks the bundled benchmark without installing system packages, uploading telemetry or modifying GPU drivers.
+- Publish a separate experimental macOS Apple silicon ZIP, ad-hoc signed and not notarized; its physical M3 Max test includes inventory and a GGUF smoke test with sentinel Python commands in PATH.
+- Provide build automation for Windows, Linux and macOS x86/ARM variants; CI execution and physical-device qualification are distinct. A model remains user-supplied and the standalone probe is not a desktop inference worker or the NodeLift host.
+- No companion binary release or distributed-speedup claim is introduced.
+
 ### 2026-11-02: Synchronize showcase and comparison with physical evidence
 
 - Refresh the Android and iOS cards with the actual physical draft trials, distinguish privately signed iOS development builds from the unsigned public IPA, and retain negative paired outcomes.

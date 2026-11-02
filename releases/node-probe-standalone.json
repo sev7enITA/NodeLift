@@ -1,0 +1,25 @@
+{
+  "component": "NodeLift node probe standalone",
+  "version": "0.1.1",
+  "platform": "macOS arm64",
+  "archive": "NodeLift-node-probe-0.1.1-macos-arm64.zip",
+  "archive_bytes": 13093634,
+  "archive_sha256": "22655e68ed5e95f16b41c23aedd84c7b3036c1b058b5075977c95acf458734eb",
+  "executable_sha256": "ec1046cdd1646a23f2784ee30007bec82e435eb7db1ee9f707453b5b667c49a3",
+  "embedded_python": "3.14.6",
+  "packager": "PyInstaller 6.22.3",
+  "llama_cpp_revision": "ddf48f85c933c1f438212a02eb21e7b001d2d37d",
+  "bench_sha256": "e55737484842a5b8048c2b818ff1cbe2b370348c45a68b6ef81fec02032bc6a0",
+  "signature": "ad-hoc; not notarized",
+  "automatic_runtime_download": false,
+  "model_included": false,
+  "tests": {
+    "macos_27_2_m3_max": "physical",
+    "self_check": "passed",
+    "inventory_with_python_path_sentinel": "passed",
+    "explicit_gguf_benchmark_with_python_path_sentinel": "passed",
+    "other_macos_versions": "not_qualified"
+  },
+  "download": "https://github.com/sev7enITA/NodeLift/releases/download/node-probe-v0.1.1/NodeLift-node-probe-0.1.1-macos-arm64.zip",
+  "source_commit": "f877f0033408e244fa37b22acf3c2a68167d24c8"
+}
