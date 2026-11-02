@@ -139,6 +139,7 @@ function updateSessionControls(){
 }
 function sessionReady(ready) {
   authenticated=ready;
+  impactSessionChanged(ready);
   $('session-recovery').hidden=ready;
   updateSessionControls();
   $('session-dot').className='status-dot '+(ready?'ready':'error');
@@ -537,6 +538,96 @@ document.addEventListener('nodelift-languagechange',()=>{
   for(const id of ['error','engine-error'])if($(id).dataset.message)$(id).textContent=t($(id).dataset.message);
   refreshEngine();
 });
+
+// Impact reports analyze explicitly selected local evidence. They never start inference.
+const impactState = {report:null, busy:false, epoch:0, message:null, error:false};
+const impactVerdicts = {insufficient_evidence:'Insufficient evidence', observed_improvement:'Observed improvement in this scope', observed_regression:'Observed regression in this scope', inconclusive:'Inconclusive comparison', invalid_comparison:'Invalid comparison', control_only:'Control experiment only'};
+const impactKinds = {physical:'Physical experiment (reported)', local:'Local experiment (reported)', synthetic:'Synthetic evidence only', control:'Control experiment only'};
+function impactNumber(value,unit='') {
+  if(typeof value!=='number'||!Number.isFinite(value))return t('Not measured');
+  return value.toLocaleString(NodeLiftI18n.language==='zh-Hans'?'zh-CN':NodeLiftI18n.language||'en',{maximumFractionDigits:2})+(unit?' '+unit:'');
+}
+function impactInterval(stat,unit='') {
+  if(!Array.isArray(stat?.ci95)||stat.ci95.length!==2||!stat.ci95.every(v=>typeof v==='number'&&Number.isFinite(v)))return t('95% interval unavailable');
+  return t('95% interval: {0} to {1}',impactNumber(stat.ci95[0],unit),impactNumber(stat.ci95[1],unit));
+}
+function impactClear(){impactState.report=null;$('impact-report').replaceChildren();$('impact-report').hidden=true;$('impact-download').disabled=true;}
+function impactSessionChanged(ready){
+  if(!ready){impactState.epoch++;impactState.busy=false;impactState.message=null;impactState.error=false;impactClear();}
+  renderImpactControls();
+}
+function renderImpactControls(){
+  const file=$('impact-file'),button=$('impact-analyze');
+  file.disabled=!authenticated||impactState.busy;button.disabled=!authenticated||impactState.busy||!file.files?.length;
+  button.textContent=t(impactState.busy?'Analyzing session…':'Analyze session');button.setAttribute('aria-busy',String(impactState.busy));
+  $('impact-download').disabled=!authenticated||impactState.busy||!impactState.report;
+  $('impact-status').textContent=impactState.message?t(impactState.message):(!authenticated?t('Restore local access to analyze a session.'):t('No report loaded. Select a recorded benchmark session.'));
+  $('impact-status').dataset.state=impactState.error?'error':impactState.busy?'busy':'idle';
+}
+function impactMetric(title,stat,unit,note){
+  const card=el('section',undefined,'impact-metric');card.append(el('h4',t(title)),el('strong',impactNumber(stat?.estimate,unit),'impact-value'),el('p',impactInterval(stat,unit),'impact-interval'));
+  if(note)card.append(el('p',t(note),'impact-note'));return card;
+}
+function impactList(title,values){
+  const section=el('section',undefined,'impact-findings');section.append(el('h4',t(title)));const list=el('ul');
+  for(const value of values||[])list.append(el('li',typeof value==='string'?t(value):JSON.stringify(value)));section.append(list);return section;
+}
+function renderImpactReport(){
+  const r=impactState.report;if(!r)return;
+  const root=$('impact-report');root.replaceChildren();root.hidden=false;
+  const headline=el('div',undefined,'impact-result-heading');headline.append(el('span',t(impactKinds[r.evidence.kind]),'impact-evidence'),el('h4',t(impactVerdicts[r.verdict])));root.append(headline);
+  root.append(el('p',t('This result describes the imported model and connection only. It does not automatically enable delegation.'),'impact-note'));
+  if(r.qualified_recommendation===false)root.append(el('p',t('Not qualified for a delegation recommendation. A directional sample signal does not establish a verified device benefit.'),'impact-qualification'));
+  const grid=el('div',undefined,'impact-metrics');const time=impactMetric('Time saved',r.time_saved_ms,'ms','Positive means faster completion than the host alone.');time.append(el('p',t('Relative change: {0}',impactNumber(r.time_saved_percent?.estimate,'%')),'impact-relative'));grid.append(time,impactMetric('TTFT change',r.ttft_change_ms,'ms','Negative means the first response text arrived earlier.'));
+  const reliability=el('section',undefined,'impact-metric');reliability.append(el('h4',t('Completion reliability')));
+  for(const [arm,label] of [['host','Host alone'],['candidate','Candidate']]){
+    const a=r.reliability[arm];reliability.append(el('p',t('{0}: {1} / {2} completed',t(label),impactNumber(a.completed),impactNumber(a.planned)),'impact-reliability'),el('p',t('{0} missing · {1} fallbacks · {2} output-equivalent',impactNumber(a.missing),impactNumber(a.fallback),impactNumber(a.correct)),'impact-note'));
+  }
+  reliability.append(el('p',t('Includes planned attempts. Fallback completion is not proof of device acceleration.'),'impact-note'));grid.append(reliability);
+  const energy=impactMetric('Measured energy saved',r.energy_saved_joules,'J','Positive means less measured energy for the declared components.');energy.append(el('p',t(r.energy.status==='measured'?'Matched energy measurements':r.energy.status==='partial'?'Partial energy coverage':'Energy measurement unavailable'),'impact-energy-state'));grid.append(energy);
+  const uncertainty=el('section',undefined,'impact-metric impact-uncertainty');uncertainty.append(el('h4',t('Uncertainty & coverage')),el('strong',t('{0} / {1} eligible pairs',impactNumber(r.counts.eligible_pairs),impactNumber(r.counts.planned_pairs)),'impact-value'),el('p',t('{0} session clusters · {1} missing runs · {2} mismatched pairs',impactNumber(r.counts.clusters),impactNumber(r.counts.missing_runs),impactNumber(r.counts.mismatched_pairs)),'impact-note'),el('p',t('Intervals describe sampling uncertainty, not measurement error or a guarantee. A missing interval is not zero uncertainty.'),'impact-note'));grid.append(uncertainty);root.append(grid);
+  if(r.reasons?.length)root.append(impactList('Interpretation',r.reasons));
+  const details=el('details',undefined,'impact-details');details.append(el('summary',t('Scope, exclusions & measurement limits')));
+  const signalLabels={observed_improvement:'Time improvement criterion met (unqualified)',observed_regression:'Regression criterion met (unqualified)',inconclusive:'Inconclusive sample signal',insufficient_evidence:'Insufficient sample evidence',invalid_comparison:'Invalid comparison',control_only:'Control experiment only'};
+  if(r.statistical_signal&&Object.hasOwn(signalLabels,r.statistical_signal))details.append(el('p',t('Descriptive sample signal: {0}',t(signalLabels[r.statistical_signal])),'impact-note'));
+  if(r.gates&&typeof r.gates==='object'&&!Array.isArray(r.gates)){
+    details.append(el('h4',t('Qualification checks')));const gates=el('dl',undefined,'impact-gates');
+    const labels={output_equivalence:'Output equivalence',sample_size:'Sample size',execution_attestation:'Execution attestation',residency_control:'Model residency control',session_independence:'Session independence',energy_coverage:'Energy coverage',routing_promotion:'Automatic routing promotion'};
+    const states={pass:'Recorded criterion met',blocked:'Not met',unverified:'Unverified',disabled:'Disabled'};
+    for(const [name,state] of Object.entries(r.gates)){const field=el('div');field.append(el('dt',t(labels[name]||name)),el('dd',t(states[state]||String(state))));gates.append(field);}details.append(gates);
+  }
+  details.append(el('h4',t('Exact comparison scope')),el('pre',JSON.stringify(r.scope,null,2),'impact-scope'));
+  if(r.exclusions?.length)details.append(impactList('Excluded pairs',r.exclusions.map(x=>String(x.pair_id)+': '+(x.reasons||[]).join('; '))));
+  if(r.energy.reasons?.length)details.append(impactList('Energy coverage',r.energy.reasons));
+  if(r.limitations?.length)details.append(impactList('Measurement limits',r.limitations));
+  details.append(el('p',String(r.evidence.clock)+' · '+String(r.evidence.confidence_method),'impact-note'));root.append(details);
+}
+function validImpactReport(r){return r&&r.schema_version===1&&r.algorithm==='nodelift-impact-v1'&&Object.hasOwn(impactVerdicts,r.verdict)&&r.evidence&&Object.hasOwn(impactKinds,r.evidence.kind)&&r.counts&&r.scope&&r.reliability?.host&&r.reliability?.candidate&&r.energy&&['unavailable','partial','measured'].includes(r.energy.status)&&['reasons','exclusions','limitations'].every(k=>Array.isArray(r[k]));}
+async function analyzeImpactSession(){
+  if(impactState.busy||!authenticated)return;
+  const file=$('impact-file').files?.[0];if(!file)return;
+  const epoch=++impactState.epoch;impactClear();impactState.busy=true;impactState.error=false;impactState.message='Analyzing session…';renderImpactControls();
+  try{
+    if(file.size>1024*1024)throw Error('The session file exceeds 1 MiB.');
+    let value;try{value=JSON.parse(await file.text());}catch(_){throw Error('Select a valid JSON session file.');}
+    if(!value||typeof value!=='object'||Array.isArray(value))throw Error('Select a valid JSON session file.');
+    if(epoch!==impactState.epoch||!authenticated)return;
+    const report=await api('impact/analyze',value);
+    if(epoch!==impactState.epoch||!authenticated)return;
+    if(!validImpactReport(report))throw Error('The host returned an invalid impact report.');
+    impactState.report=report;impactState.message='Analysis complete. Review scope and exclusions before interpreting the result.';renderImpactReport();
+  }catch(error){if(epoch===impactState.epoch){impactClear();impactState.error=true;impactState.message=error?.message||'Impact analysis failed.';}}
+  finally{if(epoch===impactState.epoch){impactState.busy=false;renderImpactControls();}}
+}
+$('impact-file').addEventListener('change',()=>{impactState.epoch++;impactState.busy=false;impactState.message=null;impactState.error=false;impactClear();renderImpactControls();});
+$('impact-analyze').addEventListener('click',analyzeImpactSession);
+$('impact-download').addEventListener('click',()=>{
+  if(!authenticated||impactState.busy||!impactState.report)return;
+  const url=URL.createObjectURL(new Blob([JSON.stringify(impactState.report,null,2)],{type:'application/json'}));
+  const link=document.createElement('a');link.href=url;link.download='NodeLift-impact-report.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+document.addEventListener('nodelift-languagechange',()=>{renderImpactControls();renderImpactReport();});
+// End of impact report UI.
 
 // Contextual explanations are independent of authentication and inference controls.
 const contextHelpTopics = {

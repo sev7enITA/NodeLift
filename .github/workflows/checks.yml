@@ -41,4 +41,5 @@ jobs:
       - run: node scripts/check-model-library.cjs
         working-directory: .
       - run: node scripts/check-context-help.cjs
+      - run: node scripts/check-impact-ui.cjs
         working-directory: .

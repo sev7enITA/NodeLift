@@ -52,3 +52,7 @@ The existing automated tests establish specific protocol and application behavio
 ## Contextual help
 
 The desktop control room provides explicit information buttons beside the main controls. Open Options to disable or restore contextual help. The preference belongs to the current browser and is saved when browser storage is available; essential warnings remain visible. Help explains behavior and limitations, and does not start a benchmark or change engine configuration.
+
+## Scoped impact measurement
+
+[NodeLift Impact v1](IMPACT_BENCHMARK.md) now collects paired native SSE sessions and analyzes time saved, TTFT change, full-denominator reliability, instrumented energy availability and uncertainty for one model/device/connection scope. The dashboard imports recorded sessions in Measurements. This is an explicit benchmark collector and evidence analyzer, not automatic routing or qualified mobile acceleration. The [initial physical pilot](../research/impact-2026-11-02/REPORT.md) found no speed benefit; energy and independent-session confidence remain unavailable.

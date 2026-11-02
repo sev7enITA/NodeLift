@@ -231,6 +231,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
             return self.send(405,{'error':'method not allowed'})
         if not secrets.compare_digest(self.bearer(), self.server.admin_token):
             raise PermissionError("open the dashboard link printed by NodeLift")
+        if method == "POST" and path == "/admin/impact/analyze":
+            from .impact import analyze
+            return self.send(200, analyze(self.body()))
         if method == "POST" and path == "/admin/assessment":
             if self.server.engine and self.server.engine.status().get("busy"):
                 raise ValueError("engine is busy")

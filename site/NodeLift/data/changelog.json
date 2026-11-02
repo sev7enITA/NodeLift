@@ -180,6 +180,17 @@
   "documentation_updates": [
     {
       "date": "2026-11-02",
+      "title": "NodeLift Impact v1: scoped time, TTFT, reliability, energy and uncertainty",
+      "changes": [
+        "Add an explicit paired native SSE collector, local impact-analysis API and Measurements import/export panel in English, Simplified Chinese and Italian. Reports retain fallback, missing and mismatched attempts for one model/device/connection scope.",
+        "Implement whole-session bootstrap uncertainty, full-coverage instrumented-energy integration and explicit qualification gates. Missing energy remains unavailable; effective offload, residency and independent-session attestation remain incomplete, so automatic routing promotion is disabled.",
+        "Methodology reviewed through GLM 5.3 Max and Gemini 4 Argon High. A three-pair Xiaomi hotspot pilot completed with matching outputs, one fallback and no observed speed benefit; one session cannot establish confidence intervals. See docs/IMPACT_BENCHMARK.md and research/impact-2026-11-02/REPORT.md.",
+        "Validation: 136 host tests, seven JavaScript suites, generated localization/release checks and 92-page documentation validation passed. The real dashboard and authenticated analysis endpoint rendered the physical pilot with explicit missing energy and no qualified recommendation.",
+        "Host, analysis and desktop update only. Native engine and Android/iOS binaries remain unchanged at companion 0.2.11/build 13."
+      ]
+    },
+    {
+      "date": "2026-11-02",
       "title": "Desktop contextual help and explicit engine capability boundaries",
       "changes": [
         "Add contextual explanations beside desktop controls and a browser-local Options preference to disable or restore them. Essential limitations remain visible.",
