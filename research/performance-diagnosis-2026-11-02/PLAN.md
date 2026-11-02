@@ -1,0 +1,5 @@
+# Performance diagnosis plan
+
+Record before the new width sweep. Use the available iPhone build 15 on the current Xiaomi hotspot, unchanged Qwen2.5 1.5B target and 0.5B draft, ctx2048 and host8 threads/full requested Metal offload. Fixed delegation widths 1, 4 and 8, in that predeclared order, output budget128. Each cell has three paired prompts and an excluded warmup pair, counterbalanced host/candidate order via the existing collector. Retain every attempt, failure and fallback. Stop if the collector detects connection/configuration drift, a failed warmup or unsuitable thermal/battery state. No silent retries. Cells remain correlated and cannot establish confidence or universal optimal width. No model download or native build change runs concurrently with inference.
+
+This is a diagnostic sweep, not a guarantee of speedup. Compare complete end-to-end service and TTFT first, then block cost per committed token. Do not pool widths or replace the previous build-14/build-15 evidence. After the sweep, correct the confirmed Android unoptimized-build configuration separately; do not infer Android physical gains from compiler flags alone.

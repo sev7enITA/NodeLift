@@ -1,0 +1,68 @@
+{
+  "scope": "Descriptive decomposition of existing complete fixed cells. Residual includes host verification and orchestration; remote wait includes computation and transfer. Ratios use totals over committed tokens, not a ratio of medians. Counterfactual removes remote wait without claiming physical feasibility.",
+  "cells": [
+    {
+      "source": "phone-tradeoffs-2026-11-02/remote-fixed-32.json",
+      "blocks": 66,
+      "committed": 192,
+      "aggregate_round_ms_per_token": 1136.8964811141875,
+      "aggregate_host_round_ms_per_token": 6.660418833538036,
+      "round_cost_ratio": 170.69444272624887,
+      "remote_wait_share_of_rounds": 0.9915244685602856,
+      "zero_remote_wait_residual_ms_per_token": 9.635801869383917,
+      "zero_wait_is_counterfactual_not_measured_speedup": true,
+      "round_ms_p50": 3001.3908130058553,
+      "rounds_between_2900_3100_ms": 21,
+      "first_remote_wait_ms": [
+        2597.068250004668,
+        8359.618541959208,
+        7733.323874999769,
+        8406.435874989256,
+        9006.270291982219,
+        8216.390541987494
+      ],
+      "median_remote_wait_ms": 2973.584374994971
+    },
+    {
+      "source": "iphone-tradeoffs-2026-11-02/remote-fixed-32.json",
+      "blocks": 66,
+      "committed": 192,
+      "aggregate_round_ms_per_token": 37.71259589090429,
+      "aggregate_host_round_ms_per_token": 6.734186620027079,
+      "round_cost_ratio": 5.600170892019717,
+      "remote_wait_share_of_rounds": 0.8456088320996462,
+      "zero_remote_wait_residual_ms_per_token": 5.822491724150798,
+      "zero_wait_is_counterfactual_not_measured_speedup": true,
+      "round_ms_p50": 99.15927049587481,
+      "rounds_between_2900_3100_ms": 0,
+      "first_remote_wait_ms": [
+        82.71404099650681,
+        103.78712497185916,
+        341.0118750180118,
+        96.30687499884516,
+        103.7092920159921,
+        152.9069579555653
+      ],
+      "median_remote_wait_ms": 82.59937501861714
+    },
+    {
+      "source": "iphone-tradeoffs-2026-11-02/build15-fixed-128.json",
+      "blocks": 83,
+      "committed": 284,
+      "aggregate_round_ms_per_token": 33.49373722858858,
+      "aggregate_host_round_ms_per_token": 7.220723014283912,
+      "round_cost_ratio": 4.638557269449588,
+      "remote_wait_share_of_rounds": 0.8473013662954819,
+      "zero_remote_wait_residual_ms_per_token": 5.11444791246363,
+      "zero_wait_is_counterfactual_not_measured_speedup": true,
+      "round_ms_p50": 99.8866250156425,
+      "rounds_between_2900_3100_ms": 0,
+      "first_remote_wait_ms": [
+        82.61183300055563,
+        132.98270804807544,
+        121.31987500470132
+      ],
+      "median_remote_wait_ms": 82.61183300055563
+    }
+  ]
+}

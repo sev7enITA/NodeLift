@@ -1,0 +1,19 @@
+{
+  "artifact": "libnodelift.so",
+  "platform": "Android arm64-v8a API 26",
+  "build_type": "Debug with native -O3",
+  "sha256": "7e032608afbc6989dc4a56a9c6a2aaf7dcf380116407c7c82562bf05068cf95d",
+  "bytes": 67100360,
+  "elf_machine": "AArch64",
+  "gnu_build_id": "71deb7079964f8e14d99826ea257a8523416a860",
+  "llama_commit": "ddf48f85c933c1f438212a02eb21e7b001d2d37d",
+  "ndk": "27.1.12297006",
+  "cpu_isa": "armv8-a",
+  "gpu_backend": null,
+  "native_link_completed": true,
+  "optimization_audit_passed": true,
+  "audit_unit_tests": 5,
+  "packaged_as_apk": false,
+  "installed_on_phone": false,
+  "physical_before_after_benchmark": false
+}

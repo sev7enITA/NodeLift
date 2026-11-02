@@ -1,0 +1,41 @@
+{
+  "units": [
+    {
+      "unit": "core.cpp",
+      "effective_optimization": "-O3",
+      "optimized": true,
+      "fast_math": false,
+      "isa": null
+    },
+    {
+      "unit": "ggml-cpu.c",
+      "effective_optimization": "-O3",
+      "optimized": true,
+      "fast_math": false,
+      "isa": "-march=armv8-a"
+    },
+    {
+      "unit": "ggml-cpu.cpp",
+      "effective_optimization": "-O3",
+      "optimized": true,
+      "fast_math": false,
+      "isa": "-march=armv8-a"
+    },
+    {
+      "unit": "quants.c",
+      "effective_optimization": "-O3",
+      "optimized": true,
+      "fast_math": false,
+      "isa": "-march=armv8-a"
+    },
+    {
+      "unit": "quants.c",
+      "effective_optimization": "-O3",
+      "optimized": true,
+      "fast_math": false,
+      "isa": "-march=armv8-a"
+    }
+  ],
+  "missing": [],
+  "passed": true
+}

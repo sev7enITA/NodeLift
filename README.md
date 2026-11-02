@@ -85,6 +85,8 @@ The optional control-model download is approximately 1.61 GB, with fixed [revisi
 
 [Visual phone benchmarks](research/visual-benchmarks-2026-11-02/README.md): inspect paired timing, first-token delay, fallback and useful proposals. [Open the chart gallery](https://www.fabriziodegni.com/NodeLift/#benchmark-charts).
 
+[Performance diagnosis](https://github.com/sev7enITA/NodeLift/blob/main/research/performance-diagnosis-2026-11-02/REPORT.md): an unoptimized Android native build is corrected and cross-compiled; nine new iPhone pairs reject a width-only solution. No phone speedup or new mobile release is claimed.
+
 The speed workstream targets lower single-chat latency than the best applicable local baseline at the same target, sampling rules and actual output length. The capacity workstream targets model/context workloads that exceed the declared host memory budget. Both support the shared local execution service; capacity, speed and multi-user throughput require separate experiments. Reported physical RAM is not memory already shared with the host.
 
 - [DistAI source study and lessons](research/distai/LESSONS_LEARNED.md)

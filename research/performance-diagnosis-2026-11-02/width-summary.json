@@ -1,0 +1,65 @@
+{
+  "1": {
+    "counts": {
+      "planned_pairs": 3,
+      "observed_host": 3,
+      "observed_candidate": 3,
+      "completed_host": 3,
+      "completed_candidate": 3,
+      "equivalent_pairs": 3,
+      "fallbacks": 0,
+      "accepted": 131,
+      "proposed": 154
+    },
+    "medians": {
+      "host_ms": 786.168666,
+      "candidate_ms": 3980.773208,
+      "added_ms": 3194.604542,
+      "slowdown_ratio": 5.0635103892578694,
+      "ttft_change_ms": 153.631,
+      "remote_wait_ms": 3019.9807090102695
+    }
+  },
+  "4": {
+    "counts": {
+      "planned_pairs": 3,
+      "observed_host": 3,
+      "observed_candidate": 3,
+      "completed_host": 3,
+      "completed_candidate": 3,
+      "equivalent_pairs": 3,
+      "fallbacks": 0,
+      "accepted": 204,
+      "proposed": 328
+    },
+    "medians": {
+      "host_ms": 784.978,
+      "candidate_ms": 3442.350209,
+      "added_ms": 2441.599584,
+      "slowdown_ratio": 4.84347128353018,
+      "ttft_change_ms": 128.68908399999998,
+      "remote_wait_ms": 2866.052291006781
+    }
+  },
+  "8": {
+    "counts": {
+      "planned_pairs": 3,
+      "observed_host": 3,
+      "observed_candidate": 3,
+      "completed_host": 3,
+      "completed_candidate": 3,
+      "equivalent_pairs": 3,
+      "fallbacks": 0,
+      "accepted": 227,
+      "proposed": 466
+    },
+    "medians": {
+      "host_ms": 937.450584,
+      "candidate_ms": 3490.411417,
+      "added_ms": 2468.6920419999997,
+      "slowdown_ratio": 5.3115155721104115,
+      "ttft_change_ms": 191.830708,
+      "remote_wait_ms": 2868.247709062416
+    }
+  }
+}

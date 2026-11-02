@@ -147,6 +147,13 @@ Every published companion build has an entry below. Android packages are laborat
 
 ## Host, documentation and tooling updates
 
+### 2026-11-02: Phone performance diagnosis and Android native optimization correction
+
+- Confirm that the distributed Android 0.2.8 native ELF matches an unoptimized Debug build. Enable -O3 for Android Debug native kernels while preserving symbols, assertions and the generic ARM ISA. Cross-compile the corrected AArch64 library and add a compile-command audit with five passing unit tests.
+- Complete nine new physical iPhone paired comparisons across draft widths 1, 4 and 8. All primary outputs match and no fallback occurs, but median paired duration remains 4.843x to 5.312x the Mac baseline. Width adjustment alone does not demonstrate acceleration.
+- Publish retained raw sessions, source hashes, a reproducible cost decomposition, research acknowledgements and external-review adjudication. Gemini High completed two reviews; GLM 5.3 Max returned a capacity error and has no completed review.
+- The asynchronous architecture remains a proposal. No optimized Android phone benchmark, new APK/IPA, measured energy result or phone-assisted speedup is claimed.
+
 ### 2026-11-02: Visual phone benchmarks in English, Simplified Chinese and Italian
 
 - Publish four reproducible chart families from existing physical Xiaomi and iPhone raw sessions: fixed-delegation duration ratios, added first-token delay, adaptive fallback timing, and proposal acceptance with candidate-request outcomes.

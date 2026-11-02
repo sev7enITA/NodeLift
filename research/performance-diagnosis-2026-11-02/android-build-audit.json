@@ -1,0 +1,43 @@
+{
+  "apk_version": "0.2.8",
+  "apk_native_sha256": "f7c3d82d32884a569aecd53d4f0c66cbb58cd14fbb93acfee7e8441917120b79",
+  "apk_and_debug_binary_matching_gnu_build_id": "6119bd85d6c75cd326d90f93ec8847c0df8171e5",
+  "compilation": [
+    {
+      "unit": "core.cpp",
+      "flags": [
+        "-g"
+      ]
+    },
+    {
+      "unit": "ggml-cpu.c",
+      "flags": [
+        "-g",
+        "-march=armv8-a"
+      ]
+    },
+    {
+      "unit": "ggml-cpu.cpp",
+      "flags": [
+        "-g",
+        "-march=armv8-a"
+      ]
+    },
+    {
+      "unit": "quants.c",
+      "flags": [
+        "-g",
+        "-march=armv8-a"
+      ]
+    },
+    {
+      "unit": "quants.c",
+      "flags": [
+        "-g",
+        "-march=armv8-a"
+      ]
+    }
+  ],
+  "finding": "No optimization flag in wrapper or CPU kernels; Clang default is O0. Confirmed build confound, not a measured causal speedup.",
+  "three_second_sleep": "Only not-ready branch; no evidence it executed during successful draft rounds."
+}

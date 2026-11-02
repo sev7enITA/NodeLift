@@ -1,0 +1,12 @@
+{
+  "planned_sweep": [
+    1,
+    4,
+    8
+  ],
+  "state": "stopped_before_any_inference",
+  "reason": "companion_not_online_at_collector_preflight",
+  "attempts": 0,
+  "retries": 0,
+  "resumption": "User confirmed screen lock and reopened app. Resume original plan; no inference attempts were previously made."
+}

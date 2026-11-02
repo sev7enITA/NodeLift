@@ -1,5 +1,7 @@
 # Physical phone performance and trade-offs
 
+Follow-up: [performance diagnosis](https://github.com/sev7enITA/NodeLift/blob/main/research/performance-diagnosis-2026-11-02/REPORT.md) identifies an unoptimized Android native build and reports nine additional iPhone pairs. The historical measurements below remain unchanged; they do not rank optimized hardware.
+
 [Visual benchmark gallery](../visual-benchmarks-2026-11-02/README.md): paired timing, first-token delay, adaptive fallback and contribution charts.
 
 2026-11-02. **The current Xiaomi draft-delegation path did not improve response speed in the tested model/connection scope.** Adaptive control contained the penalty by abandoning remote proposals, not by accelerating generation.

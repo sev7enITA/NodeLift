@@ -11,6 +11,13 @@ set(LLAMA_BUILD_TOOLS OFF CACHE BOOL "" FORCE)
 set(LLAMA_CURL OFF CACHE BOOL "" FORCE)
 set(GGML_NATIVE OFF CACHE BOOL "" FORCE)
 if(ANDROID)
+  # Debug signing/UI diagnostics must not silently disable inference optimization.
+  # Keep symbols and assertions, and preserve the baseline ARM ISA. This applies
+  # to llama/ggml subdirectories as well as our wrapper; no fast-math is enabled.
+  option(NODELIFT_OPTIMIZE_ANDROID_DEBUG "Optimize native Android debug kernels" ON)
+  if(NODELIFT_OPTIMIZE_ANDROID_DEBUG)
+    add_compile_options("$<$<CONFIG:Debug>:-O3>")
+  endif()
   set(GGML_OPENMP OFF CACHE BOOL "" FORCE)
   set(GGML_LLAMAFILE OFF CACHE BOOL "" FORCE)
   set(GGML_CPU_ALL_VARIANTS OFF CACHE BOOL "" FORCE)

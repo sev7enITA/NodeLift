@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "algorithm": "nodelift-impact-v1",
+  "scope": {
+    "target_sha256": "6a1a2eb6d15622bf3c96857206351ba97e1af16c30d7a74ee38970e434e9407e",
+    "draft_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+    "native_sha256": "4aa209157112cdb4189e6a6b9d3d3d448fafb003aeb1eef8eba13c8efbaa0239",
+    "config_sha256": "2d911652a200a65c1118a39dae2b9e67a6203080c1bff07226fc8921485add7f",
+    "host_id": "9912ede02932e2a7b32eff11d43588da5e67b8963acaa904eda22861964c776f",
+    "node_id": "c63ddfcb035094a6ff2cabbcfab19be0bbddd84114b0ebcce1bb1cc9b674272d",
+    "connection": "7c7e78bc40a829bee2bcdb765a59309bdcd3f569fbec8303c06fa5cb5266be9f",
+    "candidate": "remote_draft",
+    "warmup_policy": "one-unscored-pair; shared-residency-uncontrolled"
+  },
+  "display": {
+    "target_model": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+    "draft_model": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+    "candidate_device": "iPhone16,2",
+    "connection_label": "iphone-xiaomi-hotspot-width-diagnosis"
+  },
+  "verdict": "insufficient_evidence",
+  "reasons": [
+    "At least 10 independent sessions and 30 eligible pairs are required for the descriptive decision rule."
+  ],
+  "counts": {
+    "planned_pairs": 3,
+    "eligible_pairs": 3,
+    "clusters": 1,
+    "mismatched_pairs": 0,
+    "missing_runs": 0,
+    "invalid_pairs": 0
+  },
+  "time_saved_ms": {
+    "estimate": -2441.599584,
+    "ci95": null,
+    "n": 3,
+    "clusters": 1
+  },
+  "time_saved_percent": {
+    "estimate": -384.347128353018,
+    "ci95": null,
+    "n": 3,
+    "clusters": 1
+  },
+  "ttft_change_ms": {
+    "estimate": 128.68908399999998,
+    "ci95": null,
+    "n": 3,
+    "clusters": 1
+  },
+  "energy_saved_joules": null,
+  "service_time_saved_ms": {
+    "estimate": -2441.599584,
+    "ci95": null,
+    "n": 3,
+    "clusters": 1
+  },
+  "service_ttft_change_ms": {
+    "estimate": 128.68908399999998,
+    "ci95": null,
+    "n": 3,
+    "clusters": 1
+  },
+  "service_scope": "Completed output-equivalent pairs including fallback; missing/failed attempts remain in reliability, with no imputed duration.",
+  "reliability": {
+    "host": {
+      "planned": 3,
+      "observed": 3,
+      "completed": 3,
+      "correct": 3,
+      "missing": 0,
+      "fallback": 0,
+      "strict_success": 3,
+      "failed": 0,
+      "cancelled": 0,
+      "completion_rate": 1.0,
+      "strict_success_rate": 1.0,
+      "wilson95": [
+        0.4385029682449546,
+        1
+      ],
+      "wilson_scope": "IID descriptive only; session correlation is not modeled"
+    },
+    "candidate": {
+      "planned": 3,
+      "observed": 3,
+      "completed": 3,
+      "correct": 3,
+      "missing": 0,
+      "fallback": 0,
+      "strict_success": 3,
+      "failed": 0,
+      "cancelled": 0,
+      "completion_rate": 1.0,
+      "strict_success_rate": 1.0,
+      "wilson95": [
+        0.4385029682449546,
+        1
+      ],
+      "wilson_scope": "IID descriptive only; session correlation is not modeled"
+    },
+    "completion_change": {
+      "estimate": 0,
+      "ci95": null,
+      "n": 3,
+      "clusters": 1
+    },
+    "strict_success_change": {
+      "estimate": 0,
+      "ci95": null,
+      "n": 3,
+      "clusters": 1
+    },
+    "completion_change_definition": "candidate minus host completed fraction, all planned pairs; fallback may have completed"
+  },
+  "energy": {
+    "status": "unavailable",
+    "valid_pairs": 0,
+    "planned_pairs": 3,
+    "reasons": [
+      "energy absent"
+    ]
+  },
+  "evidence": {
+    "kind": "physical",
+    "clock": "client_sse_first_nonempty_text",
+    "confidence_method": "session_cluster_percentile_bootstrap",
+    "confidence_scope": "Approximate sampling uncertainty only; not measurement uncertainty or a guarantee."
+  },
+  "qualified_recommendation": false,
+  "statistical_signal": "insufficient_evidence",
+  "gates": {
+    "output_equivalence": "pass",
+    "sample_size": "blocked",
+    "execution_attestation": "blocked",
+    "residency_control": "blocked",
+    "session_independence": "unverified",
+    "energy_coverage": "blocked",
+    "routing_promotion": "disabled"
+  },
+  "policy": {
+    "minimum_sessions": 10,
+    "minimum_pairs": 30,
+    "time_margin_percent": 5,
+    "ttft_regression_tolerance_ms": 0,
+    "bootstrap_replicates": 2000,
+    "seed": 731921
+  },
+  "exclusions": [],
+  "paired_observations": [
+    {
+      "session": "bd7ebf1ce66341b0ba2f0a47351892c5",
+      "pair_id": "0",
+      "order": "BA",
+      "time_saved_ms": -1396.626501,
+      "ttft_change_ms": 128.68908399999998
+    },
+    {
+      "session": "bd7ebf1ce66341b0ba2f0a47351892c5",
+      "pair_id": "1",
+      "order": "AB",
+      "time_saved_ms": -2441.599584,
+      "ttft_change_ms": 176.192501
+    },
+    {
+      "session": "bd7ebf1ce66341b0ba2f0a47351892c5",
+      "pair_id": "2",
+      "order": "AB",
+      "time_saved_ms": -3377.2719580000003,
+      "ttft_change_ms": 121.51129200000001
+    }
+  ],
+  "limitations": [
+    "Imported records are not independent hardware attestation.",
+    "Time and TTFT estimates are conditional on complete, identical-output, fallback-free pairs.",
+    "Sessions must be independently collected; changing a session ID does not create independence.",
+    "Confidence intervals describe sampling variability, not systematic or meter uncertainty.",
+    "No effective GPU-offload or memory-residency attestation: no qualified routing recommendation.",
+    "No automatic scheduler promotion; results apply only to the recorded scope."
+  ]
+}

@@ -1,0 +1,117 @@
+{
+  "cells": [
+    {
+      "source": "remote-fixed-32.json",
+      "sha256": "4865f22ae56fde777aa19b60e45a35c243a75f795ab044ee7c4c2b47264c07e2",
+      "planned_pairs": 6,
+      "observed_candidate": 6,
+      "fallbacks": 0,
+      "eligible_clean_pairs": 6,
+      "scope": "Clean matched-output fixed cells only. Failures, missing attempts and fallback remain in the denominator; no confidence qualification.",
+      "block_cost": {
+        "blocks": 66,
+        "committed_tokens": 192,
+        "candidate_ms_per_committed_token": 1136.8964811141875,
+        "host_ms_per_committed_token": 6.660418833538036,
+        "remote_wait_fraction": 0.9915244685602856,
+        "remote_wait_ms_per_block": 3279.303794166701,
+        "non_remote_ms_per_committed_token": 9.635801869383917,
+        "remote_budget_ms_per_block_at_current_acceptance": -8.65565974064256,
+        "budget_definition": "Descriptive break-even headroom with current committed counts and non-remote costs held fixed; not a prediction, confidence bound or routing authorization.",
+        "remote_components": "Unresolved: phone computation, dispatch, transfer and result handling. Not network RTT."
+      },
+      "end_to_end_median_paired_ratio": 134.9489324562732
+    },
+    {
+      "source": "build15-fixed-128.json",
+      "sha256": "3d0ce16b12635bacb4ef6a9184f14df01ea0cbca3de37800c6a682bff15d0e7e",
+      "planned_pairs": 3,
+      "observed_candidate": 3,
+      "fallbacks": 0,
+      "eligible_clean_pairs": 3,
+      "scope": "Clean matched-output fixed cells only. Failures, missing attempts and fallback remain in the denominator; no confidence qualification.",
+      "block_cost": {
+        "blocks": 83,
+        "committed_tokens": 284,
+        "candidate_ms_per_committed_token": 33.49373722858858,
+        "host_ms_per_committed_token": 7.220723014283912,
+        "remote_wait_fraction": 0.8473013662954819,
+        "remote_wait_ms_per_block": 97.10503814192153,
+        "non_remote_ms_per_committed_token": 5.11444791246363,
+        "remote_budget_ms_per_block_at_current_acceptance": 7.207013601409159,
+        "budget_definition": "Descriptive break-even headroom with current committed counts and non-remote costs held fixed; not a prediction, confidence bound or routing authorization.",
+        "remote_components": "Unresolved: phone computation, dispatch, transfer and result handling. Not network RTT."
+      },
+      "end_to_end_median_paired_ratio": 4.562156161718982
+    },
+    {
+      "source": "iphone-width-1.json",
+      "sha256": "d7958d4cae5a5b727737aeae2a175225f04cf182c484197197928e3e6c63718a",
+      "planned_pairs": 3,
+      "observed_candidate": 3,
+      "fallbacks": 0,
+      "eligible_clean_pairs": 3,
+      "scope": "Clean matched-output fixed cells only. Failures, missing attempts and fallback remain in the denominator; no confidence qualification.",
+      "block_cost": {
+        "blocks": 154,
+        "committed_tokens": 284,
+        "candidate_ms_per_committed_token": 34.66710301188254,
+        "host_ms_per_committed_token": 6.422374861947799,
+        "remote_wait_fraction": 0.7613978301178485,
+        "remote_wait_ms_per_block": 48.67733630363817,
+        "non_remote_ms_per_committed_token": 8.271646002163244,
+        "remote_budget_ms_per_block_at_current_acceptance": -3.4103441806570567,
+        "budget_definition": "Descriptive break-even headroom with current committed counts and non-remote costs held fixed; not a prediction, confidence bound or routing authorization.",
+        "remote_components": "Unresolved: phone computation, dispatch, transfer and result handling. Not network RTT."
+      },
+      "end_to_end_median_paired_ratio": 5.0635103892578694
+    },
+    {
+      "source": "iphone-width-4.json",
+      "sha256": "1db6ff040ef510dda7c053e52a275f7f9cb894325b6ea92076cd8e1d524dd22c",
+      "planned_pairs": 3,
+      "observed_candidate": 3,
+      "fallbacks": 0,
+      "eligible_clean_pairs": 3,
+      "scope": "Clean matched-output fixed cells only. Failures, missing attempts and fallback remain in the denominator; no confidence qualification.",
+      "block_cost": {
+        "blocks": 83,
+        "committed_tokens": 284,
+        "candidate_ms_per_committed_token": 32.49382072425133,
+        "host_ms_per_committed_token": 6.969838057403637,
+        "remote_wait_fraction": 0.8407161579484056,
+        "remote_wait_ms_per_block": 93.47391268729334,
+        "non_remote_ms_per_committed_token": 5.175740607894472,
+        "remote_budget_ms_per_block_at_current_acceptance": 6.138839465790395,
+        "budget_definition": "Descriptive break-even headroom with current committed counts and non-remote costs held fixed; not a prediction, confidence bound or routing authorization.",
+        "remote_components": "Unresolved: phone computation, dispatch, transfer and result handling. Not network RTT."
+      },
+      "end_to_end_median_paired_ratio": 4.84347128353018
+    },
+    {
+      "source": "iphone-width-8.json",
+      "sha256": "beaee09331f6f3111662bd86d0596c773d0eaecf2411ed96f81ef8deee3912ab",
+      "planned_pairs": 3,
+      "observed_candidate": 3,
+      "fallbacks": 0,
+      "eligible_clean_pairs": 3,
+      "scope": "Clean matched-output fixed cells only. Failures, missing attempts and fallback remain in the denominator; no confidence qualification.",
+      "block_cost": {
+        "blocks": 59,
+        "committed_tokens": 284,
+        "candidate_ms_per_committed_token": 35.88483186662492,
+        "host_ms_per_committed_token": 7.545061616479537,
+        "remote_wait_fraction": 0.8378308084900231,
+        "remote_wait_ms_per_block": 144.72167161826076,
+        "non_remote_ms_per_committed_token": 5.819414171282018,
+        "remote_budget_ms_per_block_at_current_acceptance": 8.306506346374498,
+        "budget_definition": "Descriptive break-even headroom with current committed counts and non-remote costs held fixed; not a prediction, confidence bound or routing authorization.",
+        "remote_components": "Unresolved: phone computation, dispatch, transfer and result handling. Not network RTT."
+      },
+      "end_to_end_median_paired_ratio": 5.3115155721104115
+    }
+  ],
+  "new_inference_runs": 0,
+  "qualified_recommendation": false,
+  "energy": "unmeasured"
+}

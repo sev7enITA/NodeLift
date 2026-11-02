@@ -21,3 +21,7 @@ The initial small-pair trials found local drafting slower than the same host-onl
 [Open the localized benchmark gallery](https://www.fabriziodegni.com/NodeLift/#benchmark-charts) or [read the reproducible visual report](https://github.com/sev7enITA/NodeLift/blob/main/research/visual-benchmarks-2026-11-02/README.md). Four chart families show paired total duration, first-token delay, fallback-inclusive adaptive timing and proposal acceptance with incomplete requests retained. Individual observations and sample sizes accompany medians; no confidence interval or energy result is inferred.
 
 ![Measured fixed-delegation duration ratios](https://raw.githubusercontent.com/sev7enITA/NodeLift/main/site/NodeLift/assets/benchmarks-2026-11-02/01-total-time.en.png)
+
+## Performance diagnosis
+
+[Read the measured cost analysis](https://github.com/sev7enITA/NodeLift/blob/main/research/performance-diagnosis-2026-11-02/REPORT.md). The Android 0.2.8 binary was built without native optimization; the corrected native library cross-compiles with `-O3`, but has not been installed or benchmarked on a phone. Nine new iPhone pairs with draft widths 1, 4 and 8 remain approximately five times slower than the Mac. Remote wait includes computation and communication; it is not network RTT. The report gives a break-even budget, external-review adjudication and a bounded asynchronous experiment proposal.
