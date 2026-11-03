@@ -1,33 +1,33 @@
 {
-  "updated": "2026-11-02",
-  "version": "0.2.11",
-  "build": 13,
-  "source_commit": "91f5fb9778a906f142f198b2d96197927410eda1",
+  "updated": "2026-11-03",
+  "version": "0.2.13",
+  "build": 16,
+  "source_commit": "ffd3de894e3fe6d36c6a0024892e3ce417d6f746",
   "languages": [
     "en",
     "zh-Hans",
     "it"
   ],
   "assets": {
-    "NodeLift-0.2.11-android-debug.apk": {
-      "bytes": 22261383,
-      "sha256": "d643c5b8774072b2f11330dfc67d240d2c3d47d7c792a44d48c94d98a989de45",
-      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.11/NodeLift-0.2.11-android-debug.apk"
+    "NodeLift-0.2.13-ios-unsigned.zip": {
+      "bytes": 5490255,
+      "sha256": "8779f2e0120a8538c0cd9f8dc25a7089c4e404584ce65a539dbb0497216ec35a",
+      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.13/NodeLift-0.2.13-ios-unsigned.zip"
     },
-    "NodeLift-0.2.11-ios-unsigned.ipa": {
-      "bytes": 5417945,
-      "sha256": "51d1f2175e6076ef6636991297066594c665bb673a331dfc9999332ecef64ad1",
-      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.11/NodeLift-0.2.11-ios-unsigned.ipa"
+    "NodeLift-0.2.13-android-debug.apk": {
+      "bytes": 14039919,
+      "sha256": "59732048c6c07601968e33bce6adb7675f6792944fda84378c7eb69a1ae1af01",
+      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.13/NodeLift-0.2.13-android-debug.apk"
     },
-    "NodeLift-0.2.11-ios-unsigned.zip": {
-      "bytes": 5417721,
-      "sha256": "6f5595d6ceb4b27fefc2d8145697a151f64291872bcb1b45f1580e6d391b56f1",
-      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.11/NodeLift-0.2.11-ios-unsigned.zip"
+    "NodeLift-0.2.13-ios-unsigned.ipa": {
+      "bytes": 5490479,
+      "sha256": "cb9aceddbb8a10cd0eea2fac3e76a054050bb54f4edd394b0551ffb26ac96fb6",
+      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.13/NodeLift-0.2.13-ios-unsigned.ipa"
     }
   },
   "platforms": {
     "android": {
-      "artifact": "NodeLift-0.2.11-android-debug.apk",
+      "artifact": "NodeLift-0.2.13-android-debug.apk",
       "status": "compiled-debug-signed",
       "minimum_api": 26,
       "architecture": "arm64-v8a",
@@ -35,8 +35,8 @@
     },
     "ios": {
       "artifacts": [
-        "NodeLift-0.2.11-ios-unsigned.ipa",
-        "NodeLift-0.2.11-ios-unsigned.zip"
+        "NodeLift-0.2.13-ios-unsigned.ipa",
+        "NodeLift-0.2.13-ios-unsigned.zip"
       ],
       "status": "compiled-unsigned",
       "minimum_os": "17.0",
@@ -46,7 +46,7 @@
       "physical_installation_tested": false
     },
     "harmonyos_apk_compatibility_trial": {
-      "artifact": "NodeLift-0.2.11-android-debug.apk",
+      "artifact": "NodeLift-0.2.13-android-debug.apk",
       "status": "unverified-compatibility-trial",
       "requires": [
         "APK support",
@@ -68,8 +68,8 @@
     }
   },
   "verification_scope": "Package identity and IPA payload equivalence; no physical-device installation or performance qualification",
-  "original_build_manifest": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.11/NodeLift-0.2.11-build-manifest.json",
-  "ipa_packaging_manifest": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.11/NodeLift-0.2.11-ios-ipa-manifest.json",
+  "original_build_manifest": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.13/NodeLift-0.2.13-build-manifest.json",
+  "ipa_packaging_manifest": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.13/NodeLift-0.2.13-ios-ipa-manifest.json",
   "about_and_references": true,
   "update_discovery": "Automatic launch/weekly and manual checks; matching release notes precede direct browser download; explicit OS installation and iOS Apple signing required",
   "qr_pairing": {
@@ -78,7 +78,7 @@
     "ios": "native AVFoundation scanner; personal signing required",
     "physical_camera_tested": false
   },
-  "published_at": "2026-11-02T02:34:00Z",
+  "published_at": "2026-11-03T06:50:03Z",
   "local_diagnostics": {
     "platforms": [
       "android",

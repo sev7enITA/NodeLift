@@ -1,0 +1,50 @@
+[
+  {
+    "source": "controller",
+    "prompt_id": 2,
+    "repetition": 0,
+    "first_difference_index": 36,
+    "serial_token": 6104,
+    "batch_token": 5810
+  },
+  {
+    "source": "controller",
+    "prompt_id": 2,
+    "repetition": 1,
+    "first_difference_index": 36,
+    "serial_token": 6104,
+    "batch_token": 5810
+  },
+  {
+    "source": "controller",
+    "prompt_id": 2,
+    "repetition": 2,
+    "first_difference_index": 36,
+    "serial_token": 6104,
+    "batch_token": 5810
+  },
+  {
+    "source": "upstream",
+    "prompt_id": 2,
+    "repetition": 0,
+    "first_difference_index": 36,
+    "serial_token": 6104,
+    "batch_token": 5810
+  },
+  {
+    "source": "upstream",
+    "prompt_id": 2,
+    "repetition": 1,
+    "first_difference_index": 36,
+    "serial_token": 6104,
+    "batch_token": 5810
+  },
+  {
+    "source": "upstream",
+    "prompt_id": 2,
+    "repetition": 2,
+    "first_difference_index": 36,
+    "serial_token": 6104,
+    "batch_token": 5810
+  }
+]

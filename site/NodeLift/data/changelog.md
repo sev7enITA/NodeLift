@@ -4,6 +4,18 @@
 
 Every published companion build has an entry below. Android packages are laboratory builds; iOS packages require Apple signing and provisioning. Historical validation belongs to the named version and does not establish current physical-device performance.
 
+## [0.2.13](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.13): build 16 · 2026-11-03
+
+**Native timing and bounded Android lookahead experiments** · experimental-prerelease
+
+- Separate native prefix synchronization, decode diagnostics and worker durations. Record late and uncommitted proposals on the host.
+- Add an explicit one-block Android lookahead experiment with exact committed-prefix matching, sequence checks and expiry. Serial target verification remains the default.
+- Handle expired Android inference leases without breaking the session. Harden chat control-token handling, response allocation failures and cooperative cancellation during native model loading.
+
+**Validation:** 163 host tests, 25 Android JVM tests, Android lint (0 errors, 18 warnings), Swift protocol/transfer checks on macOS and unsigned iOS ARM64 compilation passed. The final host library passed 31 real-weight serial checks and 15 boundary checks; four additional failure-injection cases passed in a separate test build. Five real-weight TLS loopback cases preserved output. APK optimization flags and published package hashes were verified. 135 local pilot runs compare an 8B target and 1B draft, retaining output mismatches. GLM 5.3 Max and Gemini 4 Argon High reviewed the supplied design; they did not execute tests.
+
+**Limits:** Physical testing of this Android/iOS build is pending. Android has explicit bounded lookahead; iOS has timing support and does not advertise that pipeline. Batch verification can diverge from the serial reference and remains experimental. Exact-output local variants did not establish a speedup. ACK wait, failed compute and missing cleanup reports remain incompletely measured. Android is debug-signed; iOS requires Apple signing and provisioning. No distributed speedup, pooled memory or measured energy saving is claimed.
+
 ## [0.2.11](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.11): build 13 · 2026-11-02
 
 **Model metadata and transparent companion updates** · experimental-prerelease
@@ -146,6 +158,12 @@ Every published companion build has an entry below. Android packages are laborat
 **Limits:** The remote test node was emulated. Physical-phone inference/speedup, sustained thermals, capacity sharding, hybrid speculative checkpoints, HarmonyOS native worker and installed LM Studio GUI qualification remained open. The 27B upstream kernel result is not NodeLift hybrid-model support.
 
 ## Host, documentation and tooling updates
+
+### 2026-11-03: 8B bounded-pipeline controls and numerical diagnosis
+
+- Publish 72 NodeLift controller runs and 63 upstream HTTP control runs with raw tokens, timing records, comparative charts and independent design-review adjudication. Each harness uses its own baseline.
+- Reproduce a greedy token divergence with identical token prefixes by varying KV history construction and current batch shape. Preserve serial verification as the default; the specific numerical kernel remains unidentified.
+- Publish Android 0.2.13 build 16 with O3 native kernels and unsigned iOS timing packages. Physical qualification of the optimized Android build remains pending.
 
 ### 2026-11-02: Standalone macOS host preview and startup verification
 

@@ -1,0 +1,368 @@
+[
+  {
+    "arm": "draft-simple-k1",
+    "comparisons": [
+      {
+        "repetition": 0,
+        "prompt_id": 1,
+        "exact_tokens": true,
+        "wall_speedup": 0.9649088448865839
+      },
+      {
+        "repetition": 0,
+        "prompt_id": 2,
+        "exact_tokens": true,
+        "wall_speedup": 0.9285311320930204
+      },
+      {
+        "repetition": 0,
+        "prompt_id": 0,
+        "exact_tokens": true,
+        "wall_speedup": 1.0537021302386758
+      },
+      {
+        "repetition": 1,
+        "prompt_id": 2,
+        "exact_tokens": true,
+        "wall_speedup": 0.9455265157732399
+      },
+      {
+        "repetition": 1,
+        "prompt_id": 0,
+        "exact_tokens": true,
+        "wall_speedup": 0.9744519790336842
+      },
+      {
+        "repetition": 1,
+        "prompt_id": 1,
+        "exact_tokens": true,
+        "wall_speedup": 0.9717273247088855
+      },
+      {
+        "repetition": 2,
+        "prompt_id": 1,
+        "exact_tokens": true,
+        "wall_speedup": 0.9334457688827154
+      },
+      {
+        "repetition": 2,
+        "prompt_id": 0,
+        "exact_tokens": true,
+        "wall_speedup": 1.0097447734866143
+      },
+      {
+        "repetition": 2,
+        "prompt_id": 2,
+        "exact_tokens": true,
+        "wall_speedup": 0.8922229169386642
+      }
+    ],
+    "all_tokens_equal": true,
+    "median_paired_wall_speedup": 0.9649088448865839
+  },
+  {
+    "arm": "draft-simple-k4",
+    "comparisons": [
+      {
+        "repetition": 0,
+        "prompt_id": 0,
+        "exact_tokens": true,
+        "wall_speedup": 1.8390438999968726
+      },
+      {
+        "repetition": 0,
+        "prompt_id": 1,
+        "exact_tokens": true,
+        "wall_speedup": 1.4798989713535688
+      },
+      {
+        "repetition": 0,
+        "prompt_id": 2,
+        "exact_tokens": false,
+        "wall_speedup": 1.2704021527455656
+      },
+      {
+        "repetition": 1,
+        "prompt_id": 0,
+        "exact_tokens": true,
+        "wall_speedup": 1.6159950975014876
+      },
+      {
+        "repetition": 1,
+        "prompt_id": 2,
+        "exact_tokens": false,
+        "wall_speedup": 1.0474654905612657
+      },
+      {
+        "repetition": 1,
+        "prompt_id": 1,
+        "exact_tokens": true,
+        "wall_speedup": 1.1967748786594359
+      },
+      {
+        "repetition": 2,
+        "prompt_id": 1,
+        "exact_tokens": true,
+        "wall_speedup": 1.4479312932969952
+      },
+      {
+        "repetition": 2,
+        "prompt_id": 2,
+        "exact_tokens": false,
+        "wall_speedup": 1.1052460560475064
+      },
+      {
+        "repetition": 2,
+        "prompt_id": 0,
+        "exact_tokens": true,
+        "wall_speedup": 1.7985026220201399
+      }
+    ],
+    "all_tokens_equal": false,
+    "median_paired_wall_speedup": 1.4479312932969952
+  },
+  {
+    "arm": "draft-simple-k8",
+    "comparisons": [
+      {
+        "repetition": 0,
+        "prompt_id": 2,
+        "exact_tokens": false,
+        "wall_speedup": 0.9553262601818615
+      },
+      {
+        "repetition": 0,
+        "prompt_id": 0,
+        "exact_tokens": true,
+        "wall_speedup": 1.663905255113862
+      },
+      {
+        "repetition": 0,
+        "prompt_id": 1,
+        "exact_tokens": true,
+        "wall_speedup": 0.907644087016011
+      },
+      {
+        "repetition": 1,
+        "prompt_id": 0,
+        "exact_tokens": true,
+        "wall_speedup": 1.8188745408602596
+      },
+      {
+        "repetition": 1,
+        "prompt_id": 1,
+        "exact_tokens": true,
+        "wall_speedup": 1.065804239635314
+      },
+      {
+        "repetition": 1,
+        "prompt_id": 2,
+        "exact_tokens": false,
+        "wall_speedup": 0.9944838845566503
+      },
+      {
+        "repetition": 2,
+        "prompt_id": 2,
+        "exact_tokens": false,
+        "wall_speedup": 0.8467026648993192
+      },
+      {
+        "repetition": 2,
+        "prompt_id": 0,
+        "exact_tokens": true,
+        "wall_speedup": 1.6764816305696026
+      },
+      {
+        "repetition": 2,
+        "prompt_id": 1,
+        "exact_tokens": true,
+        "wall_speedup": 1.1365001999227735
+      }
+    ],
+    "all_tokens_equal": false,
+    "median_paired_wall_speedup": 1.065804239635314
+  },
+  {
+    "arm": "ngram-mod-k1",
+    "comparisons": [
+      {
+        "repetition": 0,
+        "prompt_id": 2,
+        "exact_tokens": true,
+        "wall_speedup": 1.056471473646781
+      },
+      {
+        "repetition": 0,
+        "prompt_id": 0,
+        "exact_tokens": true,
+        "wall_speedup": 1.025378836016241
+      },
+      {
+        "repetition": 0,
+        "prompt_id": 1,
+        "exact_tokens": true,
+        "wall_speedup": 1.0190252855829258
+      },
+      {
+        "repetition": 1,
+        "prompt_id": 0,
+        "exact_tokens": true,
+        "wall_speedup": 0.9917554659119282
+      },
+      {
+        "repetition": 1,
+        "prompt_id": 1,
+        "exact_tokens": true,
+        "wall_speedup": 0.9682455959464805
+      },
+      {
+        "repetition": 1,
+        "prompt_id": 2,
+        "exact_tokens": true,
+        "wall_speedup": 0.9025691172075073
+      },
+      {
+        "repetition": 2,
+        "prompt_id": 1,
+        "exact_tokens": true,
+        "wall_speedup": 1.0527896077179895
+      },
+      {
+        "repetition": 2,
+        "prompt_id": 2,
+        "exact_tokens": true,
+        "wall_speedup": 0.9891521815001081
+      },
+      {
+        "repetition": 2,
+        "prompt_id": 0,
+        "exact_tokens": true,
+        "wall_speedup": 1.004457265294139
+      }
+    ],
+    "all_tokens_equal": true,
+    "median_paired_wall_speedup": 1.004457265294139
+  },
+  {
+    "arm": "ngram-mod-k4",
+    "comparisons": [
+      {
+        "repetition": 0,
+        "prompt_id": 1,
+        "exact_tokens": true,
+        "wall_speedup": 1.0648614212106877
+      },
+      {
+        "repetition": 0,
+        "prompt_id": 2,
+        "exact_tokens": true,
+        "wall_speedup": 1.0426452238152937
+      },
+      {
+        "repetition": 0,
+        "prompt_id": 0,
+        "exact_tokens": true,
+        "wall_speedup": 0.9975118826211411
+      },
+      {
+        "repetition": 1,
+        "prompt_id": 2,
+        "exact_tokens": true,
+        "wall_speedup": 0.9753004930619487
+      },
+      {
+        "repetition": 1,
+        "prompt_id": 0,
+        "exact_tokens": true,
+        "wall_speedup": 0.8765106347323899
+      },
+      {
+        "repetition": 1,
+        "prompt_id": 1,
+        "exact_tokens": true,
+        "wall_speedup": 0.983887853003679
+      },
+      {
+        "repetition": 2,
+        "prompt_id": 1,
+        "exact_tokens": true,
+        "wall_speedup": 1.033671101638842
+      },
+      {
+        "repetition": 2,
+        "prompt_id": 0,
+        "exact_tokens": true,
+        "wall_speedup": 0.9370897483183215
+      },
+      {
+        "repetition": 2,
+        "prompt_id": 2,
+        "exact_tokens": true,
+        "wall_speedup": 0.9234115695064655
+      }
+    ],
+    "all_tokens_equal": true,
+    "median_paired_wall_speedup": 0.983887853003679
+  },
+  {
+    "arm": "ngram-mod-k8",
+    "comparisons": [
+      {
+        "repetition": 0,
+        "prompt_id": 1,
+        "exact_tokens": true,
+        "wall_speedup": 1.0439520656237444
+      },
+      {
+        "repetition": 0,
+        "prompt_id": 0,
+        "exact_tokens": true,
+        "wall_speedup": 1.0198672119464203
+      },
+      {
+        "repetition": 0,
+        "prompt_id": 2,
+        "exact_tokens": true,
+        "wall_speedup": 0.8697219172394607
+      },
+      {
+        "repetition": 1,
+        "prompt_id": 0,
+        "exact_tokens": true,
+        "wall_speedup": 1.0072199028670656
+      },
+      {
+        "repetition": 1,
+        "prompt_id": 2,
+        "exact_tokens": true,
+        "wall_speedup": 0.9904033055096377
+      },
+      {
+        "repetition": 1,
+        "prompt_id": 1,
+        "exact_tokens": true,
+        "wall_speedup": 0.9009825162146553
+      },
+      {
+        "repetition": 2,
+        "prompt_id": 2,
+        "exact_tokens": true,
+        "wall_speedup": 0.931655915471682
+      },
+      {
+        "repetition": 2,
+        "prompt_id": 1,
+        "exact_tokens": true,
+        "wall_speedup": 1.0208418344260985
+      },
+      {
+        "repetition": 2,
+        "prompt_id": 0,
+        "exact_tokens": true,
+        "wall_speedup": 0.9426537215360604
+      }
+    ],
+    "all_tokens_equal": true,
+    "median_paired_wall_speedup": 0.9904033055096377
+  }
+]

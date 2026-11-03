@@ -1,0 +1,28 @@
+{
+  "release": "https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.13",
+  "source_commit": "ffd3de894e3fe6d36c6a0024892e3ce417d6f746",
+  "integrity_verified": true,
+  "scope": "published bytes and tag identity; no execution, signing or device qualification",
+  "assets": [
+    {
+      "name": "NodeLift-0.2.13-build-manifest.json",
+      "bytes": 6917,
+      "sha256": "924281bd1eeb6e0bb0f932a9c4ea908a9ddf45e36422df5d2a3ad8e98e5451f7"
+    },
+    {
+      "name": "NodeLift-0.2.13-ios-unsigned.zip",
+      "bytes": 5490255,
+      "sha256": "8779f2e0120a8538c0cd9f8dc25a7089c4e404584ce65a539dbb0497216ec35a"
+    },
+    {
+      "name": "NodeLift-0.2.13-android-debug.apk",
+      "bytes": 14039919,
+      "sha256": "59732048c6c07601968e33bce6adb7675f6792944fda84378c7eb69a1ae1af01"
+    },
+    {
+      "name": "NodeLift-0.2.13-ios-unsigned.ipa",
+      "bytes": 5490479,
+      "sha256": "cb9aceddbb8a10cd0eea2fac3e76a054050bb54f4edd394b0551ffb26ac96fb6"
+    }
+  ]
+}

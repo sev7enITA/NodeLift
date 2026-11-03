@@ -56,6 +56,7 @@ int main(int argc,char **argv){try{
  Context a(llama_init_from_model(model.get(),cp),llama_free), b(llama_init_from_model(model.get(),cp),llama_free), repeat(llama_init_from_model(model.get(),cp),llama_free);require(a&&b&&repeat,"context allocation failed");
  json output={{"gpu_layers_requested",gpu},{"threads",threads},{"flash_attention_requested",flash},{"n_ctx",nctx},{"serial_history",serial_history},{"runtime",llama_version()},{"windows",json::array()}};
  for(const auto & c:cases.at("cases")){
+  int history_width=c.value("history_batch_width",1);require(history_width>=1 && history_width<=512,"invalid history width");
   Tokens prompt=c.at("prompt_tokens").get<Tokens>(),generated=c.at("generated_tokens").get<Tokens>();require(!prompt.empty(),"empty prompt");
   for(const auto & w:c.at("windows")){
    int offset=w.at("offset"),width=w.at("width");require(offset>=0 && width>=1 && size_t(offset+width-1)<=generated.size(),"invalid case window");
@@ -63,13 +64,16 @@ int main(int argc,char **argv){try{
    Tokens block{anchor};block.insert(block.end(),generated.begin()+offset,generated.begin()+offset+width-1);
    require(before.size()+block.size()<=size_t(nctx),"window exceeds context");
    for(auto ctx:{a.get(),b.get(),repeat.get()}){
-    if(serial_history && offset>0){prefill(ctx,prompt,nv);if(offset>1)single(ctx,Tokens(generated.begin(),generated.begin()+offset-1),int(prompt.size()),nv);}
+    if(serial_history && offset>0){
+     prefill(ctx,prompt,nv);int step=ctx==b.get()?history_width:1;
+     for(int at=0;at<offset-1;at+=step){int end=std::min(at+step,offset-1);eval(ctx,Tokens(generated.begin()+at,generated.begin()+end),int(prompt.size())+at,ctx==b.get() && step>1,nv);}
+    }
     else prefill(ctx,before,nv);
    }
    auto t=Clock::now();auto serial=single(a.get(),block,int(before.size()),nv);double serialms=ms(t);
    t=Clock::now();auto batch=eval(b.get(),block,int(before.size()),true,nv);double batchms=ms(t);
    auto control=single(repeat.get(),block,int(before.size()),nv);
-   json row={{"case",c.at("name")},{"offset",offset},{"width",width},{"prefix_tokens",before.size()+1},{"serial_ms",serialms},{"batch_ms",batchms},{"positions",json::array()}};
+   json row={{"case",c.at("name")},{"history_batch_width",history_width},{"offset",offset},{"width",width},{"prefix_tokens",before.size()+1},{"serial_ms",serialms},{"batch_ms",batchms},{"positions",json::array()}};
    for(int j=0;j<width;++j){
     auto sr=rank(serial[j].data(),nv),br=rank(batch[j].data(),nv),cr=rank(control[j].data(),nv);float maxab=0,maxaa=0;
     for(int v=0;v<nv;++v){require(std::isfinite(serial[j][v])&&std::isfinite(batch[j][v])&&std::isfinite(control[j][v]),"non-finite logits");maxab=std::max(maxab,std::abs(serial[j][v]-batch[j][v]));maxaa=std::max(maxaa,std::abs(serial[j][v]-control[j][v]));}

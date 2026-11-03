@@ -1,0 +1,25 @@
+{
+  "models": [
+    {
+      "model": "llama3.1-8b-ollama.gguf",
+      "info": {
+        "gpu_layers_requested": 999,
+        "n_ctx": 2048,
+        "runtime": "0.8.0-dev",
+        "tokenizer_fingerprint": "cf0f6b7f9a6901172aa8262026fe173d120614fcfd452d91d31d602454466c07",
+        "vocab_size": 128256
+      }
+    },
+    {
+      "model": "Llama-3.2-1B-Instruct-Q4_K_M.gguf",
+      "info": {
+        "gpu_layers_requested": 999,
+        "n_ctx": 2048,
+        "runtime": "0.8.0-dev",
+        "tokenizer_fingerprint": "cf0f6b7f9a6901172aa8262026fe173d120614fcfd452d91d31d602454466c07",
+        "vocab_size": 128256
+      }
+    }
+  ],
+  "compatible": true
+}

@@ -1,0 +1,143 @@
+{
+  "date": "2026-11-03",
+  "host_tests": 163,
+  "android_jvm_tests": 25,
+  "android_lint": {
+    "errors": 0,
+    "warnings": 18
+  },
+  "android_optimization": {
+    "units": [
+      {
+        "unit": "core.cpp",
+        "effective_optimization": "-O3",
+        "optimized": true,
+        "fast_math": false,
+        "isa": null
+      },
+      {
+        "unit": "ggml-cpu.c",
+        "effective_optimization": "-O3",
+        "optimized": true,
+        "fast_math": false,
+        "isa": "-march=armv8-a"
+      },
+      {
+        "unit": "ggml-cpu.cpp",
+        "effective_optimization": "-O3",
+        "optimized": true,
+        "fast_math": false,
+        "isa": "-march=armv8-a"
+      },
+      {
+        "unit": "quants.c",
+        "effective_optimization": "-O3",
+        "optimized": true,
+        "fast_math": false,
+        "isa": "-march=armv8-a"
+      },
+      {
+        "unit": "quants.c",
+        "effective_optimization": "-O3",
+        "optimized": true,
+        "fast_math": false,
+        "isa": "-march=armv8-a"
+      }
+    ],
+    "missing": [],
+    "passed": true
+  },
+  "lab_publication": {
+    "status": "published laboratory build, physical validation pending",
+    "assets": [
+      {
+        "url": "https://www.fabriziodegni.com/NodeLift/experiments/NodeLift-0.2.13-build16-android-lab.apk",
+        "sha256": "59732048c6c07601968e33bce6adb7675f6792944fda84378c7eb69a1ae1af01",
+        "bytes": 14039919,
+        "https_verified": true
+      },
+      {
+        "url": "https://www.fabriziodegni.com/NodeLift/experiments/NodeLift-0.2.13-build16-notes.html",
+        "sha256": "27013cb681f2e12c8d436b86dd59c0f0c4ce6bb14d5a08a4a980531ee2612575",
+        "bytes": 2385,
+        "https_verified": true
+      }
+    ],
+    "site_sha256": "ec6c731a9abb922a79bb28eadf773478c46e3446843d779a3981a2e5ddac1ddb",
+    "date": "2026-11-03T05:56:55.974893+00:00"
+  },
+  "native": {
+    "native-strict.json": {
+      "library_sha256": "4377acd3e7a3174f249a2ca8afe994cf4b517430496378ce233d7867833b8fac",
+      "checks": 31,
+      "all_passed": true
+    },
+    "native-boundaries.json": {
+      "library_sha256": "4377acd3e7a3174f249a2ca8afe994cf4b517430496378ce233d7867833b8fac",
+      "checks": 19,
+      "all_passed": true
+    },
+    "native-production-boundaries.json": {
+      "library_sha256": "a7a033ea527cedbf328db886db84cb900a443d5f17dd21b41377733310ff3f2a",
+      "checks": 15,
+      "all_passed": true
+    },
+    "native-production-strict.json": {
+      "library_sha256": "a7a033ea527cedbf328db886db84cb900a443d5f17dd21b41377733310ff3f2a",
+      "checks": 31,
+      "all_passed": true
+    }
+  },
+  "loopback": {
+    "scope": "loopback TLS with emulated native node; NOT Android/iOS device evidence",
+    "real_weights": true,
+    "checks": [
+      {
+        "case": "valid",
+        "exact_tokens": true,
+        "generated": 32,
+        "fallbacks": 0,
+        "blocks": 12
+      },
+      {
+        "case": "wrong",
+        "exact_tokens": true,
+        "generated": 32,
+        "fallbacks": 0,
+        "blocks": 32
+      },
+      {
+        "case": "error",
+        "exact_tokens": true,
+        "generated": 32,
+        "fallbacks": 1,
+        "blocks": 32
+      },
+      {
+        "case": "drop",
+        "exact_tokens": true,
+        "generated": 32,
+        "fallbacks": 1,
+        "blocks": 32
+      },
+      {
+        "case": "adaptive deadline and late reply",
+        "exact_tokens": true,
+        "generated": 32,
+        "fallbacks": 1,
+        "late_replies_rejected": 1,
+        "effective_deadline_ms": 75.09521004976705
+      }
+    ],
+    "timestamp": 1793687855.8428779
+  },
+  "ios": {
+    "version": "0.2.13",
+    "build": 16,
+    "arm64_unsigned_compiled": true,
+    "swift_protocol_check": "passed on macOS",
+    "swift_transfer_check": "passed on macOS",
+    "physical_device_tested": false,
+    "bounded_lookahead": false
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "date": "2026-11-03",
+  "scope": "identical-prefix numerical diagnosis; probe durations are not performance evidence",
+  "target_sha256": "667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29",
+  "native_core_source_commit": "ffd3de894e3fe6d36c6a0024892e3ce417d6f746",
+  "parameters": {
+    "gpu_layers_requested": 999,
+    "threads": 8,
+    "flash_attention_requested": true,
+    "n_ctx": 2048,
+    "serial_history": true
+  },
+  "artifacts": {
+    "native/experiments/shape_probe.cpp": {
+      "sha256": "0b3a072d1587980eac890c4e7f92d37d4e092c01534095c47bef5a3150081f1c",
+      "bytes": 6917
+    },
+    "nodelift-shape-probe": {
+      "sha256": "c5e6a757d0888cab9f148711221836c648cd848464a7949bdbdbce8ee5980cc7",
+      "bytes": 11087624
+    },
+    "shape-cases.json": {
+      "sha256": "a835290f505667fec72186debfbeee517df9af9559e00a50011a0403ca631686",
+      "bytes": 3177
+    },
+    "shape-history-cases.json": {
+      "sha256": "e139415e1b8845bd193fa1f6dcd04fd0ff26bee4b0aaefa6f218d79a10894201",
+      "bytes": 7364
+    },
+    "shape-metal-fa.json": {
+      "sha256": "85ba1c36f9ea701b106f19ea949aa385d83d829164051b3fcab8513c121089f8",
+      "bytes": 30345
+    },
+    "shape-history-metal-fa.json": {
+      "sha256": "7457c97de1b18fdb995a5684c1a2b1aed9dcfb3cd4d51fb18b488cf10d6e9f61",
+      "bytes": 9784
+    }
+  }
+}

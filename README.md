@@ -6,7 +6,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-lightgrey.svg)](LICENSE)
 [![Live project showcase](https://img.shields.io/badge/Showcase-Live-146c6a.svg)](https://www.fabriziodegni.com/NodeLift/)
-[![Companion 0.2.11 prerelease](https://img.shields.io/badge/Companion-0.2.11%20prerelease-b45309.svg)](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.11)
+[![Companion 0.2.13 prerelease](https://img.shields.io/badge/Companion-0.2.13%20prerelease-b45309.svg)](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.13)
 [![Host 0.3.0 preview](https://img.shields.io/badge/Host-0.3.0%20preview-b45309.svg)](docs/INTEGRATIONS.md)
 
 [![Source checks](https://github.com/sev7enITA/NodeLift/actions/workflows/checks.yml/badge.svg?branch=main)](https://github.com/sev7enITA/NodeLift/actions/workflows/checks.yml)
@@ -31,11 +31,11 @@ The current experimental implementation supports phone-assisted drafting: a smal
 
 **[Live project showcase and interactive atlas](https://www.fabriziodegni.com/NodeLift/)** · [55-entry detailed matrix](site/NodeLift/data/comparison.md) · [Assessment and engineering lessons](research/comparison-2026-10-31/ASSESSMENT.md) · [Publication verification](docs/SHOWCASE_DEPLOYMENT.md). The dated atlas distinguishes applications, runtimes, serving systems and research; it is not an exhaustive inventory or a universal performance ranking.
 
-**[0.2.11 experimental prerelease](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.11), 2 November 2026.** Native inference, authenticated mobile work leases, an OpenAI-style text gateway, Android/iOS companion sources and an LM Studio generator adapter are implemented. **Phone inference speedup, pooled RAM, large hybrid-model speculation and sustained mobile operation are not yet qualified.** The first real-weight control experiments found local drafting slower than target-only inference on the small test pair. Negative results are published.
+**[0.2.13 experimental prerelease](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.13), 3 November 2026.** Native inference, authenticated mobile work leases, an OpenAI-style text gateway, Android/iOS companion sources and an LM Studio generator adapter are implemented. **Phone inference speedup, pooled RAM, large hybrid-model speculation and sustained mobile operation are not yet qualified.** The first real-weight control experiments found local drafting slower than target-only inference on the small test pair. Negative results are published.
 
-**Host 0.3.0 integration preview:** public Hugging Face GGUF search/download with SHA-256 verification, direct file/path import, opt-in OpenRouter, and a loopback text bridge for oMLX/LM Studio. English (default), Simplified Chinese and Italian UI. [Setup](docs/INTEGRATIONS.md#model-sources-and-external-engines-host-030-preview) · [Source review and qualification](research/integrations-2026-11-01/ASSESSMENT.md). Companion binaries are 0.2.11/build 13.
+**Host 0.3.0 integration preview:** public Hugging Face GGUF search/download with SHA-256 verification, direct file/path import, opt-in OpenRouter, and a loopback text bridge for oMLX/LM Studio. English (default), Simplified Chinese and Italian UI. [Setup](docs/INTEGRATIONS.md#model-sources-and-external-engines-host-030-preview) · [Source review and qualification](research/integrations-2026-11-01/ASSESSMENT.md). Companion binaries are 0.2.13/build 16.
 
-**Engine controls:** measured adaptive draft control, context lookup without a second model, and greedy argmax caching are available in source and the dashboard. [Optimization study and measured limits](research/optimization-2026-10-31/REPORT.md). The 0.2.11 companions support English (default), Simplified Chinese and Italian, with a saved in-app language choice. [Localization and validation](docs/LOCALIZATION.md).
+**Engine controls:** measured adaptive draft control, context lookup without a second model, and greedy argmax caching are available in source and the dashboard. [Optimization study and measured limits](research/optimization-2026-10-31/REPORT.md). The 0.2.13 companions support English (default), Simplified Chinese and Italian, with a saved in-app language choice. [Localization and validation](docs/LOCALIZATION.md).
 
 ![NodeLift public showcase, desktop capture from 31 October 2026](docs/evidence/showcase-2026-10-31/live-desktop.jpg)
 
@@ -57,7 +57,7 @@ This is **not an Ollama backend patch**. Clients with a custom OpenAI-style endp
 
 **About & References:** author attribution, installed component version, official project links, technical references and manual release checking are available inside the desktop and companion apps. [How to find them](docs/ABOUT_AND_UPDATES.md).
 
-[Download Android 0.2.11](https://github.com/sev7enITA/NodeLift/releases/download/v0.2.11/NodeLift-0.2.11-android-debug.apk) · [Source checks](https://github.com/sev7enITA/NodeLift/actions)
+[Download Android 0.2.13](https://github.com/sev7enITA/NodeLift/releases/download/v0.2.13/NodeLift-0.2.13-android-debug.apk) · [Source checks](https://github.com/sev7enITA/NodeLift/actions)
 
 ## Start on the host
 
@@ -91,7 +91,9 @@ The optional control-model download is approximately 1.61 GB, with fixed [revisi
 
 [Visual phone benchmarks](research/visual-benchmarks-2026-11-02/README.md): inspect paired timing, first-token delay, fallback and useful proposals. [Open the chart gallery](https://www.fabriziodegni.com/NodeLift/#benchmark-charts).
 
-[Performance diagnosis](https://github.com/sev7enITA/NodeLift/blob/main/research/performance-diagnosis-2026-11-02/REPORT.md): an unoptimized Android native build is corrected and cross-compiled; nine new iPhone pairs reject a width-only solution. No phone speedup or new mobile release is claimed.
+[Performance diagnosis](https://github.com/sev7enITA/NodeLift/blob/main/research/performance-diagnosis-2026-11-02/REPORT.md): an unoptimized Android native build is corrected and cross-compiled; nine new iPhone pairs reject a width-only solution. That report predates the optimized 0.2.13 Android release; physical qualification of the new binary remains pending.
+
+[8B pipeline pilot and visual results](research/async-pipeline-2026-11-03/README.md): 135 local runs retain both timings and exact-token comparisons. Serial draft paths were slower; some batch paths were faster but changed output. A controlled probe reproduces a token flip when KV history and batch shape change. Serial verification stays the default. Android 0.2.13 adds native timing and opt-in bounded lookahead; its physical test is still pending.
 
 The speed workstream targets lower single-chat latency than the best applicable local baseline at the same target, sampling rules and actual output length. The capacity workstream targets model/context workloads that exceed the declared host memory budget. Both support the shared local execution service; capacity, speed and multi-user throughput require separate experiments. Reported physical RAM is not memory already shared with the host.
 
