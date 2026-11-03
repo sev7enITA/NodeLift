@@ -1,0 +1,38 @@
+Scope. This is a static review of the supplied NodeLift report text only. I executed and inspected nothing; all numbers are taken as reported. Nothing below claims a phone speedup or causal attribution.
+
+Verdict. The report's central negative conclusion — under this build, protocol, and LAN, phone-assisted drafting runs ~4.8–5.3× slower than the host-only arm, and the serial pipeline cannot reach its own break-even budget — is supported by the supplied measurements. The bounded asynchronous pipeline is a sound correctness design but, by the report's own ~18 ms overlap bound, cannot close a 93 ms → 6 ms gap; its net effect is untested. Key attributions remain unproved, mainly because remote wait is an undecomposed residual and the optimized Android artifact was never installed or measured.
+
+Supported by the supplied data
+
+Phone-assisted durations are 4.843–5.312× the Mac-only arm with +129–192 ms TTFT. The 18/18 token-hash/count/finish-reason matches and zero fallback support the faithfulness of the greedy, host-verified protocol — a correctness result, not a performance one.
+Remote wait at 84.1% of round duration (93.474 ms/block observed vs a 6.139 ms break-even budget; older cell 97.105 vs 7.207) makes width tuning and minor kernel fixes insufficient under the serial critical path. This necessary-condition argument holds with a ~15× margin, so its direction is robust even at small n.
+The report's refusal to claim a benchmark, a speedup, or an optimized-Android result is consistent with its evidence. Host monotonic clocks, no cross-device timestamp subtraction, the recorded screen-lock exclusion, and named-but-unallocated remainders are good practice.
+
+Issues
+
+Remote wait is a residual, not a mechanism. Claim: "remote wait 84.1% of round duration." Reasoning: it is a host-observed composite of transport, queueing, phone compute, and wakeup granularity; worker_total_ms vs worker_native_ms was named but not measured, so "the phone is slow" versus "the transport/polling is slow" is not adjudicated. Correction: phone-side monotonic durations per phase, KV-sync bytes per block, and wakeup counts, reported as a stacked per-block breakdown (durations only, no absolute-clock subtraction).
+
+The break-even budget is correctly labelled counterfactual but fragile at n=3. Claim: 6.139 ms/block allowed. Reasoning: it holds all other terms fixed while scaling remote wait, and each cell has three paired prompts in a single session with no variance reported; the width ordering (4 < 1 < 8) is within plausible noise. Correction: ≥10 pairs per cell across independent sessions with per-pair scatter, or withdraw width-ordering statements.
+
+The -O3 Android fix is built but unmeasured. Claim: CMake corrected, audits passed, no APK packaged. Reasoning: every Android number — including the 9.636 ms local-work floor vs the 6.660 ms host baseline — comes from the unoptimized Debug ELF, so that floor can move. Correction: package, install, and re-run the identical paired protocol on the optimized build. The report claims no optimized result, which is appropriate.
+
+The iOS build is not audited. Claim: the build defect was established for Android 0.2.8 via GNU build ID. Reasoning: the primary tables come from iPhone build 15, but no equivalent flag audit or build-ID linkage is supplied for it, so the same confound is unexcluded where it matters most. Correction: run the identical optimization audit on the iOS artifact.
+
+The "best applicable" local baseline is missing. Claim: fair comparison requires host-only vs best host-local speculation vs phone speculation on the same target, context, and sampling. Reasoning: only the host-only arm is reported; host-local speculation (0.5B draft on the Mac) was not run. The current ordering happens to be settled anyway because phone-assisted is ~5× slower than host-only, but any future positive claim needs this arm. Correction: measure host-side speculative decoding under the same protocol.
+
+The async pipeline's benefit is untested and self-limited. Claim: one-block lookahead with request epoch, sequence, and authoritative-prefix-hash cancellation. Reasoning: the invariants are sound and falsifiable — prefix hashing makes stale drafts detectable, discarding on partial rejection or bonus-token mismatch prevents publishing unverified tokens, and one-block lookahead bounds state. But lookahead is discarded on partial acceptance, so the operative rate is the fully-accepted-block fraction, not the 204/328 per-token rate; and the report's own bound (≤ ~18 ms hideable local work against 93.474 ms remote wait) means asynchrony addresses the tail, not the gap. Also, the correctly-rejected "3 s poll sleep" fix still implies up to ~3 s lease-acquisition latency under bursty arrivals. Corrections: prototype behind a flag with preregistered thresholds (e.g., ≥1.05× host-only, full failure/fallback denominators, multiple sessions, sustained load); report the fully-accepted-block fraction; add a bursty-arrival arm.
+
+Unproved on this evidence
+
+Any performance statement about the optimized Android build.
+Attribution of the ~5× gap to phone compute vs transport vs polling.
+Net effect of the bounded asynchronous pipeline (no run supplied).
+Phone speculation vs best host-local speculation (arm absent).
+The 9.636 vs 6.660 ms Xiaomi floor as a stable bound (single trace, unoptimized build).
+Width ordering among 1/4/8 (three pairs per cell).
+
+Next experiments, in order. (i) Decompose remote wait into phases, bytes, and wakeups. (ii) Install the -O3 Android build and repeat the sweep. (iii) Audit iOS build flags. (iv) Run the host-local speculation arm. (v) Prototype one-block lookahead with preregistered thresholds and report fully-accepted-block fraction. (vi) Add sustained and bursty-load arms. (vii) Raise to ≥10 pairs per cell across sessions.
+
+Limitations. I reviewed supplied text only and verified no number, build ID, or file
+
+. All statements inherit the report's collection conditions: one session, three paired prompts per cell, one LAN, one model pair at Q4_K_M, greedy decoding. Nothing here demonstrates — or rules out — a phone-assisted speedup under different builds or transports.

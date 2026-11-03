@@ -30,4 +30,8 @@ The [initial brief](review-brief.txt) and [focused follow-up](review-followup-br
 - A proposed arbitrary accepted-token percentage must not be used to remove slow or fallback requests from service evidence. Clean delegation and full-denominator service are reported separately.
 - Ordinary cloud CI does not validate physical device thermals, radio behavior or energy. Those require device measurements.
 
-This adjudication incorporates Gemini's useful suggestions while rejecting its unsupported certainty. GLM remains an unavailable requested reviewer, not a completed reviewer.
+This original 2 November adjudication incorporated Gemini's useful suggestions while rejecting its unsupported certainty. At that time GLM was unavailable.
+
+## Resumption on 3 November
+
+GLM 5.3 Max has now completed the [resumed assessment and independent adjudication](../reviewer-resumption-2026-11-03/PERFORMANCE-REVIEW.md). The actual response is preserved there. The historical availability section above describes the original attempts; it is not the current review status. Static analysis did not add physical measurements.

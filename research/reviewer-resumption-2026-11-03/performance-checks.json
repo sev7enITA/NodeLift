@@ -1,0 +1,14 @@
+{
+  "analysis_replay_equal_cells": 3,
+  "new_inference_runs": 0,
+  "new_physical_device_tests": false,
+  "source": "scripts/diagnose-draft-cost.py",
+  "inputs": [
+    "iphone-width-1.json",
+    "iphone-width-4.json",
+    "iphone-width-8.json"
+  ],
+  "comparison": "Exact decoded JSON equality with the last three retained cost-diagnosis.json cells",
+  "reviewer": "GLM 5.3 Max",
+  "review_type": "Supplied report text only; independent adjudication against source and retained evidence"
+}

@@ -72,7 +72,7 @@ Independent task offload, aggregate throughput and capacity beyond host RAM rema
 
 ## Reviews and research
 
-[Review adjudication](REVIEW_ADJUDICATION.md) distinguishes model suggestions from checked facts. Gemini 4 Argon with High effort completed two responses. GLM 5.3 Max was engaged, but returned a capacity error after an initial stalled request and a focused retry; no completed GLM review is claimed.
+[Review adjudication](REVIEW_ADJUDICATION.md) distinguishes model suggestions from checked facts. Gemini 4 Argon with High effort completed two responses. GLM 5.3 Max completed its [resumed static assessment on 3 November](../reviewer-resumption-2026-11-03/PERFORMANCE-REVIEW.md); findings were checked and unsupported inferences rejected. Neither model executed these physical tests. The original 2 November availability record remains in the adjudication history.
 
 Relevant prior work, with credit:
 

@@ -59,4 +59,4 @@ The [completed follow-up](glm-core-followup.txt) explicitly downgrades F4 to inf
 - **F11:** the default path can re-evaluate one extra retained token. The experimental option already changes that condition and remains disabled by default. A reduced operation count alone is not evidence of a useful speed gain.
 - **F12:** the original synthetic benchmark inserted a separately tokenized BOS in its suffix. Both arms shared it, and prior corrections record the actual prefix length. These remain synthetic prompts, not representative production workload evidence.
 
-The initial answer is preserved where corrected. The separate GLM performance assessment remains in progress. All requested product assessments are not yet complete; the automation remains active.
+The initial answer is preserved where corrected. The separate [GLM performance assessment](PERFORMANCE-REVIEW.md) is now complete and adjudicated. All availability-delayed assessment scopes are complete; this does not close unresolved runtime or physical validation work.

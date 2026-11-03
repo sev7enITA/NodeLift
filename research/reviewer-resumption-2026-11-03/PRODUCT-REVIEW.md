@@ -43,4 +43,4 @@ NODE_PATH=/tmp/nodelift-review-dom/node_modules node research/reviewer-resumptio
 node scripts/check-device-graph.cjs
 ```
 
-The mobile changes are source updates with policy and Kotlin compilation evidence. This assessment does not create or publish new APK/IPA packages, qualify the weekly timer on a physical phone, or change the published companion release. The native framework packaging build is documented separately in [the core/build assessment](REVIEW.md). GLM's separate performance assessment is still pending; the automation remains active.
+The mobile changes are source updates with policy and Kotlin compilation evidence. This assessment does not create or publish new APK/IPA packages, qualify the weekly timer on a physical phone, or change the published companion release. The native framework packaging build is documented separately in [the core/build assessment](REVIEW.md). GLM's separate [performance assessment](PERFORMANCE-REVIEW.md) is now complete and adjudicated. Physical validation remains separate.
