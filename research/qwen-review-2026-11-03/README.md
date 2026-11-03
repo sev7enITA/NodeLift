@@ -41,7 +41,7 @@ This pass does **not** establish superiority over GLM/Gemini or a causal effect 
 - Size: 17,923,393,664 bytes.
 - SHA-256: `ba36dc3c2b2ff5e0aa5d71092a8894546996a6a119ae391803dda07cdc08516d`.
 - Actual GGUF architecture: `qwen35`, 65 blocks including the embedded prediction head; native context metadata 262,144.
-- Review context: 16,384 tokens, one slot, Metal offload, temperature zero, non-thinking mode, maximum 512 output tokens per call.
+- Review context: 16,384 tokens, one slot, Metal offload requested, temperature zero, non-thinking mode, maximum 512 output tokens per call.
 - llama.cpp source: `ddf48f85c933c1f438212a02eb21e7b001d2d37d`; 1,819 source files compared with the pinned tree. This source-identity check is not a review of all those files.
 - The initial ten source packets cover 14 NodeLift files or excerpts. Native core files shared with the community fork are recorded in [fork-scope.json](fork-scope.json).
 - Embedded MTP and the associated FastMTP patch are disabled. [FastMTP inspection](fastmtp-inspection.json) is a Codex static assessment only, with no imported patch or benchmark.
@@ -66,3 +66,9 @@ Use the retained frozen prompts for reproduction. `prepare_packets.py` creates a
 ## Acknowledgements
 
 Thanks to [HauhauCS](https://huggingface.co/HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF) for the published quantization and optimization material, and to the [llama.cpp contributors](https://github.com/ggml-org/llama.cpp) for the inference runtime. The Hub identifies the model license as Apache 2.0; weights are not included in NodeLift's MIT-licensed repository. Earlier work, including DistAI, remains linked in [Acknowledgements](../../docs/ACKNOWLEDGEMENTS.md). No endorsement, certification, pooled RAM or distributed acceleration is implied.
+
+## Publication verification
+
+![English portal review section, captured from the live site](portal-review-en.jpg)
+
+The [publication receipt](publication.json) records matching FTPS/HTTPS bytes and observed English, Simplified Chinese and Italian rendering. The image is an unedited English browser capture, not an app screenshot or performance chart. The [source and documentation checks](publication.json) passed on the source-fix commit.

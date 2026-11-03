@@ -1,0 +1,52 @@
+{
+  "published_at": "2026-11-03T10:41:38.208412+00:00",
+  "previous_index_sha256": "88fd3b1d80e30ab5ac8bbb4e6c64ca1867daac7617fd20e73ece37367a24e17b",
+  "assets": [
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/data/changelog.md",
+      "bytes": 40679,
+      "sha256": "ba3b62fde058da7a6b4dfa112363e7e4a38825be51d9f5eb2954e32184d1cc49",
+      "https_verified": true
+    },
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/data/changelog.json",
+      "bytes": 44833,
+      "sha256": "8eb42a41db35c34fac5020d06e5af182ada1737dd69054309d7f64d57750efa3",
+      "https_verified": true
+    },
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/index.html",
+      "bytes": 182543,
+      "sha256": "46fea8759a0c2b3b1f51f2b80e4c2b0374f6c4dbfeafddf2a035e279bd8dae81",
+      "https_verified": true
+    }
+  ],
+  "source_commit": "d3cae5783030380fe947dea1679ad24905652460",
+  "ci": [
+    {
+      "name": "Source checks",
+      "conclusion": "success",
+      "url": "https://github.com/sev7enITA/NodeLift/actions/runs/41621367889"
+    },
+    {
+      "name": "Documentation checks",
+      "conclusion": "success",
+      "url": "https://github.com/sev7enITA/NodeLift/actions/runs/41621367929"
+    }
+  ],
+  "rendered_review_section": {
+    "languages": [
+      "en",
+      "zh-Hans",
+      "it"
+    ],
+    "method": "Actual Chrome UI language controls and rendered accessibility text; English viewport visually checked",
+    "url": "https://www.fabriziodegni.com/NodeLift/?lang=en#qwen-review",
+    "screenshot": {
+      "file": "portal-review-en.jpg",
+      "sha256": "8d9d82526507ae0f98282158d8dbe02ab0cc9de44b8036f3b4c3b21a505fff5a",
+      "language": "en",
+      "edited": false
+    }
+  }
+}
