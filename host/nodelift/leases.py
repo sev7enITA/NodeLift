@@ -116,17 +116,27 @@ class Mailbox:
     def submit(self, node, result):
         with self.condition:
             self._prune();entry=self.history.get((node,result.get('id')))
-            if not entry or not entry['delivered'] or entry['received']:
+            if not entry:
                 raise ValueError('unknown, expired or replayed inference lease')
+            def reject(code, message):
+                # Record only a bounded reason code and host clock, never the
+                # rejected payload. Diagnostics do not mark the lease received.
+                record=entry['record']
+                record['rejected_response_count']=min(record.get('rejected_response_count',0)+1,1000000)
+                record['last_rejection_code']=code
+                record['last_rejection_monotonic']=time.monotonic()
+                raise ValueError(message)
+            if not entry['delivered'] or entry['received']:
+                reject('undelivered_or_replayed','unknown, expired or replayed inference lease')
             expected=entry['message']
             for field in IDENTITY:
-                if result.get(field)!=expected[field]:raise ValueError('stale or mismatched draft identity')
+                if result.get(field)!=expected[field]:reject('identity_mismatch','stale or mismatched draft identity')
             if expected.get('pipeline')=='bounded_v1' and (type(result.get('sequence')) is not int or result['sequence']!=expected['sequence']):
-                raise ValueError('stale draft sequence')
+                reject('sequence_mismatch','stale draft sequence')
             ids=result.get('tokens',[])
             if not isinstance(ids,list) or len(ids)>expected['count'] or any(type(i) is not int or i<0 or i>=expected['vocab_size'] for i in ids):
-                raise ValueError('invalid draft token IDs')
-            if not ids and not result.get('error') and expected.get('op')!='finish':raise ValueError('empty successful draft')
+                reject('invalid_token_ids','invalid draft token IDs')
+            if not ids and not result.get('error') and expected.get('op')!='finish':reject('empty_draft','empty successful draft')
             now=time.monotonic();timing=worker_timing(result.get('telemetry'))
             if timing and timing.get('lookahead_parent_id'):
                 parent=self.history.get((node,timing['lookahead_parent_id']))

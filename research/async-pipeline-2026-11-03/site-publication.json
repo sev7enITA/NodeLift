@@ -1,0 +1,42 @@
+{
+  "published_at": "2026-11-03T07:04:20.117065+00:00",
+  "previous_index_sha256": "ec6c731a9abb922a79bb28eadf773478c46e3446843d779a3981a2e5ddac1ddb",
+  "assets": [
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/assets/pipeline-8b-pilot.png",
+      "bytes": 267204,
+      "sha256": "9ddbdd16dd511208b02ef0b5504fa0de7e609844e2df34f1f23e5ba7e0c8fe5e",
+      "https_verified": true
+    },
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/assets/site-locales.js",
+      "bytes": 34187,
+      "sha256": "ccc385c0dd1f011d424090500bddfd0e5ac2e40326e8de022a9fe703a1b7c2c1",
+      "https_verified": true
+    },
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/data/changelog.md",
+      "bytes": 37610,
+      "sha256": "d6b80f10566740e9959977e31a0101c4837da5caa191ab910bac28ae3b73507a",
+      "https_verified": true
+    },
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/data/changelog.json",
+      "bytes": 41406,
+      "sha256": "aed47715f86644b914887c89d67c08fd848b19b63c4d95c1bd7c1ec2ab9ca8b0",
+      "https_verified": true
+    },
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/data/mobile-downloads.json",
+      "bytes": 3518,
+      "sha256": "8c46dc14632452c103e441ce9955fafed1dbe963fbd8ed340b578842c771de02",
+      "https_verified": true
+    },
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/index.html",
+      "bytes": 172263,
+      "sha256": "649fa453f685de05a48daf1a167b04f1d2f87147043824c54e48658c53a8976a",
+      "https_verified": true
+    }
+  ]
+}

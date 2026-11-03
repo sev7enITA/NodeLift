@@ -1,0 +1,24 @@
+{
+  "published_at": "2026-11-03T07:11:59.178095+00:00",
+  "previous_index_sha256": "649fa453f685de05a48daf1a167b04f1d2f87147043824c54e48658c53a8976a",
+  "assets": [
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/assets/site-locales.js",
+      "bytes": 34187,
+      "sha256": "de6f45df69cc6c876de6112484e068f683d8c08b070d3a5347a7597bb36c074f",
+      "https_verified": true
+    },
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/data/mobile-installation.md",
+      "bytes": 8207,
+      "sha256": "87f01b9e7e6837e3986205f5da46d304bd9a53163f238c9d716a6772987d4e7e",
+      "https_verified": true
+    },
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/index.html",
+      "bytes": 172550,
+      "sha256": "26ac4eb58d013b3a59e993460b777f9a512d750a8d134684978a9ac0f0c4c920",
+      "https_verified": true
+    }
+  ]
+}

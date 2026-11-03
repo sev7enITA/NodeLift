@@ -27,3 +27,7 @@ Serial target verification is the default. Experimental batched verification req
 The native wrapper rejects embedded NUL and recognized special-token spellings inside chat message content, including system and assistant content. This preserves trusted template controls but currently rejects legitimate literal discussion of those spellings. Raw tokenization offers explicit `parse_special` and `add_special` flags. This is a tokenizer boundary, not protection against semantic prompt injection.
 
 Allocation/serialization failures cannot escape the C ABI; null is a response-allocation failure. Cooperative load cancellation clears partially loaded state. Tests exercise recovery, default serial equivalence, actual context boundaries and stale-prefix rejection. Passing these tests is not proof that every model, GPU, quantization or batch shape is exact. Batched output divergence remains a release gate, including when the affected mode is faster.
+
+## Rejected-response diagnostics
+
+A follow-up host patch records a bounded rejection count, host monotonic timestamp and fixed reason code for a known authenticated lease. It stores no rejected payload and neither marks an invalid result received nor authorizes its tokens. Foreign-node IDs do not touch another worker’s record. One additional regression test covers identity, sequence, token validation, valid recovery and replay; 164 host tests pass after this patch. Absence of a recorded rejection is not proof of network loss: a worker may not send a result, or a request may fail before reaching the mailbox.

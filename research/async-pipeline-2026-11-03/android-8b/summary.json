@@ -1,0 +1,96 @@
+[
+  {
+    "arm": 1,
+    "definition": [
+      "local_draft",
+      "serial",
+      "serial",
+      4
+    ],
+    "pairs": [],
+    "all_exact": false,
+    "median_speedup": null
+  },
+  {
+    "arm": 2,
+    "definition": [
+      "local_draft",
+      "experimental_batch",
+      "serial",
+      1
+    ],
+    "pairs": [],
+    "all_exact": false,
+    "median_speedup": null
+  },
+  {
+    "arm": 3,
+    "definition": [
+      "local_draft",
+      "experimental_batch",
+      "serial",
+      4
+    ],
+    "pairs": [],
+    "all_exact": false,
+    "median_speedup": null
+  },
+  {
+    "arm": 4,
+    "definition": [
+      "lookup",
+      "experimental_batch",
+      "serial",
+      1
+    ],
+    "pairs": [],
+    "all_exact": false,
+    "median_speedup": null
+  },
+  {
+    "arm": 5,
+    "definition": [
+      "remote_draft",
+      "serial",
+      "serial",
+      4
+    ],
+    "pairs": [],
+    "all_exact": false,
+    "median_speedup": null
+  },
+  {
+    "arm": 6,
+    "definition": [
+      "remote_draft",
+      "serial",
+      "bounded_v1",
+      4
+    ],
+    "pairs": [
+      {
+        "repetition": 0,
+        "prompt_id": 0,
+        "exact_tokens": true,
+        "speedup": 0.2073502204921872,
+        "ttft_delta_ms": 864.866167,
+        "fallback": true,
+        "cleanup_incomplete": true
+      }
+    ],
+    "all_exact": true,
+    "median_speedup": 0.2073502204921872
+  },
+  {
+    "arm": 7,
+    "definition": [
+      "remote_draft",
+      "experimental_batch",
+      "bounded_v1",
+      4
+    ],
+    "pairs": [],
+    "all_exact": false,
+    "median_speedup": null
+  }
+]

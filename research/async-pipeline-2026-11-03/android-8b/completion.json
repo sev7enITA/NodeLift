@@ -1,0 +1,6 @@
+{
+  "planned_attempts": 72,
+  "retained_attempts": 3,
+  "complete": false,
+  "stop_reason": "phone availability changed; remaining attempts were not executed"
+}

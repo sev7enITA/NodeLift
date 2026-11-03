@@ -218,16 +218,34 @@ class ProtocolTests(unittest.TestCase):
         self.state.heartbeat(p["node_id"],{"supported_jobs":["network"]})
         with self.assertRaises(ValueError):self.state.queue(p["node_id"],"cpu")
 
-    def test_connection_id_identifies_persistent_socket(self):
+    def test_tls_releases_slots_even_when_clients_do_not_close(self):
+        # More than the 32 server slots, retaining every client object. A
+        # companion that does not reuse idle sockets must not starve itself.
         p=self.pair()
         context=ssl.create_default_context(cafile=str(self.cert))
-        c=http.client.HTTPSConnection("127.0.0.1",self.server.server_port,context=context,timeout=3)
-        ids=[]
+        clients=[];ids=[]
         try:
-            for _ in range(2):
+            for _ in range(40):
+                c=http.client.HTTPSConnection("127.0.0.1",self.server.server_port,context=context,timeout=3)
+                clients.append(c)
                 c.request("GET","/v1/probe?size=64",headers={"Authorization":"Bearer "+p["token"]})
-                r=c.getresponse();self.assertEqual(r.status,200);ids.append(r.getheader("X-NodeLift-Connection-ID"));r.read()
-            self.assertTrue(ids[0]);self.assertEqual(ids[0],ids[1])
+                r=c.getresponse();self.assertEqual(r.status,200)
+                self.assertEqual(r.getheader("Connection"),"close")
+                self.assertTrue(r.will_close)
+                ids.append(r.getheader("X-NodeLift-Connection-ID"));r.read()
+            self.assertTrue(all(ids));self.assertEqual(len(set(ids)),40)
+        finally:
+            for c in clients:c.close()
+
+    def test_loopback_http_connection_remains_persistent(self):
+        c=http.client.HTTPConnection("127.0.0.1",self.admin.server_port,timeout=3)
+        try:
+            sockets=[]
+            for _ in range(2):
+                c.request("GET","/admin/status",headers={"Authorization":"Bearer test-admin"})
+                r=c.getresponse();self.assertEqual(r.status,200)
+                self.assertFalse(r.will_close);r.read();sockets.append(c.sock)
+            self.assertIsNotNone(sockets[0]);self.assertIs(sockets[0],sockets[1])
         finally:c.close()
 
 

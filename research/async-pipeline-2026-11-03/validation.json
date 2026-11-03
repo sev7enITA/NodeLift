@@ -139,5 +139,74 @@
     "swift_transfer_check": "passed on macOS",
     "physical_device_tested": false,
     "bounded_lookahead": false
+  },
+  "android_physical_smoke": {
+    "scope": "one 16-token prompt; host plus two remote arms; fixed order and cold host first",
+    "app_version": "0.2.13",
+    "remote_exact_outputs": 2,
+    "remote_attempts": 2,
+    "accepted_tokens_per_remote_run": 9,
+    "generation_fallbacks": 0,
+    "bounded_cleanup_complete": false,
+    "speedup_qualified": false,
+    "larger_target_physical_pilot": "two interrupted attempts; 3/72 and 2/72 measured arms retained"
+  },
+  "host_tests_after_rejection_diagnostics": 164,
+  "android_8b_attempts": {
+    "scope": "two interrupted physical attempts; no completed randomized pilot or performance qualification",
+    "attempts": [
+      {
+        "attempt": "android-8b",
+        "retained_attempts": 3,
+        "planned_attempts": 72,
+        "complete": false,
+        "reference_duration_ms": 3707.18425,
+        "remote_duration_ms": 17878.853667,
+        "reference_ttft_ms": 125.930083,
+        "remote_ttft_ms": 990.79625,
+        "token_count": 128,
+        "tokens_equal": true,
+        "accepted_tokens": 26,
+        "proposed_tokens": 36,
+        "fallbacks": 1,
+        "remote_wait_ms": 12753.253329894505,
+        "cleanup_ms": 2004.6215420006774,
+        "cleanup_incomplete": true,
+        "worker_connection_lost": true,
+        "last_successful_sequence": 8,
+        "first_expired_sequence": 9,
+        "rejected_responses_recorded": null
+      },
+      {
+        "attempt": "android-8b-retry1",
+        "retained_attempts": 2,
+        "planned_attempts": 72,
+        "complete": false,
+        "reference_duration_ms": 5241.018166,
+        "remote_duration_ms": 19100.709583,
+        "reference_ttft_ms": 124.643,
+        "remote_ttft_ms": 994.906542,
+        "token_count": 128,
+        "tokens_equal": true,
+        "accepted_tokens": 26,
+        "proposed_tokens": 36,
+        "fallbacks": 1,
+        "remote_wait_ms": 12778.09249801794,
+        "cleanup_ms": 2003.261208999902,
+        "cleanup_incomplete": true,
+        "worker_connection_lost": true,
+        "last_successful_sequence": 8,
+        "first_expired_sequence": 9,
+        "rejected_responses_recorded": 0
+      }
+    ]
+  },
+  "transport_followup": {
+    "host_tests": 165,
+    "result": "passed",
+    "tls_response_connection_close": true,
+    "physical_post_fix_test": "pending",
+    "diagnostic": "socket-diagnostic.json",
+    "scope": "Companion TLS slots are released after each response; local HTTP persistence retained."
   }
 }

@@ -1,0 +1,829 @@
+{
+  "scope": "Physical serial Android diagnostic with concurrent lsof sampling, not a performance benchmark",
+  "original_artifact_sha256": "dcfe3d9f33536de6501a244ebda8f10e982ea1c79f5de818dd754d7953b45ad5",
+  "samples": [
+    {
+      "elapsed_s": 0.07345304102636874,
+      "established": 3
+    },
+    {
+      "elapsed_s": 0.39392966602463275,
+      "established": 5
+    },
+    {
+      "elapsed_s": 0.7128970409976318,
+      "established": 5
+    },
+    {
+      "elapsed_s": 1.0359065409866162,
+      "established": 5
+    },
+    {
+      "elapsed_s": 1.3600861660088412,
+      "established": 5
+    },
+    {
+      "elapsed_s": 1.6822036249795929,
+      "established": 5
+    },
+    {
+      "elapsed_s": 2.0059408330125734,
+      "established": 5
+    },
+    {
+      "elapsed_s": 2.3261418329784647,
+      "established": 5
+    },
+    {
+      "elapsed_s": 2.6485400830279104,
+      "established": 5
+    },
+    {
+      "elapsed_s": 2.9795535409939475,
+      "established": 5
+    },
+    {
+      "elapsed_s": 3.3049772910308093,
+      "established": 7
+    },
+    {
+      "elapsed_s": 3.6434436659910716,
+      "established": 10
+    },
+    {
+      "elapsed_s": 3.970265833020676,
+      "established": 12
+    },
+    {
+      "elapsed_s": 4.307393499999307,
+      "established": 14
+    },
+    {
+      "elapsed_s": 4.642143291013781,
+      "established": 16
+    },
+    {
+      "elapsed_s": 4.966161333024502,
+      "established": 18
+    },
+    {
+      "elapsed_s": 5.2927516250056215,
+      "established": 20
+    },
+    {
+      "elapsed_s": 5.617184332979377,
+      "established": 22
+    },
+    {
+      "elapsed_s": 5.9416296249837615,
+      "established": 24
+    },
+    {
+      "elapsed_s": 6.266113208024763,
+      "established": 26
+    },
+    {
+      "elapsed_s": 6.591321957996115,
+      "established": 27
+    },
+    {
+      "elapsed_s": 6.927427957998589,
+      "established": 31
+    },
+    {
+      "elapsed_s": 7.260784375015646,
+      "established": 32
+    },
+    {
+      "elapsed_s": 7.584796332987025,
+      "established": 32
+    },
+    {
+      "elapsed_s": 7.914377750013955,
+      "established": 32
+    },
+    {
+      "elapsed_s": 8.237163832993247,
+      "established": 32
+    },
+    {
+      "elapsed_s": 8.56896574998973,
+      "established": 32
+    },
+    {
+      "elapsed_s": 8.887541499978397,
+      "established": 32
+    },
+    {
+      "elapsed_s": 9.214460832998157,
+      "established": 32
+    },
+    {
+      "elapsed_s": 9.549082208017353,
+      "established": 32
+    },
+    {
+      "elapsed_s": 9.876066708005965,
+      "established": 32
+    },
+    {
+      "elapsed_s": 10.203727415995672,
+      "established": 31
+    },
+    {
+      "elapsed_s": 10.525063999986742,
+      "established": 30
+    },
+    {
+      "elapsed_s": 10.85398424998857,
+      "established": 30
+    },
+    {
+      "elapsed_s": 11.18056050001178,
+      "established": 30
+    },
+    {
+      "elapsed_s": 11.504149999993388,
+      "established": 30
+    },
+    {
+      "elapsed_s": 11.836940540990327,
+      "established": 30
+    },
+    {
+      "elapsed_s": 12.169715165975504,
+      "established": 29
+    },
+    {
+      "elapsed_s": 12.499486291024368,
+      "established": 29
+    },
+    {
+      "elapsed_s": 12.82608283299487,
+      "established": 29
+    },
+    {
+      "elapsed_s": 13.145105000003241,
+      "established": 28
+    },
+    {
+      "elapsed_s": 13.46575833298266,
+      "established": 25
+    },
+    {
+      "elapsed_s": 13.78638416598551,
+      "established": 22
+    },
+    {
+      "elapsed_s": 14.113720958004706,
+      "established": 20
+    },
+    {
+      "elapsed_s": 14.445222290989477,
+      "established": 18
+    },
+    {
+      "elapsed_s": 14.775902374996804,
+      "established": 16
+    },
+    {
+      "elapsed_s": 15.109029582992662,
+      "established": 14
+    },
+    {
+      "elapsed_s": 15.431577583018225,
+      "established": 12
+    },
+    {
+      "elapsed_s": 15.765030790993478,
+      "established": 10
+    },
+    {
+      "elapsed_s": 16.099053999991156,
+      "established": 8
+    },
+    {
+      "elapsed_s": 16.43317333300365,
+      "established": 6
+    },
+    {
+      "elapsed_s": 16.763378707983065,
+      "established": 3
+    },
+    {
+      "elapsed_s": 17.09396533301333,
+      "established": 1
+    },
+    {
+      "elapsed_s": 17.423792791028973,
+      "established": 0
+    },
+    {
+      "elapsed_s": 17.793533291027416,
+      "established": 0
+    },
+    {
+      "elapsed_s": 18.110716000024695,
+      "established": 0
+    },
+    {
+      "elapsed_s": 18.43112475000089,
+      "established": 0
+    },
+    {
+      "elapsed_s": 18.75347829097882,
+      "established": 0
+    },
+    {
+      "elapsed_s": 19.07454391598003,
+      "established": 0
+    },
+    {
+      "elapsed_s": 19.396592499979306,
+      "established": 0
+    },
+    {
+      "elapsed_s": 19.717299124982674,
+      "established": 0
+    },
+    {
+      "elapsed_s": 20.037633707979694,
+      "established": 0
+    }
+  ],
+  "peak_established_connections": 32,
+  "server_slot_limit": 32,
+  "result": {
+    "status": "completed",
+    "fallback": true,
+    "token_count": 128,
+    "tokens_sha256": "8756547b7842979c11a70301864e5280fda44ebab967ad6b1f0b4ac86dc854b1",
+    "metrics": {
+      "timing_schema_version": 3,
+      "load_ms": 0.24887500330805779,
+      "target_prefill_wall_ms": 1934.0955830411986,
+      "target_prefill_native_ms": 1933.938666,
+      "target_prefill_tokens_per_second": 16.02946388373208,
+      "draft_initial_prefill_wall_ms": null,
+      "draft_initial_prefill_native_ms": null,
+      "prefill_ms": 1934.1437499970198,
+      "ttft_ms": 3127.4602499906905,
+      "worker_first_token_ready_ms": 3151.9017920363694,
+      "worker_first_text_ready_ms": 3151.9017920363694,
+      "generated_tokens": 128,
+      "accepted_tokens": 43,
+      "proposed_tokens": 56,
+      "elapsed_seconds": 20.107647874974646,
+      "tokens_per_second": 7.043220675537035,
+      "decode_seconds": 18.173504124977626,
+      "uncommitted_proposals": 13,
+      "fallbacks": 1,
+      "remote_wait_ms": 14355.946331983432,
+      "request_total_ms": 20132.874667004216,
+      "cleanup_ms": 0.0002500019036233425
+    },
+    "identity": {
+      "target_sha256": "667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29",
+      "draft_sha256": "6f85a640a97cf2bf5b8e764087b1e83da0fdb51d7c9fab7d0fece9385611df83",
+      "tokenizer_fingerprint": "cf0f6b7f9a6901172aa8262026fe173d120614fcfd452d91d31d602454466c07",
+      "config": {
+        "target_model": "sha256-667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29",
+        "draft_model": "Llama-3.2-1B-Instruct-Q4_K_M.gguf",
+        "n_ctx": 2048,
+        "threads": 8,
+        "gpu_layers": 999
+      },
+      "llama_commit": "ddf48f85c933c1f438212a02eb21e7b001d2d37d",
+      "verification_mode": "serial",
+      "pipeline": "serial",
+      "target_runtime": {
+        "gpu_layers_requested": 999,
+        "n_ctx": 2048,
+        "runtime": "0.8.0-dev",
+        "tokenizer_fingerprint": "cf0f6b7f9a6901172aa8262026fe173d120614fcfd452d91d31d602454466c07",
+        "vocab_size": 128256
+      },
+      "local_draft_resident_at_start": true,
+      "local_draft_resident_at_finish": true
+    },
+    "remote_trace": [
+      {
+        "id": "5e682aa6bbf129f4e1700dbd246c79b2",
+        "epoch": "aa5eb919942e15423fe74d2721ba2e9b",
+        "op": "draft",
+        "sequence": 0,
+        "created_monotonic": 447193.392598916,
+        "outcome": "returned",
+        "committed_proposals": 4,
+        "late_proposal_tokens": 0,
+        "lookahead_requested": false,
+        "dispatch_monotonic": 447193.392628625,
+        "host_queue_ms": 0.02970895729959011,
+        "received_monotonic": 447194.49394775,
+        "host_dispatch_to_result_ms": 1101.3191250385717,
+        "received_proposal_tokens": 4,
+        "worker": {
+          "schema_version": 1,
+          "evidence": "self_reported_worker_durations",
+          "worker_total_ms": 1032.261719,
+          "worker_validation_ms": 0.963073,
+          "worker_native_ms": 1031.077083,
+          "native_total_ms": 1030.610156,
+          "native_sync_ms": 844.461666,
+          "native_after_sync_ms": 186.14848999999992,
+          "native_decode_ms": 1022.1291669999999,
+          "native_decode_calls": 5,
+          "native_decode_tokens": 35,
+          "native_sync_tokens": 31
+        },
+        "worker_timing_status": "valid_self_report",
+        "late": false,
+        "unattributed_ms": 69.05740603857157,
+        "unattributed_scope": "transport, scheduling and unmeasured overhead; not network RTT",
+        "host_wait_ms": 1101.4569170074537,
+        "uncommitted_proposals": 0
+      },
+      {
+        "id": "20e7f63155bf4bb416341e423fbe49a1",
+        "epoch": "aa5eb919942e15423fe74d2721ba2e9b",
+        "op": "draft",
+        "sequence": 1,
+        "created_monotonic": 447194.585955708,
+        "outcome": "returned",
+        "committed_proposals": 4,
+        "late_proposal_tokens": 0,
+        "lookahead_requested": false,
+        "dispatch_monotonic": 447194.585990291,
+        "host_queue_ms": 0.034582975786179304,
+        "received_monotonic": 447194.805752458,
+        "host_dispatch_to_result_ms": 219.7621670202352,
+        "received_proposal_tokens": 4,
+        "worker": {
+          "schema_version": 1,
+          "evidence": "self_reported_worker_durations",
+          "worker_total_ms": 195.983021,
+          "worker_validation_ms": 0.435157,
+          "worker_native_ms": 195.410416,
+          "native_total_ms": 195.161979,
+          "native_sync_ms": 42.19151,
+          "native_after_sync_ms": 152.970469,
+          "native_decode_ms": 192.67150900000001,
+          "native_decode_calls": 5,
+          "native_decode_tokens": 5,
+          "native_sync_tokens": 1
+        },
+        "worker_timing_status": "valid_self_report",
+        "late": false,
+        "unattributed_ms": 23.779146020235203,
+        "unattributed_scope": "transport, scheduling and unmeasured overhead; not network RTT",
+        "host_wait_ms": 219.91283301031217,
+        "uncommitted_proposals": 0
+      },
+      {
+        "id": "d2243de4a2aff7f3236001f2e3d2bdc2",
+        "epoch": "aa5eb919942e15423fe74d2721ba2e9b",
+        "op": "draft",
+        "sequence": 2,
+        "created_monotonic": 447194.89816825,
+        "outcome": "returned",
+        "committed_proposals": 1,
+        "late_proposal_tokens": 0,
+        "lookahead_requested": false,
+        "dispatch_monotonic": 447194.898187458,
+        "host_queue_ms": 0.019208004232496023,
+        "received_monotonic": 447195.118625,
+        "host_dispatch_to_result_ms": 220.43754201149568,
+        "received_proposal_tokens": 4,
+        "worker": {
+          "schema_version": 1,
+          "evidence": "self_reported_worker_durations",
+          "worker_total_ms": 197.699792,
+          "worker_validation_ms": 0.319948,
+          "worker_native_ms": 197.241718,
+          "native_total_ms": 197.006406,
+          "native_sync_ms": 40.902083,
+          "native_after_sync_ms": 156.104323,
+          "native_decode_ms": 194.48000000000002,
+          "native_decode_calls": 5,
+          "native_decode_tokens": 5,
+          "native_sync_tokens": 1
+        },
+        "worker_timing_status": "valid_self_report",
+        "late": false,
+        "unattributed_ms": 22.737750011495677,
+        "unattributed_scope": "transport, scheduling and unmeasured overhead; not network RTT",
+        "host_wait_ms": 220.56366602191702,
+        "uncommitted_proposals": 3
+      },
+      {
+        "id": "45a6220e5cf9ac0142d8dbdc37339b8a",
+        "epoch": "aa5eb919942e15423fe74d2721ba2e9b",
+        "op": "draft",
+        "sequence": 3,
+        "created_monotonic": 447195.154593083,
+        "outcome": "returned",
+        "committed_proposals": 4,
+        "late_proposal_tokens": 0,
+        "lookahead_requested": false,
+        "dispatch_monotonic": 447195.154615291,
+        "host_queue_ms": 0.02220796886831522,
+        "received_monotonic": 447195.41016825,
+        "host_dispatch_to_result_ms": 255.55295898811892,
+        "received_proposal_tokens": 4,
+        "worker": {
+          "schema_version": 1,
+          "evidence": "self_reported_worker_durations",
+          "worker_total_ms": 233.465573,
+          "worker_validation_ms": 0.405,
+          "worker_native_ms": 232.930573,
+          "native_total_ms": 232.7075,
+          "native_sync_ms": 66.978229,
+          "native_after_sync_ms": 165.729271,
+          "native_decode_ms": 230.185365,
+          "native_decode_calls": 5,
+          "native_decode_tokens": 6,
+          "native_sync_tokens": 2
+        },
+        "worker_timing_status": "valid_self_report",
+        "late": false,
+        "unattributed_ms": 22.08738598811891,
+        "unattributed_scope": "transport, scheduling and unmeasured overhead; not network RTT",
+        "host_wait_ms": 255.71670796489343,
+        "uncommitted_proposals": 0
+      },
+      {
+        "id": "9671f681fcbe2f3a51d1ff7346a174c7",
+        "epoch": "aa5eb919942e15423fe74d2721ba2e9b",
+        "op": "draft",
+        "sequence": 4,
+        "created_monotonic": 447195.494912416,
+        "outcome": "returned",
+        "committed_proposals": 4,
+        "late_proposal_tokens": 0,
+        "lookahead_requested": false,
+        "dispatch_monotonic": 447195.494938916,
+        "host_queue_ms": 0.026500027161091566,
+        "received_monotonic": 447195.745753375,
+        "host_dispatch_to_result_ms": 250.81445899559185,
+        "received_proposal_tokens": 4,
+        "worker": {
+          "schema_version": 1,
+          "evidence": "self_reported_worker_durations",
+          "worker_total_ms": 201.278125,
+          "worker_validation_ms": 0.494583,
+          "worker_native_ms": 200.653229,
+          "native_total_ms": 200.382136,
+          "native_sync_ms": 45.826094,
+          "native_after_sync_ms": 154.556042,
+          "native_decode_ms": 197.81911499999998,
+          "native_decode_calls": 5,
+          "native_decode_tokens": 5,
+          "native_sync_tokens": 1
+        },
+        "worker_timing_status": "valid_self_report",
+        "late": false,
+        "unattributed_ms": 49.53633399559186,
+        "unattributed_scope": "transport, scheduling and unmeasured overhead; not network RTT",
+        "host_wait_ms": 250.95270900055766,
+        "uncommitted_proposals": 0
+      },
+      {
+        "id": "282ddd5068abe83a7ad4d5abeb796fbd",
+        "epoch": "aa5eb919942e15423fe74d2721ba2e9b",
+        "op": "draft",
+        "sequence": 5,
+        "created_monotonic": 447195.828281666,
+        "outcome": "returned",
+        "committed_proposals": 4,
+        "late_proposal_tokens": 0,
+        "lookahead_requested": false,
+        "dispatch_monotonic": 447195.828314375,
+        "host_queue_ms": 0.032709038350731134,
+        "received_monotonic": 447196.057401166,
+        "host_dispatch_to_result_ms": 229.08679099055007,
+        "received_proposal_tokens": 4,
+        "worker": {
+          "schema_version": 1,
+          "evidence": "self_reported_worker_durations",
+          "worker_total_ms": 204.520989,
+          "worker_validation_ms": 0.483177,
+          "worker_native_ms": 203.912135,
+          "native_total_ms": 203.652031,
+          "native_sync_ms": 44.883333,
+          "native_after_sync_ms": 158.768698,
+          "native_decode_ms": 201.16604,
+          "native_decode_calls": 5,
+          "native_decode_tokens": 5,
+          "native_sync_tokens": 1
+        },
+        "worker_timing_status": "valid_self_report",
+        "late": false,
+        "unattributed_ms": 24.565801990550085,
+        "unattributed_scope": "transport, scheduling and unmeasured overhead; not network RTT",
+        "host_wait_ms": 229.2077920283191,
+        "uncommitted_proposals": 0
+      },
+      {
+        "id": "e9cf09dfc93d13187d664f0de3f9cdcf",
+        "epoch": "aa5eb919942e15423fe74d2721ba2e9b",
+        "op": "draft",
+        "sequence": 6,
+        "created_monotonic": 447196.146231958,
+        "outcome": "returned",
+        "committed_proposals": 0,
+        "late_proposal_tokens": 0,
+        "lookahead_requested": false,
+        "dispatch_monotonic": 447196.14625625,
+        "host_queue_ms": 0.024291977752000093,
+        "received_monotonic": 447196.373306791,
+        "host_dispatch_to_result_ms": 227.0505410269834,
+        "received_proposal_tokens": 4,
+        "worker": {
+          "schema_version": 1,
+          "evidence": "self_reported_worker_durations",
+          "worker_total_ms": 201.679479,
+          "worker_validation_ms": 0.362656,
+          "worker_native_ms": 201.18052,
+          "native_total_ms": 200.947969,
+          "native_sync_ms": 44.64,
+          "native_after_sync_ms": 156.307969,
+          "native_decode_ms": 198.358542,
+          "native_decode_calls": 5,
+          "native_decode_tokens": 5,
+          "native_sync_tokens": 1
+        },
+        "worker_timing_status": "valid_self_report",
+        "late": false,
+        "unattributed_ms": 25.371062026983424,
+        "unattributed_scope": "transport, scheduling and unmeasured overhead; not network RTT",
+        "host_wait_ms": 227.17841697158292,
+        "uncommitted_proposals": 4
+      },
+      {
+        "id": "1ddc382c3e004b7f728485c51ec76b84",
+        "epoch": "aa5eb919942e15423fe74d2721ba2e9b",
+        "op": "draft",
+        "sequence": 7,
+        "created_monotonic": 447196.39099725,
+        "outcome": "returned",
+        "committed_proposals": 4,
+        "late_proposal_tokens": 0,
+        "lookahead_requested": false,
+        "dispatch_monotonic": 447196.394078875,
+        "host_queue_ms": 3.081625036429614,
+        "received_monotonic": 447196.641648416,
+        "host_dispatch_to_result_ms": 247.56954098120332,
+        "received_proposal_tokens": 4,
+        "worker": {
+          "schema_version": 1,
+          "evidence": "self_reported_worker_durations",
+          "worker_total_ms": 225.056927,
+          "worker_validation_ms": 0.443958,
+          "worker_native_ms": 224.49427,
+          "native_total_ms": 224.214635,
+          "native_sync_ms": 68.856719,
+          "native_after_sync_ms": 155.357916,
+          "native_decode_ms": 221.69968800000004,
+          "native_decode_calls": 5,
+          "native_decode_tokens": 6,
+          "native_sync_tokens": 2
+        },
+        "worker_timing_status": "valid_self_report",
+        "late": false,
+        "unattributed_ms": 22.512613981203316,
+        "unattributed_scope": "transport, scheduling and unmeasured overhead; not network RTT",
+        "host_wait_ms": 250.8049579919316,
+        "uncommitted_proposals": 0
+      },
+      {
+        "id": "8918f98e640a835f8c05229b66fdd50d",
+        "epoch": "aa5eb919942e15423fe74d2721ba2e9b",
+        "op": "draft",
+        "sequence": 8,
+        "created_monotonic": 447196.74066,
+        "outcome": "returned",
+        "committed_proposals": 1,
+        "late_proposal_tokens": 0,
+        "lookahead_requested": false,
+        "dispatch_monotonic": 447196.740687583,
+        "host_queue_ms": 0.027582980692386627,
+        "received_monotonic": 447196.970746625,
+        "host_dispatch_to_result_ms": 230.05904199089855,
+        "received_proposal_tokens": 4,
+        "worker": {
+          "schema_version": 1,
+          "evidence": "self_reported_worker_durations",
+          "worker_total_ms": 205.438646,
+          "worker_validation_ms": 0.48099,
+          "worker_native_ms": 204.837812,
+          "native_total_ms": 204.570209,
+          "native_sync_ms": 45.275729,
+          "native_after_sync_ms": 159.29448000000002,
+          "native_decode_ms": 202.078593,
+          "native_decode_calls": 5,
+          "native_decode_tokens": 5,
+          "native_sync_tokens": 1
+        },
+        "worker_timing_status": "valid_self_report",
+        "late": false,
+        "unattributed_ms": 24.620395990898544,
+        "unattributed_scope": "transport, scheduling and unmeasured overhead; not network RTT",
+        "host_wait_ms": 230.2054999745451,
+        "uncommitted_proposals": 3
+      },
+      {
+        "id": "c7205e61f3f4cfdfc44c0debac795a75",
+        "epoch": "aa5eb919942e15423fe74d2721ba2e9b",
+        "op": "draft",
+        "sequence": 9,
+        "created_monotonic": 447197.0075445,
+        "outcome": "returned",
+        "committed_proposals": 4,
+        "late_proposal_tokens": 0,
+        "lookahead_requested": false,
+        "dispatch_monotonic": 447197.007575333,
+        "host_queue_ms": 0.03083300543949008,
+        "received_monotonic": 447197.266970041,
+        "host_dispatch_to_result_ms": 259.39470797311515,
+        "received_proposal_tokens": 4,
+        "worker": {
+          "schema_version": 1,
+          "evidence": "self_reported_worker_durations",
+          "worker_total_ms": 235.654947,
+          "worker_validation_ms": 0.477708,
+          "worker_native_ms": 235.048125,
+          "native_total_ms": 234.785729,
+          "native_sync_ms": 73.756146,
+          "native_after_sync_ms": 161.029583,
+          "native_decode_ms": 232.263386,
+          "native_decode_calls": 5,
+          "native_decode_tokens": 6,
+          "native_sync_tokens": 2
+        },
+        "worker_timing_status": "valid_self_report",
+        "late": false,
+        "unattributed_ms": 23.739760973115153,
+        "unattributed_scope": "transport, scheduling and unmeasured overhead; not network RTT",
+        "host_wait_ms": 259.5151659916155,
+        "uncommitted_proposals": 0
+      },
+      {
+        "id": "93f1eaed702cc90cd9eeced99766ce98",
+        "epoch": "aa5eb919942e15423fe74d2721ba2e9b",
+        "op": "draft",
+        "sequence": 10,
+        "created_monotonic": 447197.351454583,
+        "outcome": "returned",
+        "committed_proposals": 1,
+        "late_proposal_tokens": 0,
+        "lookahead_requested": false,
+        "dispatch_monotonic": 447197.351479625,
+        "host_queue_ms": 0.02504198346287012,
+        "received_monotonic": 447197.639010375,
+        "host_dispatch_to_result_ms": 287.5307500362396,
+        "received_proposal_tokens": 4,
+        "worker": {
+          "schema_version": 1,
+          "evidence": "self_reported_worker_durations",
+          "worker_total_ms": 202.048177,
+          "worker_validation_ms": 0.612552,
+          "worker_native_ms": 201.301823,
+          "native_total_ms": 201.01427,
+          "native_sync_ms": 43.414167,
+          "native_after_sync_ms": 157.60010300000002,
+          "native_decode_ms": 198.506146,
+          "native_decode_calls": 5,
+          "native_decode_tokens": 5,
+          "native_sync_tokens": 1
+        },
+        "worker_timing_status": "valid_self_report",
+        "late": false,
+        "unattributed_ms": 85.48257303623961,
+        "unattributed_scope": "transport, scheduling and unmeasured overhead; not network RTT",
+        "host_wait_ms": 287.6667500240728,
+        "uncommitted_proposals": 3
+      },
+      {
+        "id": "2743ccc048d81dbce93eee5a3b05a61e",
+        "epoch": "aa5eb919942e15423fe74d2721ba2e9b",
+        "op": "draft",
+        "sequence": 11,
+        "created_monotonic": 447197.67292,
+        "outcome": "returned",
+        "committed_proposals": 4,
+        "late_proposal_tokens": 0,
+        "lookahead_requested": false,
+        "dispatch_monotonic": 447197.672944375,
+        "host_queue_ms": 0.02437504008412361,
+        "received_monotonic": 447197.9478845,
+        "host_dispatch_to_result_ms": 274.94012500392273,
+        "received_proposal_tokens": 4,
+        "worker": {
+          "schema_version": 1,
+          "evidence": "self_reported_worker_durations",
+          "worker_total_ms": 247.668542,
+          "worker_validation_ms": 0.497135,
+          "worker_native_ms": 247.052657,
+          "native_total_ms": 246.7675,
+          "native_sync_ms": 71.791146,
+          "native_after_sync_ms": 174.97635400000001,
+          "native_decode_ms": 244.19827999999998,
+          "native_decode_calls": 5,
+          "native_decode_tokens": 6,
+          "native_sync_tokens": 2
+        },
+        "worker_timing_status": "valid_self_report",
+        "late": false,
+        "unattributed_ms": 27.27158300392273,
+        "unattributed_scope": "transport, scheduling and unmeasured overhead; not network RTT",
+        "host_wait_ms": 275.1175829907879,
+        "uncommitted_proposals": 0
+      },
+      {
+        "id": "ad40b0f77025d5c35ce3423febfafafe",
+        "epoch": "aa5eb919942e15423fe74d2721ba2e9b",
+        "op": "draft",
+        "sequence": 12,
+        "created_monotonic": 447198.053814833,
+        "outcome": "returned",
+        "committed_proposals": 4,
+        "late_proposal_tokens": 0,
+        "lookahead_requested": false,
+        "dispatch_monotonic": 447198.053867,
+        "host_queue_ms": 0.05216698627918959,
+        "received_monotonic": 447198.28469875,
+        "host_dispatch_to_result_ms": 230.83175002830103,
+        "received_proposal_tokens": 4,
+        "worker": {
+          "schema_version": 1,
+          "evidence": "self_reported_worker_durations",
+          "worker_total_ms": 206.856511,
+          "worker_validation_ms": 0.504636,
+          "worker_native_ms": 206.217031,
+          "native_total_ms": 205.897864,
+          "native_sync_ms": 49.952031,
+          "native_after_sync_ms": 155.945833,
+          "native_decode_ms": 203.382656,
+          "native_decode_calls": 5,
+          "native_decode_tokens": 5,
+          "native_sync_tokens": 1
+        },
+        "worker_timing_status": "valid_self_report",
+        "late": false,
+        "unattributed_ms": 23.97523902830102,
+        "unattributed_scope": "transport, scheduling and unmeasured overhead; not network RTT",
+        "host_wait_ms": 231.03308299323544,
+        "uncommitted_proposals": 0
+      },
+      {
+        "id": "492101e47c56fc6e93f95c6cae15170e",
+        "epoch": "aa5eb919942e15423fe74d2721ba2e9b",
+        "op": "draft",
+        "sequence": 13,
+        "created_monotonic": 447198.367725541,
+        "outcome": "returned",
+        "committed_proposals": 4,
+        "late_proposal_tokens": 0,
+        "lookahead_requested": false,
+        "dispatch_monotonic": 447198.367750458,
+        "host_queue_ms": 0.024917011614888906,
+        "received_monotonic": 447198.678080916,
+        "host_dispatch_to_result_ms": 310.33045798540115,
+        "received_proposal_tokens": 4,
+        "worker": {
+          "schema_version": 1,
+          "evidence": "self_reported_worker_durations",
+          "worker_total_ms": 198.272396,
+          "worker_validation_ms": 0.52099,
+          "worker_native_ms": 197.62375,
+          "native_total_ms": 197.317448,
+          "native_sync_ms": 42.03599,
+          "native_after_sync_ms": 155.28145800000001,
+          "native_decode_ms": 194.80770900000002,
+          "native_decode_calls": 5,
+          "native_decode_tokens": 5,
+          "native_sync_tokens": 1
+        },
+        "worker_timing_status": "valid_self_report",
+        "late": false,
+        "unattributed_ms": 112.05806198540117,
+        "unattributed_scope": "transport, scheduling and unmeasured overhead; not network RTT",
+        "host_wait_ms": 310.4488339740783,
+        "uncommitted_proposals": 0
+      },
+      {
+        "id": "d1e70d173c70674ed217dccc7f386b9e",
+        "epoch": "aa5eb919942e15423fe74d2721ba2e9b",
+        "op": "draft",
+        "sequence": 14,
+        "created_monotonic": 447198.761889875,
+        "outcome": "expired",
+        "committed_proposals": 0,
+        "late_proposal_tokens": 0,
+        "lookahead_requested": false,
+        "host_wait_ms": 10005.050249979831
+      }
+    ]
+  },
+  "redaction": "Absolute model paths reduced to basenames. No credentials or phone network addresses retained."
+}

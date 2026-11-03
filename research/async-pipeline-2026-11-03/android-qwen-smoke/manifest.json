@@ -1,0 +1,58 @@
+{
+  "scope": "physical Android telemetry and pipeline smoke test; not a matched performance benchmark",
+  "date": "2026-11-03",
+  "node_label": "Xiaomi 17 Ultra (reported Xiaomi 25128PNA1C)",
+  "node_id_sha256": "c76a26bf8645bdfb773cfa37d96308acd4e8fad8512ca24857e09473e9def2bf",
+  "caps": {
+    "model": "Xiaomi 25128PNA1C",
+    "os": "Android 17 / API 37",
+    "app_version": "0.2.13",
+    "thermal": "nominal",
+    "transport": "other / not detected",
+    "lifecycle": "foreground-service",
+    "draft_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+    "tokenizer_fingerprint": "795dc470607fd5b32608b81d408164ed663e8020a3044cbef97ce9939508c016",
+    "native_build": "timing-v1-0.2.13",
+    "native_optimization": "O3",
+    "physical_memory_bytes": 15843803136,
+    "available_memory_bytes": 5516177408,
+    "process_memory_bytes": 669818880,
+    "battery_percent": 69,
+    "cpu_cores": 8,
+    "draft_timing_version": 1,
+    "bounded_lookahead": true,
+    "inference_available": false,
+    "engine_ready": true,
+    "supported_jobs": [
+      "cpu",
+      "network",
+      "network_paced"
+    ],
+    "evidence": "self-reported device telemetry"
+  },
+  "config": {
+    "target_model": "qwen2.5-1.5b-instruct-q4_k_m.gguf",
+    "draft_model": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+    "n_ctx": 2048,
+    "threads": 8,
+    "gpu_layers": 999
+  },
+  "prompt": "Explain in one sentence what RAM does.",
+  "tokens": 16,
+  "arms": [
+    [
+      "host",
+      "serial"
+    ],
+    [
+      "remote_draft",
+      "serial"
+    ],
+    [
+      "remote_draft",
+      "bounded_v1"
+    ]
+  ],
+  "timeout_ms": 10000,
+  "verification_mode": "serial"
+}

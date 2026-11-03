@@ -1,0 +1,49 @@
+{
+  "scope": "physical Qwen telemetry smoke; fixed order, cold host first, 16 tokens, no causal or performance ranking",
+  "results": [
+    {
+      "arm": "serial",
+      "tokens_equal_to_host": true,
+      "token_count": 16,
+      "accepted_tokens": 9,
+      "proposed_tokens": 26,
+      "uncommitted_proposals": 17,
+      "fallbacks": 0,
+      "summed_host_queue_ms": 92.56912406999618,
+      "summed_native_sync_ms": 480.33500100000003,
+      "summed_native_after_sync_ms": 494.0723959999999,
+      "summed_unattributed_ms": 329.63104301318924,
+      "lookahead_computed_reported": 0,
+      "lookahead_reused_reported": 0,
+      "lookahead_discarded_reported": 0,
+      "lookahead_prefix_consumed_reported": 0,
+      "cleanup_ms": 0.0005839974619448185,
+      "cleanup_incomplete": false,
+      "missing_cleanup_is_unknown": true
+    },
+    {
+      "arm": "bounded_v1",
+      "tokens_equal_to_host": true,
+      "token_count": 16,
+      "accepted_tokens": 9,
+      "proposed_tokens": 26,
+      "uncommitted_proposals": 17,
+      "fallbacks": 0,
+      "summed_host_queue_ms": 435.4866670910269,
+      "summed_native_sync_ms": 203.791979,
+      "summed_native_after_sync_ms": 753.911458,
+      "summed_unattributed_ms": 400.1205429629056,
+      "lookahead_computed_reported": 17,
+      "lookahead_reused_reported": 4,
+      "lookahead_discarded_reported": 12,
+      "lookahead_prefix_consumed_reported": 1,
+      "cleanup_ms": 2005.7057499652728,
+      "cleanup_incomplete": true,
+      "missing_cleanup_is_unknown": true
+    }
+  ],
+  "phone_optimization": "compiled artifact O3; authenticated phone self-report timing-v1-0.2.13",
+  "backend": "phone ARM64 CPU; host Metal",
+  "energy_measured": false,
+  "network_transport": "operator-described Xiaomi hotspot to Mac; Android active transport reported other / not detected"
+}

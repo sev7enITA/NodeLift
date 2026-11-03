@@ -52,6 +52,26 @@ class LeaseTimingTests(unittest.TestCase):
             box.submit('phone',{**w,'tokens':[]});t.join(1)
         self.assertLessEqual(len(box.history),2)
 
+    def test_rejection_diagnostics_do_not_authorize_or_consume_a_lease(self):
+        box=Mailbox();t,out,w=self.run_lease(box)
+        with self.assertRaises(ValueError):box.submit('another-phone',{**w,'tokens':[3]})
+        self.assertNotIn('rejected_response_count',box.trace('e')[0])
+        for update,code in [({'prefix_hash':'private-content'},'identity_mismatch'),
+                            ({'sequence':True},'sequence_mismatch'),
+                            ({'tokens':[True]},'invalid_token_ids'),
+                            ({'tokens':[]},'empty_draft')]:
+            with self.assertRaises(ValueError):box.submit('phone',{**w,'tokens':[3],**update})
+            row=box.trace('e')[0]
+            self.assertEqual(row['last_rejection_code'],code)
+            self.assertEqual(row['committed_proposals'],0)
+            self.assertNotIn('private-content',str(row))
+            self.assertFalse(next(iter(box.history.values()))['received'])
+        box.submit('phone',{**w,'tokens':[3]});t.join(1)
+        self.assertEqual(out['result']['tokens'],[3])
+        self.assertEqual(box.trace('e')[0]['rejected_response_count'],4)
+        with self.assertRaises(ValueError):box.submit('phone',{**w,'tokens':[3]})
+        self.assertEqual(box.trace('e')[0]['last_rejection_code'],'undelivered_or_replayed')
+
 class LookaheadTests(unittest.TestCase):
     def test_exact_prefix_or_discard(self):
         self.assertEqual(reusable([1,2],[3,4,5],[1,2,3],2),([4,5],1))

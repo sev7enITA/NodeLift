@@ -1,6 +1,6 @@
 # Bounded lookahead, native timing and the 8B control pilot
 
-**No reliable speedup has been established.** The exact-output serial variants are slower in this local pilot. Some batch variants are faster but diverge from the serial token sequence. The new optimized Android APK is available for physical qualification; these results are Mac measurements, not phone results.
+**No reliable speedup has been established.** The exact-output serial variants are slower in this local pilot. Some batch variants are faster but diverge from the serial token sequence. The performance tables below are Mac measurements. Separate physical Android checks validate timing acquisition, but two 128-token attempts on the 8B target were interrupted and required fallback. They do not establish phone acceleration.
 
 ![Every paired comparison, retaining output mismatches](comparative-pilot.png)
 
@@ -52,7 +52,22 @@ Read the [timing contract and limits](TIMING.md), [predeclared plan](PLAN.md), [
 
 ## Physical qualification still required
 
-The optimized Xiaomi build has not yet been observed by the host. No physical result from 0.2.13 is included. Start with the existing Qwen control pair to verify telemetry, then transfer the compatible 1B draft for the 8B target and run matched host/local/remote arms. Keep thermal snapshots, failures, fallback and discarded work. ACK wait, failed native work and unreachable cleanup remain incompletely measured and must not be reported as zero. Battery percentage is not energy consumption.
+The optimized 0.2.13 phone has now completed a separate [Qwen telemetry smoke check](android-qwen-smoke/README.md). Serial and bounded remote requests matched the 16-token host output with 9 accepted draft tokens each and no generation fallback. The bounded finish exchange expired; its approximately 2-second cleanup wait and incomplete accounting are retained. This fixed-order, cold-start check cannot support a speed comparison. The compatible 1B draft was subsequently transferred and used in two attempted 8B pilots, described below. Keep thermal snapshots, failures, fallback and discarded work. ACK wait, failed native work and unreachable cleanup remain incompletely measured and must not be reported as zero. Battery percentage is not energy consumption.
+
+### Interrupted physical 8B attempts
+
+![Observed response times and TTFT, including failures](physical-interruptions.png)
+
+The Xiaomi received the compatible 1B draft. Four warmups (host, local serial, remote serial and remote bounded) completed in each attempt. Both measured remote bounded requests then lost their worker at sequence 9, after 26 of 36 submitted draft tokens had been accepted. A ten-second lease expiry triggered host fallback; the finish exchange also expired after about two seconds. The final 128-token sequence still matched its host reference.
+
+| Attempt | Mac reference | Mac + Xiaomi bounded, including fallback/cleanup | Retained measured arms |
+|---|---:|---:|---:|
+| First | 3.707 s | 17.879 s | 3 of 72 planned |
+| With rejection diagnostics | 5.241 s | 19.101 s | 2 of 72 planned |
+
+Client TTFT was approximately 0.125 s on the Mac and 0.991-0.995 s on the remote path. These are two individual interrupted observations on one prompt, not a completed randomized performance comparison. Do not average them into a general speedup estimate. The second attempt adds bounded host-side rejection diagnostics; no rejected response was recorded for the expired lease. The first expired lease was dispatched; the second was never dispatched. The owner reported the screen remained on and the app showed connected. A subsequent serial diagnostic observed established HTTPS connections reach the server limit of 32 immediately before a lease expired. This supports connection-slot starvation as a concrete failure mechanism; it does not establish that every earlier timeout had this cause.
+
+Read the [attempt summary](physical-attempts.json), [first raw runs](android-8b/runs.jsonl), [second raw runs](android-8b-retry1/runs.jsonl) and each directory's frozen manifest, original collector and completion record. The collectors retained all written attempts; subsequent collection code now also reconstructs partial summaries from those rows when a post-run scope check stops the series. The next gate is to isolate the missing contact, then repeat serial and bounded physical arms against the recorded local controls. The source host now sends `Connection: close` on companion TLS responses, releasing bounded connection slots without waiting for an idle timeout. Plain loopback HTTP persistence is preserved. A 40-client regression and the full 165-test host suite pass. The correction has not yet been retested on the physical phone; additional TLS handshake overhead remains to be measured. No new Android binary is required for this host change. See [the socket diagnostic](socket-diagnostic.json).
 
 The historic O0 Android binary and new O3 binary differ in more than compiler optimization. A causal O0/O3 comparison needs two otherwise matched builds on the same phone. No pooled memory, model sharding or distributed acceleration is claimed.
 

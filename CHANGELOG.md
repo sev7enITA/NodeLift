@@ -159,6 +159,21 @@ Every published companion build has an entry below. Android packages are laborat
 
 ## Host, documentation and tooling updates
 
+### 2026-11-03: TLS connection-slot diagnostic and English presentation images
+
+- A physical serial Android diagnostic reached all 32 companion TLS connection slots before lease expiry. The source host now closes companion TLS responses promptly; 165 host tests pass, including more clients than the slot limit and retained local HTTP persistence. Physical post-fix validation and handshake overhead remain unmeasured. No new mobile binary is implied.
+- Replace the README and gallery presentation image with a real English browser capture. Preserve dated historical evidence and require English for future presentation screenshots.
+
+### 2026-11-03: Interrupted 8B physical trials and rejection diagnostics
+
+- Transferred the compatible 1B draft to Xiaomi 0.2.13. Two 8B attempts accepted 26 draft tokens before sequence 9 expired. Host fallback preserved the final 128-token sequence; finish accounting remained incomplete. Publish individual timing charts and all partial attempts, without calling the unfinished pilots a speedup.
+- Add bounded host-side rejection reason codes without retaining invalid payloads or granting token credit. 164 host tests pass. No rejected response was recorded in the second failure. The underlying interruption, including the connection-accumulation hypothesis, remains unresolved.
+
+### 2026-11-03: First physical optimized Android timing check
+
+- The Xiaomi 0.2.13 worker completed two remote 16-token Qwen requests with identical host-reference token hashes, 9 accepted draft tokens each and no generation fallback. Timing and bounded-work telemetry were received.
+- The bounded finish request timed out after approximately 2 seconds. Cleanup remains incomplete; the cause is unresolved. This fixed-order check, with a cold first host request, does not qualify speedup. The larger 8B/1B randomized physical pilot requires a new draft transfer.
+
 ### 2026-11-03: 8B bounded-pipeline controls and numerical diagnosis
 
 - Publish 72 NodeLift controller runs and 63 upstream HTTP control runs with raw tokens, timing records, comparative charts and independent design-review adjudication. Each harness uses its own baseline.

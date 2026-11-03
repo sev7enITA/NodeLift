@@ -102,6 +102,15 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def log_message(self, *_):
         pass  # Never put invitations, bearer tokens or query strings in logs.
 
+    def end_headers(self):
+        if self.server.context is not None:
+            # The mobile TLS client may leave separate idle sockets behind
+            # instead of reusing them. Release this bounded thread/slot after
+            # each response so one worker cannot exhaust all 32 slots. Local
+            # dashboard/gateway HTTP persistence is unchanged.
+            self.send_header("Connection", "close")
+        super().end_headers()
+
     def send(self, status, payload, content_type="application/json"):
         if not isinstance(payload, bytes):
             payload = json.dumps(payload, allow_nan=False).encode()

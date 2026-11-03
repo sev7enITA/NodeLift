@@ -1,0 +1,473 @@
+{
+  "scope": "physical Xiaomi 0.2.13 O3 paired 8B target pilot; exploratory, not sustained qualification",
+  "target_sha256": "667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29",
+  "draft_sha256": "6f85a640a97cf2bf5b8e764087b1e83da0fdb51d7c9fab7d0fece9385611df83",
+  "native_host_sha256": "a7a033ea527cedbf328db886db84cb900a443d5f17dd21b41377733310ff3f2a",
+  "collector_sha256": "0dcc6e90f26cb72e4a10795d4c12a3b4f974f0bdb1a740b09cfe4213813dfdb0",
+  "source_commit": "ffd3de894e3fe6d36c6a0024892e3ce417d6f746",
+  "prompts": [
+    "Write a Python function returning the unique elements of a list in their original order. Explain its time complexity.",
+    "Explain in Italian why network latency matters when computers collaborate. Use three brief points.",
+    "Write a concise comparison of RAM capacity and memory bandwidth for local language model inference."
+  ],
+  "arms": [
+    [
+      "host",
+      "serial",
+      "serial",
+      1
+    ],
+    [
+      "local_draft",
+      "serial",
+      "serial",
+      4
+    ],
+    [
+      "local_draft",
+      "experimental_batch",
+      "serial",
+      1
+    ],
+    [
+      "local_draft",
+      "experimental_batch",
+      "serial",
+      4
+    ],
+    [
+      "lookup",
+      "experimental_batch",
+      "serial",
+      1
+    ],
+    [
+      "remote_draft",
+      "serial",
+      "serial",
+      4
+    ],
+    [
+      "remote_draft",
+      "serial",
+      "bounded_v1",
+      4
+    ],
+    [
+      "remote_draft",
+      "experimental_batch",
+      "bounded_v1",
+      4
+    ]
+  ],
+  "plan": [
+    [
+      0,
+      0,
+      6
+    ],
+    [
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      4
+    ],
+    [
+      0,
+      0,
+      5
+    ],
+    [
+      0,
+      0,
+      7
+    ],
+    [
+      0,
+      0,
+      2
+    ],
+    [
+      0,
+      0,
+      3
+    ],
+    [
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      1,
+      3
+    ],
+    [
+      0,
+      1,
+      7
+    ],
+    [
+      0,
+      1,
+      5
+    ],
+    [
+      0,
+      1,
+      2
+    ],
+    [
+      0,
+      1,
+      6
+    ],
+    [
+      0,
+      1,
+      1
+    ],
+    [
+      0,
+      1,
+      4
+    ],
+    [
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      2,
+      4
+    ],
+    [
+      0,
+      2,
+      1
+    ],
+    [
+      0,
+      2,
+      7
+    ],
+    [
+      0,
+      2,
+      5
+    ],
+    [
+      0,
+      2,
+      3
+    ],
+    [
+      0,
+      2,
+      6
+    ],
+    [
+      0,
+      2,
+      0
+    ],
+    [
+      0,
+      2,
+      2
+    ],
+    [
+      1,
+      0,
+      6
+    ],
+    [
+      1,
+      0,
+      2
+    ],
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      7
+    ],
+    [
+      1,
+      0,
+      5
+    ],
+    [
+      1,
+      0,
+      4
+    ],
+    [
+      1,
+      0,
+      1
+    ],
+    [
+      1,
+      0,
+      3
+    ],
+    [
+      1,
+      1,
+      6
+    ],
+    [
+      1,
+      1,
+      5
+    ],
+    [
+      1,
+      1,
+      7
+    ],
+    [
+      1,
+      1,
+      4
+    ],
+    [
+      1,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      1
+    ],
+    [
+      1,
+      1,
+      3
+    ],
+    [
+      1,
+      1,
+      2
+    ],
+    [
+      1,
+      2,
+      0
+    ],
+    [
+      1,
+      2,
+      5
+    ],
+    [
+      1,
+      2,
+      7
+    ],
+    [
+      1,
+      2,
+      4
+    ],
+    [
+      1,
+      2,
+      3
+    ],
+    [
+      1,
+      2,
+      6
+    ],
+    [
+      1,
+      2,
+      2
+    ],
+    [
+      1,
+      2,
+      1
+    ],
+    [
+      2,
+      0,
+      2
+    ],
+    [
+      2,
+      0,
+      0
+    ],
+    [
+      2,
+      0,
+      1
+    ],
+    [
+      2,
+      0,
+      7
+    ],
+    [
+      2,
+      0,
+      6
+    ],
+    [
+      2,
+      0,
+      5
+    ],
+    [
+      2,
+      0,
+      3
+    ],
+    [
+      2,
+      0,
+      4
+    ],
+    [
+      2,
+      1,
+      7
+    ],
+    [
+      2,
+      1,
+      3
+    ],
+    [
+      2,
+      1,
+      4
+    ],
+    [
+      2,
+      1,
+      6
+    ],
+    [
+      2,
+      1,
+      5
+    ],
+    [
+      2,
+      1,
+      1
+    ],
+    [
+      2,
+      1,
+      2
+    ],
+    [
+      2,
+      1,
+      0
+    ],
+    [
+      2,
+      2,
+      7
+    ],
+    [
+      2,
+      2,
+      1
+    ],
+    [
+      2,
+      2,
+      0
+    ],
+    [
+      2,
+      2,
+      3
+    ],
+    [
+      2,
+      2,
+      2
+    ],
+    [
+      2,
+      2,
+      4
+    ],
+    [
+      2,
+      2,
+      6
+    ],
+    [
+      2,
+      2,
+      5
+    ]
+  ],
+  "seed": 2026110308,
+  "max_tokens": 128,
+  "repetitions": 3,
+  "config": {
+    "target_model": "sha256-667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29",
+    "draft_model": "Llama-3.2-1B-Instruct-Q4_K_M.gguf",
+    "n_ctx": 2048,
+    "threads": 8,
+    "gpu_layers": 999
+  },
+  "phone_caps": {
+    "model": "Xiaomi 25128PNA1C",
+    "os": "Android 17 / API 37",
+    "app_version": "0.2.13",
+    "thermal": "nominal",
+    "transport": "other / not detected",
+    "lifecycle": "foreground-service",
+    "draft_sha256": "6f85a640a97cf2bf5b8e764087b1e83da0fdb51d7c9fab7d0fece9385611df83",
+    "tokenizer_fingerprint": "cf0f6b7f9a6901172aa8262026fe173d120614fcfd452d91d31d602454466c07",
+    "native_build": "timing-v1-0.2.13",
+    "native_optimization": "O3",
+    "physical_memory_bytes": 15843803136,
+    "available_memory_bytes": 5533753344,
+    "process_memory_bytes": 1037166592,
+    "battery_percent": 67,
+    "cpu_cores": 8,
+    "draft_timing_version": 1,
+    "bounded_lookahead": true,
+    "inference_available": false,
+    "engine_ready": true,
+    "supported_jobs": [
+      "cpu",
+      "network",
+      "network_paced"
+    ],
+    "evidence": "self-reported device telemetry"
+  },
+  "topology": "Xiaomi hotspot supplies Mac; operator-described, no wired transport",
+  "phone_threads_and_context": "saved device preferences; not yet included in native telemetry",
+  "warmup_policy": "warm host/local/remote; keep target and host draft resident in every arm; record warmups separately",
+  "limits": [
+    "One session, three public prompts; not independent-session confidence or thermal endurance",
+    "No measured energy",
+    "Self-reported phone durations; residual is not RTT",
+    "Experimental batch mismatches disqualify exact-output speedup",
+    "Late cleanup can retain unknown work; client completion includes cleanup"
+  ],
+  "started_at_unix": 1793690305.869202
+}

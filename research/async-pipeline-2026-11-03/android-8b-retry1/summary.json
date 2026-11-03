@@ -1,0 +1,86 @@
+[
+  {
+    "arm": 1,
+    "definition": [
+      "local_draft",
+      "serial",
+      "serial",
+      4
+    ],
+    "pairs": [],
+    "all_exact": false,
+    "median_speedup": null
+  },
+  {
+    "arm": 2,
+    "definition": [
+      "local_draft",
+      "experimental_batch",
+      "serial",
+      1
+    ],
+    "pairs": [],
+    "all_exact": false,
+    "median_speedup": null
+  },
+  {
+    "arm": 3,
+    "definition": [
+      "local_draft",
+      "experimental_batch",
+      "serial",
+      4
+    ],
+    "pairs": [],
+    "all_exact": false,
+    "median_speedup": null
+  },
+  {
+    "arm": 4,
+    "definition": [
+      "lookup",
+      "experimental_batch",
+      "serial",
+      1
+    ],
+    "pairs": [],
+    "all_exact": false,
+    "median_speedup": null
+  },
+  {
+    "arm": 5,
+    "definition": [
+      "remote_draft",
+      "serial",
+      "serial",
+      4
+    ],
+    "pairs": [],
+    "all_exact": false,
+    "median_speedup": null
+  },
+  {
+    "arm": 6,
+    "definition": [
+      "remote_draft",
+      "serial",
+      "bounded_v1",
+      4
+    ],
+    "pairs": [],
+    "all_exact": false,
+    "median_speedup": null
+  },
+  {
+    "arm": 7,
+    "definition": [
+      "remote_draft",
+      "experimental_batch",
+      "bounded_v1",
+      4
+    ],
+    "pairs": [],
+    "all_exact": false,
+    "median_speedup": null
+  }
+]

@@ -1,0 +1,30 @@
+{
+  "published_at": "2026-11-03T07:43:19.863769+00:00",
+  "previous_index_sha256": "26ac4eb58d013b3a59e993460b777f9a512d750a8d134684978a9ac0f0c4c920",
+  "assets": [
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/assets/android-8b-interruptions.png",
+      "bytes": 157654,
+      "sha256": "b408c7ad1d46fe37bf71e3322dedcea8e1dfe3fdcc726809e54d101f1591d091",
+      "https_verified": true
+    },
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/data/changelog.md",
+      "bytes": 38859,
+      "sha256": "5f3cf64a5a697469be4ddc87e4cc9118089a4c483eefa887095219f32b5f5295",
+      "https_verified": true
+    },
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/data/changelog.json",
+      "bytes": 42825,
+      "sha256": "52e01c71d377fb51c0ea5e210a289b3b7f3d5dd6e6e861bdf30e5a59af0ff5b0",
+      "https_verified": true
+    },
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/index.html",
+      "bytes": 176192,
+      "sha256": "6d555616c2c6037538ce1dde3af794c2675b682d71703a4a47fff7b15bdbbd74",
+      "https_verified": true
+    }
+  ]
+}
