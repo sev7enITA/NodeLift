@@ -1,0 +1,26 @@
+{
+  "scope": "Cross-compiled NodeLift iOS framework; not a companion app or physical-device execution",
+  "timestamp_utc": "2026-11-03T00:53:56.511729+00:00",
+  "configure_exit": 0,
+  "build_exit": 0,
+  "upstream_commit": "ddf48f85c933c1f438212a02eb21e7b001d2d37d",
+  "upstream_compiled_subtrees_match_pin": true,
+  "source_hashes": {
+    "CMakeLists.txt": "08b224cecd9cc5f070afeaa059b4e8d34a3e89547c350d7f0eb5add9e652d5bd",
+    "core.cpp": "42420ceebef44e7696063cffafba375766a14ade7e50eacca5a71f0cfa6c413b",
+    "core.h": "ba705eed0ca8303a1cb0b4dbf616f57790ad77de00f73a0225f016c8783ba6a0"
+  },
+  "cmake_version": "3.22.1",
+  "sdk": "iphoneos",
+  "deployment_target": "17.0",
+  "architecture": "arm64",
+  "build_type": "Release",
+  "experimental_deferred_draft": false,
+  "header_present": true,
+  "header_matches_source": true,
+  "binary_sha256": "a3d50650f302505af9e9c1eea8afd6a96bd70620f3a73a281680bfe7a674eeb1",
+  "binary_type": "Mach-O 64-bit dynamically linked shared library arm64",
+  "physical_device_execution": false,
+  "app_release_created": false,
+  "cloud_checkout_build": "Stopped during slow generation; independent temporary source build completed"
+}

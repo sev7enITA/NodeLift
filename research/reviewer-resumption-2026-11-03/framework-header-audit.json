@@ -1,0 +1,20 @@
+{
+  "scope": "Minimal real iOS arm64 framework fixture; not a NodeLift iOS app build",
+  "cmake_version": "cmake version 3.22.1-g37088a8",
+  "results": [
+    {
+      "header_in_target_sources": false,
+      "configure_exit": 0,
+      "build_exit": 0,
+      "header_present": false,
+      "header_matches_source": false
+    },
+    {
+      "header_in_target_sources": true,
+      "configure_exit": 0,
+      "build_exit": 0,
+      "header_present": true,
+      "header_matches_source": true
+    }
+  ]
+}

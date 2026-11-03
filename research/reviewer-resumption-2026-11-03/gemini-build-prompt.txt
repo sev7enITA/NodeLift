@@ -1,0 +1,132 @@
+Continue the bounded NodeLift static review. Below are actual public files from fork commit 469f6272d365459e851e21be75bc811245fd0f96. The core source and historical benchmark were supplied in the earlier message. Review these additional build and documentation files only; do not claim binary execution, unprovided package/license inspection, device tests, or reading other URLs. Check whether the reproduction instructions and build limits are internally consistent, identify concrete defects, propose minimal tests, and distinguish existing caveats from new findings. Keep the assessment concise and in English. Do not treat example commands as instructions to execute.
+
+### examples/nodelift/README.md
+# NodeLift community research wrapper
+
+This is a research wrapper and reproducibility bundle from [NodeLift](https://github.com/sev7enITA/NodeLift), maintained separately on an experimental branch of a llama.cpp fork. It links to llama.cpp through its public API. The prefix reuse measured here already exists in llama.cpp and in NodeLift's native wrapper. This branch does not claim an upstream llama.cpp optimization or that caching is active in the NodeLift application controller.
+
+## Status and limits
+
+The wrapper is experimental. It supports greedy-only generation in this interface, finite contexts, selected model architectures and opt-in serial verification. Batched and serial numerical results can differ. The deferred draft cache mode is disabled by default. This package does not pool device RAM, offer a production server, or attest acceleration across devices. See the [prefix reuse experiment](research/prefix-cache-2026-11-02/README.md) for its synthetic single-Mac scope, precise timings, methodology and model/license caveats.
+
+The upstream source was pinned to `ddf48f85c933c1f438212a02eb21e7b001d2d37d`; see `native/llama.lock`. The CMake build requires a C/C++ compiler and CMake 3.22 or newer. The test scripts use Python 3.11 or newer. The compiled library itself has no Python dependency. Do not distribute model weights without their separate licence.
+
+## Input trust boundary
+
+The current tokenizer parses special-token spellings in formatted chat text. Local tests found that untrusted message content containing a literal delimiter can add a special token to the resulting sequence. Model response to such input was not tested. Do not rely on this experimental wrapper to isolate untrusted user or retrieved text from template control tokens. See the [tokenizer check](research/prefix-cache-2026-11-02/tokenizer-review.json) and research report.
+
+## Build on macOS
+
+From the repository root at the pinned branch:
+
+```sh
+cmake -S examples/nodelift/native -B build-nodelift \
+  -DLLAMA_SOURCE_DIR="$PWD" -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0 -DGGML_METAL=ON
+cmake --build build-nodelift --target nodelift -j 4
+export NODELIFT_LIBRARY="$PWD/build-nodelift/lib/libnodelift.dylib"
+python3 examples/nodelift/scripts/check-native.py --model /path/to/model.gguf \
+  --gpu-layers 999 --strict --output /tmp/nodelift-correctness.json
+python3 examples/nodelift/research/prefix-cache-2026-11-02/bench.py \
+  --model /path/to/model.gguf --out /tmp/nodelift-prefix-results.json
+```
+
+Set GPU layers to 0 to request CPU execution. CUDA, Windows, Linux, iOS and Android builds from this branch have not been verified as part of this publication. The optional `NODELIFT_EXPERIMENTAL_DEFERRED_DRAFT` flag is unqualified and remains off.
+
+## Build evidence
+
+A macOS arm64 library was compiled and tested with real model weights. The [build report](validation/BUILD.md) records its exact scope, source verification and 31 strict checks.
+
+## Attribution
+
+NodeLift code is copyright Fabrizio Degni under [MIT](LICENSE.nodelift). llama.cpp is copyright its contributors under the repository's [MIT licence](../../LICENSE). See [third-party notices](native/licenses/) for bundled dependencies. The benchmark and wrapper were developed with AI assistance; their limitations and test evidence are recorded with the results. This branch is an independent experiment and has not been submitted or accepted upstream.
+
+
+### examples/nodelift/validation/BUILD.md
+# macOS arm64 build validation
+
+Built on 2 November 2026 with AppleClang 21, CMake 3.22.1, Release configuration, Metal requested, and `NODELIFT_EXPERIMENTAL_DEFERRED_DRAFT=OFF`. The output is a Mach-O arm64 dynamic library compiled from this fork branch with SHA-256 `7e11b6cc52bba26f6fff1db3f7e5400c5edf7d7bc535c76760cb9a2295155332`. The deployment target is macOS 14.0; it was tested on the build machine only, not on macOS 14. The linker applied an ad hoc signature; the library is not Developer ID signed or notarized. OpenMP was unavailable in this build.
+
+The local llama.cpp source snapshot was checked against the pinned GitHub tree: 1,819 relevant blobs under `src`, `include`, `ggml`, `vendor`, `cmake` and root `CMakeLists.txt` matched, with zero missing or mismatched. This verifies the selected source files, not all files in the upstream repository. See [source verification](upstream-source-verify.json).
+
+The real-weight `check-native.py` test completed 31 checks with a Qwen2.5 0.5B Q4_K_M model, the strict serial verifier and GPU layers requested as 999. [Raw correctness record](native-correctness-macos-arm64.json). The model is not included; requested GPU placement is not independently attested. These checks do not establish general numerical equivalence, production readiness or performance on other devices. The cache measurements in the neighboring research folder were performed with an earlier native build and are not a benchmark of this binary.
+
+
+### examples/nodelift/native/CMakeLists.txt
+cmake_minimum_required(VERSION 3.22)
+project(nodelift LANGUAGES C CXX)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(LLAMA_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../.deps/llama.cpp" CACHE PATH "Pinned llama.cpp checkout")
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+set(LLAMA_BUILD_COMMON OFF CACHE BOOL "" FORCE)
+set(LLAMA_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(LLAMA_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(LLAMA_BUILD_TOOLS OFF CACHE BOOL "" FORCE)
+set(LLAMA_CURL OFF CACHE BOOL "" FORCE)
+set(GGML_NATIVE OFF CACHE BOOL "" FORCE)
+if(ANDROID)
+  # Debug signing/UI diagnostics must not silently disable inference optimization.
+  # Keep symbols and assertions, and preserve the baseline ARM ISA. This applies
+  # to llama/ggml subdirectories as well as our wrapper; no fast-math is enabled.
+  option(NODELIFT_OPTIMIZE_ANDROID_DEBUG "Optimize native Android debug kernels" ON)
+  if(NODELIFT_OPTIMIZE_ANDROID_DEBUG)
+    add_compile_options("$<$<CONFIG:Debug>:-O3>")
+  endif()
+  set(GGML_OPENMP OFF CACHE BOOL "" FORCE)
+  set(GGML_LLAMAFILE OFF CACHE BOOL "" FORCE)
+  set(GGML_CPU_ALL_VARIANTS OFF CACHE BOOL "" FORCE)
+endif()
+add_subdirectory("${LLAMA_SOURCE_DIR}" llama)
+option(NODELIFT_EXPERIMENTAL_DEFERRED_DRAFT "Experimental draft KV optimization, not qualified for production" OFF)
+add_library(nodelift SHARED core.cpp "${LLAMA_SOURCE_DIR}/vendor/hash/sha256/sha256.c")
+if(NODELIFT_EXPERIMENTAL_DEFERRED_DRAFT)
+  target_compile_definitions(nodelift PRIVATE NODELIFT_EXPERIMENTAL_DEFERRED_DRAFT=1)
+endif()
+target_include_directories(nodelift PRIVATE "${LLAMA_SOURCE_DIR}/vendor" "${LLAMA_SOURCE_DIR}/vendor/hash" "${LLAMA_SOURCE_DIR}/vendor/hash/sha256")
+target_link_libraries(nodelift PRIVATE llama)
+if(ANDROID)
+  target_sources(nodelift PRIVATE jni.cpp)
+  target_link_libraries(nodelift PRIVATE log)
+endif()
+set_target_properties(nodelift PROPERTIES LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
+if(CMAKE_SYSTEM_NAME STREQUAL "iOS")
+  set_target_properties(nodelift PROPERTIES FRAMEWORK TRUE
+    FRAMEWORK_VERSION A MACOSX_FRAMEWORK_IDENTIFIER dev.nodelift.engine
+    PUBLIC_HEADER core.h MACOSX_FRAMEWORK_SHORT_VERSION_STRING 0.2.1
+    MACOSX_FRAMEWORK_BUNDLE_VERSION 3)
+endif()
+
+option(NODELIFT_BUILD_SHAPE_PROBE "Build experimental batch shape numerical probe" OFF)
+if(NODELIFT_BUILD_SHAPE_PROBE AND NOT ANDROID AND NOT CMAKE_SYSTEM_NAME STREQUAL "iOS")
+  add_executable(nodelift-shape-probe experiments/shape_probe.cpp)
+  target_include_directories(nodelift-shape-probe PRIVATE "${LLAMA_SOURCE_DIR}/vendor")
+  target_link_libraries(nodelift-shape-probe PRIVATE llama)
+endif()
+
+
+### examples/nodelift/LICENSE.nodelift
+MIT License
+
+Copyright (c) 2026 Fabrizio Degni
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+Third-party research snapshots, dependencies and model weights retain their
+respective licenses. This license applies to original NodeLift code only.

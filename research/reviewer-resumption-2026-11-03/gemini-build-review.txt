@@ -1,0 +1,129 @@
+1. File Access & Scope Ledger
+
+No binaries were executed, no external URLs were fetched in this turn, and no unprovided files were inspected.
+
+Read in this turn (Commit 469f6272d365459e851e21be75bc811245fd0f96):
+
+examples/nodelift/README.md (complete)
+
+examples/nodelift/validation/BUILD.md (complete)
+
+examples/nodelift/native/CMakeLists.txt (complete, 48 lines)
+
+examples/nodelift/LICENSE.nodelift (complete)
+
+Read in previous turn (Commit 42458074580813661f1a35fa8da60107ee796fe7):
+
+examples/nodelift/native/core.h, examples/nodelift/native/core.cpp, examples/nodelift/research/prefix-cache-2026-11-02/bench.py, and partial HTML of [fabriziodegni.com/NodeLift/#evidence](https://fabriziodegni.com/NodeLift/#evidence).
+
+Referenced in the newly provided docs/build files, but NOT read:
+
+examples/nodelift/native/llama.lock, examples/nodelift/native/licenses/, examples/nodelift/native/jni.cpp, examples/nodelift/native/experiments/shape_probe.cpp, examples/nodelift/scripts/check-native.py, examples/nodelift/host/nodelift/native.py, examples/nodelift/validation/upstream-source-verify.json, examples/nodelift/validation/native-correctness-macos-arm64.json, examples/nodelift/research/prefix-cache-2026-11-02/README.md, examples/nodelift/research/prefix-cache-2026-11-02/tokenizer-review.json, and root LICENSE.
+
+2. Existing Disclosed Caveats vs. Remaining / New Findings
+
+Cross-referencing README.md and BUILD.md against the earlier core.cpp and bench.py findings resolves or narrows several points while confirming others:
+
+Topic	Already Disclosed by Author in README.md / BUILD.md	Remaining Undisclosed Defect or Gap (Verified in Code)
+Special-token injection (F-01)	README.md (Input trust boundary) explicitly warns that tokenize parses special-token spellings in formatted chat text and that untrusted delimiters can inject control tokens.	Still active & undisclosed: (1) chat=false also forces add_special=true and parse_special=true (core.cpp:224,226). In bench.py:13-15,21, tokenizing base, old, and new separately with chat=False prepends a BOS token (<|begin_of_text|>) to old and new, injecting a second BOS at token index 256 and 1024. (2) In chat=true, if the model's Jinja chat template already emits a leading BOS string, parse_special=true + add_special=true produces a duplicate leading [BOS, BOS].
+Batched vs. serial drift (F-06)	README.md (Status and limits) explicitly states: "Batched and serial numerical results can differ." BUILD.md notes that the 31 checks used the strict serial verifier and do not establish general numerical equivalence.	New gap (B-01 below): README.md and BUILD.md run check-native.py with --strict (verify_serial), whereas core.cpp:242 defaults strict to false (verify). Furthermore, verify() omits the "verification_mode" JSON key returned by verify_serial().
+Deferred draft mode (F-05, F-07)	README.md, BUILD.md, and CMakeLists.txt:24 confirm NODELIFT_EXPERIMENTAL_DEFERRED_DRAFT is OFF by default and was OFF in the validated macOS binary (7e11b6cc...).	Confirmed active in release binary: Because the flag is OFF, the validated binary executes the #else branches in core.cpp:120 and 139: (1) sync() evicts and re-decodes the last matching prefix token (--keep) whenever keep < cached.size() even when keep < prefix.size() (including every reuse run in bench.py); (2) draft(prefix, count) executes count llama_decode calls instead of count - 1.
+Binary vs. benchmark provenance	BUILD.md explicitly states that the prefix-cache measurements were run on an earlier native build, not on binary 7e11b6cc..., and that macOS 14 compatibility, Developer ID signing/notarization, and actual GPU placement are unattested.	Still active (F-09): bench.py:34 hardcodes 'model': 'Llama 3.1 8B Q4_K_M' in its output JSON even when invoked with --model /path/to/model.gguf as instructed in README.md:33-34 (e.g., if a user runs it with the Qwen2.5 0.5B Q4_K_M model from BUILD.md).
+3. Concrete New Defects in Build, Packaging & Reproduction Files
+[B-01] Validation Coverage Gap: --strict in README.md/BUILD.md Bypasses Default Batched verify() and Its Custom KV Rollback
+
+Severity: Medium / High
+
+File / Line: README.md:31-32, BUILD.md:9-11, core.cpp:147-204, 242.
+
+Trigger Condition: Following the reproduction commands in README.md (check-native.py ... --strict) or relying on the 31 checks in BUILD.md. When strict=true is passed, core.cpp:242 routes verification to verify_serial() (which uses sync(prefix) and single-token decode). However, default callers omitting "strict": true execute verify() (core.cpp:170-204), which uses a separate, hand-written KV rollback loop (before, llama_memory_seq_rm, and batched decode(batch, true)) and omits "verification_mode" from its JSON response (core.cpp:202 vs 168).
+
+Minimal Confirmation Test: Send {"op":"verify","prefix":[...],"proposal":[...]} without "strict" via nl_call: inspect the returned JSON to confirm "verification_mode" is absent and that cached retains rejected proposal tokens until the next sync()/verify() call.
+
+Minimal Fix:
+
+Add {"verification_mode", "batch"} to the return object of Engine::verify() at core.cpp:203.
+
+Run check-native.py both with and without --strict in README.md / BUILD.md so the batched KV rollback path (core.cpp:178-186) is explicitly covered by correctness checks.
+
+[B-02] Global Symbol Table Pollution & sha256_* Symbol Collision Hazard in libnodelift
+
+Severity: Medium
+
+File / Line: CMakeLists.txt:4, 6, 25, 30; core.h:4-11; core.cpp:4-6.
+
+Trigger Condition: CMakeLists.txt builds llama statically with PIC (BUILD_SHARED_LIBS OFF, CMAKE_POSITION_INDEPENDENT_CODE ON) and links it alongside ${LLAMA_SOURCE_DIR}/vendor/hash/sha256/sha256.c into the shared library nodelift without setting hidden symbol visibility (CMAKE_C_VISIBILITY_PRESET hidden, CMAKE_CXX_VISIBILITY_PRESET hidden) or a linker export list. As a result, libnodelift.dylib / libnodelift.so exports not only the 5 nl_* C ABI functions, but also all GGML_API / LLAMA_API symbols and the unprefixed global C symbols sha256_init, sha256_update, and sha256_final. Loading libnodelift into a host process (Python, Android JNI process, or LM Studio) that links another llama.cpp build or a C library defining sha256_init/sha256_update/sha256_final risks symbol interposition or ODR violations.
+
+Minimal Confirmation Test: Inspect exported global symbols on the built library using nm -gU build-nodelift/lib/libnodelift.dylib (macOS) or nm -D libnodelift.so (Linux/Android): verify that  _sha256_init, _sha256_update, _sha256_final, _llama_*, and _ggml_* are globally exported alongside _nl_*.
+
+Minimal Fix:
+In CMakeLists.txt, set hidden visibility on nodelift and restrict exported symbols to _nl_*:
+
+CMake
+set_target_properties(nodelift PROPERTIES
+  C_VISIBILITY_PRESET hidden
+  CXX_VISIBILITY_PRESET hidden
+  VISIBILITY_INLINES_HIDDEN ON)
+
+
+And mark the 5 functions in core.h / core.cpp with __attribute__((visibility("default"))) (or pass -Wl,-exported_symbols_list on Apple platforms).
+
+[B-03] Missing core.h in nodelift Target Sources Breaks iOS .framework Header Installation
+
+Severity: Medium (for iOS builds)
+
+File / Line: CMakeLists.txt:25, 36-41.
+
+Trigger Condition: Configuring CMake with -DCMAKE_SYSTEM_NAME=iOS. Lines 36–41 set FRAMEWORK TRUE and PUBLIC_HEADER core.h on target nodelift. However, in CMake, files listed in PUBLIC_HEADER must also be listed as sources of the target (add_library or target_sources) for CMake's framework generator to copy them into nodelift.framework/Headers/. Because line 25 (add_library(nodelift SHARED core.cpp "${LLAMA_SOURCE_DIR}/vendor/hash/sha256/sha256.c")) omits core.h, CMake does not populate Headers/core.h inside the framework bundle.
+
+Minimal Confirmation Test: Configure and build with -DCMAKE_SYSTEM_NAME=iOS and inspect build/lib/nodelift.framework/Headers/core.h (file will be missing).
+
+Minimal Fix: Add core.h to the target sources in CMakeLists.txt:25:
+
+CMake
+add_library(nodelift SHARED core.cpp core.h "${LLAMA_SOURCE_DIR}/vendor/hash/sha256/sha256.c")
+
+[B-04] Undocumented Hard Limits in core.cpp vs. README.md Reproduction Instructions
+
+Severity: Low / Medium
+
+File / Line: README.md:7, 25-36; core.cpp:78-79, 96, 129, 148, 171, 209, 214, 219.
+
+Trigger Condition: README.md states the wrapper supports "finite contexts, selected model architectures" and provides generic CLI commands (--model /path/to/model.gguf), but does not document the strict numeric bounds hardcoded in core.cpp:79:
+
+threads: 1 <= threads <= 16 (fails on >16 thread configurations)
+
+n_ctx: 256 <= n_ctx <= 8192
+
+gpu_layers: 0 <= gpu_layers <= 999
+
+proposal.size() <= 16, 1 <= remaining <= 512, 1 <= draft count <= 512, 1 <= messages.size() <= 32.
+Additionally, if a user runs bench.py --model /path/to/qwen2.5-0.5b.gguf right after running check-native.py with the Qwen2.5 0.5B model from BUILD.md, bench.py succeeds (if len(base) >= 1024) but writes "model": "Llama 3.1 8B Q4_K_M" into /tmp/nodelift-prefix-results.json (F-09).
+
+Minimal Confirmation Test: Call load with {"op":"load","path":"...","threads":24} -> throws "invalid model limits".
+
+Minimal Fix: Document the exact parameter bounds in README.md under Status and limits, and replace the hardcoded 'model': 'Llama 3.1 8B Q4_K_M' in bench.py:34 with dynamic model metadata.
+
+[B-05] CMakeLists.txt Missing CMAKE_CXX_STANDARD_REQUIRED ON and Subdirectory Scope of Android -O3 Flag
+
+Severity: Low
+
+File / Line: CMakeLists.txt:3, 16-19, 23.
+
+Trigger Condition:
+
+Line 3 sets set(CMAKE_CXX_STANDARD 17) without set(CMAKE_CXX_STANDARD_REQUIRED ON) or set(CMAKE_CXX_EXTENSIONS OFF).
+
+Lines 17–19 call add_compile_options("$<$<CONFIG:Debug>:-O3>") before add_subdirectory("${LLAMA_SOURCE_DIR}" llama). Because Debug builds in CMake do not define NDEBUG, compiling ggml and llama in Debug mode with -O3 keeps runtime assert() / GGML_ASSERT() checks active inside compute paths while mixing -O0 (from toolchain CMAKE_CXX_FLAGS_DEBUG) and -O3 on the command line.
+
+Minimal Confirmation Test: Inspect compile_commands.json generated with -DCMAKE_BUILD_TYPE=Debug -DANDROID=ON: verify that -O0 and -O3 both appear on the compiler line without -DNDEBUG.
+
+Minimal Fix: Add set(CMAKE_CXX_STANDARD_REQUIRED ON) after line 3, and document or use RelWithDebInfo instead of mutating Debug flags globally across subdirectories.
+
+4. Internal Consistency Summary Across the 4 Provided Files
+
+README.md ↔ BUILD.md ↔ CMakeLists.txt: Internally consistent regarding CMake minimum version (3.22), output path (build-nodelift/lib/libnodelift.dylib via LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"), default state of NODELIFT_EXPERIMENTAL_DEFERRED_DRAFT (OFF), and macOS deployment target (14.0 when passed on the CLI as shown in README.md).
+
+README.md ↔ CMakeLists.txt Default LLAMA_SOURCE_DIR: CMakeLists.txt:5 defaults LLAMA_SOURCE_DIR to ${CMAKE_CURRENT_SOURCE_DIR}/../.deps/llama.cpp (the standalone NodeLift repo layout), whereas inside the fork tree README.md:26 correctly overrides it via -DLLAMA_SOURCE_DIR="$PWD". Note that if a user runs CMake inside the fork without -DLLAMA_SOURCE_DIR="$PWD", CMake will fail unless examples/nodelift/.deps/llama.cpp exists; defaulting LLAMA_SOURCE_DIR to CMAKE_CURRENT_SOURCE_DIR/../.. when ${CMAKE_CURRENT_SOURCE_DIR}/../../include/llama.h exists would make out-of-the-box fork builds less error-prone.
+
+LICENSE.nodelift ↔ README.md: LICENSE.nodelift is a standard MIT license for original NodeLift code and explicitly carves out third-party snapshots, dependencies, and model weights. (Note: native/licenses/ and root ../../LICENSE referenced in README.md:45 were not provided and remain uninspected).
