@@ -1,0 +1,24 @@
+{
+  "fork_commit": "70c29c60ef15d832e791eedea768f663f4de2885",
+  "comparison": [
+    {
+      "file": "core.cpp",
+      "nodelift_sha256": "ea143c43b03f712125b0192c753771d6e1288baaeef33926e9b01af3c6f77edb",
+      "fork_sha256": "ea143c43b03f712125b0192c753771d6e1288baaeef33926e9b01af3c6f77edb",
+      "identical": true
+    },
+    {
+      "file": "core.h",
+      "nodelift_sha256": "ac0a7d0bfaed732b6afc8174ab042300ba1f4a2bc7949273eeacf10567d0c185",
+      "fork_sha256": "ac0a7d0bfaed732b6afc8174ab042300ba1f4a2bc7949273eeacf10567d0c185",
+      "identical": true
+    },
+    {
+      "file": "CMakeLists.txt",
+      "nodelift_sha256": "f1db7cd55f375279b5ccd29148795c776e4eede5505ee7963ae965d7f7feb822",
+      "fork_sha256": "f1db7cd55f375279b5ccd29148795c776e4eede5505ee7963ae965d7f7feb822",
+      "identical": true
+    }
+  ],
+  "scope": "Only identical files inherit the supplied-source coverage. Different build files need a separate packet."
+}

@@ -1,0 +1,182 @@
+[
+  {
+    "id": "native-state",
+    "prompt_sha256": "12235dc4519aed4e8f9d4be731c4489ca6b45df7e0256049bada31e3af380972",
+    "prompt_bytes": 17381,
+    "source": [
+      {
+        "path": "native/core.cpp",
+        "sha256": "ea143c43b03f712125b0192c753771d6e1288baaeef33926e9b01af3c6f77edb",
+        "line_start": 1,
+        "line_end": 205
+      },
+      {
+        "path": "native/core.h",
+        "sha256": "ac0a7d0bfaed732b6afc8174ab042300ba1f4a2bc7949273eeacf10567d0c185",
+        "line_start": 1,
+        "line_end": 17
+      },
+      {
+        "path": "native/CMakeLists.txt",
+        "sha256": "f1db7cd55f375279b5ccd29148795c776e4eede5505ee7963ae965d7f7feb822",
+        "line_start": 1,
+        "line_end": 55
+      }
+    ]
+  },
+  {
+    "id": "native-boundary",
+    "prompt_sha256": "b8da2c2ff55ddc19af3619fb0098afd0681043254b7d1fd34260e5026d72fb89",
+    "prompt_bytes": 12049,
+    "source": [
+      {
+        "path": "native/core.cpp",
+        "sha256": "ea143c43b03f712125b0192c753771d6e1288baaeef33926e9b01af3c6f77edb",
+        "line_start": 200,
+        "line_end": 339
+      },
+      {
+        "path": "native/jni.cpp",
+        "sha256": "909924505080a5fb1a0f416307fe6fccbbdd78265edf344a97cca175c3e66894",
+        "line_start": 1,
+        "line_end": 12
+      }
+    ]
+  },
+  {
+    "id": "controller",
+    "prompt_sha256": "f92241ae73866b967a92dad398f45df1d88a0b3303af2e73599a1f71ecfd1e51",
+    "prompt_bytes": 16739,
+    "source": [
+      {
+        "path": "host/nodelift/engine.py",
+        "sha256": "8d3dadad4fd862128241728dc866753f91e32453b8f3c6197e35ed6592e19380",
+        "line_start": 220,
+        "line_end": 416
+      }
+    ]
+  },
+  {
+    "id": "leases",
+    "prompt_sha256": "257e6401b5f79329f559b77fe1d2f69eaae4eb403e14fd65adac4adad5198fc1",
+    "prompt_bytes": 11908,
+    "source": [
+      {
+        "path": "host/nodelift/leases.py",
+        "sha256": "f52ff276929d60eb58605215fcc0d49df06522d2d4a981a503a0b290bc0ce625",
+        "line_start": 1,
+        "line_end": 173
+      }
+    ]
+  },
+  {
+    "id": "transport",
+    "prompt_sha256": "7ddd2524f64e3a84a12c237eb32a4bf443e0ff15601b9885f19da8263098ec87",
+    "prompt_bytes": 12644,
+    "source": [
+      {
+        "path": "host/nodelift/host.py",
+        "sha256": "1e24a5add54183e7c52fdba95615dd5fbfcf779d2ce09de5790b1313d9b74111",
+        "line_start": 1,
+        "line_end": 200
+      },
+      {
+        "path": "host/tests/test_protocol.py",
+        "sha256": "58233a09e5982f707143bf6a5cd62e9f6ee8ed490b828477ef26b3f7397419f1",
+        "line_start": 220,
+        "line_end": 252
+      }
+    ]
+  },
+  {
+    "id": "android-lifecycle",
+    "prompt_sha256": "39a157984e8a5b09ea00d766dc917ae22ba6000077baa08b75fb0e7d7bb07bfa",
+    "prompt_bytes": 22550,
+    "source": [
+      {
+        "path": "apps/android/app/src/main/java/dev/nodelift/companion/NodeService.kt",
+        "sha256": "b7cc46bfc78df9fbe888a4b46ab627caea240752648061ecf517212bda6cf75e",
+        "line_start": 1,
+        "line_end": 277
+      }
+    ]
+  },
+  {
+    "id": "android-transport",
+    "prompt_sha256": "00a11c037beca4e39e29297ef9f2ba7f749f34a463a4e8acf531aea426a4edff",
+    "prompt_bytes": 24121,
+    "source": [
+      {
+        "path": "apps/android/app/src/main/java/dev/nodelift/companion/Protocol.kt",
+        "sha256": "9321b7d4211f76a39530dafa8b2bb76139a1456d8817a74b7952bd519750f84e",
+        "line_start": 1,
+        "line_end": 204
+      },
+      {
+        "path": "apps/android/app/src/main/java/dev/nodelift/companion/NativeEngine.kt",
+        "sha256": "6f2e215dbafeda17be5485455d69f4173f17e0074ab900bad944cfe9bf808fb4",
+        "line_start": 1,
+        "line_end": 137
+      }
+    ]
+  },
+  {
+    "id": "impact-estimator",
+    "prompt_sha256": "968c85fe43cab725a24be1ee8b79c8ff7c27c86b4de04636148efdee6ea8f1bd",
+    "prompt_bytes": 10864,
+    "source": [
+      {
+        "path": "host/nodelift/impact.py",
+        "sha256": "e2b9590fdddae461788fe0340624e04873a7f1f33b51d3a66922edca9e70a5bc",
+        "line_start": 1,
+        "line_end": 190
+      }
+    ]
+  },
+  {
+    "id": "impact-attribution",
+    "prompt_sha256": "e3f4468e3774f99506a5e77c2825949055f41c4bb2c456dd8edb19d241914e3f",
+    "prompt_bytes": 14066,
+    "source": [
+      {
+        "path": "host/nodelift/impact.py",
+        "sha256": "e2b9590fdddae461788fe0340624e04873a7f1f33b51d3a66922edca9e70a5bc",
+        "line_start": 190,
+        "line_end": 366
+      }
+    ]
+  },
+  {
+    "id": "provider",
+    "prompt_sha256": "22e96fe3b46ba455ddb9304620db018278ad8ee84fa0ef19e86ccebe698b9ade",
+    "prompt_bytes": 18717,
+    "source": [
+      {
+        "path": "host/nodelift/providers.py",
+        "sha256": "4eac0ca9605f29dc77dfe41f238e90f923253e8c078f2712d58a6145500570fd",
+        "line_start": 1,
+        "line_end": 199
+      },
+      {
+        "path": "host/nodelift/gateway.py",
+        "sha256": "49cbd1f4a680e4b77fa3a279b6767db26f25de2c43a4de4631a48822b4d053b2",
+        "line_start": 1,
+        "line_end": 73
+      }
+    ]
+  },
+  {
+    "id": "jni-fix-audit",
+    "phase": "Known-fix audit, not blind discovery",
+    "prompt_sha256": "fee43aef86d071a442d1e002ce26e772b60126ba01218e6bc34e4d654c00686e",
+    "prompt_bytes": 6980,
+    "source": [
+      {
+        "path": "native/jni.cpp",
+        "sha256": "e7513f4ba31b12e73e3f8fe03c06a26b22df70dab546932627de9179b76e394f",
+        "line_start": 1,
+        "line_end": 48
+      }
+    ]
+  }
+]

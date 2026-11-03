@@ -52,6 +52,16 @@ class LeaseTimingTests(unittest.TestCase):
             box.submit('phone',{**w,'tokens':[]});t.join(1)
         self.assertLessEqual(len(box.history),2)
 
+    def test_null_total_is_missing_telemetry_without_discarding_valid_tokens(self):
+        box=Mailbox();t,out,w=self.run_lease(box)
+        box.submit('phone',{**w,'tokens':[3], 'telemetry':{'schema_version':1,'worker_total_ms':None}})
+        t.join(1)
+        self.assertEqual(out['result']['tokens'],[3])
+        row=box.trace('e')[0]
+        self.assertEqual(row['worker_timing_status'],'missing_or_invalid')
+        self.assertIsNone(row['worker'])
+        self.assertNotIn('unattributed_ms',row)
+
     def test_rejection_diagnostics_do_not_authorize_or_consume_a_lease(self):
         box=Mailbox();t,out,w=self.run_lease(box)
         with self.assertRaises(ValueError):box.submit('another-phone',{**w,'tokens':[3]})

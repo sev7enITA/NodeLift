@@ -1,0 +1,76 @@
+{
+  "scope": "CPU real-weight native correctness checks, not performance or phone tests",
+  "model": "qwen2.5-0.5b-instruct-q4_k_m.gguf",
+  "model_sha256": "74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db",
+  "library_sha256": "a7a033ea527cedbf328db886db84cb900a443d5f17dd21b41377733310ff3f2a",
+  "script_sha256": "ced882667e9dd33ac9e41a0209829e7d728146f6392d23da08d8fde25f7c6330",
+  "checks": [
+    {
+      "case": "255-token prefix plus one proposal in context 256",
+      "strict": true,
+      "result": {
+        "tokens": [
+          785
+        ],
+        "accepted": 1,
+        "proposed": 1,
+        "verification_mode": "serial"
+      },
+      "passed": true
+    },
+    {
+      "case": "255-token prefix plus one proposal in context 256",
+      "strict": false,
+      "result": {
+        "tokens": [
+          785
+        ],
+        "accepted": 1,
+        "proposed": 1,
+        "verification_mode": "experimental_batch"
+      },
+      "passed": true
+    },
+    {
+      "case": "serial accepted count with remaining budget",
+      "remaining": 1,
+      "accepted": 1,
+      "output_tokens": 1,
+      "passed": true
+    },
+    {
+      "case": "serial accepted count with remaining budget",
+      "remaining": 2,
+      "accepted": 2,
+      "output_tokens": 2,
+      "passed": true
+    },
+    {
+      "case": "serial accepted count with remaining budget",
+      "remaining": 3,
+      "accepted": 3,
+      "output_tokens": 3,
+      "passed": true
+    },
+    {
+      "case": "serial accepted count with remaining budget",
+      "remaining": 4,
+      "accepted": 4,
+      "output_tokens": 4,
+      "passed": true
+    },
+    {
+      "case": "serial accepted count with remaining budget",
+      "remaining": 5,
+      "accepted": 4,
+      "output_tokens": 5,
+      "passed": true
+    },
+    {
+      "case": "one accepted proposal followed by replacement",
+      "accepted": 1,
+      "output_tokens": 2,
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "completed_at_utc": "2026-11-03T10:31:37Z",
+  "completed_packets": 11,
+  "truncated_packets": [
+    "native-state",
+    "transport",
+    "impact-estimator",
+    "impact-attribution"
+  ],
+  "human_adjudication": "pending"
+}

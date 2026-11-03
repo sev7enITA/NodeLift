@@ -159,6 +159,13 @@ Every published companion build has an entry below. Android packages are laborat
 
 ## Host, documentation and tooling updates
 
+### 2026-11-03: Local Qwen review and verified request-boundary corrections
+
+- Run the pinned HauhauCS Qwen3.8 27B Q4_K_P model locally through NodeLift, retaining source packets, model identity, raw responses, truncation markers and independent finding adjudication. MTP is disabled; this is static code review, not a distributed performance result.
+- Reproduce and fix a provider cancellation window identified by Qwen: cancellation during connection setup must be checked before a generation POST is sent. A real loopback regression fails before and passes after. OS DNS/connect is not promised to stop instantly.
+- Independently correct supplementary Unicode conversion at the JNI boundary and reject null worker totals as missing telemetry without discarding valid tokens. Validation: 167 host tests, 15 real JVM/JNI cases, Android ARM64 object compilation and eight real-weight native counterchecks. The JNI correction is source-only; published companion build 16 is unchanged.
+- Publish the observed TLS connection-slot pressure graph and refresh current Android/iOS evidence descriptions. Physical post-fix phone performance and rapid lifecycle transitions remain unqualified.
+
 ### 2026-11-03: TLS connection-slot diagnostic and English presentation images
 
 - A physical serial Android diagnostic reached all 32 companion TLS connection slots before lease expiry. The source host now closes companion TLS responses promptly; 165 host tests pass, including more clients than the slot limit and retained local HTTP persistence. Physical post-fix validation and handshake overhead remain unmeasured. No new mobile binary is implied.

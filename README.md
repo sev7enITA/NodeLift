@@ -41,14 +41,16 @@ The current experimental implementation supports phone-assisted drafting: a smal
 
 *Public showcase capture, not a companion-app screenshot or live telemetry. [More images and provenance](docs/GALLERY.md).*
 
+The [local Qwen code review](research/qwen-review-2026-11-03/README.md) records a reproduced provider cancellation defect, two independently found boundary corrections, raw reviewer responses and their adjudication. Published mobile build 16 is unchanged.
+
 ## Implementation and evidence
 
 | Component | Implemented | Observed evidence / limit |
 |---|---|---|
 | Native core | Locked llama.cpp, greedy block verification, correction/bonus, EOS, KV resynchronization | Real-weight M3 Max/Metal tests; no universal bitwise-equivalence claim |
 | Remote work | Pinned TLS, lease, epoch, prefix/vocabulary/model identities | Real-weight loopback tests including wrong proposals and lost replies; emulated node |
-| Android | ARM64 CPU draft worker, checked LAN model transfer, battery/thermal controls | APK built; physical Xiaomi measurements used the earlier 0.1 qualification app |
-| iOS | Native Metal/CPU worker, GGUF import, foreground lifecycle, user limits | Unsigned device build compiled; physical iPhone inference remains open |
+| Android | ARM64 CPU draft worker, checked LAN model transfer, battery/thermal controls | Xiaomi supplied draft tokens in physical 0.2.8 and 0.2.13 trials; larger-target attempts required fallback, with no qualified speedup |
+| iOS | Native Metal/CPU worker, GGUF import, foreground lifecycle, user limits | Private signed 0.2.12 builds supplied draft tokens on iPhone 15 Pro Max; public 0.2.13 remains unsigned and physically unqualified |
 | HarmonyOS NEXT | Separate ArkTS qualification candidate | No HAP or native inference worker |
 | Desktop | [Device graph](docs/DEVICE-GRAPH.md), hardware inspector, run contribution, pairing, diagnostics, model settings | Browser functional checks and accounting tests; contribution is accepted token attribution, not compute share |
 | Integration | Authenticated text chat gateway and LM Studio generator | Real-weight HTTP/adapter-handler tests; LM Studio GUI qualification open |
@@ -91,9 +93,9 @@ The optional control-model download is approximately 1.61 GB, with fixed [revisi
 
 [Visual phone benchmarks](research/visual-benchmarks-2026-11-02/README.md): inspect paired timing, first-token delay, fallback and useful proposals. [Open the chart gallery](https://www.fabriziodegni.com/NodeLift/#benchmark-charts).
 
-[Performance diagnosis](https://github.com/sev7enITA/NodeLift/blob/main/research/performance-diagnosis-2026-11-02/REPORT.md): an unoptimized Android native build is corrected and cross-compiled; nine new iPhone pairs reject a width-only solution. That report predates the optimized 0.2.13 Android release; physical qualification of the new binary remains pending.
+[Performance diagnosis](https://github.com/sev7enITA/NodeLift/blob/main/research/performance-diagnosis-2026-11-02/REPORT.md): an unoptimized Android native build is corrected and cross-compiled; nine new iPhone pairs reject a width-only solution. That report predates the optimized 0.2.13 Android release; the new binary has since passed a short physical timing check, while longer 8B trials were interrupted.
 
-[8B pipeline pilot and visual results](research/async-pipeline-2026-11-03/README.md): 135 local runs retain both timings and exact-token comparisons. Serial draft paths were slower; some batch paths were faster but changed output. A controlled probe reproduces a token flip when KV history and batch shape change. Serial verification stays the default. Android 0.2.13 adds native timing and opt-in bounded lookahead; its physical test is still pending.
+[8B pipeline pilot and visual results](research/async-pipeline-2026-11-03/README.md): 135 local runs retain both timings and exact-token comparisons. Serial draft paths were slower; some batch paths were faster but changed output. A controlled probe reproduces a token flip when KV history and batch shape change. Serial verification stays the default. Android 0.2.13 adds native timing and opt-in bounded lookahead; a short physical timing check passed, but longer 8B trials reached fallback. A later serial diagnostic reached all 32 TLS connection slots; the source host correction passes 165 tests and still needs phone validation.
 
 The speed workstream targets lower single-chat latency than the best applicable local baseline at the same target, sampling rules and actual output length. The capacity workstream targets model/context workloads that exceed the declared host memory budget. Both support the shared local execution service; capacity, speed and multi-user throughput require separate experiments. Reported physical RAM is not memory already shared with the host.
 

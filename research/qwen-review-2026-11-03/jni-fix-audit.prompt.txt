@@ -1,0 +1,177 @@
+Review this proposed JNI Unicode correction as a STATIC follow-up. This is a known issue found independently by Codex before your review, not a request to claim a new discovery. The old bridge rejected literal supplementary Unicode in valid JSON because JNI Modified UTF-8 was passed to a standard UTF-8 parser. The candidate passed 15 real JVM/JNI cases on macOS and compiled as an Android ARM64 object; no phone test or APK release is claimed. Inspect the exact patch for a concrete regression or missing safety property. Consider malformed surrogate pairs, embedded raw NUL, exception containment, JNI allocation failure and output encoding. Cite exact code and a testable trigger. If no supported defect is found, say so. Reply in English within 180 words. Do not claim test execution.
+
+--- before/native/jni.cpp
++++ after/native/jni.cpp
+@@ -1,12 +1,48 @@
+ #include <jni.h>
+ #include "core.h"
++#include <memory>
++#include <string>
++
++// JNI's GetStringUTFChars uses Modified UTF-8, not the standard UTF-8 JSON
++// accepted by nl_call. Preserve scalar values and reject malformed UTF-16.
++static bool json_utf8(JNIEnv * env, jstring input, std::string & out) {
++    const jsize size=env->GetStringLength(input);
++    const jchar * chars=env->GetStringChars(input,nullptr);
++    if(!chars)return false;
++    auto release=[&](const jchar * p){env->ReleaseStringChars(input,p);};
++    std::unique_ptr<const jchar,decltype(release)> guard(chars,release);
++    out.reserve(size_t(size)*3);
++    for(jsize i=0;i<size;++i) {
++        unsigned int cp=chars[i];
++        if(cp==0)return false; // Raw NUL is not JSON and would truncate the C ABI.
++        if(cp>=0xd800 && cp<=0xdbff) {
++            if(i+1>=size || chars[i+1]<0xdc00 || chars[i+1]>0xdfff)return false;
++            cp=0x10000+((cp-0xd800)<<10)+(chars[++i]-0xdc00);
++        } else if(cp>=0xdc00 && cp<=0xdfff)return false;
++        if(cp<0x80)out.push_back(char(cp));
++        else if(cp<0x800){out.push_back(char(0xc0|(cp>>6)));out.push_back(char(0x80|(cp&0x3f)));}
++        else if(cp<0x10000){out.push_back(char(0xe0|(cp>>12)));out.push_back(char(0x80|((cp>>6)&0x3f)));out.push_back(char(0x80|(cp&0x3f)));}
++        else {out.push_back(char(0xf0|(cp>>18)));out.push_back(char(0x80|((cp>>12)&0x3f)));out.push_back(char(0x80|((cp>>6)&0x3f)));out.push_back(char(0x80|(cp&0x3f)));}
++    }
++    return true;
++}
+ extern "C" JNIEXPORT jlong JNICALL Java_dev_nodelift_companion_NativeEngine_create(JNIEnv *,jobject) {return reinterpret_cast<jlong>(nl_create());}
+ extern "C" JNIEXPORT jstring JNICALL Java_dev_nodelift_companion_NativeEngine_request(JNIEnv * env,jobject,jlong handle,jstring input) {
+-    const char * text=env->GetStringUTFChars(input,nullptr);
+-    if(!text)return nullptr; // JNI already has a pending allocation exception.
+-    char * result=nl_call(reinterpret_cast<void *>(handle),text);env->ReleaseStringUTFChars(input,text);
+-    if(!result)return env->NewStringUTF("{\"error\":\"native allocation failed\"}");
+-    jstring value=env->NewStringUTF(result);nl_free_string(result);return value;
++    try {
++        std::string text;
++        if(!input || !json_utf8(env,input,text)) {
++            if(env->ExceptionCheck())return nullptr;
++            return env->NewStringUTF("{\"error\":\"invalid Unicode or NUL in JSON request\"}");
++        }
++        std::unique_ptr<char,decltype(&nl_free_string)> result(nl_call(reinterpret_cast<void *>(handle),text.c_str()),nl_free_string);
++        if(!result)return env->NewStringUTF("{\"error\":\"native allocation failed\"}");
++        // nl_call serializes with ensure_ascii=true, so Modified UTF-8 output
++        // is safe here: supplementary characters are JSON ASCII escapes.
++        return env->NewStringUTF(result.get());
++    } catch(...) {
++        if(env->ExceptionCheck())return nullptr;
++        return env->NewStringUTF("{\"error\":\"native request conversion failed\"}");
++    }
+ }
+ extern "C" JNIEXPORT void JNICALL Java_dev_nodelift_companion_NativeEngine_interrupt(JNIEnv *,jobject,jlong handle) {nl_cancel(reinterpret_cast<void *>(handle));}
+ extern "C" JNIEXPORT void JNICALL Java_dev_nodelift_companion_NativeEngine_dispose(JNIEnv *,jobject,jlong handle) {nl_destroy(reinterpret_cast<void *>(handle));}
+
+Native result contract: nl_call serializes with result.dump(-1, ASCII space, ensure_ascii=true, error_handler_t::replace), followed by strdup. Null means allocation failure. The native C boundary catches exceptions.
+
+Retained validation receipt:
+{
+  "scope": "Real JVM/JNI bridge on macOS, no model loaded; optional Android object compilation is not a device test",
+  "jni_source_sha256": "e7513f4ba31b12e73e3f8fe03c06a26b22df70dab546932627de9179b76e394f",
+  "native_library_sha256": "a7a033ea527cedbf328db886db84cb900a443d5f17dd21b41377733310ff3f2a",
+  "jni_harness_binary_sha256": "bfddedffd4dca5907b4bd1c1e769a83ee9b166f52eb7c34f12dd7f9aaee62103",
+  "android_object_compiled": true,
+  "cases": [
+    {
+      "case": "ascii",
+      "result": {
+        "error": "no model loaded"
+      },
+      "passed": true
+    },
+    {
+      "case": "accent",
+      "result": {
+        "error": "no model loaded"
+      },
+      "passed": true
+    },
+    {
+      "case": "chinese",
+      "result": {
+        "error": "no model loaded"
+      },
+      "passed": true
+    },
+    {
+      "case": "combining",
+      "result": {
+        "error": "no model loaded"
+      },
+      "passed": true
+    },
+    {
+      "case": "emoji",
+      "result": {
+        "error": "no model loaded"
+      },
+      "passed": true
+    },
+    {
+      "case": "supplementary_cjk",
+      "result": {
+        "error": "no model loaded"
+      },
+      "passed": true
+    },
+    {
+      "case": "maximum_scalar",
+      "result": {
+        "error": "no model loaded"
+      },
+      "passed": true
+    },
+    {
+      "case": "escaped_emoji",
+      "result": {
+        "error": "no model loaded"
+      },
+      "passed": true
+    },
+    {
+      "case": "escaped_nul",
+      "result": {
+        "error": "no model loaded"
+      },
+      "passed": true
+    },
+    {
+      "case": "raw_nul",
+      "result": {
+        "error": "invalid Unicode or NUL in JSON request"
+      },
+      "passed": true
+    },
+    {
+      "case": "high_surrogate",
+      "result": {
+        "error": "invalid Unicode or NUL in JSON request"
+      },
+      "passed": true
+    },
+    {
+      "case": "low_surrogate",
+      "result": {
+        "error": "invalid Unicode or NUL in JSON request"
+      },
+      "passed": true
+    },
+    {
+      "case": "reversed_pair",
+      "result": {
+        "error": "invalid Unicode or NUL in JSON request"
+      },
+      "passed": true
+    },
+    {
+      "case": "high_then_ascii",
+      "result": {
+        "error": "invalid Unicode or NUL in JSON request"
+      },
+      "passed": true
+    },
+    {
+      "case": "null_input",
+      "result": {
+        "error": "invalid Unicode or NUL in JSON request"
+      },
+      "passed": true
+    }
+  ],
+  "passed": true
+}

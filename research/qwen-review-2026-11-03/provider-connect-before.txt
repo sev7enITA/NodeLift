@@ -1,0 +1,22 @@
+test_cancel_during_connect_sends_no_generation_request (host.tests.test_providers.ProviderTests.test_cancel_during_connect_sends_no_generation_request) ... FAIL
+
+======================================================================
+FAIL: test_cancel_during_connect_sends_no_generation_request (host.tests.test_providers.ProviderTests.test_cancel_during_connect_sends_no_generation_request)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "host/tests/test_providers.py", line 105, in test_cancel_during_connect_sends_no_generation_request
+    self.assertEqual(received,[])
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+AssertionError: Lists differ: ['/v1/chat/completions'] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+'/v1/chat/completions'
+
+- ['/v1/chat/completions']
++ []
+
+----------------------------------------------------------------------
+Ran 1 test in 0.512s
+
+FAILED (failures=1)

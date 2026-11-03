@@ -108,3 +108,7 @@ Thank you to **Apple and the MLX / MLX LM contributors** for the open distribute
 ## Generic hardware assessment
 
 Thanks to the [linuxhw/hw-probe contributors](https://github.com/linuxhw/hw-probe) for their hardware, driver and operability classification work. The [NodeLift node probe](NODE_PROBE.md) uses independently implemented allowlisted OS collectors and invokes no hw-probe upload or monitoring workflow. No hw-probe code is incorporated. Native model microbenchmarks use the separately installed [llama.cpp benchmark tool](https://github.com/ggml-org/llama.cpp/blob/master/tools/llama-bench/README.md). Detection, execution and acceleration evidence remain separate.
+
+## Local model-assisted review: 3 November 2026
+
+Thank you to [HauhauCS](https://huggingface.co/HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF) for making the requested quantized model and associated optimization material available. NodeLift ran the pinned Q4_K_P variant locally through its provider bridge using [llama.cpp](https://github.com/ggml-org/llama.cpp). The [review record](../research/qwen-review-2026-11-03/README.md) separates actual model responses, independent reproductions, rejected findings and pending physical checks. The model publisher's “uncensored” label does not establish review accuracy. Weights are not redistributed here, and the associated FastMTP patch was inspected but not applied.

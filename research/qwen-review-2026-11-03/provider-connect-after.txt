@@ -1,0 +1,21 @@
+test_bad_catalog_shapes_do_not_replace_valid_catalog (host.tests.test_providers.ProviderShapeTests.test_bad_catalog_shapes_do_not_replace_valid_catalog) ... ok
+test_controller_closes_generator_when_its_output_limit_fails (host.tests.test_providers.ProviderShapeTests.test_controller_closes_generator_when_its_output_limit_fails) ... ok
+test_network_event_shapes_are_sanitized_and_release_connection (host.tests.test_providers.ProviderShapeTests.test_network_event_shapes_are_sanitized_and_release_connection) ... ok
+test_second_stream_cannot_replace_active_connection (host.tests.test_providers.ProviderShapeTests.test_second_stream_cannot_replace_active_connection) ... ok
+test_cancel_before_request_sends_nothing (host.tests.test_providers.ProviderTests.test_cancel_before_request_sends_nothing) ... ok
+test_cancel_during_connect_sends_no_generation_request (host.tests.test_providers.ProviderTests.test_cancel_during_connect_sends_no_generation_request) ... ok
+test_controller_no_fabricated_tokens_and_distinct_scope (host.tests.test_providers.ProviderTests.test_controller_no_fabricated_tokens_and_distinct_scope) ... ok
+test_incomplete_error_and_redirect_never_retried (host.tests.test_providers.ProviderTests.test_incomplete_error_and_redirect_never_retried) ... ok
+test_loopback_only_and_no_self_routing (host.tests.test_providers.ProviderTests.test_loopback_only_and_no_self_routing) ... ok
+test_public_catalog_omits_authorization (host.tests.test_providers.ProviderTests.test_public_catalog_omits_authorization) ... ok
+test_requires_explicit_model_key_and_host_mode (host.tests.test_providers.ProviderTests.test_requires_explicit_model_key_and_host_mode) ... ok
+test_secret_session_only_no_network_on_status (host.tests.test_providers.ProviderTests.test_secret_session_only_no_network_on_status) ... ok
+test_stream_unicode_usage_and_no_fallback_payload (host.tests.test_providers.ProviderTests.test_stream_unicode_usage_and_no_fallback_payload) ... ok
+test_cancel_retains_transport_after_http_connection_detaches (host.tests.test_providers.SlowStreamTests.test_cancel_retains_transport_after_http_connection_detaches) ... ok
+test_oversized_partial_line_rejected (host.tests.test_providers.SlowStreamTests.test_oversized_partial_line_rejected) ... ok
+test_partial_lines_obey_wall_deadline_and_utf8_boundaries (host.tests.test_providers.SlowStreamTests.test_partial_lines_obey_wall_deadline_and_utf8_boundaries) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.543s
+
+OK

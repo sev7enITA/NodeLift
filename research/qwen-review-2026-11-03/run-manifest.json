@@ -1,0 +1,21 @@
+{
+  "model_repo": "HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF",
+  "revision": "993a5971fda8f30dd1b7eb2654792ba4415c7460",
+  "model_file": "Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-Q4_K_P.gguf",
+  "model_sha256": "ba36dc3c2b2ff5e0aa5d71092a8894546996a6a119ae391803dda07cdc08516d",
+  "server_sha256": "1864718efb6175a669f8931805060c4e823c0d05a2c1e6058290a55ba046302b",
+  "server_source_commit": "ddf48f85c933c1f438212a02eb21e7b001d2d37d",
+  "server_source_verification": "/tmp/nodelift-upstream-source-verify.json",
+  "backend": "local_api",
+  "context_tokens": 16384,
+  "max_output_tokens": 512,
+  "reasoning": false,
+  "mtp_enabled": false,
+  "scope": "Static source review through NodeLift; no model-executed tests; no distributed inference",
+  "started_at_utc": "2026-11-03T10:13:54Z",
+  "source_hashes": {
+    "host/nodelift/engine.py": "8d3dadad4fd862128241728dc866753f91e32453b8f3c6197e35ed6592e19380",
+    "host/nodelift/providers.py": "4eac0ca9605f29dc77dfe41f238e90f923253e8c078f2712d58a6145500570fd",
+    "host/nodelift/host.py": "1e24a5add54183e7c52fdba95615dd5fbfcf779d2ce09de5790b1313d9b74111"
+  }
+}

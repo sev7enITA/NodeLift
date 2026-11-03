@@ -1,0 +1,22 @@
+{
+  "packet": "telemetry-fix-audit",
+  "run_id": "91afd67ab1c14ee624797193",
+  "status": "completed",
+  "backend": "local_api",
+  "provider_model": "nodelift-review-qwen38-27b-q4kp",
+  "text": "The fix correctly rejects null, nonfinite, and boolean `worker_total_ms` values while preserving zero durations. Token authorization logic remains unchanged, ensuring valid tokens are still accepted. The mailbox regression confirms that missing or invalid timing results in a `missing_or_invalid` status without affecting token validation. No concrete flaw is present in the supplied fix regarding these specific constraints.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 1408,
+    "completion_tokens": 73,
+    "total_tokens": 1481
+  },
+  "metrics": {
+    "elapsed_seconds": 21.542861958034337,
+    "ttft_ms": 11570.919166028034,
+    "request_total_ms": 21542.861499998253,
+    "generated_tokens": 73
+  },
+  "measurement_scope": "local_external_server",
+  "error": null
+}

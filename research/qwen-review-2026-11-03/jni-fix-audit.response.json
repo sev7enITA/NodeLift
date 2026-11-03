@@ -1,0 +1,22 @@
+{
+  "packet": "jni-fix-audit",
+  "run_id": "dcaddb609b0f9dd3ba17ac22",
+  "status": "completed",
+  "backend": "local_api",
+  "provider_model": "nodelift-review-qwen38-27b-q4kp",
+  "text": "No supported defect found. The patch correctly replaces `GetStringUTFChars` with a manual UTF-16 to UTF-8 conversion, resolving the Modified UTF-8 mismatch.\n\n**Safety Analysis:**\n1.  **Malformed Surrogates:** The logic `if(cp>=0xd800 && cp<=0xdbff)` correctly validates high surrogates against subsequent low surrogates (`0xdc00`–`0xdfff`). Lone surrogates or reversed pairs trigger `return false`, preventing invalid UTF-8 generation.\n2.  **Raw NUL:** The check `if(cp==0)return false` prevents C-string truncation at the `nl_call` boundary, which is critical since `nl_call` expects a null-terminated C string.\n3.  **Exception Containment:** The `try/catch` block wraps JNI calls. If `GetStringChars` fails, `json_utf8` returns false. The code checks `env->ExceptionCheck()` before returning the error string, ensuring no pending JNI exception is overwritten.\n4.  **Allocation Failure:** `std::unique_ptr` manages `nl_call`'s result. If `nl_call` returns null, the error JSON is returned. If `NewStringUTF` fails, the `catch` block handles it, though `NewStringUTF` failure typically implies OOM where the JVM may already be in a critical state.\n5.  **Output Encoding:** The comment correctly notes that `ensure_ascii=true` in `nl_call` ensures the output is pure ASCII, making `NewStringUTF` safe for all valid JSON outputs.\n\n**Testable Trigger:**\nInput: `\"\\uD800\"` (lone high surrogate).\nExpected: `{\"error\":\"invalid Unicode or NUL in JSON request\"}`.\nThe code correctly identifies `cp >= 0xd800`, checks `i+1 >= size` (true for single char), and returns false.\n\nThe implementation is robust for the stated scope.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 2165,
+    "completion_tokens": 420,
+    "total_tokens": 2585
+  },
+  "metrics": {
+    "elapsed_seconds": 77.83592462498927,
+    "ttft_ms": 18005.24912500987,
+    "request_total_ms": 77835.92220797436,
+    "generated_tokens": 420
+  },
+  "measurement_scope": "local_external_server",
+  "error": null
+}

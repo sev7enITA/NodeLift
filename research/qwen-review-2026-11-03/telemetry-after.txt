@@ -1,0 +1,13 @@
+test_finish_reports_no_tokens_and_retention_is_bounded (host.tests.test_lease_timing.LeaseTimingTests.test_finish_reports_no_tokens_and_retention_is_bounded) ... ok
+test_late_work_is_recorded_never_credited_and_prefix_is_not_retained (host.tests.test_lease_timing.LeaseTimingTests.test_late_work_is_recorded_never_credited_and_prefix_is_not_retained) ... ok
+test_null_total_is_missing_telemetry_without_discarding_valid_tokens (host.tests.test_lease_timing.LeaseTimingTests.test_null_total_is_missing_telemetry_without_discarding_valid_tokens) ... ok
+test_rejection_diagnostics_do_not_authorize_or_consume_a_lease (host.tests.test_lease_timing.LeaseTimingTests.test_rejection_diagnostics_do_not_authorize_or_consume_a_lease) ... ok
+test_sequence_and_parent_identity_are_independent_of_untrusted_timings (host.tests.test_lease_timing.LeaseTimingTests.test_sequence_and_parent_identity_are_independent_of_untrusted_timings) ... ok
+test_telemetry_rejects_nonfinite_bool_and_impossible_durations (host.tests.test_lease_timing.LeaseTimingTests.test_telemetry_rejects_nonfinite_bool_and_impossible_durations) ... ok
+test_exact_prefix_or_discard (host.tests.test_lease_timing.LookaheadTests.test_exact_prefix_or_discard) ... ok
+test_one_worker_overlap_and_mismatch_fallback (host.tests.test_lease_timing.LookaheadTests.test_one_worker_overlap_and_mismatch_fallback) ... ok
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.028s
+
+OK

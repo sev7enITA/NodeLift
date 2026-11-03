@@ -69,6 +69,8 @@ Client TTFT was approximately 0.125 s on the Mac and 0.991-0.995 s on the remote
 
 Read the [attempt summary](physical-attempts.json), [first raw runs](android-8b/runs.jsonl), [second raw runs](android-8b-retry1/runs.jsonl) and each directory's frozen manifest, original collector and completion record. The collectors retained all written attempts; subsequent collection code now also reconstructs partial summaries from those rows when a post-run scope check stops the series. The next gate is to isolate the missing contact, then repeat serial and bounded physical arms against the recorded local controls. The source host now sends `Connection: close` on companion TLS responses, releasing bounded connection slots without waiting for an idle timeout. Plain loopback HTTP persistence is preserved. A 40-client regression and the full 165-test host suite pass. The correction has not yet been retested on the physical phone; additional TLS handshake overhead remains to be measured. No new Android binary is required for this host change. See [the socket diagnostic](socket-diagnostic.json).
 
+![Observed TLS connections reaching the 32-slot limit during one serial diagnostic](tls-slot-pressure.png)
+
 The historic O0 Android binary and new O3 binary differ in more than compiler optimization. A causal O0/O3 comparison needs two otherwise matched builds on the same phone. No pooled memory, model sharding or distributed acceleration is claimed.
 
 ## Reproduction

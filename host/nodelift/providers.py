@@ -118,6 +118,11 @@ class Providers:
         if backend == 'openrouter': payload['provider'] = {'allow_fallbacks': False, 'data_collection': 'deny'}
         try:
             if cancelled.is_set(): raise ValueError('Provider run cancelled')
+            # A cancellation during DNS/connect cannot shut down a socket that
+            # is not available yet. Recheck before sending a generation POST.
+            connection.connect()
+            with self.lock: self.active_socket = connection.sock
+            if cancelled.is_set(): raise ValueError('Provider run cancelled')
             connection.request('POST', prefix + '/chat/completions', json.dumps(payload).encode(), headers)
             with self.lock: self.active_socket = connection.sock
             transport = connection.sock

@@ -1,0 +1,7 @@
+{
+  "engine_busy": false,
+  "local_provider_url": "http://127.0.0.1:8000/v1",
+  "temporary_review_server_stopped": true,
+  "native_target": "sha256-667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29",
+  "native_draft": "Llama-3.2-1B-Instruct-Q4_K_M.gguf"
+}

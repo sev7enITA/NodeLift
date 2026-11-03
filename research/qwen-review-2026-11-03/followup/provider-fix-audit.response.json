@@ -1,0 +1,22 @@
+{
+  "packet": "provider-fix-audit",
+  "run_id": "037e7ce76fab7d4a0601c4ac",
+  "status": "completed",
+  "backend": "local_api",
+  "provider_model": "nodelift-review-qwen38-27b-q4kp",
+  "text": "No supported regression is evidenced. The patch correctly addresses the identified race condition by explicitly connecting and rechecking the cancellation flag before sending the POST request. This ensures that if cancellation occurs during the connection setup phase, the request is aborted before transmission, preventing the generation POST from being sent. The logic is sound, and the described test results confirm the fix works as intended without introducing new issues.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 823,
+    "completion_tokens": 78,
+    "total_tokens": 901
+  },
+  "metrics": {
+    "elapsed_seconds": 16.056479415972717,
+    "ttft_ms": 6261.481457971968,
+    "request_total_ms": 16056.478790997062,
+    "generated_tokens": 78
+  },
+  "measurement_scope": "local_external_server",
+  "error": null
+}

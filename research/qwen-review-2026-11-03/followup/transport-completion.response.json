@@ -1,0 +1,22 @@
+{
+  "packet": "transport-completion",
+  "run_id": "99dde1577bd93acccad1f2c7",
+  "status": "completed",
+  "backend": "local_api",
+  "provider_model": "nodelift-review-qwen38-27b-q4kp",
+  "text": "Retract the path traversal suspicion. The route `/v1/engine/model` calls `model_path()`, which returns `Path(self.config['draft_model'])`. This value is set exclusively via the admin handler, which validates the input against a local catalog of existing files. The node endpoint accepts no user-supplied path parameters. Since the path is fixed by the owner's prior admin action and not influenced by the node request, arbitrary filesystem access is impossible.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 1286,
+    "completion_tokens": 92,
+    "total_tokens": 1378
+  },
+  "metrics": {
+    "elapsed_seconds": 27.70176987501327,
+    "ttft_ms": 14200.454083038494,
+    "request_total_ms": 27701.76916703349,
+    "generated_tokens": 92
+  },
+  "measurement_scope": "local_external_server",
+  "error": null
+}

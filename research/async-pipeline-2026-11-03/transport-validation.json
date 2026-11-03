@@ -1,0 +1,14 @@
+{
+  "host_test_count": 165,
+  "host_tests_passed": true,
+  "log_sha256": "1c53f3198c5c7308669dc7340e1d60af634f2efc23e70a3d688f061ea94b6c51",
+  "additional_synthetic_checks": [
+    "localization",
+    "device graph",
+    "model library",
+    "QR pairing"
+  ],
+  "source_ci": "https://github.com/sev7enITA/NodeLift/actions/runs/41610340301",
+  "documentation_ci": "https://github.com/sev7enITA/NodeLift/actions/runs/41610340197",
+  "physical_post_fix": "not tested yet; companions offline and model download active"
+}

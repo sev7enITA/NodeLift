@@ -1,0 +1,22 @@
+{
+  "packet": "estimator-completion",
+  "run_id": "cab5f60493a50188a6212e01",
+  "status": "completed",
+  "backend": "local_api",
+  "provider_model": "nodelift-review-qwen38-27b-q4kp",
+  "text": "The code complies with both stated contracts. The `energy` function correctly enforces strictly ordered run-relative monotonic timestamps by raising an error if `t1 <= t0` (line 120), rejecting unordered inputs without sorting. The `estimate` function implements whole-session cluster resampling via `rng.choices(clusters, ...)` (line 69), preserving the integrity of session clusters. It applies equal weight per pair by aggregating all values from selected clusters into a single list for the reducer (line 69), rather than weighting by session size. No defects are found regarding these specific requirements.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 1387,
+    "completion_tokens": 126,
+    "total_tokens": 1513
+  },
+  "metrics": {
+    "elapsed_seconds": 26.25994445802644,
+    "ttft_ms": 10695.525750052184,
+    "request_total_ms": 26259.943875018507,
+    "generated_tokens": 126
+  },
+  "measurement_scope": "local_external_server",
+  "error": null
+}

@@ -1,0 +1,22 @@
+{
+  "packet": "android-lifecycle",
+  "run_id": "57d5211695e9f4f3c2ffe49e",
+  "status": "completed",
+  "backend": "local_api",
+  "provider_model": "nodelift-review-qwen38-27b-q4kp",
+  "text": "**Bug 1: Resource Leak in `onDestroy`**\n*   **File:Line:** `NodeService.kt:271`\n*   **Trigger:** The service is destroyed while the worker thread is executing a long-running job (e.g., CPU calibration or network probe).\n*   **Consequence:** `worker?.interrupt()` is called, but the worker thread is never joined. The `finally` block (lines 166-170) executes asynchronously after `onDestroy` returns. If the thread is blocked in a non-interruptible native call or sleep, the `MobileDraft` instance may remain open or the `Client` may remain active beyond the service lifecycle, causing memory leaks or undefined behavior.\n*   **Repro:** Start a CPU job, immediately call `stopService`. Observe that `onDestroy` returns before the worker thread terminates.\n\n**Bug 2: Race Condition in `connected` State**\n*   **File:Line:** `NodeService.kt:34` vs `NodeService.kt:139`\n*   **Trigger:** The worker thread sets `connected=true` (line 139) while the UI thread reads `connected` (line 34).\n*   **Consequence:** The `connected` getter depends on `lastContactElapsed`. If `lastContactElapsed` is updated (line 83) but `transportConnected` is not yet set, or vice versa, the state is inconsistent. More critically, `lastContactElapsed` is updated in a callback (line 83) that checks `generation.get()==ownerRun`. If the service restarts quickly, `ownerRun` changes, but `lastContactElapsed` might retain a stale value from the previous run if `running` was reset before the callback fired, causing `connected` to incorrectly report `true` or `false` based on stale timing data.\n*   **Repro:** Rapidly restart the service. Observe `connected` state flickering or remaining `true` despite no active transport, due to stale `lastContactElapsed` not being cleared atomically with `transportConnected`.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 5878,
+    "completion_tokens": 452,
+    "total_tokens": 6330
+  },
+  "metrics": {
+    "elapsed_seconds": 113.44555666600354,
+    "ttft_ms": 48619.785249989945,
+    "request_total_ms": 113445.55624999339,
+    "generated_tokens": 452
+  },
+  "measurement_scope": "local_external_server",
+  "error": null
+}

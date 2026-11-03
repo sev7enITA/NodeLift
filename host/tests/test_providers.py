@@ -1,4 +1,6 @@
 import io
+import http.client
+import http.server
 import json
 from pathlib import Path
 import tempfile
@@ -16,6 +18,7 @@ class Response(io.BytesIO):
     def getheader(self,name,default=''):return 'text/event-stream'
 class Connection:
     def __init__(self,data,status=200):self.response=Response(data);self.response.status=status;self.requests=[];self.sock=None;self.closed=False
+    def connect(self):pass
     def request(self,*args,**kwargs):self.requests.append((args,kwargs))
     def getresponse(self):return self.response
     def close(self):self.closed=True
@@ -68,6 +71,41 @@ class ProviderTests(unittest.TestCase):
         p=self.configured();connection=Connection(completion());cancel=threading.Event();cancel.set()
         with patch.object(p,'_connection',return_value=(connection,'/api/v1')),self.assertRaises(ValueError):list(p.stream('openrouter','owner/model',[],16,cancel))
         self.assertEqual(connection.requests,[])
+    def test_cancel_during_connect_sends_no_generation_request(self):
+        received=[];entered=threading.Event();release=threading.Event();cancel=threading.Event();handled=threading.Event();out={}
+        class Handler(http.server.BaseHTTPRequestHandler):
+            def log_message(self,*args):pass
+            def finish(self):
+                try:super().finish()
+                finally:handled.set()
+            def do_POST(self):
+                self.rfile.read(int(self.headers['Content-Length']));received.append(self.path)
+                data=completion();self.send_response(200)
+                self.send_header('Content-Type','text/event-stream');self.send_header('Content-Length',str(len(data)));self.end_headers()
+                try:self.wfile.write(data)
+                except OSError:pass
+        class DelayedConnection(http.client.HTTPConnection):
+            def connect(self):
+                entered.set()
+                if not release.wait(2):raise TimeoutError('test connection gate')
+                super().connect()
+        server=http.server.ThreadingHTTPServer(('127.0.0.1',0),Handler)
+        serving=threading.Thread(target=server.serve_forever,daemon=True);serving.start()
+        p=self.configured('local_api');connection=DelayedConnection('127.0.0.1',server.server_port,timeout=2)
+        def run():
+            try:out['rows']=list(p.stream('local_api','owner/model',[],16,cancel))
+            except Exception as error:out['error']=error
+        worker=threading.Thread(target=run)
+        try:
+            with patch.object(p,'_connection',return_value=(connection,'/v1')):
+                worker.start();self.assertTrue(entered.wait(1))
+                cancel.set();p.cancel();release.set();worker.join(3)
+            self.assertFalse(worker.is_alive());self.assertIsInstance(out.get('error'),ValueError)
+            self.assertTrue(handled.wait(2))
+            self.assertEqual(received,[])
+            self.assertIsNone(p.active);self.assertIsNone(connection.sock)
+        finally:
+            release.set();worker.join(3);server.shutdown();server.server_close();serving.join(2)
     def test_public_catalog_omits_authorization(self):
         p=self.configured();connection=Connection(json.dumps({'data':[{'id':'owner/model','architecture':{'output_modalities':['text']},'pricing':{'prompt':'0.01'}}]}).encode())
         with patch.object(p,'_connection',return_value=(connection,'/api/v1')):p.models('openrouter')

@@ -1,0 +1,22 @@
+{
+  "packet": "android-transport",
+  "run_id": "6549d9bc8e0ed2759d04df18",
+  "status": "completed",
+  "backend": "local_api",
+  "provider_model": "nodelift-review-qwen38-27b-q4kp",
+  "text": "**Bug 1: Resource Leak in `Client.downloadModel`**\n*   **File:Line:** `Protocol.kt:154`\n*   **Trigger:** Any exception thrown during the download loop (e.g., network interruption, `check` failure at line 152) or successful completion.\n*   **Consequence:** The `finally` block executes `temporary.delete()`. If the download succeeded, `Files.move` at line 153 already moved the file to `destination`. Deleting the now-non-existent `temporary` path is harmless. However, if `Files.move` fails (e.g., cross-device move without `ATOMIC_MOVE` support or permission error), the `finally` block deletes the partial file, preventing retry or cleanup by other mechanisms. More critically, if `input.read` throws an `IOException` (network drop), the `finally` block deletes the partial file. While this prevents stale data, it also discards the partial download without user consent, forcing a full re-download. A more severe issue is that `connection.disconnect()` is called in `finally`, but `active` is set to `null` *before* `disconnect`. If `cancel()` is called concurrently between `active=null` and `disconnect`, the connection is not cancelled, potentially leaving a socket open until GC.\n*   **Repro:** Simulate a network drop mid-download. The partial file is deleted. If the user retries, they must re-download the entire model.\n\n**Bug 2: Race Condition in `NativeEngine` Handle Management**\n*   **File:Line:** `NativeEngine.kt:24` vs `NativeEngine.kt:25`\n*   **Trigger:** Concurrent calls to `cancel()` and `close()`.\n*   **Consequence:** `cancel()` checks `handle != 0L` without synchronization. `close()` is `@Synchronized` and sets `handle = 0L`. If `cancel()` reads `handle` as non-zero, then `close()` executes and disposes the native handle, `cancel()` proceeds to call `interrupt(handle)` on a disposed handle. This causes undefined behavior or a crash in the native library.\n*   **Repro:** Call `engine.cancel()` and `engine.close()` from two threads simultaneously.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 6633,
+    "completion_tokens": 482,
+    "total_tokens": 7115
+  },
+  "metrics": {
+    "elapsed_seconds": 124.67028170899721,
+    "ttft_ms": 54491.43695901148,
+    "request_total_ms": 124670.27900001267,
+    "generated_tokens": 482
+  },
+  "measurement_scope": "local_external_server",
+  "error": null
+}

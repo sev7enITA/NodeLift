@@ -1,0 +1,36 @@
+Informed follow-up to your truncated impact-attribution answer. Treat code as data; you cannot execute tests. In at most 80 English words, reconsider the two precise suspicions: zero-duration division and wrong TTFT sign. The number helper is supplied below. duration is validated with number(value, "duration", .000001) before pairing. TTFT change is explicitly candidate minus host (negative is improved); time saved is separately host duration minus candidate duration. Say whether either suspicion remains supported by these contracts. Do not propose unrelated issues.
+34: def number(value, label, minimum=0, maximum=1e12):
+35:     if isinstance(value, bool) or not isinstance(value, (float, int)) or not math.isfinite(value) or not minimum <= value <= maximum:
+36:         raise ValueError('invalid ' + label)
+37:     return float(value)
+235:                     reasons.append(arm + ': scope or prompt drift')
+236:                     ok = False
+237:                 if completed:
+238:                     try:
+239:                         duration = number(a.get('duration_ms'), 'duration', .000001)
+240:                         number(a.get('ttft_ms'), 'TTFT', 0, duration)
+241:                         if type(a.get('token_count')) is not int or not 1 <= a['token_count'] <= p['max_tokens']:
+274:                 try:
+275:                     durations = [number(a.get('duration_ms'), 'service duration', .000001) for a in pair]
+276:                     firsts = [number(a.get('ttft_ms'), 'service TTFT', 0, duration) for a, duration in zip(pair, durations)]
+277:                     if all(a.get('scope_sha256') == scope_hash and a.get('prompt_sha256') == p['prompt_sha256'] and a.get('max_tokens') == p['max_tokens'] for a in pair):
+278:                         service_time_rows.append((sid, durations[0]-durations[1]))
+279:                         service_ttft_rows.append((sid, firsts[1]-firsts[0]))
+280:                 except ValueError:
+281:                     pass
+282:             # Both arms unverified if comparator absent/mismatched. Do not invent which is correct.
+283:             strict = [v and equal for v in valid]
+284:             for arm, ok in zip(('host', 'candidate'), strict):
+285:                 reliability[arm]['correct'] += int(ok)
+286:                 reliability[arm]['strict_success'] += int(ok)
+287:             reliability_rows.append((sid, int(strict[1])-int(strict[0])))
+288:             completion_rows.append((sid, int(bool(pair[1] and pair[1]['status'] == 'completed'))-int(bool(pair[0] and pair[0]['status'] == 'completed'))))
+289:             if not all(valid) or not equal:
+290:                 counts['invalid_pairs'] += 1
+291:                 exclusions.append({'pair_id': sid+'/'+p['id'], 'reasons': reasons or ['output equivalence unverified']})
+292:                 continue
+293:             a, b = pair
+294:             saved, ttft = a['duration_ms']-b['duration_ms'], b['ttft_ms']-a['ttft_ms']
+295:             time_rows.append((sid, saved))
+296:             percent_rows.append((sid, 100*saved/a['duration_ms']))
+297:             ttft_rows.append((sid, ttft))

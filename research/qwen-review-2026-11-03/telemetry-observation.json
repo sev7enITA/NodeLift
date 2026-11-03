@@ -1,0 +1,13 @@
+{
+  "discovered_by": "Codex during independent adjudication; not raised by Qwen in its leases response",
+  "input": {
+    "schema_version": 1,
+    "worker_total_ms": null
+  },
+  "observed_before": {
+    "schema_version": 1,
+    "evidence": "self_reported_worker_durations"
+  },
+  "expected": null,
+  "scope": "Malformed self-reported telemetry is accepted as valid without its required total duration; no token authorization bypass"
+}

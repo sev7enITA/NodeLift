@@ -1,0 +1,22 @@
+{
+  "packet": "transport",
+  "run_id": "eeb0ec38d42d793d1aa536b5",
+  "status": "completed",
+  "backend": "local_api",
+  "provider_model": "nodelift-review-qwen38-27b-q4kp",
+  "text": "**Bug 1: Resource Leak in TLS Slot Management**\nFile: `host/nodelift/host.py`, lines 67-87.\nTrigger: A client connects, the TLS handshake succeeds, but the HTTP request fails or the connection closes before `process_request_thread` completes normally (e.g., client aborts).\nConsequence: `process_request` acquires a slot. If `process_request_thread` raises an exception other than `OSError` or `ssl.SSLError` (such as a `ValueError` from `Handler.body` or `json.JSONDecodeError`), the `finally` block releases the slot. However, if the exception occurs *before* `process_request_thread` is called (inside `process_request`), the `except` block releases it. The critical flaw is that `process_request_thread` catches `OSError` and `ssl.SSLError` but not other exceptions. If `Handler` raises an unhandled exception (e.g., `ValueError` from `body()`), it propagates up. `ThreadingHTTPServer` catches it in `handle_error` (which is a no-op here). The `finally` block in `process_request_thread` *does* run, releasing the slot. Wait, let's re-read.\nActually, the bug is in `process_request`. If `super().process_request` raises, it releases. If `process_request_thread` raises an unhandled exception (like `ValueError` from `body()`), it propagates. The `finally` block in `process_request_thread` releases the slot. So slots are released.\nLet's look closer at `process_request_thread`. It wraps the socket. If `wrap_socket` fails, it raises `ssl.SSLError`, caught, slot released. If `super().process_request_thread` raises `ValueError` (from `body()`), it is NOT caught by `except (OSError, ssl.SSLError)`. It propagates. The `finally` block runs, releasing the slot. So this seems safe.\n\nLet's look at **Bug 2: Insecure Direct Object Reference / Path Traversal in Model Download**\nFile: `host/nodelift/host.py`, lines 177-186.\nTrigger: A valid authenticated node requests `/v1/engine/model`.\nConsequence: `self.server.engine.model_path()` returns a path. The code opens this file and streams it. If `model",
+  "finish_reason": "length",
+  "usage": {
+    "prompt_tokens": 3635,
+    "completion_tokens": 512,
+    "total_tokens": 4147
+  },
+  "metrics": {
+    "elapsed_seconds": 99.67616858304245,
+    "ttft_ms": 28237.14825004572,
+    "request_total_ms": 99676.16816604277,
+    "generated_tokens": 512
+  },
+  "measurement_scope": "local_external_server",
+  "error": null
+}

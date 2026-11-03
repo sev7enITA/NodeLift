@@ -1,0 +1,23 @@
+{
+  "scope": "Independent Codex validation; model responses are static reviews, not execution evidence",
+  "host_tests": {
+    "passed": 167,
+    "seconds": 13.334,
+    "report": "host-tests-final.txt"
+  },
+  "provider_tests": 16,
+  "jni_cases": 15,
+  "android_arm64_jni_object_compiled": true,
+  "native_hypothesis_checks": 8,
+  "physical_phone_test": false,
+  "new_mobile_package": false,
+  "native_core_library_changed": false,
+  "source_hashes": {
+    "host/nodelift/providers.py": "2229eaa7510a32c07ee50b7b8b8767ca5fc23d3214667bef6bfe0eacc5f5adc1",
+    "host/nodelift/leases.py": "0eb6edc7ea66bfbfc5e924f9f7cc123bb5869b4e43098eae1542084cbe783f74",
+    "native/jni.cpp": "e7513f4ba31b12e73e3f8fe03c06a26b22df70dab546932627de9179b76e394f",
+    "host/tests/test_providers.py": "f158929a83825606e9f50b8438755454c07744dd509c6875fc9ffa9f23776aab",
+    "host/tests/test_lease_timing.py": "622a80f504baeaf898d1d67afb7edbd64593f10d0d192f1f31a306d712905ead",
+    "scripts/check-jni-unicode.py": "91f9b3b1f0583d1e25f22a976dfc94851e9c59ee4cf5fd0759b33d110fb128ca"
+  }
+}

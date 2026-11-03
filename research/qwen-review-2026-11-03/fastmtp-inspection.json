@@ -1,0 +1,13 @@
+{
+  "source_url": "https://huggingface.co/HauhauCS/Qwen3.8-27B-Uncensored-HauhauCS-Aggressive-MTP-GGUF/blob/993a5971fda8f30dd1b7eb2654792ba4415c7460/HauhauCS-FastMTP-llama.cpp.patch",
+  "sha256": "981285400b59dc45cf99936b6ff66d4b3aa0f1b532f85fa51418cb407e51d615",
+  "status": "Inspected by Codex only; not applied or benchmarked",
+  "mechanism": "A reduced draft output vocabulary is expanded into full target-vocabulary logits through the d2t row map. This is a model-specific local MTP output-head optimization, not remote weight partitioning.",
+  "qualification_gates": [
+    "Validate d2t dimensions, integer type and index range against the target vocabulary.",
+    "Establish deterministic handling or rejection of duplicate d2t indices.",
+    "Compare target outputs and fallback behavior with MTP disabled under matched sampling.",
+    "Qualify hybrid-state checkpoint/rollback before any NodeLift native speculative path.",
+    "Measure accepted-token benefit against map/scatter and target verification costs on Metal; do not transfer CUDA numbers to the Mac or phones."
+  ]
+}

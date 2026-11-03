@@ -1,0 +1,115 @@
+{
+  "scope": "Real JVM/JNI bridge on macOS, no model loaded; optional Android object compilation is not a device test",
+  "jni_source_sha256": "e7513f4ba31b12e73e3f8fe03c06a26b22df70dab546932627de9179b76e394f",
+  "native_library_sha256": "a7a033ea527cedbf328db886db84cb900a443d5f17dd21b41377733310ff3f2a",
+  "jni_harness_binary_sha256": "bfddedffd4dca5907b4bd1c1e769a83ee9b166f52eb7c34f12dd7f9aaee62103",
+  "android_object_compiled": true,
+  "cases": [
+    {
+      "case": "ascii",
+      "result": {
+        "error": "no model loaded"
+      },
+      "passed": true
+    },
+    {
+      "case": "accent",
+      "result": {
+        "error": "no model loaded"
+      },
+      "passed": true
+    },
+    {
+      "case": "chinese",
+      "result": {
+        "error": "no model loaded"
+      },
+      "passed": true
+    },
+    {
+      "case": "combining",
+      "result": {
+        "error": "no model loaded"
+      },
+      "passed": true
+    },
+    {
+      "case": "emoji",
+      "result": {
+        "error": "no model loaded"
+      },
+      "passed": true
+    },
+    {
+      "case": "supplementary_cjk",
+      "result": {
+        "error": "no model loaded"
+      },
+      "passed": true
+    },
+    {
+      "case": "maximum_scalar",
+      "result": {
+        "error": "no model loaded"
+      },
+      "passed": true
+    },
+    {
+      "case": "escaped_emoji",
+      "result": {
+        "error": "no model loaded"
+      },
+      "passed": true
+    },
+    {
+      "case": "escaped_nul",
+      "result": {
+        "error": "no model loaded"
+      },
+      "passed": true
+    },
+    {
+      "case": "raw_nul",
+      "result": {
+        "error": "invalid Unicode or NUL in JSON request"
+      },
+      "passed": true
+    },
+    {
+      "case": "high_surrogate",
+      "result": {
+        "error": "invalid Unicode or NUL in JSON request"
+      },
+      "passed": true
+    },
+    {
+      "case": "low_surrogate",
+      "result": {
+        "error": "invalid Unicode or NUL in JSON request"
+      },
+      "passed": true
+    },
+    {
+      "case": "reversed_pair",
+      "result": {
+        "error": "invalid Unicode or NUL in JSON request"
+      },
+      "passed": true
+    },
+    {
+      "case": "high_then_ascii",
+      "result": {
+        "error": "invalid Unicode or NUL in JSON request"
+      },
+      "passed": true
+    },
+    {
+      "case": "null_input",
+      "result": {
+        "error": "invalid Unicode or NUL in JSON request"
+      },
+      "passed": true
+    }
+  ],
+  "passed": true
+}

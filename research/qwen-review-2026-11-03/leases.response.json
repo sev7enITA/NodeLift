@@ -1,0 +1,22 @@
+{
+  "packet": "leases",
+  "run_id": "35863e21c2ab2ebd97bf8e04",
+  "status": "completed",
+  "backend": "local_api",
+  "provider_model": "nodelift-review-qwen38-27b-q4kp",
+  "text": "**Bug 1: Race condition in `Mailbox.request` cleanup**\nFile: `host/nodelift/leases.py`, lines 94-96.\nTrigger: A worker calls `submit` concurrently while the host thread in `request` is waking up from `wait` due to `notify_all`.\nConsequence: The host thread may execute the `finally` block before the worker’s `submit` call acquires the lock. The host sets `entry['finished']` and removes the entry from `pending`. When `submit` subsequently runs, it finds the entry in `history` but sees `entry['finished']` is not `None`. Line 146 marks the result as `late`, and line 156 raises `ValueError`, discarding a valid, timely result.\nRepro: Start `request` with a short timeout. Immediately call `submit` with valid data. If `submit` acquires the lock after `request`’s `wait` returns but before `request`’s `finally` completes, the result is rejected as late.\n\n**Bug 2: Unbounded memory growth in `Mailbox._prune`**\nFile: `host/nodelift/leases.py`, lines 65-68.\nTrigger: The `history` dictionary contains more than `max_history` (512) entries, but all entries have `finished` set to `None` (i.e., they are currently active or stuck in `pending`).\nConsequence: The `while` loop at line 65 attempts to evict entries to respect the size limit. However, line 66 only selects entries where `finished` is not `None`. If no such entries exist, `key` is `None`, and line 67 breaks. The loop terminates without removing any entries. If a client keeps creating requests that never complete (e.g., due to network hangs or missing `submit` calls), `history` grows indefinitely, causing a memory leak.\nRepro: Create 513 requests for distinct nodes. Do not call `submit` or `cancel` for any of them. Call `trace` or `request` to trigger `_prune`. The history size remains 513, exceeding the limit.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 3187,
+    "completion_tokens": 478,
+    "total_tokens": 3665
+  },
+  "metrics": {
+    "elapsed_seconds": 89.66693329199916,
+    "ttft_ms": 24855.38312495919,
+    "request_total_ms": 89666.9327080017,
+    "generated_tokens": 478
+  },
+  "measurement_scope": "local_external_server",
+  "error": null
+}

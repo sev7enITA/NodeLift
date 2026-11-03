@@ -1,0 +1,22 @@
+{
+  "packet": "native-boundary",
+  "run_id": "19e325d510bd8a769d3c314e",
+  "status": "completed",
+  "backend": "local_api",
+  "provider_model": "nodelift-review-qwen38-27b-q4kp",
+  "text": "**Bug 1: Resource Leak on JNI String Release**\nFile: `native/jni.cpp:7`\nTrigger: `nl_call` returns `nullptr` (e.g., due to `std::bad_alloc` or test fault).\nConsequence: `env->ReleaseStringUTFChars` is skipped, leaking the JNI string buffer.\nRepro: Force `nl_call` to return null; observe unreleased JNI memory.\n\n**Bug 2: Use-After-Free in Handle Destruction**\nFile: `native/core.cpp:338`\nTrigger: `nl_destroy` erases the handle from the map while a concurrent `nl_call` holds a `shared_ptr` to the `Engine`.\nConsequence: The `Engine` object is destroyed while `nl_call` is still executing, causing undefined behavior.\nRepro: Call `nl_destroy` concurrently with `nl_call` on the same handle.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 3387,
+    "completion_tokens": 193,
+    "total_tokens": 3580
+  },
+  "metrics": {
+    "elapsed_seconds": 53.915811917046085,
+    "ttft_ms": 27026.713917031884,
+    "request_total_ms": 53915.811332990415,
+    "generated_tokens": 193
+  },
+  "measurement_scope": "local_external_server",
+  "error": null
+}

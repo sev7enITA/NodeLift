@@ -17,7 +17,7 @@ COUNTS = ('native_decode_calls', 'native_decode_tokens', 'native_sync_tokens',
 def worker_timing(value):
     if not isinstance(value, dict) or type(value.get('schema_version')) is not int or value.get('schema_version') != 1:
         return None
-    if 'worker_total_ms' not in value:return None
+    if type(value.get('worker_total_ms')) not in (int, float):return None
     result = {'schema_version': 1, 'evidence': 'self_reported_worker_durations'}
     for key in DURATIONS:
         v = value.get(key)

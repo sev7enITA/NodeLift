@@ -1,0 +1,8 @@
+ASCII: {"error":"no model loaded"}
+NON_BMP: {"error":"[json.exception.parse_error.101] parse error at line 1, column 24: syntax error while parsing value - invalid string: ill-formed UTF-8 byte; last read: '\"\ufffd\ufffd'"}
+ESCAPED: {"error":"no model loaded"}
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by dev.nodelift.companion.NativeEngine in an unnamed module (file:/private/tmp/nodelift-jni-unicode/)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+

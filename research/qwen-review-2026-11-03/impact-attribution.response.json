@@ -1,0 +1,22 @@
+{
+  "packet": "impact-attribution",
+  "run_id": "4cd0f0a59e59e97f5bd7d07c",
+  "status": "completed",
+  "backend": "local_api",
+  "provider_model": "nodelift-review-qwen38-27b-q4kp",
+  "text": "**Bug 1: Division by Zero in Percent Calculation**\nFile: `host/nodelift/impact.py`, Line 296\nTrigger: A pair is valid and equal, but the host arm (`a`) has a `duration_ms` of zero.\nConsequence: `ZeroDivisionError` crashes the runtime.\nRepro: Provide a plan where `host` and `candidate` arms have identical outputs, valid hashes, and `duration_ms: 0`. The code at line 239 allows `duration_ms` >= 0.000001, but if `a['duration_ms']` is exactly 0 (or if `number` allows 0 despite the min bound, which needs surrounding source to confirm strictness), line 296 `100*saved/a['duration_ms']` fails. If `number` enforces >0, this is safe. However, line 294 calculates `saved` using `a['duration_ms']`. If `a['duration_ms']` is 0, line 296 divides by zero.\n\n**Bug 2: Incorrect TTFT Direction in Service Rows**\nFile: `host/nodelift/impact.py`, Line 279\nTrigger: Both arms complete with fallback, are output-equivalent, and have valid timing.\nConsequence: `service_ttft_rows` records `candidate_ttft - host_ttft` instead of `host_ttft - candidate_ttft`.\nRepro: Host TTFT=100ms, Candidate TTFT=50ms. Line 279 appends `50 - 100 = -50`. The variable name `service_ttft_change_ms` and context imply \"time saved\" or \"host minus candidate\" (consistent with line 294 `b['ttft_ms']-a['ttft_ms']` where `b` is candidate and `a` is host, yielding `candidate - host`). Wait, line 294 is `b - a` (candidate - host). Line 279 is `firsts[1] - firsts[0]` (candidate - host). This is consistent.\nLet's re-evaluate Bug 1. Line 239: `number(a.get('duration_ms'), 'duration', .000001)`. If `number` enforces min > 0, division",
+  "finish_reason": "length",
+  "usage": {
+    "prompt_tokens": 3858,
+    "completion_tokens": 512,
+    "total_tokens": 4370
+  },
+  "metrics": {
+    "elapsed_seconds": 95.34672845801106,
+    "ttft_ms": 31670.129125006497,
+    "request_total_ms": 95346.72749997117,
+    "generated_tokens": 512
+  },
+  "measurement_scope": "local_external_server",
+  "error": null
+}

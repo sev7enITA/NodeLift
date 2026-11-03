@@ -1,0 +1,294 @@
+{
+  "status": "completed_with_physical_followup",
+  "method": "Codex independently checks each visible model claim against full source and targeted tests; model opinions are not test results.",
+  "findings": [
+    {
+      "id": "native-state-1",
+      "packet": "native-state",
+      "claim": "Context overflow for prefix length 255 plus one proposal with context 256",
+      "status": "rejected",
+      "evidence": "before excludes the final prefix token, so it has 254 tokens. The two-token batch reaches 256 exactly. Native real-weight tests pass in serial and batch modes.",
+      "references": [
+        "native/core.cpp:188-202",
+        "native-findings-check.json"
+      ],
+      "followup": "Qwen retracts this claim in native-reconsideration."
+    },
+    {
+      "id": "native-state-2",
+      "packet": "native-state",
+      "claim": "Serial accepted count confuses proposal tokens and output tokens",
+      "status": "rejected",
+      "evidence": "accepted increments only on matching proposals; the bonus never increments it. The min cap does not increase it. Five remaining-budget cases and a partial-mismatch case pass against real weights. The model answer was truncated; the stated claim is adjudicated, not an unseen continuation.",
+      "references": [
+        "native/core.cpp:163-184",
+        "native-findings-check.json"
+      ],
+      "followup": "Qwen still confuses accepted draft-proposal tokens with all committed output tokens. Its revised rationale is rejected: a target bonus is intentionally not credited to the draft."
+    },
+    {
+      "id": "native-boundary-1",
+      "packet": "native-boundary",
+      "claim": "Null nl_call response skips JNI string release",
+      "status": "rejected",
+      "evidence": "The original JNI line 7 invokes ReleaseStringUTFChars unconditionally immediately after nl_call and before line 8 tests the returned pointer. nl_call catches all exceptions at the C ABI.",
+      "references": [
+        "native-boundary.prompt.txt",
+        "native/core.cpp:311-332"
+      ]
+    },
+    {
+      "id": "native-boundary-2",
+      "packet": "native-boundary",
+      "claim": "Erasing the handle destroys Engine while another call holds a shared_ptr",
+      "status": "rejected",
+      "evidence": "The retained shared_ptr keeps the Engine alive through the call and mutex scope. Removing the registry reference cannot destroy an object while that other strong reference exists.",
+      "references": [
+        "native/core.cpp:292-339"
+      ]
+    },
+    {
+      "id": "controller-1",
+      "packet": "controller",
+      "claim": "Cancellation leaves shutdown blocked until the remote lease timeout",
+      "status": "rejected",
+      "evidence": "Mailbox.request checks the shared cancellation event and waits at most 0.2 seconds between checks. The running Future exits cooperatively; shutdown does not wait the full remote timeout. The existing cancellation regression passes again. A separate bounded finish exchange can wait up to two seconds and is already reported as cleanup.",
+      "references": [
+        "host/nodelift/leases.py:84-99",
+        "host/nodelift/engine.py:396-404",
+        "mailbox-cancel-check.txt"
+      ]
+    },
+    {
+      "id": "controller-2",
+      "packet": "controller",
+      "claim": "Finish must send the original prompt rather than the committed prefix",
+      "status": "rejected",
+      "evidence": "The Android protocol explicitly accepts finish with the full bounded prefix and count zero, verifies its hash, clears prepared work and skips native drafting. There is no requirement to match the original prompt length. The model conjectured that missing contract.",
+      "references": [
+        "apps/android/app/src/main/java/dev/nodelift/companion/NativeEngine.kt:80-116",
+        "host/nodelift/engine.py:255,403"
+      ]
+    },
+    {
+      "id": "leases-1",
+      "packet": "leases",
+      "claim": "Concurrent submit can race request cleanup and reject a timely result",
+      "status": "rejected",
+      "evidence": "Both operations hold the same Condition lock. Request leaves its wait loop only for a result, cancellation, or deadline expiry; a spurious wakeup repeats the loop. A result processed after the host deadline is intentionally late. The alleged interleaving inside finally cannot occur under that lock.",
+      "references": [
+        "host/nodelift/leases.py:82-101,116-160",
+        "host/tests/test_engine.py:MailboxTests"
+      ]
+    },
+    {
+      "id": "leases-2",
+      "packet": "leases",
+      "claim": "More than 512 never-finishing active requests cause unbounded history growth",
+      "status": "not_reachable_in_current_application",
+      "evidence": "The generic Mailbox class does not hard-cap active entries; that is a possible future hardening need if callers change. Current Controller permits one run, uses one node, joins the first Future before further requests and limits remote timeouts to 60 seconds. Active entries are not network-created. The proposed 513 simultaneous distinct-node requests bypass that contract; absent responses still expire. No current application leak is demonstrated.",
+      "references": [
+        "host/nodelift/engine.py:138-159,277,331-333,397-403",
+        "host/nodelift/leases.py:65-99"
+      ]
+    },
+    {
+      "id": "transport-1",
+      "packet": "transport",
+      "claim": "TLS exception leaks a connection slot",
+      "status": "withdrawn_by_model",
+      "evidence": "The model reread the finally block and explicitly retracted its own claim in the same response. Slots release in finally. The full host tests include 40 clients against the 32-slot limit.",
+      "references": [
+        "transport.response.json",
+        "host/nodelift/host.py:67-87",
+        "host/tests/test_protocol.py"
+      ]
+    },
+    {
+      "id": "transport-2",
+      "packet": "transport",
+      "claim": "Path traversal or unauthorized object access in model download",
+      "status": "rejected_after_followup",
+      "evidence": "The original answer was truncated. After receiving model_path and owner-side selection, Qwen retracts path traversal. The authenticated node cannot select a path through this endpoint.",
+      "references": [
+        "transport.response.json",
+        "host/nodelift/host.py:169-186",
+        "host/nodelift/engine.py:model_path"
+      ]
+    },
+    {
+      "id": "android-lifecycle-1",
+      "packet": "android-lifecycle",
+      "claim": "Not joining the worker in onDestroy leaks the native worker and client",
+      "status": "unsupported_as_stated",
+      "evidence": "onDestroy cooperatively cancels the native engine, disconnects the client, sets stop and interrupts the thread. CPU work checks stop each iteration; network calls have timeouts; the worker closes MobileDraft in finally. Returning before termination is asynchronous cleanup, not by itself a leak. No persistent leak is demonstrated. Cancellation latency and rapid restart remain physical qualification work; no phone test is claimed here.",
+      "references": [
+        "apps/android/app/src/main/java/dev/nodelift/companion/NodeService.kt:166-170,200-211,249-254,268-275",
+        "apps/android/app/src/main/java/dev/nodelift/companion/NativeEngine.kt:135-136",
+        "apps/android/app/src/main/java/dev/nodelift/companion/Protocol.kt:98"
+      ]
+    },
+    {
+      "id": "android-lifecycle-2",
+      "packet": "android-lifecycle",
+      "claim": "Quick restart preserves a stale contact time and incorrect connection state",
+      "status": "needs_physical_followup",
+      "evidence": "The supplied source clears connected and lastContactElapsed on start, uses volatile fields and guards contact callbacks by generation. This contradicts a simple missing-reset claim. UI snapshots are not atomic, and shutdown/restart callback ordering still deserves a targeted instrumentation/device test. No sustained stale state or correctness patch was established by this review.",
+      "references": [
+        "apps/android/app/src/main/java/dev/nodelift/companion/NodeService.kt:29-35,70-83,138-139,168,270-273"
+      ]
+    },
+    {
+      "id": "android-transport-1",
+      "packet": "android-transport",
+      "claim": "Download cleanup leaks a socket and deleting a failed partial file is a defect",
+      "status": "rejected",
+      "evidence": "Temporary files are intentionally discarded on failure; resumable download is not promised. Success atomically replaces a file in the same directory. Finally explicitly disconnects the connection after clearing active, so a concurrent cancel that observes null does not defer cleanup to garbage collection. No socket leak is demonstrated.",
+      "references": [
+        "apps/android/app/src/main/java/dev/nodelift/companion/Protocol.kt:134-155"
+      ]
+    },
+    {
+      "id": "android-transport-2",
+      "packet": "android-transport",
+      "claim": "Concurrent cancel and close pass a disposed native pointer and crash",
+      "status": "rejected",
+      "evidence": "The Java long is an opaque registry ID, not a raw Engine pointer. Native lookup locks the registry and retains a shared_ptr; cancel after removal is a no-op. The model did not have this C ABI context in the Android packet.",
+      "references": [
+        "apps/android/app/src/main/java/dev/nodelift/companion/NativeEngine.kt:14-25",
+        "native/core.cpp:292-306,335-339"
+      ]
+    },
+    {
+      "id": "impact-estimator-1",
+      "packet": "impact-estimator",
+      "claim": "Rejecting unsorted energy samples rejects valid data",
+      "status": "rejected",
+      "evidence": "The acquisition contract uses ordered run-relative monotonic samples; line 120 explicitly rejects non-increasing time. Reordering can conceal clock/acquisition faults. The cited [50,10],[0,10] example also does not cover a 100 ms window. The existing energy regression intentionally rejects unordered samples.",
+      "references": [
+        "host/nodelift/impact.py:87-132",
+        "host/tests/test_impact.py:118-129"
+      ]
+    },
+    {
+      "id": "impact-estimator-2",
+      "packet": "impact-estimator",
+      "claim": "Cluster bootstrap resampling is faulty",
+      "status": "withdrawn_after_followup",
+      "evidence": "The initial response was truncated without a supported failure. The informed follow-up accepts whole-session bootstrap with equal pair weights; the local seeded RNG and grouping match the declared contract.",
+      "references": [
+        "impact-estimator.response.json",
+        "host/nodelift/impact.py:59-74"
+      ]
+    },
+    {
+      "id": "impact-attribution-1",
+      "packet": "impact-attribution",
+      "claim": "Zero host duration causes division by zero",
+      "status": "rejected",
+      "evidence": "number enforces the minimum inclusively and rejects bool and nonfinite values. The duration call supplies minimum 0.000001, excluding zero before any pair calculation. The model explicitly lacked that helper context.",
+      "references": [
+        "host/nodelift/impact.py:34-37,239,296"
+      ],
+      "followup": "Qwen withdraws the suspicion after seeing the number helper."
+    },
+    {
+      "id": "impact-attribution-2",
+      "packet": "impact-attribution",
+      "claim": "Candidate minus host has the wrong TTFT sign",
+      "status": "withdrawn_by_model",
+      "evidence": "The model itself recognizes both TTFT paths use candidate minus host consistently. The metric is change, not time saved; negative means improved latency. The initial answer was truncated after that re-evaluation.",
+      "references": [
+        "impact-attribution.response.json",
+        "host/nodelift/impact.py:279,294"
+      ],
+      "followup": "Qwen confirms the sign convention after receiving the explicit metric contract."
+    },
+    {
+      "id": "provider-1",
+      "packet": "provider",
+      "claim": "An exception from the stream bypasses generator finally and leaks the socket",
+      "status": "rejected",
+      "evidence": "Propagating an exception unwinds the generator through its finally block. In addition, Controller wraps iteration with contextlib.closing, including early consumer failure. Existing generator-close regressions pass.",
+      "references": [
+        "host/nodelift/providers.py:169-175 in original packet",
+        "host/nodelift/engine.py:185-196",
+        "host/tests/test_providers.py:test_controller_closes_generator_when_its_output_limit_fails"
+      ]
+    },
+    {
+      "id": "provider-2",
+      "packet": "provider",
+      "claim": "Cancellation while connect has not exposed its socket cannot interrupt the pending operation",
+      "status": "confirmed_refined_and_fixed",
+      "evidence": "Qwen identified the unavailable-socket cancellation window. Codex reproduced a concrete consequence with real loopback HTTP: after cancellation during a gated connect, the original code still sent /v1/chat/completions. The patch explicitly connects, exposes the socket and rechecks cancellation before sending the POST. The regression fails before and passes after; all 16 provider tests pass. It does not make OS DNS/connect instantly cancellable or retract requests already sent.",
+      "references": [
+        "PROVIDER_CANCELLATION.md",
+        "provider-connect-before.txt",
+        "provider-connect-after.txt",
+        "host/tests/test_providers.py:test_cancel_during_connect_sends_no_generation_request"
+      ],
+      "followup": "Qwen reports no supported regression in the disclosed fix. Independent before/after network regression and host suite are the execution evidence."
+    },
+    {
+      "id": "jni-fix-audit",
+      "packet": "jni-fix-audit",
+      "claim": "No supported regression found in supplied known Unicode fix",
+      "status": "known_fix_review_no_new_defect",
+      "evidence": "Qwen reviewed a disclosed issue and patch, not a blind discovery. Its broad description agrees with the 15 independent JNI cases. Two explanatory details require care: JNI allocation failure normally returns null with a pending Java exception rather than a C++ throw, and a literal UTF-16 surrogate differs from an ASCII JSON escape. The test harness, not the model narrative, establishes behavior.",
+      "references": [
+        "JNI_UNICODE.md",
+        "jni-unicode-candidate.json",
+        "jni-fix-audit.response.json"
+      ]
+    }
+  ],
+  "adjudicated_by": "Codex, not a human auditor",
+  "completed_at_utc": "2026-11-03T10:38:45.667879+00:00",
+  "followups": {
+    "native-reconsideration": {
+      "status": "completed",
+      "finish_reason": "stop",
+      "response": "followup/native-reconsideration.response.json"
+    },
+    "transport-completion": {
+      "status": "completed",
+      "finish_reason": "stop",
+      "response": "followup/transport-completion.response.json"
+    },
+    "telemetry-fix-audit": {
+      "status": "completed",
+      "finish_reason": "stop",
+      "response": "followup/telemetry-fix-audit.response.json"
+    },
+    "estimator-completion": {
+      "status": "completed",
+      "finish_reason": "stop",
+      "response": "followup/estimator-completion.response.json"
+    },
+    "attribution-completion": {
+      "status": "completed",
+      "finish_reason": "stop",
+      "response": "followup/attribution-completion.response.json"
+    },
+    "provider-fix-audit": {
+      "status": "completed",
+      "finish_reason": "stop",
+      "response": "followup/provider-fix-audit.response.json"
+    }
+  },
+  "independent_findings": [
+    {
+      "issue": "JNI supplementary Unicode conversion",
+      "provenance": "Codex before Qwen replies",
+      "status": "source_fixed",
+      "record": "JNI_UNICODE.md"
+    },
+    {
+      "issue": "Null worker total labelled valid telemetry",
+      "provenance": "Codex during adjudication, not raised by Qwen",
+      "status": "fixed",
+      "record": "TELEMETRY_NULL.md"
+    }
+  ]
+}

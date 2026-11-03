@@ -1,0 +1,22 @@
+{
+  "packet": "provider",
+  "run_id": "c6f80de390af95d4dfad5081",
+  "status": "completed",
+  "backend": "local_api",
+  "provider_model": "nodelift-review-qwen38-27b-q4kp",
+  "text": "**Bug 1: Resource Leak on Cancellation**\nFile: `host/nodelift/providers.py`, lines 100-106.\nTrigger: `cancel()` is called while `stream()` is blocked in `response.read1()` (line 190).\nConsequence: `cancel()` shuts down the socket, causing `read1()` to raise `OSError`. The `stream()` generator propagates this to the caller. If the caller does not exhaust the generator (e.g., breaks out of the loop or catches the exception without closing the generator), the `finally` block (lines 169-175) never executes. The `http.client.HTTPConnection` object remains open, leaking file descriptors and sockets.\nRepro: Start a stream, call `cancel()`, catch the resulting `ValueError` in the consumer loop, and exit without closing the generator.\n\n**Bug 2: Race Condition in Socket Assignment**\nFile: `host/nodelift/providers.py`, lines 122-123.\nTrigger: `stream()` executes `self.active_socket = connection.sock` after `connection.request()` but before `getresponse()`.\nConsequence: `connection.sock` may be `None` if the connection has not yet been established or if `request()` failed silently before socket assignment (though `request` usually raises). More critically, if `cancel()` runs between `request()` and line 122, `self.active_socket` is still `None`. `cancel()` then falls back to `connection.sock` (line 103). If `connection.sock` is `None` (e.g., DNS failure pending), `transport` is `None`, and cancellation fails silently, leaving the thread blocked until timeout.\nRepro: Mock `http.client.HTTPConnection` to delay socket assignment. Call `cancel()` immediately after `stream()` starts. Verify `active_socket` is `None` and `connection.sock` is `None`, resulting in no shutdown.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 4888,
+    "completion_tokens": 421,
+    "total_tokens": 5309
+  },
+  "metrics": {
+    "elapsed_seconds": 97.76098045799881,
+    "ttft_ms": 41208.031208021566,
+    "request_total_ms": 97760.97950001713,
+    "generated_tokens": 421
+  },
+  "measurement_scope": "local_external_server",
+  "error": null
+}

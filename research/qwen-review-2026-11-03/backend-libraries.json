@@ -1,0 +1,57 @@
+{
+  "source_commit": "ddf48f85c933c1f438212a02eb21e7b001d2d37d",
+  "source_tree_verification": {
+    "github_tree_sha": "ddf48f85c933c1f438212a02eb21e7b001d2d37d",
+    "truncated": false,
+    "compared": 1819,
+    "mismatches": [],
+    "missing": []
+  },
+  "libraries": [
+    {
+      "file": "libggml-base.0.28.0.dylib",
+      "bytes": 756776,
+      "sha256": "74cc557572735c2b0bb9c98ee86e546dbaae8197fe33a9d519095923ad5e8104"
+    },
+    {
+      "file": "libllama-server-impl.dylib",
+      "bytes": 7236360,
+      "sha256": "b5ece27a720053d57a88c0955410956e42dfa0c91aad0b7be4815ccc76020cd9"
+    },
+    {
+      "file": "libllama-common.0.8.0.dylib",
+      "bytes": 5548168,
+      "sha256": "d802082b2c5fbfe8abc71d6c2ecfb8b25fc2605afae23383a844cbc5bb83cb56"
+    },
+    {
+      "file": "libllama.0.8.0.dylib",
+      "bytes": 3788112,
+      "sha256": "501ea784415cc46e355089bfbdd0501364276d4721cece78f95702b0bb761df4"
+    },
+    {
+      "file": "libmtmd.0.8.0.dylib",
+      "bytes": 1612864,
+      "sha256": "cc70ddb949cea207f358354be455b17b50dc71c07b0766d100a2f1696f1fead8"
+    },
+    {
+      "file": "libggml-blas.0.28.0.dylib",
+      "bytes": 58776,
+      "sha256": "903047cef8623f66f42498d9e60465047219cf72c4bc5a222192f3d9ee3a5165"
+    },
+    {
+      "file": "libggml-metal.0.28.0.dylib",
+      "bytes": 5621928,
+      "sha256": "d62c32ff1493549d74203254fa58edc58aa13a37ee5c92810803d0ed5392b575"
+    },
+    {
+      "file": "libggml.0.28.0.dylib",
+      "bytes": 60096,
+      "sha256": "b85169cfa3e4029a6f811796d2bf8041d4962170246b1a5877c1bfdd97a948e7"
+    },
+    {
+      "file": "libggml-cpu.0.28.0.dylib",
+      "bytes": 992496,
+      "sha256": "319e1a20d9c1369360a3d0f91049ae998de55ac5e29ed996174184efb6ef4aa8"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "discovered_by": "Codex during review preparation, before any Qwen response",
+  "source_commit": "436058cb3a23cd25e4b70de891dff24d20d93338",
+  "file": "native/jni.cpp",
+  "original_sha256": "909924505080a5fb1a0f416307fe6fccbbdd78265edf344a97cca175c3e66894",
+  "candidate_sha256": "e7513f4ba31b12e73e3f8fe03c06a26b22df70dab546932627de9179b76e394f",
+  "observation": "A literal supplementary Unicode character in otherwise valid JSON is rejected at the JNI input boundary; its ASCII JSON escape is accepted. JNI Modified UTF-8 differs from JSON UTF-8.",
+  "verified_scope": "Real JNI bridge on macOS/JDK 25, no loaded model. Candidate passed 15 cases and compiled as an Android ARM64 object. No physical Android test.",
+  "current_worker_scope": "The current mobile worker normally sends token IDs and a fixed internal model path. This does not demonstrate corruption of an observed phone inference.",
+  "prior_review_comparison": "The earlier GLM/Gemini core source packets did not include this JNI file; do not attribute this difference to censorship.",
+  "source_references": [
+    "https://docs.oracle.com/en/java/javase/25/docs/specs/jni/functions.html",
+    "https://developer.android.com/ndk/guides/jni-tips"
+  ]
+}

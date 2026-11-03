@@ -1,0 +1,22 @@
+{
+  "packet": "attribution-completion",
+  "run_id": "dbaab26aef807178d9fc312e",
+  "status": "completed",
+  "backend": "local_api",
+  "provider_model": "nodelift-review-qwen38-27b-q4kp",
+  "text": "Zero-duration division is unsupported; `number` enforces a minimum of .000001, preventing division by zero. The wrong TTFT sign suspicion is also unsupported. Line 294 calculates `ttft` as `b['ttft_ms'] - a['ttft_ms']` (candidate minus host), matching the stated contract where negative values indicate improvement. Both calculations strictly adhere to the provided validation and subtraction logic.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 859,
+    "completion_tokens": 91,
+    "total_tokens": 950
+  },
+  "metrics": {
+    "elapsed_seconds": 17.972844999982044,
+    "ttft_ms": 6579.967374971602,
+    "request_total_ms": 17972.84454095643,
+    "generated_tokens": 91
+  },
+  "measurement_scope": "local_external_server",
+  "error": null
+}

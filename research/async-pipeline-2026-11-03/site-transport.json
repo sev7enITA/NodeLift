@@ -1,0 +1,24 @@
+{
+  "published_at": "2026-11-03T09:21:36.871477+00:00",
+  "previous_index_sha256": "6d555616c2c6037538ce1dde3af794c2675b682d71703a4a47fff7b15bdbbd74",
+  "assets": [
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/data/changelog.md",
+      "bytes": 39493,
+      "sha256": "b0d5243465bfc4ba7439096a15b85ab0957e1d52bdabf238e186ed322bd5f100",
+      "https_verified": true
+    },
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/data/changelog.json",
+      "bytes": 43544,
+      "sha256": "01fcdfabcbfc3a155965c7b789e1842cef2e1e5cb14d11280143ba92cff59e30",
+      "https_verified": true
+    },
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/index.html",
+      "bytes": 177690,
+      "sha256": "88fd3b1d80e30ab5ac8bbb4e6c64ca1867daac7617fd20e73ece37367a24e17b",
+      "https_verified": true
+    }
+  ]
+}

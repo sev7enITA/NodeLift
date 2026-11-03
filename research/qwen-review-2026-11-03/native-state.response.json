@@ -1,0 +1,22 @@
+{
+  "packet": "native-state",
+  "run_id": "ef82b57d9079634e2ac3c411",
+  "status": "completed",
+  "backend": "local_api",
+  "provider_model": "nodelift-review-qwen38-27b-q4kp",
+  "text": "**Bug 1: Context Overflow in `verify`**\n*   **File:Line:** `native/core.cpp:194`\n*   **Trigger:** Calling `verify` with a `prefix` where `prefix.size() == nctx - 1` and a non-empty `proposal`.\n*   **Consequence:** The code constructs `before` with size `nctx - 1`. It then constructs `batch` with size `1 + proposal.size()`. The total tokens to decode is `nctx + proposal.size() - 1`. Since `proposal.size() >= 1`, the total exceeds `nctx`. The `decode` call at line 202 will fail the check at line 104 (`cached.size()+input.size()<=size_t(nctx)`), throwing an exception and resetting the engine state, preventing valid verification.\n*   **Repro:** Set `nctx=256`. Call `verify` with `prefix` of 255 tokens and `proposal` of 1 token.\n\n**Bug 2: Incorrect `accepted` Count in `verify_serial`**\n*   **File:Line:** `native/core.cpp:182`\n*   **Trigger:** Calling `verify_serial` where the proposal is partially accepted, but the output is truncated by the `remaining` limit or an early EOS token before the full proposal is processed.\n*   **Consequence:** The variable `accepted` is incremented for every matching token in the proposal loop (line 175). However, if the loop breaks early due to `output.size() >= remaining` (line 176) or an EOS token (line 176), the `output` vector is truncated. Line 182 sets `accepted = std::min(accepted, int(output.size()))`. This is incorrect because `accepted` counts proposal tokens that matched, but `output.size()` includes the bonus token (if any) or is truncated. More critically, if the proposal is fully accepted, `accepted` equals `proposal.size()`, but `output` may contain `proposal.size() + 1` tokens (including the bonus). The logic fails to distinguish between \"tokens from proposal\" and \"total output tokens\". Specifically, if `remaining` is small, `accepted` is clamped to `output.size()`, which might be less than the actual number of proposal tokens verified, or it might incorrectly report acceptance",
+  "finish_reason": "length",
+  "usage": {
+    "prompt_tokens": 5195,
+    "completion_tokens": 512,
+    "total_tokens": 5707
+  },
+  "metrics": {
+    "elapsed_seconds": 109.59397766698385,
+    "ttft_ms": 39837.67583296867,
+    "request_total_ms": 109593.97649997845,
+    "generated_tokens": 512
+  },
+  "measurement_scope": "local_external_server",
+  "error": null
+}

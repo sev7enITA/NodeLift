@@ -1,0 +1,38 @@
+[
+  {
+    "id": "native-reconsideration",
+    "phase": "informed follow-up",
+    "prompt_sha256": "f76c8b240bb0aba95b802046a2caaeb986121f0832378a7b5ab0e1c4971b45d4",
+    "prompt_bytes": 5145
+  },
+  {
+    "id": "transport-completion",
+    "phase": "informed follow-up",
+    "prompt_sha256": "11030dab934825c1358fd6dc4ca913dd2e798bcf395b30e547282ca50552e79c",
+    "prompt_bytes": 4837
+  },
+  {
+    "id": "telemetry-fix-audit",
+    "phase": "informed follow-up",
+    "prompt_sha256": "3530b5a4a6c67f4dd46dfa0b8a982970726a492fe7c69c77a24c01446dcf075b",
+    "prompt_bytes": 5267
+  },
+  {
+    "id": "estimator-completion",
+    "phase": "informed follow-up",
+    "prompt_sha256": "022466880651a0e3a78a8847dc4678c40e542e6060e533a24fbf09c02cc483a1",
+    "prompt_bytes": 4619
+  },
+  {
+    "id": "attribution-completion",
+    "phase": "informed follow-up",
+    "prompt_sha256": "8808534986dc029461bb752e53b23762201f9dac1b7eb668579fbd2e4aedaa04",
+    "prompt_bytes": 3120
+  },
+  {
+    "id": "provider-fix-audit",
+    "phase": "known-fix audit",
+    "prompt_sha256": "ddc5890ff41e2b8eff63cbfdcb3da4c283cacd90cd164610e2d1f2d1834c5252",
+    "prompt_bytes": 3343
+  }
+]

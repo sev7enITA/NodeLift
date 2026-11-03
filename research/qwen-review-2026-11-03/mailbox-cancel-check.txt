@@ -1,0 +1,6 @@
+test_cancel_and_single_delivery (host.tests.test_engine.MailboxTests.test_cancel_and_single_delivery) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.211s
+
+OK

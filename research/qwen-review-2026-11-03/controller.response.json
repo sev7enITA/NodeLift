@@ -1,0 +1,22 @@
+{
+  "packet": "controller",
+  "run_id": "0da3f62cd2bd42676cba6014",
+  "status": "completed",
+  "backend": "local_api",
+  "provider_model": "nodelift-review-qwen38-27b-q4kp",
+  "text": "**Bug 1: Resource Leak on Cancellation**\nFile: `host/nodelift/engine.py`, lines 396-397.\nTrigger: A `remote_draft` run is cancelled while `first_remote` is pending.\nConsequence: `self.cancelled.set()` is called, but `remote_pool.shutdown(wait=True)` blocks until the worker thread finishes. If the remote request hangs or times out slowly, the main thread stalls, preventing other runs from starting. The `cancel_futures=True` flag only cancels *new* submissions; it does not interrupt the currently executing `mailbox.request` in the worker.\nRepro: Submit a `remote_draft` run with a long timeout. Cancel it immediately. The engine blocks in `shutdown` until the remote timeout expires.\n\n**Bug 2: Incorrect Cleanup Payload**\nFile: `host/nodelift/engine.py`, line 403.\nTrigger: A `remote_draft` run completes or fails.\nConsequence: The cleanup call uses `payload_for(prefix, 0, sequence, 'finish')`. The `prefix` variable contains the *entire* generated sequence (prompt + all generated tokens), not the original prompt. The remote node likely expects the original prompt context to release resources or finalize state. Sending the full generated history may cause the remote to reject the request, allocate excessive memory, or fail to match the session, leading to resource leaks on the remote node.\nRepro: Run a `remote_draft` generation. Inspect the `finish` payload sent to the remote. It contains `len(prefix)` tokens instead of the initial prompt length.",
+  "finish_reason": "stop",
+  "usage": {
+    "prompt_tokens": 4139,
+    "completion_tokens": 340,
+    "total_tokens": 4479
+  },
+  "metrics": {
+    "elapsed_seconds": 81.66188537498238,
+    "ttft_ms": 33245.0409589801,
+    "request_total_ms": 81661.8849170045,
+    "generated_tokens": 340
+  },
+  "measurement_scope": "local_external_server",
+  "error": null
+}

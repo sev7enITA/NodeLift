@@ -1,0 +1,18 @@
+test_null_total_is_missing_telemetry_without_discarding_valid_tokens (host.tests.test_lease_timing.LeaseTimingTests.test_null_total_is_missing_telemetry_without_discarding_valid_tokens) ... FAIL
+
+======================================================================
+FAIL: test_null_total_is_missing_telemetry_without_discarding_valid_tokens (host.tests.test_lease_timing.LeaseTimingTests.test_null_total_is_missing_telemetry_without_discarding_valid_tokens)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "host/tests/test_lease_timing.py", line 61, in test_null_total_is_missing_telemetry_without_discarding_valid_tokens
+    self.assertEqual(row['worker_timing_status'],'missing_or_invalid')
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 'valid_self_report' != 'missing_or_invalid'
+- valid_self_report
++ missing_or_invalid
+
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+FAILED (failures=1)
