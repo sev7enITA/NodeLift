@@ -13,8 +13,10 @@ object UpdatePolicy {
     const val WEEK_MS=7*24*60*60*1000L
     const val RETRY_MS=60*60*1000L
     fun due(now:Long,lastSuccess:Long,lastAttempt:Long):Boolean {
-        if(now<lastSuccess || now<lastAttempt)return true // Clock correction must not postpone indefinitely.
-        return (lastSuccess<=0 || now-lastSuccess>=WEEK_MS) && (lastAttempt<=0 || now-lastAttempt>=RETRY_MS)
+        // Treat future timestamps as unknown, while retaining a recent retry after failure.
+        val success=if(now<lastSuccess)0L else lastSuccess
+        val attempt=if(now<lastAttempt)0L else lastAttempt
+        return (success<=0 || now-success>=WEEK_MS) && (attempt<=0 || now-attempt>=RETRY_MS)
     }
 }
 

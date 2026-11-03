@@ -1,0 +1,73 @@
+1. Retracted and Corrected Findings
+
+F2 — Retracted (Not a missing-key defect): Both "Original project concept, research direction and development." (desktop HTML / excerpted Entry 8) and "Original concept, research direction and development." (AboutDialog.kt / Swift AboutView) exist in all three complete localization catalogs. No lookup fallback occurs; only a minor copy wording difference exists between desktop and mobile.   
+nodelift-gemini-product-review.txt
++ 1
+
+F3 — Retracted (Packet excerpt extraction artifact, not a source defect): The un-queried .graph-workspace and .graph-inspector rules in the packet's CSS excerpt resulted from stripped @media wrappers during packet preparation. In the actual host/nodelift/dashboard.css, the two-column desktop grid and inspector scroll constraints are properly isolated inside @media(min-width:901px) and (min-height:600px), and the single-column collapse is isolated inside @media(max-width:900px),(max-height:599px).   
+nodelift-gemini-product-review.txt
+
+F12 — Corrected (ReleaseMetadata.parse downgrade guard & monotonic build contract):
+
+Retracted premise: Removing release >= current or release.build >= current.build from ReleaseMetadata.parse is invalid. Because UpdateMonitor.kt and UpdateMonitor.swift assign details = verified unconditionally and the UI enables "View release notes & download" whenever details != null, permitting release < current inside ReleaseMetadata.parse would expose an older manifest as a downloadable downgrade. Furthermore, build numbers are globally monotonic across versions by release contract.   
+nodelift-gemini-product-review.txt
++ 1
+
+Remaining narrow refinement: docs/ABOUT_AND_UPDATES.md states "Three numeric version components are compared numerically, followed by the build number for the same version"; updating that sentence to note that build is also enforced as globally monotonic across versions aligns the documentation with UpdatePolicy.kt. If ahead-of-manifest local builds (current > release) ever need to report "No newer companion release was found." instead of throwing into UPDATE_FAILED, UpdateMonitor would have to gate details = if (available) verified else null rather than weakening the downgrade guard.   
+nodelift-gemini-product-review.txt
++ 1
+
+F14.2 — Retracted (Intentional incident-flag retention): Retaining previousIncident until explicit Clear diagnostics is intentional by design so exporting a report does not erase the incident state on either Android or iOS.   
+nodelift-gemini-product-review.txt
+
+2. Reproduced Defects vs. Remaining Static Findings and Hypotheses
+
+Reproduced and Locally Verified in Code / Synthetic DOM:
+
+F11 (High — Confirmed in Kotlin & Swift): Backward clock adjustment (now < lastSuccess) combined with a failed update check caused UpdatePolicy.due to short-circuit to true on every subsequent onResume, bypassing the 1-hour retry cooldown (RETRY_MS).   
+nodelift-gemini-product-review.txt
+
+F4–F7 (Confirmed in synthetic DOM checks for host/nodelift/graph.js):
+
+F4: Unreachable "No accepted mobile proposals" return branch in contributionStatus when c.measured && c.mobile === 0 due to buildButton precedence.   
+nodelift-gemini-product-review.txt
+
+F5: telemetryAge treating capabilities_updated_at === 0 as a valid timestamp ('Historical telemetry') while date() renders 'Unknown'.   
+nodelift-gemini-product-review.txt
+
+F6: detailSignature including all state?.jobs (triggering inspector DOM replacement on unrelated node job updates) and <button class="graph-device"> span concatenation / aria-pressed semantics.   
+nodelift-gemini-product-review.txt
+
+F7: Mixed binary (MiB/s) and decimal (MB/s stored as mbps) transfer throughput units in the same inspector.   
+nodelift-gemini-product-review.txt
+
+Remaining Low-Severity Static Findings & Untested Hypotheses:
+
+F1 (Catalog terminology consistency): Dropping "draft" in Italian Entry 2 ("una companion per prova") and alternating "伴侣设备" / "配套应用" and "草稿" / "候选词元生成" in zh-Hans Entries 2, 3, 4, 9, 11, and 12 remain valid localization polish items.   
+nodelift-gemini-product-review.txt
+
+F13 (AboutDialog.kt:showReleaseDetails initial expired visibility): expired is attached with default View.VISIBLE before handler.post(refresh) runs on the main looper to set View.GONE. Whether this causes a perceptible flash or a spurious polite live-region announcement on physical Android devices remains an untested runtime hypothesis without physical-device or TalkBack execution.   
+nodelift-gemini-product-review.txt
+
+F14.1, F14.3, F14.4 (ABOUT_AND_UPDATES.md & Android About/Update details): Documenting the second fetch to changelog.json in docs/ABOUT_AND_UPDATES.md, avoiding redundant L10n.text wrapping on installedCompanionVersion(activity) in AboutDialog.kt:showAbout, adding isAccessibilityHeading = true on showAbout section headers (matching showReleaseDetails), and initializing this.context in UpdateMonitor.kt:onResume remain valid static cleanup items.   
+nodelift-gemini-product-review.txt
+
+Screen-reader behavior: Actual assistive-technology announcement order for .graph-device buttons, inspector focus restoration, and Android/iOS live regions remains unverified on real assistive technology, as only synthetic DOM checks were run.
+
+3. Limits of the Protocol-Description-Only QR Review (F8–F10)
+
+Because Scope (C) reviewed only docs/evidence/qr-pairing-2026-11-01/review-adjudication.md and no host or mobile pairing source files were included in the packet, F8–F10 are strictly design-boundary observations, not source-code defect findings:   
+nodelift-gemini-product-review.txt
+
+No Source Verification of Implementation Invariants: The review cannot independently verify from source how make_identity constructs X.509 SANs, how SQLite transactions serialize consume/revoke operations, how Android pins the leaf certificate digest, or how iOS URLSession validates the TLS identity.   
+nodelift-gemini-product-review.txt
+
+F8 (Consume/Close & Single-Step Enrollment Boundary): The observation that Close only revokes an unused invitation (not an already-paired session) and that consuming an invite immediately issues a 256-bit bearer token without a second host-side approval step reflects the explicitly documented trust boundary in review-adjudication.md ("Close does not revoke a session that already paired; the device's Revoke pairing control does", "This release does not add a separate approval registry, device attestation or protection against deliberate disclosure of a live invitation"). It is an architectural trade-off of single-step pairing, not an implementation bug.   
+nodelift-gemini-product-review.txt
+
+F9 (QR Version 27 Browser Scaling from 532px to 460px): While 460 / 133 ≈ 3.46 px/module is non-integer scaling and can introduce resampling softness in CSS/canvas rendering, review-adjudication.md notes that the 460px browser rendering was decoded by ZXing in isolation. Whether 460px vs. 532px materially affects real-world scan latency or failure rates is an untested hardware hypothesis until physical camera qualification (focus, distance, display glare, and screen DPI) is performed.   
+nodelift-gemini-product-review.txt
++ 1
+
+F10 (Zero Clock-Skew Grace & Startup IP Binding): Both behaviors are intentional, documented design constraints in review-adjudication.md ("no clock-skew tolerance is claimed", "Existing state refuses an IP mismatch; the guide explains use of a new state directory and re-pairing after a network change"). Treating them as usability trade-offs rather than defects is required by the documented specification.   
+nodelift-gemini-product-review.txt

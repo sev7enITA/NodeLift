@@ -47,7 +47,7 @@ const jobs=[
  {node:'phone',kind:'cpu',state:'completed',finished:22,result:{samples:[{kind:'cpu',iterations:100,ms:1000},{kind:'cpu',iterations:50,ms:500}]}}
 ];
 const m=measurements(jobs,'phone');assert.equal(m.networkAt,20);assert.deepEqual(m.rtt.map(r=>[r.pace,r.median]),[[0,4],[30,100]]);
-assert.equal(m.transfer.length,3);assert.equal(m.transfer.find(r=>r.kind==='download'&&r.bytes===1000000).mbps,40);assert.equal(m.cpuIterationsPerSecond,100);
+assert.equal(m.transfer.length,3);assert.equal(m.transfer.find(r=>r.kind==='download'&&r.bytes===1000000).mibPerSecond,40_000_000/1048576);assert.equal(m.cpuIterationsPerSecond,100);
 assert.equal(measurements([], 'phone').cpuIterationsPerSecond,null);assert.equal(measurements([], 'phone').networkAt,null);
 // Six-device routing at narrow, two-column and wide layouts. Every segment must
 // stay out of all card interiors, including earlier cards in the same column.

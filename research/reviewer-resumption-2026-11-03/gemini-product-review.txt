@@ -1,0 +1,326 @@
+Scope and Attachment Verification
+
+Attachment Completeness: The attached packet (nodelift-gemini-product-review.txt, commit 6ceedfd58c338294b84e39fab0fb45530decd770) is not truncated at the transport level; it terminates cleanly at the closing bracket of the 15-entry localization JSON array.
+
+Exact Scopes Reviewed:
+
+ Complete files: host/nodelift/graph.js, docs/evidence/qr-pairing-2026-11-01/review-adjudication.md, docs/ABOUT_AND_UPDATES.md, apps/android/app/src/main/java/dev/nodelift/companion/AboutDialog.kt, apps/android/app/src/main/java/dev/nodelift/companion/UpdateMonitor.kt, apps/android/app/src/main/java/dev/nodelift/companion/UpdatePolicy.kt, and apps/ios/NodeLift/UpdateMonitor.swift.
+
+Explicit excerpts / partial artifacts (by packet design): CSS excerpts from host/nodelift/dashboard.css, the #about HTML section excerpt, the Swift AboutView / ReleaseNotesView excerpt, and 15 selected en/zh-Hans/it catalog entries.
+
+Omitted dependencies not assumed in this review: iOS implementations of UpdatePolicy, ReleaseMetadata, CompanionRelease, CompanionBuild, Diagnostics, and Message; Android implementations of L10n, ControlUI, and Diagnostics; the host HTML outside #about; and the QR pairing source code. No code execution, live network testing, physical device measurement, inference speedup, or pooled memory is claimed.
+
+(A) 15 Selected EN / zh-Hans / IT Catalog Entries
+Finding 1 — Qualifier omission in Italian and inconsistent domain terminology in Simplified Chinese
+
+Severity: Low
+
+File / Function: 15 selected catalog entries (Entries 2, 3, 4, 9, 11, 12)
+
+Concrete Trigger & Evidence:
+
+In Entry 2 ("Coordinates one native run and verifies phone proposals. Current phone delegation uses one draft companion per run; device memory is not pooled."), the Italian translation renders "one draft companion per run" as "una companion per prova", dropping the "draft" qualifier and translating "run" as "prova" (trial/test). host/nodelift/graph.js:selectedRole explicitly distinguishes a 'Draft-capable companion' / 'Available draft companion' from a 'Diagnostics companion'.
+
+Across the zh-Hans entries, "companion" is translated as "伴侣设备" in Entry 2 ("一台草稿伴侣设备") but as "配套应用" in Entries 3, 9, and 11. Similarly, "Draft" is translated as "草稿" in Entries 2 and 4 ("草稿伴侣设备", "草稿就绪") but as "候选词元生成" in Entry 12 ("候选词元生成已暂停：电量、温度或授权限制").
+
+Smallest Fix:
+
+In Entry 2 (it), change "Coordina una prova nativa e verifica le proposte del telefono. La delega attuale usa una companion per prova; la memoria dei dispositivi non è unificata." to "Coordina un’esecuzione nativa e verifica le proposte del telefono. La delega attuale usa una companion di draft per esecuzione; la memoria dei dispositivi non è unificata.".
+
+In Entry 2 (zh-Hans), standardize "草稿伴侣设备" with "配套应用" (e.g., "一台草稿配套应用/设备"), and align "草稿" vs. "候选词元" across Entries 2, 4, and 12.
+
+Meaningful Test: Static glossary assertion test verifying that every source entry containing "draft companion" preserves both the draft and companion terms in it and zh-Hans.
+
+Finding 2 — Localization key divergence between desktop HTML and mobile About views on Entry 8
+
+Severity: Low
+
+File / Function: 15 selected catalog entries (Entry 8), HTML EXCERPT: About section, apps/android/app/src/main/java/dev/nodelift/companion/AboutDialog.kt:showAbout, Swift SOURCE EXCERPT: AboutView.body
+
+Concrete Trigger & Evidence: Catalog Entry 8 and the desktop HTML (data-i18n="Original project concept, research direction and development.") include the word "project", whereas AboutDialog.kt:showAbout (text("Original concept, research direction and development.")) and Swift AboutView.body (note("Original concept, research direction and development.")) omit "project". If a shared translation catalog is keyed by Entry 8's id, the mobile lookups miss the entry and fall back to English.
+
+Smallest Fix: Update AboutDialog.kt:showAbout and AboutView.body to pass "Original project concept, research direction and development." (or maintain both keys in the full mobile catalog if intentionally distinct).
+
+Meaningful Test: Unit test scanning all t(...), L10n.text(...), and Message(...) string literals in Android/iOS sources against the localization catalog key set to fail on any unresolved key.
+
+(B) Device Graph (host/nodelift/graph.js & host/nodelift/dashboard.css)
+Finding 3 — Unscoped top-level CSS rules unconditionally collapse the two-column desktop graph layout and disable inspector scrolling
+
+Severity: High
+
+File / Function: host/nodelift/dashboard.css (.graph-workspace, .graph-inspector)
+
+Concrete Trigger & Evidence: Early in dashboard.css, .graph-workspace is defined as display:grid;grid-template-columns:minmax(0,1fr) minmax(285px,34%) with responsive overrides inside @media(max-width:1240px) and @media(max-width:760px). However, later in the stylesheet at top-level (un-queried) scope, the following rules appear back-to-back:
+
+CSS
+.graph-workspace{align-items:start}
+.graph-inspector{max-height:calc(100vh - var(--header-height) - 36px);max-height:calc(100dvh - var(--header-height) - 36px);overflow-y:auto;overscroll-behavior-y:contain;scrollbar-gutter:stable;scroll-padding-block:20px}
+.graph-overview{align-self:start}
+.graph-attribution{margin-top:0}
+.graph-workspace{grid-template-columns:1fr}
+.graph-inspector{max-height:none;overflow:visible;border-left:0;border-top:1px solid var(--line)}
+
+
+Because the last two rules are at the top level outside any @media(max-width:760px) block, CSS cascade order causes .graph-workspace{grid-template-columns:1fr} and .graph-inspector{max-height:none;overflow:visible;border-left:0;border-top:1px solid var(--line)} to override both the two-column desktop grid and the max-height/overflow-y:auto inspector rules immediately above them at all viewport widths.
+
+Smallest Fix: Wrap the last two rules (.graph-workspace{grid-template-columns:1fr} and .graph-inspector{max-height:none;overflow:visible;border-left:0;border-top:1px solid var(--line)}) inside @media(max-width:760px){ ... }.
+
+Meaningful Test: CSS layout test (or stylesheet AST check) asserting that at viewport width 1280px, getComputedStyle(document.querySelector('.graph-workspace')).gridTemplateColumns resolves to two columns and .graph-inspector has overflowY === 'auto'.
+
+Finding 4 — Dead return branch in contributionStatus prevents Catalog Entry 15 ("No accepted mobile proposals") from rendering in the UI
+
+Severity: Medium
+
+File / Function: host/nodelift/graph.js:contributionStatus, host/nodelift/graph.js:buildButton, host/nodelift/graph.js:renderInspector
+
+Concrete Trigger & Evidence: In contributionStatus(node, run, c), the final line is:
+
+JavaScript
+return c.mobile===0?'No accepted mobile proposals':'Accepted mobile proposals recorded';
+
+
+That line is only reachable when !host, run.mode === 'remote_draft', run.node_id === node.id, c.applicable === true, and c.measured === true. However, the only two callers of contributionStatus in graph.js bypass it whenever those exact conditions hold:
+
+buildButton evaluates !host && participating && c.measured ? tr('Accepted mobile draft: {0}%', fmt(100*c.share)) : tr(contributionStatus(node,run,c)), which takes the first branch even when c.mobile === 0 (displaying "Accepted mobile draft: 0.0%").
+
+renderInspector only calls contributionStatus(node, run, c) inside the else branch of if (c.measured) (when c.measured is false).
+Consequently, the final line of contributionStatus is dead code during DOM rendering, and Catalog Entry 15 ("No accepted mobile proposals") is never shown on the device card or inspector when a remote_draft run completes with c.mobile === 0.
+
+Smallest Fix: In buildButton, change !host&&participating&&c.measured to !host&&participating&&c.measured&&c.mobile>0 so a zero-accepted run falls through to tr(contributionStatus(node,run,c)) and displays "No accepted mobile proposals".
+
+Meaningful Test: Unit/DOM test passing a native remote_draft run with blocks: [{effective_mode: 'remote_draft', generated: 10, proposed: 4, accepted: 0}] and verifying that the participating peer button's .graph-device-weight text equals "No accepted mobile proposals".
+
+Finding 5 — telemetryAge treats capabilities_updated_at === 0 as a valid timestamp, contradicting date() in the inspector
+
+Severity: Medium
+
+File / Function: host/nodelift/graph.js:finite, host/nodelift/graph.js:date, host/nodelift/graph.js:telemetryAge
+
+Concrete Trigger & Evidence: finite(value) is defined as typeof value === 'number' && Number.isFinite(value) && value >= 0, which returns true for 0. While date(value) explicitly guards against epoch zero via finite(value) && value > 0 ? ... : tr('Unknown'), telemetryAge(node) checks if (!finite(at)) return tr('Telemetry time unknown') without checking at <= 0. When a companion has capabilities_updated_at: 0, date(node.capabilities_updated_at) in renderInspector renders 'Unknown', whereas telemetryAge(node) computes now - 0 > 20 and renders 'Historical telemetry' instead of 'Telemetry time unknown'.
+
+Smallest Fix: In telemetryAge(node), change if (!finite(at)) to if (!finite(at) || at <= 0).
+
+Meaningful Test: Unit test calling telemetryAge({id: 'peer-1', online: true, capabilities_updated_at: 0}) (or verifying the inspector .graph-freshness text) and asserting it returns 'Telemetry time unknown'.
+
+Finding 6 — Toggle-button ARIA semantics on non-unpressable device cards and unnecessary inspector DOM replacement on unrelated job updates
+
+Severity: Low
+
+File / Function: host/nodelift/graph.js:buildButton, host/nodelift/graph.js:renderInspector
+
+Concrete Trigger & Evidence:
+
+buildButton sets button.setAttribute('aria-pressed', String(selected === node.id)) on each device card, while button.onclick = () => { selected = node.id; detailSignature = ''; render(); } never unpresses an already-selected card. aria-pressed communicates a bimodal toggle button that can be deactivated by clicking it again. In addition, the six <span> children inside <button class="graph-device"> contain no punctuation or whitespace delimiters between adjacent spans, causing screen readers that concatenate text nodes to merge adjacent spans when computing the button's accessible name.
+
+renderInspector computes detailSignature using the entire state?.jobs array (JSON.stringify([node,run,c,state?.jobs,engine?.available,connected,NodeLiftI18n.language,telemetryAge(node)])). Any job progress or completion on an unselected companion invalidates detailSignature and runs area.replaceChildren(), destroying and recreating the active inspector DOM tree (Even when node.id === 'host', which does not read state.jobs).
+
+Smallest Fix: In renderInspector, replace state?.jobs in signature with node.id === 'host' ? null : measurements(state?.jobs, node.id). In buildButton, append visually hidden or CSS-separated delimiters (or aria-label) and avoid aria-pressed if the control cannot be toggled off.
+
+Meaningful Test: DOM test verifying that updating state.jobs for node-B while node-A (or host) is selected preserves identity (===) of the DOM nodes inside #graph-inspector.
+
+Finding 7 — Mixed binary (MiB/s) and decimal (MB/s named mbps) transfer rate units within the same inspector
+
+Severity: Low
+
+File / Function: host/nodelift/graph.js:measurements, host/nodelift/graph.js:renderInspector
+
+Concrete Trigger & Evidence: In renderInspector, the Basic assessment section displays network throughput in binary MiB/s (fmt(a.network.download_mib_s, 2) + ' MiB/s'). In the Measurements section of the same inspector, measurements(jobs, id) computes mbps: g.totalBytes / g.totalMs / 1000 (which is decimal megabytes per second, 
+10
+6
+ B/s
+10
+6
+ B/s, stored under a property named mbps), and renderInspector pairs a binary payload size label (Host → device · {0} MiB, using r.bytes / 1048576) with a decimal rate value (fmt(r.mbps, 2) + ' MB/s').
+
+Smallest Fix: Compute mibPerSecond: (g.totalBytes / 1048576) / (g.totalMs / 1000) in measurements(jobs, id) and display ' MiB/s' in renderInspector so both sections of the inspector use consistent MiB/s units.
+
+Meaningful Test: Unit test on NodeLiftGraph.measurements with a sample {kind: 'download', bytes: 1048576, ms: 1000} verifying the rate equals 1.0 MiB/s.
+
+(C) QR Pairing Protocol Description (docs/evidence/qr-pairing-2026-11-01/review-adjudication.md)
+
+(Reviewed strictly as a protocol description per instructions, without assuming unprovided pairing source files.)
+
+Finding 8 — Single-step invitation consumption without host-side enrollment approval exposes race-winner enrollment to URI-scheme interception, clipboard reads, and Close timing races
+
+Severity: Medium
+
+File / Function: docs/evidence/qr-pairing-2026-11-01/review-adjudication.md (Bullets: Consume/Close race, Trust/user intent, Credential lifetime, Admin/fallback)
+
+Concrete Trigger & Evidence: The protocol description specifies that:
+
+Consuming the invitation atomically deletes the invite and immediately returns a persistent 256-bit worker bearer token over pinned TLS without a separate host-side approval step ("This release does not add a separate approval registry, device attestation or protection against deliberate disclosure of a live invitation").
+
+Custom URI schemes are non-exclusive on mobile OSes, and manual fallback exposes the ticket to the clipboard ("documents custom-scheme non-exclusivity", "Manual copying still leaves user-controlled clipboard exposure").
+
+Clicking Close on the invitation modal only revokes an unused invitation and does not revoke a session that already paired ("SQLite serialization allows either completed pairing or revoked-unused invitation, never replay. Close does not revoke a session that already paired; the device's Revoke pairing control does").
+If a background app reading the clipboard, a competing custom-scheme handler, or a nearby observer on the LAN consumes the invitation milliseconds before the legitimate phone scans it (or just before the operator clicks Close to abort), the unauthorized client receives the 256-bit bearer token and remains paired even after the operator clicks Close.
+
+Smallest Fix: Either (a) bind Close / Cancel on an invitation dialog to an explicit "Cancel & revoke any session created by invitation 
+𝐼
+I" action if the operator aborts rather than confirming completion, or (b) add a lightweight host-side confirmation state (pending_approval 
+→
+→ active) before the issued bearer token is authorized for worker endpoints.
+
+Meaningful Test: Protocol integration test where invitation 
+𝐼
+I is consumed at 
+𝑡
+0
+t
+0
+	​
+
+ and the admin calls cancel_invitation(I) at 
+𝑡
+1
+t
+1
+	​
+
+; assert whether the resulting session from 
+𝐼
+I is revoked or flagged cleanly in the UI.
+
+Finding 9 — Non-integer browser downscaling (532px to 460px) of a dense Version 27 QR code introduces sub-pixel interpolation blur
+
+Severity: Low
+
+File / Function: docs/evidence/qr-pairing-2026-11-01/review-adjudication.md (Bullet: Optical density)
+
+Concrete Trigger & Evidence: The protocol uses QR Version 27 (125 modules per side) with a 4-module quiet zone (125 + 2 × 4 = 133 total modules per side) rendered on a 532px native canvas (532 / 133 = 4.0 px/module exact integer alignment), which is then scaled to 460px in the browser (460 / 133 ≈ 3.4586 px/module). Scaling 133 modules to 460px places almost every module edge on a fractional pixel boundary, causing browser bilinear resampling to blur black/white transitions across all 125×125 modules, while physical camera scanning on hardware remains unmeasured.
+
+Smallest Fix: Render the QR element in the browser at an exact integer multiple of 133px (399px for 3 px/module or 532px for 4 px/module) with CSS image-rendering: pixelated / crisp-edges.
+
+Meaningful Test: Automated DOM/CSS check asserting canvas.clientWidth % 133 === 0 (on 1x DPR) and getComputedStyle(canvas).imageRendering === 'pixelated'.
+
+Finding 10 — Client-side clock-skew rejection despite server authority, and full state invalidation on DHCP IP change
+
+Severity: Low
+
+File / Function: docs/evidence/qr-pairing-2026-11-01/review-adjudication.md (Bullets: Clock, IP changes)
+
+Concrete Trigger & Evidence:
+
+Although "the server enforces its stored invitation expiry; it never accepts a caller-supplied expiry as authority", "A badly skewed phone clock can reject an otherwise valid invitation early; no clock-skew tolerance is claimed". Because the client enforces strict local expiry with zero skew grace before contacting the server, a phone whose clock is fast by even the invitation TTL window rejects a freshly generated QR code that the authoritative host would accept.
+
+Under IP changes, "certificate SAN, bind address and generated invitation use the startup address. Existing state refuses an IP mismatch; the guide explains use of a new state directory and re-pairing after a network change". Routine DHCP lease changes on a local Wi-Fi network invalidate the entire state directory rather than isolating transport identity from historical run/device records.
+
+Smallest Fix: Allow a bounded local clock-skew grace window (e.g., 
+±
+5
+±5 minutes) on client pre-validation while keeping server enforcement authoritative, and decouple the host TLS leaf certificate / bind IP from the persistent SQLite state directory.
+
+Meaningful Test: Client unit test verifying an invitation expiring at server_now + 60s is still submitted to the host when phone_now == server_now + 120s, and rejected by the host if actually expired on the server.
+
+(D) About / Update UI Source Excerpts and Documented Policy
+Finding 11 — Backward clock adjustment (now < lastSuccess) combined with a failed update check causes UpdatePolicy.due to trigger an immediate retry on every onResume
+
+Severity: High
+
+File / Function: apps/android/app/src/main/java/dev/nodelift/companion/UpdatePolicy.kt:UpdatePolicy.due, apps/android/app/src/main/java/dev/nodelift/companion/UpdateMonitor.kt:onResume & check, apps/ios/NodeLift/UpdateMonitor.swift:onResume & check
+
+Concrete Trigger & Evidence: In UpdatePolicy.kt:UpdatePolicy.due:
+
+Kotlin
+fun due(now:Long,lastSuccess:Long,lastAttempt:Long):Boolean {
+    if(now<lastSuccess || now<lastAttempt)return true // Clock correction must not postpone indefinitely.
+    return (lastSuccess<=0 || now-lastSuccess>=WEEK_MS) && (lastAttempt<=0 || now-lastAttempt>=RETRY_MS)
+}
+
+
+When now < lastSuccess (e.g., system clock moved backward after a prior successful check) and onResume triggers check(), check() overwrites attempt = now (UpdateMonitor.kt line 39; UpdateMonitor.swift line 29), but success is only updated inside the try block after both network requests succeed. If that check fails (e.g., device is offline), lastSuccess remains in the future (now < lastSuccess). On every subsequent onResume() call (every time the app returns to foreground or the timer fires), if (now < lastSuccess || now < lastAttempt) return true short-circuits to true before checking now - lastAttempt >= RETRY_MS, violating the documented 1-hour retry policy ("Failed due checks retry after one hour while the process runs").
+
+Smallest Fix: Normalize future timestamps to 0 before evaluating the standard backoff predicates in UpdatePolicy.due:
+
+Kotlin
+fun due(now:Long,lastSuccess:Long,lastAttempt:Long):Boolean {
+    val s=if(now<lastSuccess)0L else lastSuccess
+    val a=if(now<lastAttempt)0L else lastAttempt
+    return (s<=0 || now-s>=WEEK_MS) && (a<=0 || now-a>=RETRY_MS)
+}
+
+
+With this change, a backward clock shift resets s to 0 (triggering an immediate check if a was also in the future or 
+>
+1
+h
+>1h ago), and if that check fails after recording attempt = now, now - a < RETRY_MS properly enforces the 1-hour retry cooldown.
+
+Meaningful Test: Unit test calling UpdatePolicy.due(now = 1_000_000L, lastSuccess = 2_000_000L, lastAttempt = 999_000L) (representing a failed check 1 second ago after a backward clock correction) and asserting it returns false.
+
+Finding 12 — ReleaseMetadata.parse throws on release < current or version-reset build numbers, turning older manifests or dev builds into failure states and contradicting docs/ABOUT_AND_UPDATES.md
+
+Severity: Medium
+
+File / Function: apps/android/app/src/main/java/dev/nodelift/companion/UpdatePolicy.kt:ReleaseMetadata.parse, apps/android/app/src/main/java/dev/nodelift/companion/UpdateMonitor.kt:check, docs/ABOUT_AND_UPDATES.md
+
+Concrete Trigger & Evidence:
+
+docs/ABOUT_AND_UPDATES.md states: "Three numeric version components are compared numerically, followed by the build number for the same version. An older manifest cannot trigger a downgrade prompt."
+
+However, ReleaseMetadata.parse (UpdatePolicy.kt line 33) enforces:
+
+Kotlin
+require(release>=current && release.build>=current.build)
+
+
+First, if a newer version resets or has a lower build number than the previous version (release > current but release.build < current.build), ReleaseMetadata.parse throws IllegalArgumentException, contradicting CompanionRelease.compareTo and docs/ABOUT_AND_UPDATES.md.
+Second, if the installed app is newer than the public manifest (release < current, e.g., during development/pre-release testing or CDN staleness), require(release >= current ...) throws, causing UpdateMonitor.check to enter the catch block, display "Update check unavailable. Check your connection or try again later.", log DiagnosticEvent.UPDATE_FAILED, and schedule 1-hour retries (RETRY_MS) instead of recording a successful check with "No newer companion release was found.".
+
+Smallest Fix: If build is globally monotonic across all releases, update docs/ABOUT_AND_UPDATES.md to state that build numbers are strictly monotonic across versions; if build is per-version as documented, remove && release.build >= current.build. To handle release < current without false network-error states, either allow release < current in ReleaseMetadata.parse (since UpdateMonitor already checks available = release > current and only sets details = if (available) verified else null) or handle it explicitly as "No newer companion release was found.".
+
+Meaningful Test: Unit test calling ReleaseMetadata.parse (and UpdateMonitor.check) with current = CompanionRelease("0.2.6", 6) against a manifest with version = "0.2.5", build = 5 and against version = "0.3.0", build = 1, verifying expected available and message states.
+
+Finding 13 — AboutDialog.kt:showReleaseDetails attaches the expired warning TextView as VISIBLE before handler.post(refresh) hides it
+
+Severity: Low
+
+File / Function: apps/android/app/src/main/java/dev/nodelift/companion/AboutDialog.kt:showReleaseDetails
+
+Concrete Trigger & Evidence: In showReleaseDetails (lines 199–209), expired ("Release details need a new check. Close this view and choose Check now.") is instantiated with default View.VISIBLE and accessibilityLiveRegion = View.ACCESSIBILITY_LIVE_REGION_POLITE, added to content, and shown via dialog.show() before handler.post(refresh) executes on a subsequent main-thread message to set expired.visibility = View.GONE. By contrast, diagnosticState in showAbout (line 103) explicitly initializes visibility = android.view.View.GONE.
+
+Smallest Fix: Add visibility = android.view.View.GONE inside val expired = TextView(activity).apply { ... } (or invoke refresh.run() synchronously instead of handler.post(refresh) after dialog.show()).
+
+Meaningful Test: Android UI test calling showReleaseDetails(activity, validDetails) and asserting immediately after return (before advancing the main looper queue) that expired.visibility == View.GONE.
+
+Finding 14 — Undocumented changelog.json dependency, stale previousIncident state on iOS export, double-localization call, and missing heading semantics in AboutDialog.kt
+
+Severity: Low
+
+File / Function: docs/ABOUT_AND_UPDATES.md, apps/android/app/src/main/java/dev/nodelift/companion/UpdateMonitor.kt:check, apps/ios/NodeLift/UpdateMonitor.swift:check, Swift SOURCE EXCERPT: AboutView.body, apps/android/app/src/main/java/dev/nodelift/companion/AboutDialog.kt:showAbout
+
+Concrete Trigger & Evidence:
+
+Undocumented second network fetch: docs/ABOUT_AND_UPDATES.md states "The companion fetches the small public mobile release manifest ([https://www.fabriziodegni.com/NodeLift/data/mobile-downloads.json](https://www.fabriziodegni.com/NodeLift/data/mobile-downloads.json)) over HTTPS", but both UpdateMonitor.kt:check and UpdateMonitor.swift:check also unconditionally fetch [https://www.fabriziodegni.com/NodeLift/data/changelog.json](https://www.fabriziodegni.com/NodeLift/data/changelog.json) on every check and fail the entire update check if changelog.json is unreachable or not yet updated to match mobile-downloads.json.
+
+Stale previousIncident state on iOS export: In Swift AboutView, @State private var previousIncident = Diagnostics.shared.hasPreviousIncident is refreshed when clearing diagnostics (if cleared { previousIncident = Diagnostics.shared.hasPreviousIncident }), but is not refreshed after Diagnostics.shared.export() succeeds, leaving "A previous interruption was recorded. Export diagnostics from About & References." displayed inside About & References simultaneously with "Diagnostic report prepared...".
+
+Double localization & missing accessibility headings in AboutDialog.kt:showAbout: Line 74 calls text(installedCompanionVersion(activity), 13f, mint), passing the already-localized result of installedCompanionVersion(activity) into text(key), which calls L10n.text(activity, key) a second time. Additionally, showAbout does not set isAccessibilityHeading = true on its section titles ("About & References", "Updates", "Diagnostics", etc.), whereas showReleaseDetails (line 177) explicitly sets if (Build.VERSION.SDK_INT >= 28) isAccessibilityHeading = true.
+
+Missing application context fallback in UpdateMonitor.kt:onResume: UpdateMonitor.kt only assigns this.context = context.applicationContext inside start(context). If onResume(context) is called before start(context), schedule(context) posts timer (Runnable { context?.let { onResume(it) } }) while this.context is null.
+
+Smallest Fix:
+
+Document changelog.json alongside mobile-downloads.json in docs/ABOUT_AND_UPDATES.md.
+
+Refresh previousIncident = Diagnostics.shared.hasPreviousIncident after Diagnostics.shared.export() in AboutView.
+
+In AboutDialog.kt:showAbout, set isAccessibilityHeading = true (API 
+≥
+28
+≥28) on section headers and avoid passing installedCompanionVersion(activity) through t(key).
+
+In UpdateMonitor.kt:onResume, add if (this.context == null) this.context = context.applicationContext.
+
+Meaningful Test: Unit/UI tests asserting: (1) AboutDialog.kt:showAbout section title TextView instances have isAccessibilityHeading == true on API 
+≥
+28
+≥28; and (2) UpdateMonitor.onResume(appContext) schedules a functional timer callback even when start() was not called first.
+
+Unsupported Hypotheses & Boundaries Not Claimed
+
+No live or hardware claims: This review was conducted strictly via static analysis of the provided commit 6ceedfd58c338294b84e39fab0fb45530decd770 packet. Physical camera QR scan rates, real-device iOS/Android TLS handshakes, and live update-server responses were not executed.
+
+No performance or memory-pooling claims: As accurately disclosed in host/nodelift/graph.js, docs/ABOUT_AND_UPDATES.md, and the About UI views, token attribution is not compute utilization, capacity sharding / device memory pooling is not implemented, and physical-phone inference speedup is unproven.
+
+Unprovided files treated as out-of-scope: Hypotheses regarding how iOS ReleaseMetadata.parse or UpdatePolicy.due behave in Swift beyond the supplied UpdateMonitor.swift call sites are marked as dependent on unprovided files (UpdatePolicy.swift / ReleaseMetadata.swift are not in the packet), though the call signature UpdatePolicy.due(now:success:attempt:) in UpdateMonitor.swift mirrors UpdatePolicy.kt.

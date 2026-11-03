@@ -24,7 +24,7 @@ Synthetic data is UI/test evidence only. It does not establish six-phone operati
 
 ## Review boundaries
 
-The requested Gemini high-capability model was unavailable due to the browser account's usage limit. No Gemini review is claimed for this change. Responsive captures used the synthetic fixture; fixed-header compositor artifacts in the emulated-viewport captures prevent treating those images as polished release/gallery screenshots. DOM geometry and functional checks are recorded separately from visual critique.
+Gemini 4 Argon High completed a later scoped static review on 3 November. The [adjudication and regressions](../../../research/reviewer-resumption-2026-11-03/PRODUCT-REVIEW.md) record verified presentation fixes and rejected findings. This supersedes the original unavailable-review status; it does not add physical-device or screen-reader qualification. Responsive captures used the synthetic fixture; fixed-header compositor artifacts in the emulated-viewport captures prevent treating those images as polished release/gallery screenshots. DOM geometry and functional checks are recorded separately from visual critique.
 
 GLM 5.3 with Max effort returned PASS on the initial sanitized-source/synthetic-image review, with four recommendations: announce device selection without announcing polling updates; route multirow links outside cards and observe layout changes; remove unexplained percentage-dependent edge thickness; distinguish an unselected phone from a selected phone whose proposals were not accepted. These are UI findings, not model-performance validation. The initial review also reported that its CSS attachment was truncated before graph rules; focused styles are required for any follow-up review.
 

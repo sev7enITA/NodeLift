@@ -1,0 +1,25 @@
+{
+  "scope": "Synthetic jsdom tests; no browser layout, screen reader, network or phone execution",
+  "cases": [
+    {
+      "name": "zero accepted proposals shown explicitly",
+      "passed": false,
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'Accepted mobile draft: 0.0%'\n- 'No accepted mobile proposals'\n"
+    },
+    {
+      "name": "epoch zero telemetry remains unknown",
+      "passed": false,
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'Historical telemetry'\n- 'Telemetry time unknown'\n"
+    },
+    {
+      "name": "unrelated jobs preserve selected inspector nodes",
+      "passed": false,
+      "error": "Values have same structure but are not reference-equal:\n\nHTMLHeadingElement {}\n"
+    },
+    {
+      "name": "one MiB in one second reports one MiB/s",
+      "passed": false,
+      "error": "Expected values to be strictly equal:\n\nundefined !== 1\n"
+    }
+  ]
+}

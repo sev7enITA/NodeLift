@@ -1,0 +1,21 @@
+{
+  "scope": "Synthetic jsdom tests; no browser layout, screen reader, network or phone execution",
+  "cases": [
+    {
+      "name": "zero accepted proposals shown explicitly",
+      "passed": true
+    },
+    {
+      "name": "epoch zero telemetry remains unknown",
+      "passed": true
+    },
+    {
+      "name": "unrelated jobs preserve selected inspector nodes",
+      "passed": true
+    },
+    {
+      "name": "one MiB in one second reports one MiB/s",
+      "passed": true
+    }
+  ]
+}

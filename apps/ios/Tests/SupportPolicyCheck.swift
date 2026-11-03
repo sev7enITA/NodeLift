@@ -13,6 +13,10 @@ import Foundation
         precondition(!UpdatePolicy.due(now:start+100,success:0,attempt:start))
         precondition(UpdatePolicy.due(now:start+UpdatePolicy.retry,success:0,attempt:start))
         precondition(UpdatePolicy.due(now:start-1,success:start,attempt:start))
+        // A failed check after a backward clock change must retain the one-hour backoff.
+        precondition(!UpdatePolicy.due(now:start,success:start+UpdatePolicy.week,attempt:start-1))
+        precondition(!UpdatePolicy.due(now:start+UpdatePolicy.retry-1,success:start+UpdatePolicy.week,attempt:start))
+        precondition(UpdatePolicy.due(now:start+UpdatePolicy.retry,success:start+UpdatePolicy.week,attempt:start))
         let directory=FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         defer{try? FileManager.default.removeItem(at:directory)}
         var now=Date()

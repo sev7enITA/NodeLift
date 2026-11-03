@@ -19,8 +19,10 @@ enum UpdatePolicy {
     static let week:TimeInterval=7*24*60*60
     static let retry:TimeInterval=60*60
     static func due(now:TimeInterval,success:TimeInterval,attempt:TimeInterval)->Bool {
-        if now<success || now<attempt{return true}
-        return (success<=0 || now-success>=week) && (attempt<=0 || now-attempt>=retry)
+        // A clock correction must not bypass the retry interval after a failed check.
+        let lastSuccess=now<success ? 0 : success
+        let lastAttempt=now<attempt ? 0 : attempt
+        return (lastSuccess<=0 || now-lastSuccess>=week) && (lastAttempt<=0 || now-lastAttempt>=retry)
     }
 }
 

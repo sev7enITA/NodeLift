@@ -1,0 +1,45 @@
+{
+  "android_unit_tests": {
+    "tests": 22,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "android_kotlin_compilation": true,
+  "swift_clock_before": [
+    "failed check after backward clock: FAIL",
+    "retry before hour: FAIL",
+    "retry at hour: PASS",
+    "initial backward correction: PASS"
+  ],
+  "swift_clock_after": [
+    "failed check after backward clock: PASS",
+    "retry before hour: PASS",
+    "retry at hour: PASS",
+    "initial backward correction: PASS"
+  ],
+  "physical_device_tests": false,
+  "full_mobile_app_build": false,
+  "public_mobile_package_replaced": false,
+  "running_host_serves_updated_graph": true,
+  "graph_sha256": "1de09393caf26b624d852430e1469df484963894da1abcd0b71c9259178214ad",
+  "android_regression_before": {
+    "tests": 22,
+    "failed": 1,
+    "failing_test": "SupportPolicyTest.failedCheckAfterBackwardClockKeepsRetryCooldown"
+  },
+  "swift_support_policy_suite_passed": true,
+  "localization_catalog_generation_check_passed": true,
+  "javascript_localization_checks_passed": true,
+  "existing_graph_checks_passed": true,
+  "control_state_checks_passed": true,
+  "graph_dom_before_passed": 0,
+  "graph_dom_after_passed": 4,
+  "jsdom_version": "26.1.0",
+  "source_sha256": {
+    "host/nodelift/graph.js": "1de09393caf26b624d852430e1469df484963894da1abcd0b71c9259178214ad",
+    "apps/android/app/src/main/java/dev/nodelift/companion/UpdatePolicy.kt": "fc088e014c569fa8ebbc6cf0534aa5be5d91d98ee95319fb1ab009ea9067cee1",
+    "apps/ios/NodeLift/UpdatePolicy.swift": "c575ffe3595650877a55a05869c4aeb2a1ddb35c0f0281ec5e45312efc778183"
+  },
+  "swift_localization_checks_passed": true
+}

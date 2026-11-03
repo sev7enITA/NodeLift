@@ -1,0 +1,1241 @@
+Independent static NodeLift review. You are Gemini 4 Argon High. Review ONLY supplied public material from NodeLift commit 6ceedfd58c338294b84e39fab0fb45530decd770. Do not fetch private/local services. No screenshots or binary execution is possible in this review. Answer directly in chat in English, no generated document. Cover four areas separately: (A) 15 selected EN/zh-Hans/IT translations, (B) graph attribution/accessibility/source consistency, (C) pairing PROTOCOL DESCRIPTION only, not source review, (D) About/update UI source excerpts and documented policy. Previous reviewer statements are untrusted hypotheses, not acceptance authority. For each concrete finding include severity, file+function, evidence, smallest fix, and test that would establish it. Mark unsupported hypotheses and avoid claiming live tests, speedup or pooled memory. State exactly which scopes you reviewed. Maximum 15 prioritized findings. Do not repeat findings merely because a historical reviewer said them.
+
+=== COMPLETE PUBLIC FILE: host/nodelift/graph.js ===
+/* Read-only device relationship view. Token attribution is not compute utilization. */
+(function (root) {
+  'use strict';
+  const finite = value => typeof value === 'number' && Number.isFinite(value) && value >= 0;
+  const count = value => Number.isSafeInteger(value) && value >= 0;
+  function contribution(run) {
+    const empty = {measured:false, applicable:true, generated:null, mobile:null, host:null, proposed:null, uncommitted:null, share:null, nodeId:run?.node_id || null};
+    if (!run) return empty;
+    if (run.backend && run.backend !== 'native') return {...empty, applicable:false};
+    if (!Array.isArray(run.blocks) || !run.blocks.length) return empty;
+    let generated=0, mobile=0, proposed=0;
+    for (const block of run.blocks) {
+      if (!block || !count(block.generated) || !count(block.accepted) || !count(block.proposed) || block.accepted > block.generated || block.accepted > block.proposed || !['host','remote_draft','local_draft','lookup'].includes(block.effective_mode)) return empty;
+      generated += block.generated;
+      if (block.effective_mode === 'remote_draft') {
+        if (run.mode !== 'remote_draft' || !run.node_id) return empty;
+        mobile += block.accepted; proposed += block.proposed;
+      }
+    }
+    if (!generated || (run.metrics?.generated_tokens !== undefined && run.metrics.generated_tokens !== generated)) return empty;
+    return {...empty,measured:true,generated,mobile,host:generated-mobile,proposed,uncommitted:proposed-mobile,share:mobile/generated};
+  }
+  function contributionStatus(node,run,c=contribution(run)) {
+    const host=node.id==='host';
+    if(!run)return host?'Host available · select a native run':'No run selected';
+    if(!c.applicable)return host?'API coordination only · no local inference':'No phone delegation on this route';
+    if(!host && (run.mode!=='remote_draft'||run.node_id!==node.id))return 'Not used in the selected run';
+    if(!c.measured)return ['queued','loading','running'].includes(run.status)?'Waiting for recorded output':'No token accounting recorded';
+    if(host)return 'Host evaluates every output token';
+    return c.mobile===0?'No accepted mobile proposals':'Accepted mobile proposals recorded';
+  }
+  function timingEvidence(run) {
+    const m=run?.metrics||{};
+    if(!run||(run.backend&&run.backend!=='native'))return {generationTtftMs:null,prefillMs:null,requestTotalMs:null};
+    // These clocks have distinct origins. Never synthesize an end-to-end TTFT.
+    return {generationTtftMs:finite(m.ttft_ms)?m.ttft_ms:null,prefillMs:finite(m.prefill_ms)?m.prefill_ms:null,requestTotalMs:finite(m.request_total_ms)?m.request_total_ms:null};
+  }
+  function assessmentPresentation(assessment) {
+    const a=assessment||{};
+    const states={pending:'Assessment queued',running:'Assessment running',completed:'Basic checks completed',partial:'Partial assessment',failed:'Assessment failed',unsupported:'Unsupported diagnostics'};
+    const roles={needs_assessment:'Needs assessment',diagnostics_only:'Diagnostics only',draft_candidate:'Draft candidate',needs_attention:'Needs attention'};
+    const reasons={connection_changed:'Connection address changed. Repeat the assessment on this connection.',needs_assessment:'Run basic checks to identify useful roles for this device.',assessment_running:'Network and CPU checks run one at a time.',waiting_for_device:'Waiting for device availability and safe battery and thermal conditions.',basic_complete:'Basic checks passed. Native inference usefulness still needs a matched comparison.',engine_not_ready:'Basic checks passed. Load and enable a draft before testing phone proposals.',unsupported_diagnostics:'This companion does not support the required basic checks.',network_failed:'The network check did not complete. Review diagnostics before repeating the assessment.',cpu_failed:'The CPU check did not complete. Review diagnostics before repeating the assessment.'};
+    const unrequested=a.reason==='needs_assessment';
+    return {state:unrequested?'Assessment not started':states[a.state]||'Assessment not started',role:roles[a.classification]||'Needs assessment',busy:!unrequested&&['pending','running'].includes(a.state),reason:a.reason?(reasons[a.reason]||'Assessment details unavailable'):null};
+  }
+  // Orthogonal routes stay in the column gutters, never through preceding device cards.
+  function edgePoints(host, peer, trunkY=host.top+host.height+30) {
+    const center=host.left+host.width/2, gutter=peer.left-10, target=peer.top+peer.height/2;
+    return [[center,host.top+host.height],[center,trunkY],[gutter,trunkY],[gutter,target],[peer.left,target]];
+  }
+  function connectionAfterUpdate(connected, statusFetched=false) {
+    return statusFetched === true || connected === true;
+  }
+  function connectionState(node, connected=true) {
+    return !connected?'unknown':node.revoked?'revoked':node.online?'online':'offline';
+  }
+  function memoryScope(caps) {
+    const os=String(caps.os || '').toLowerCase();
+    return /ios|ipados/.test(os) ? 'Process allocation headroom' : /android/.test(os) ? 'System available memory' : 'Available memory · scope unknown';
+  }
+  function measurements(jobs, id) {
+    const completed=(jobs || []).filter(j=>j.node===id && j.state==='completed' && Array.isArray(j.result?.samples)).sort((a,b)=>(b.finished || b.created || 0)-(a.finished || a.created || 0));
+    const network=completed.find(j=>['network','network_paced'].includes(j.kind));
+    const cpu=completed.find(j=>j.kind==='cpu');
+    const rtt=new Map(), transfer=new Map();
+    for (const s of network?.result.samples || []) {
+      if (!finite(s.ms)) continue;
+      if (s.kind==='rtt') {
+        const pace=finite(s.pace_ms)?s.pace_ms:0;
+        if (!rtt.has(pace))rtt.set(pace,[]); rtt.get(pace).push(s.ms);
+      } else if (['download','upload'].includes(s.kind) && finite(s.bytes) && s.bytes>0 && s.ms>0) {
+        const key=s.kind+':'+s.bytes;
+        if (!transfer.has(key))transfer.set(key,{kind:s.kind,bytes:s.bytes,totalBytes:0,totalMs:0,samples:0});
+        const g=transfer.get(key);g.totalBytes+=s.bytes;g.totalMs+=s.ms;g.samples++;
+      }
+    }
+    const cpuRows=(cpu?.result.samples || []).filter(s=>s.kind==='cpu' && finite(s.iterations) && finite(s.ms) && s.ms>0);
+    const cpuMs=cpuRows.reduce((a,s)=>a+s.ms,0);
+    return {networkAt:network?.finished || network?.created || null,cpuAt:cpu?.finished || cpu?.created || null,
+      rtt:[...rtt].sort((a,b)=>a[0]-b[0]).map(([pace,values])=>({pace,median:values.sort((a,b)=>a-b)[Math.ceil(values.length*.5)-1],samples:values.length})),
+      transfer:[...transfer.values()].map(g=>({...g,mbps:g.totalBytes/g.totalMs/1000})),
+      cpuIterationsPerSecond:cpuMs?cpuRows.reduce((a,s)=>a+s.iterations,0)/cpuMs*1000:null};
+  }
+  // A visual weight is token attribution, never estimated RAM pooling or CPU usage.
+  function edgeAppearance(node,run,c,connected=true) {
+    const status=connectionState(node,connected);
+    const participant=run?.mode==='remote_draft' && (!run.backend||run.backend==='native') && run.node_id===node.id;
+    const share=participant&&c.measured?c.share:null;
+    const band=share===null?'unmeasured':share<.25?'low':share<.6?'medium':'high';
+    const last=run?.blocks?.at(-1);
+    const flowing=status==='online'&&participant&&run.status==='running'&&last?.effective_mode==='remote_draft';
+    return {status,participant,share,band,width:share===null?1.5:2+5*share,flowing};
+  }
+  const logic={contribution,contributionStatus,timingEvidence,assessmentPresentation,memoryScope,measurements,connectionState,connectionAfterUpdate,edgePoints,edgeAppearance};
+  if (typeof module !== 'undefined' && module.exports) module.exports=logic;
+  root.NodeLiftGraph=logic;
+  if (typeof document === 'undefined')return;
+  const $=id=>document.getElementById(id);
+  let state=null, engine=null, selected='host', runChoice='latest', filter='all', connected=true;
+  let optionsSignature='', detailSignature='', announcedSelection=null;
+  const buttons=new Map();
+  const tr=(key,...args)=>NodeLiftI18n.t(key,...args);
+  const fmt=(value,digits=1)=>finite(value)?value.toLocaleString(NodeLiftI18n.locale,{maximumFractionDigits:digits,minimumFractionDigits:digits}):tr('Not measured');
+  const bytes=value=>finite(value)?fmt(value/1073741824)+' GiB':tr('Not detected');
+  const date=value=>finite(value)&&value>0?new Date(value*1000).toLocaleString(NodeLiftI18n.locale):tr('Unknown');
+  function make(tag,cls,text) {const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n;}
+  function set(id,text){if($(id).textContent!==text)$(id).textContent=text;}
+  function field(list,label,value) {const row=make('div','graph-field');row.append(make('dt',null,tr(label)),make('dd',null,value));list.append(row);}
+  function notice(text,cls='') {return make('p','graph-note '+cls,tr(text));}
+  function currentRun(){const runs=engine?.runs || [];return runChoice==='latest'?runs[0] || null:runs.find(r=>r.id===runChoice) || null;}
+  function deviceState(node) {return {unknown:'Contact unknown',revoked:'REVOKED',online:'ONLINE',offline:'OFFLINE'}[connectionState(node,connected)];}
+  function isCurrent(run) {return run && ['queued','running','loading'].includes(run.status);}
+  function selectedRole(node,run) {
+    if (node.id==='host')return run?.backend && run.backend!=='native'?'API coordinator':'Target model · verifier';
+    if(run?.backend && run.backend!=='native')return 'No phone delegation';
+    if(run?.mode==='remote_draft' && run.node_id===node.id)return isCurrent(run)?'Selected draft proposer':'Draft proposer in this run';
+    return node.capabilities?.engine_ready?(connected&&node.online&&!node.revoked?'Available draft companion':'Draft-capable companion'):'Diagnostics companion';
+  }
+  function telemetryAge(node) {
+    if (node.id==='host')return tr('Host hardware inventory');
+    const at=node.capabilities_updated_at;
+    if (!finite(at))return tr('Telemetry time unknown');
+    const now=Math.max(finite(state?.observed_at)?state.observed_at:0,Date.now()/1000);
+    if (!connected || !node.online || node.revoked || now-at>20)return tr('Historical telemetry');
+    return tr('Recent telemetry');
+  }
+  function buildButton(node, run, c) {
+    let button=buttons.get(node.id);
+    if(!button){
+      button=make('button','graph-device');button.type='button';button.dataset.device=node.id;
+      for(const cls of ['graph-device-kicker','graph-device-name','graph-device-spec','graph-device-role','graph-device-address','graph-device-weight'])button.append(make('span',cls));
+      button.onclick=()=>{selected=node.id;detailSignature='';render();};
+      buttons.set(node.id,button);
+    }
+    const host=node.id==='host', caps=host?node:node.capabilities || {};
+    const participating=run?.mode==='remote_draft' && run.node_id===node.id && (!run.backend || run.backend==='native');
+    button.className='graph-device'+(host?' graph-host':'')+(connectionState(node,connected)==='unknown'?' is-unknown':node.online&&!node.revoked?' is-online':' is-offline')+(participating?' is-participant':'');
+    button.setAttribute('aria-pressed',String(selected===node.id));
+    button.setAttribute('aria-controls','graph-inspector');
+    const values=[host?tr('HOST / COORDINATOR')+(connected?'':' · '+tr('Contact unknown')):tr(deviceState(node)),host?tr('This computer'):node.name,
+      [caps.model || tr('Hardware unknown'),bytes(caps.physical_memory_bytes)].join(' · '),tr(selectedRole(node,run)),
+      tr('IP: {0}',node.ip_address||tr('Not observed')),
+      !host&&participating&&c.measured?tr('Accepted mobile draft: {0}%',fmt(100*c.share)):tr(contributionStatus(node,run,c))];
+    values.forEach((value,i)=>{if(button.children[i].textContent!==value)button.children[i].textContent=value;});
+    return button;
+  }
+  function drawEdges() {
+    const svg=$('graph-edges'), canvas=$('graph-map');if(!svg||!state)return;
+    const origin=canvas.getBoundingClientRect(),host=buttons.get('host');if(!host || !host.isConnected)return;
+    svg.setAttribute('viewBox',`0 0 ${origin.width} ${origin.height}`);
+    const localRect=rect=>({left:rect.left-origin.left,top:rect.top-origin.top,width:rect.width,height:rect.height});
+    const h=localRect(host.getBoundingClientRect()),run=currentRun(),c=contribution(run);
+    const remoteId=run?.mode==='remote_draft'&&(!run.backend||run.backend==='native')?run.node_id:null;
+    const peers=[...buttons].filter(([id,button])=>id!=='host'&&button.isConnected)
+      .map(([id,button])=>({id,button,rect:localRect(button.getBoundingClientRect())}));
+    const trunkY=Math.min(h.top+h.height+30,...peers.map(peer=>peer.rect.top-10));
+    const visible=new Set(peers.map(p=>p.id));
+    for(const path of [...svg.children])if(!visible.has(path.dataset.device))path.remove();
+    peers.sort((a,b)=>Number(a.id===remoteId)-Number(b.id===remoteId));
+    for(const {id,rect} of peers) {
+      const node=state.nodes.find(n=>n.id===id),look=edgeAppearance(node,run,c,connected);
+      let path=[...svg.children].find(p=>p.dataset.device===id);
+      if(!path){path=document.createElementNS('http://www.w3.org/2000/svg','path');path.dataset.device=id;svg.append(path);}
+      path.setAttribute('d',edgePoints(h,rect,trunkY).map(([x,y],i)=>(i?'L ':'M ')+x+' '+y).join(' '));
+      path.setAttribute('class','graph-edge '+look.status+' weight-'+look.band+(look.participant?' participant':'')+(look.flowing?' flowing':''));
+      path.setAttribute('stroke-width',String(look.width));
+      // Keep DOM nodes stable during polling so dash animation does not restart.
+      if(look.participant && path!==svg.lastElementChild)svg.append(path);
+    }
+  }
+
+  function renderInspector(node,run,c) {
+    const signature=JSON.stringify([node,run,c,state?.jobs,engine?.available,connected,NodeLiftI18n.language,telemetryAge(node)]);
+    if(signature===detailSignature)return;detailSignature=signature;
+    const area=$('graph-inspector'),focused=document.activeElement,focusedInside=area.contains(focused),focusedSection=focusedInside?focused.closest('details')?.dataset.section:null;
+    const inspectorScroll=area.dataset.device===node.id?area.scrollTop:0;area.dataset.device=node.id;
+    const focusedAssessment=focusedInside&&!!focused.closest('.graph-assessment'),open=new Set([...area.querySelectorAll('details[open]')].map(n=>n.dataset.section));
+    const host=node.id==='host',caps=host?node:node.capabilities || {};
+    area.replaceChildren();
+    const heading=make('h3',null,host?tr('This computer'):node.name);heading.id='graph-device-title';
+    area.append(make('p','micro',tr('DEVICE INSPECTOR')),heading,make('p','graph-inspector-role',tr(selectedRole(node,run))));
+    const freshness=make('p','graph-freshness',telemetryAge(node));freshness.classList.toggle('stale',telemetryAge(node)!==tr('Recent telemetry')&&!host);area.append(freshness);
+    const connection=make('details','graph-connection-details graph-more');connection.dataset.section='connection';connection.open=open.has('connection');connection.append(make('summary',null,tr('Connection and sessions')));
+    const contacts=make('dl','graph-fields');
+    field(contacts,host?'Host LAN address':'Observed IP address',node.ip_address||tr('Not observed'));
+    field(contacts,host?'Host session started':'Latest session started',date(node.session_started_at??node.started_at));
+    if(!host){
+      field(contacts,'Last authenticated contact',date(node.last_seen));
+      field(contacts,'Previous session last contact',date(node.previous_session_ended_at));
+      field(contacts,'First paired',date(node.first_paired_at));field(contacts,'Last paired',date(node.last_paired_at));
+      field(contacts,'Observed sessions',finite(node.session_count)?fmt(node.session_count,0):tr('Unknown'));
+    }
+    connection.append(contacts);
+    if(!host)connection.append(notice('Session boundaries are inferred after a contact gap over 20 seconds. The IP is observed by this host, not a device identifier.'));
+    const assessment=make('section','graph-assessment');assessment.tabIndex=-1;assessment.append(make('h4',null,tr(host?'Host role and readiness':'Basic assessment')));
+    if(host){
+      assessment.append(make('p','assessment-title',tr(run&&c.applicable?'Target execution and verification':'Native target and verifier')),
+        notice('The host runs the main model and evaluates all native output. Phone token share never replaces this work.'));
+      assessment.append(notice(engine?.available?'Native backend detected. Select a completed native run to inspect timings.':'Native backend unavailable. Configure the host before benchmarking.'));
+    }else{
+      const a=node.assessment||{},presentation=assessmentPresentation(a);assessment.dataset.state=a.state||'unknown';
+      assessment.append(make('p','assessment-title',tr(presentation.role)),make('p','assessment-status',tr(presentation.state)));
+      const assessmentFields=make('dl','graph-fields');
+      field(assessmentFields,'Assessment updated',date(a.updated_at));
+      if(a.network){
+        field(assessmentFields,'HTTPS RTT p50',fmt(a.network.rtt_p50_ms,2)+' ms');field(assessmentFields,'HTTPS RTT p95',fmt(a.network.rtt_p95_ms,2)+' ms');
+        field(assessmentFields,'Host → device',fmt(a.network.download_mib_s,2)+' MiB/s');field(assessmentFields,'Device → host',fmt(a.network.upload_mib_s,2)+' MiB/s');
+      }
+      if(a.cpu)field(assessmentFields,'Synthetic CPU rate',fmt(a.cpu.iterations_per_second,0)+' '+tr('iterations/s'));
+      field(assessmentFields,'LLM usefulness',tr('Requires a matched native inference comparison'));
+      assessment.append(assessmentFields);
+      if(presentation.reason)assessment.append(make('p','graph-note',tr(presentation.reason)));
+      assessment.append(notice('Initial checks measure this connection and a short CPU task. They do not predict tokens/s, pool RAM or prove a speedup.'));
+      if(typeof root.NodeLiftGraph.createAssessmentControl==='function')assessment.append(root.NodeLiftGraph.createAssessmentControl(node));
+    }
+    area.append(assessment,connection);
+    const hardware=make('dl','graph-fields');
+    field(hardware,'Model',caps.model || tr('Not detected'));field(hardware,'Processor',caps.processor || tr('Not reported'));
+    field(hardware,'System',caps.os || tr('Not detected'));field(hardware,'CPU cores',finite(caps.cpu_cores)?fmt(caps.cpu_cores,0):tr('Not reported'));
+    field(hardware,'Physical RAM',bytes(caps.physical_memory_bytes));
+    field(hardware,host?'System available memory':memoryScope(caps),bytes(caps.available_memory_bytes));
+    if(!host && /android/i.test(caps.os || ''))field(hardware,'Process memory · PSS',bytes(caps.process_memory_bytes));
+    if(!host){field(hardware,'Thermal status',tr(caps.thermal || 'Not reported'));field(hardware,'Battery',finite(caps.battery_percent)?fmt(caps.battery_percent,0)+'%':tr('Not reported'));field(hardware,'Connection',tr(caps.transport || 'Not reported'));field(hardware,'Companion',caps.app_version || tr('Not reported'));}
+    const hardwareDetails=make('details','graph-more');hardwareDetails.dataset.section='hardware';hardwareDetails.open=open.has('hardware');hardwareDetails.append(make('summary',null,tr('Hardware inventory')),hardware);area.append(hardwareDetails);
+    const impact=make('section','graph-impact');impact.append(make('h4',null,tr('Contribution in selected run')));
+    const impactFields=make('dl','graph-fields');
+    if(c.measured){
+      const participating=!host && run?.mode==='remote_draft' && c.nodeId===node.id;
+      if(!host&&!participating)field(impactFields,'Token attribution',tr('Not the draft proposer in this run'));
+      else {
+        field(impactFields,host?'Host-origin token IDs':'Accepted draft token IDs',fmt(host?c.host:participating?c.mobile:0,0)+' / '+fmt(c.generated,0));
+        field(impactFields,host?'Host-origin token share':'Accepted mobile draft share',fmt(100*(host?c.host/c.generated:participating?c.share:0))+'%');
+        if(participating){field(impactFields,'Submitted draft tokens',fmt(c.proposed,0));field(impactFields,'Draft tokens not committed',fmt(c.uncommitted,0));field(impactFields,'Accepted / submitted',c.proposed>0?fmt(100*c.mobile/c.proposed)+'%':tr('No proposals submitted'));}
+      }
+    }else field(impactFields,'Token attribution',tr(contributionStatus(node,run,c)));
+    if(host && c.applicable){field(impactFields,'Host responsibility',tr('Main model execution and output verification'));if(c.measured)field(impactFields,'Evaluated output token IDs',fmt(c.generated,0));}
+    if(run?.mode==='remote_draft' && c.nodeId===node.id && c.applicable)field(impactFields,'Combined remote wait',finite(run.metrics?.remote_wait_ms)?fmt(run.metrics.remote_wait_ms/1000,2)+' s':tr('Not measured'));
+    field(impactFields,'Measured acceleration',tr('No matched baseline in this view'));
+    if(run && c.applicable){
+      const timing=timingEvidence(run);
+      field(impactFields,'Generation time to first token',timing.generationTtftMs!==null?fmt(timing.generationTtftMs,1)+' ms':tr('Not recorded'));
+      field(impactFields,'Whole-run prefill time',timing.prefillMs!==null?fmt(timing.prefillMs,1)+' ms':tr('Not recorded'));
+      if(timing.requestTotalMs!==null)field(impactFields,'Total engine request duration',fmt(timing.requestTotalMs,1)+' ms');
+      field(impactFields,'Whole-run fallback count',finite(run.metrics?.fallbacks)?fmt(run.metrics.fallbacks,0):tr('Not recorded'));
+    }
+    if(run?.fallback_reason)field(impactFields,'Fallback reason',tr(run.fallback_reason));
+    impact.append(impactFields);
+    if(run && c.applicable)impact.append(notice('Generation time to first token excludes model loading, tokenization and setup. Total engine request duration is a separate measurement, not end-to-end time to first token.'));
+    impact.append(notice('Token attribution includes EOS IDs. The host verifies every accepted mobile proposal. This is not a compute share or a speedup.'));area.append(impact);
+    const details=make('details','graph-more');details.dataset.section='measurements';details.open=open.has('measurements');details.append(make('summary',null,tr('Measurements and freshness')));
+    const measured=make('dl','graph-fields');
+    field(measured,host?'Inventory sampled':'Last contact',date(host?node.sampled_at:node.last_seen));
+    if(!host)field(measured,'Telemetry sampled',date(node.capabilities_updated_at));
+    if(host){field(measured,'Run decode throughput',c.applicable&&finite(run?.metrics?.tokens_per_second)?fmt(run.metrics.tokens_per_second,2)+' '+tr('token IDs/s'):tr('Not measured'));details.append(measured,notice('Run decode throughput includes delegation and waiting. Model loading and prefill are excluded.'));}
+    else{
+      const m=measurements(state.jobs,node.id);field(measured,'Network test recorded',date(m.networkAt));
+      for(const r of m.rtt)field(measured,tr('HTTPS RTT median · {0} ms pacing',fmt(r.pace,0)),fmt(r.median,2)+' ms');
+      for(const r of m.transfer)field(measured,tr(r.kind==='download'?'Host → device · {0} MiB':'Device → host · {0} MiB',fmt(r.bytes/1048576,2)),fmt(r.mbps,2)+' MB/s');
+      field(measured,'Synthetic CPU test recorded',date(m.cpuAt));field(measured,'Synthetic CPU rate',finite(m.cpuIterationsPerSecond)?fmt(m.cpuIterationsPerSecond,0)+' '+tr('iterations/s'):tr('Not measured'));
+      details.append(measured,notice('Last completed diagnostics, not live bandwidth or LLM speed. Transfers are grouped by direction and payload; RTT is grouped by pacing.'));
+    }
+    area.append(details);
+    const limits=make('details','graph-more');limits.dataset.section='limits';limits.open=open.has('limits');limits.append(make('summary',null,tr('Usage and limitations')));
+    if(host){limits.append(notice('Coordinates one native run and verifies phone proposals. Current phone delegation uses one draft companion per run; device memory is not pooled.'));}
+    else{
+      const list=make('dl','graph-fields');field(list,'Reported readiness',tr(caps.engine_ready?'Native draft reported ready':'Native draft not ready'));
+      field(list,'Supported diagnostics',(caps.supported_jobs || []).map(kind=>tr({network:'Quick network test',network_paced:'Paced network test',cpu:'CPU test'}[kind] || kind)).join(' · ') || tr('Not reported'));
+      field(list,'Lifecycle',tr(caps.lifecycle || 'Not reported'));field(list,'Live resource limits',tr('Not reported by this companion protocol'));limits.append(list);
+      if(!node.online||node.revoked)limits.append(notice('This device cannot receive new work while offline or revoked.','stale'));
+      limits.append(notice('Battery, thermal and memory policies remain enforced by the companion. Readiness is self-reported, not a measured performance guarantee.'));
+    }
+    limits.append(notice('GPU/NPU utilization, energy and separate phone compute time are not measured.'));area.append(limits);
+    area.scrollTop=inspectorScroll;
+    if(focusedSection)area.querySelector('details[data-section="'+focusedSection+'"] summary')?.focus({preventScroll:true});
+    else if(focusedAssessment){const control=assessment.querySelector('[data-action="assessment"]');(control&&!control.disabled?control:assessment).focus({preventScroll:true});}
+  }
+  function render() {
+    if(!state)return;
+    const runs=engine?.runs || [];
+    if(runChoice!=='latest' && !runs.some(r=>r.id===runChoice))runChoice='latest';
+    const run=currentRun(),c=contribution(run);
+    const signature=JSON.stringify(runs.map(r=>[r.id,r.status]))+NodeLiftI18n.language;
+    if(signature!==optionsSignature){
+      optionsSignature=signature;const select=$('graph-run');select.replaceChildren();
+      const latest=make('option',null,tr('Latest run · follow'));latest.value='latest';select.append(latest);
+      for(const r of runs){const o=make('option',null,date(r.created)+' · '+tr(({completed:'Completed',running:'Running',loading:'Loading',failed:'Failed',cancelled:'Stopped',queued:'Queued'})[r.status] || 'Status unavailable')+' · '+String(r.id).slice(0,6));o.value=r.id;select.append(o);}
+      if(runChoice!=='latest' && !runs.some(r=>r.id===runChoice))runChoice='latest';select.value=runChoice;
+    }
+    $('graph-run').disabled=!runs.length;$('graph-filter').disabled=!connected;
+    $('graph-unknown-legend').hidden=connected;
+    $('graph-filter').options[1].textContent=tr(connected?'Online only':'Online at last snapshot');
+    const all=[{id:'host',name:'This computer',online:true,...state.host},...(state.nodes || [])];
+    const visible=all.filter(n=>n.id==='host'||filter==='all'||n.online&&!n.revoked);
+    if(!visible.some(n=>n.id===selected))selected='host';
+    const ids=new Set(visible.map(n=>n.id));
+    for(const [id,button] of buttons)if(!ids.has(id)){button.remove();buttons.delete(id);}
+    for(const node of visible){const b=buildButton(node,run,c),parent=$(node.id==='host'?'graph-host-slot':'graph-peer-slots');if(b.parentNode!==parent)parent.append(b);}
+    $('graph-empty').hidden=visible.length>1;
+    set('graph-empty',tr(filter==='online'?'No online companions. Show all devices to inspect historical telemetry.':'No paired companions. Add a device to start measuring.'));
+    set('graph-connection',tr(connected?'Session connected':'Connection interrupted · last snapshot'));
+    $('graph-connection').classList.toggle('stale',!connected);
+    set('graph-context',!connected?tr('Last snapshot · {0}',date(state.observed_at)):run?tr(isCurrent(run)?'In progress · {0}':'Recorded run · {0}',date(run.created)):tr('No run selected · hardware inventory only'));
+    let model=run?.provider_model || run?.identity?.config?.target_model;
+    if(model)model=String(model).split(/[\\/]/).pop();
+    set('graph-route',run?(run.backend&&run.backend!=='native'?tr('External route · no phone delegation'):tr('Native target → verification'))+(model?' · '+model:''):tr('Select a device to inspect capabilities and evidence.'));
+    set('graph-share-value',c.measured?fmt(c.share*100)+'%':tr(!run?'No run':c.applicable?'No output data':'Not applicable'));
+    set('graph-token-total',c.measured?tr('{0} mobile / {1} committed token IDs',fmt(c.mobile,0),fmt(c.generated,0)):tr(!run?'Select a native run to measure token contribution.':c.applicable?'No valid token accounting has been recorded for this run.':'This external route does not use phone inference.'));
+    $('graph-share-fill').style.width=c.measured?(c.share*100)+'%':'0%';
+    $('graph-share-track').classList.toggle('unmeasured',!c.measured);
+    set('graph-decode',c.applicable&&finite(run?.metrics?.tokens_per_second)?fmt(run.metrics.tokens_per_second,2)+' '+tr('token IDs/s'):tr('Not measured'));
+    const selectedNode=visible.find(n=>n.id===selected);
+    renderInspector(selectedNode,run,c);
+    if(announcedSelection!==selected){
+      announcedSelection=selected;
+      set('graph-selection-status',tr('Selected device: {0}',selected==='host'?tr('This computer'):selectedNode.name));
+    }
+    requestAnimationFrame(drawEdges);
+  }
+  root.NodeLiftGraph.update=function(snapshot,engineSnapshot,statusFetched=false) {state=snapshot;engine=engineSnapshot;connected=connectionAfterUpdate(connected,statusFetched);render();};
+  root.NodeLiftGraph.refresh=function(){detailSignature='';render();};
+  root.NodeLiftGraph.disconnected=function(){connected=false;detailSignature='';render();};
+  root.NodeLiftGraph.clear=function(){
+    state=null;engine=null;connected=false;selected='host';runChoice='latest';optionsSignature='';detailSignature='';announcedSelection=null;buttons.clear();
+    set('graph-selection-status','');
+    for(const id of ['graph-host-slot','graph-peer-slots','graph-edges','graph-inspector','graph-run'])$(id).replaceChildren();
+    const heading=make('h3',null,tr('Device inspector'));heading.id='graph-device-title';$('graph-inspector').append(heading);
+    $('graph-run').disabled=true;$('graph-filter').disabled=true;$('graph-unknown-legend').hidden=true;$('graph-empty').hidden=false;
+    set('graph-empty',tr('Topology appears after access is established.'));set('graph-connection',tr('Access required'));
+    set('graph-context',tr('Access your session'));set('graph-route',tr('Use the complete link generated by NodeLift on your computer.'));
+    set('graph-share-value','-');set('graph-token-total',tr('No measured mobile contribution in this view.'));set('graph-decode','-');$('graph-share-fill').style.width='0%';$('graph-share-track').classList.add('unmeasured');
+  };
+  $('graph-run').addEventListener('change',event=>{runChoice=event.target.value;detailSignature='';render();});
+  $('graph-filter').addEventListener('change',event=>{filter=event.target.value;render();});
+  window.addEventListener('resize',drawEdges);
+  if(typeof ResizeObserver!=='undefined'){
+    const observer=new ResizeObserver(drawEdges);
+    for(const id of ['graph-map','graph-peer-slots','graph-host-slot'])observer.observe($(id));
+  }
+  const motionToggle=$('graph-motion');
+  if(motionToggle){
+    try{motionToggle.checked=localStorage.getItem('nodelift-graph-motion')!=='off';}catch(_){}
+    const applyMotion=()=>{$('graph-map').classList.toggle('motion-paused',!motionToggle.checked||document.hidden);};
+    motionToggle.addEventListener('change',()=>{try{localStorage.setItem('nodelift-graph-motion',motionToggle.checked?'on':'off');}catch(_){}applyMotion();});
+    document.addEventListener('visibilitychange',applyMotion);applyMotion();
+  }
+})(typeof window !== 'undefined' ? window : globalThis);
+
+
+=== CSS EXCERPTS ONLY: graph/About/reduced-motion rules from host/nodelift/dashboard.css ===
+.device-graph{border:1px solid var(--line);background:#0c191f;border-radius:7px;overflow:hidden}.graph-toolbar{display:flex;align-items:center;justify-content:space-between;gap:22px;padding:23px 25px}.graph-toolbar .micro{color:var(--aqua);margin:0 0 7px}.graph-toolbar h3{font-size:18px;letter-spacing:-.35px;margin:0}.graph-controls{display:flex;gap:13px;min-width:0}.graph-controls label{display:flex;flex-direction:column;gap:7px;margin:0;font-size:11px;color:var(--muted);min-width:0}.graph-controls select{min-height:40px;padding:8px 30px 8px 10px;max-width:245px;font-size:11px}.graph-run-context{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:14px 25px;border-block:1px solid var(--line);background:#101f25}.graph-run-context strong{font-size:12px;font-weight:600}.graph-run-context p{margin:4px 0 0;color:var(--muted);font-size:11px;overflow-wrap:anywhere}.graph-run-context .micro{font-size:9px;flex-shrink:0}.graph-workspace{display:grid;grid-template-columns:minmax(0,1fr) minmax(285px,34%)}.graph-overview{min-width:0;display:flex;flex-direction:column}.graph-map{position:relative;padding:32px 24px 22px;background-image:radial-gradient(#29404780 .8px,transparent .8px);background-size:20px 20px;min-height:320px;isolation:isolate}.graph-edges{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:-1;overflow:visible}.graph-edge{fill:none;stroke:#5a7c85}.graph-edge.offline{stroke-dasharray:5 5;stroke:#667c83}.graph-edge.participant{stroke:var(--aqua)}.graph-host-slot{display:flex;justify-content:center}.graph-peer-slots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 18px;align-items:start}.graph-peer-slots:has(>.graph-device:only-child){grid-template-columns:minmax(0,310px);justify-content:center}.graph-device{width:100%;position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:17px 18px;min-height:155px;text-align:left;white-space:normal;color:var(--ink);border:1px solid #526c75;background:#102027;border-radius:4px;box-shadow:0 5px 18px #0002;overflow-wrap:anywhere}.graph-device:hover:not(:disabled){background:#162c33;border-color:var(--aqua);transform:none}.graph-device[aria-pressed="true"]{border-color:var(--aqua);box-shadow:inset 3px 0 var(--aqua),0 0 0 1px #a0fff133}.graph-device span,.graph-device span:first-child{margin:0}.graph-device .graph-device-kicker{font:9px/1.4 var(--mono);letter-spacing:.08em;color:var(--muted)}.graph-device.is-online .graph-device-kicker{color:var(--aqua)}.graph-device.is-offline .graph-device-kicker{color:var(--amber)}.graph-device .graph-device-name{font-size:15px;font-weight:650;line-height:1.35}.graph-device .graph-device-spec{font-size:11px;font-weight:400;color:#bbd0d5;line-height:1.6}.graph-device .graph-device-role{font-size:10px;font-weight:500;color:var(--muted)}.graph-device .graph-device-weight{border-top:1px solid #36515b;width:100%;padding-top:8px;margin-top:auto;font:10px/1.5 var(--mono);color:var(--aqua)}.graph-host{max-width:310px;background:#14292e}.graph-relation-label{position:relative;z-index:1;width:fit-content;max-width:100%;margin:18px auto 24px;padding:4px 9px;border:1px solid #294047;background:#0c191f;color:var(--muted);font:8px/1.5 var(--mono);letter-spacing:.08em;text-align:center}.graph-empty{text-align:center;font-size:12px;color:var(--muted);margin:25px auto;max-width:330px;line-height:1.8}.graph-legend{display:flex;flex-wrap:wrap;gap:12px 18px;padding:14px 24px;border-top:1px solid #233a42;font-size:10px;color:var(--muted)}.graph-legend>span{display:flex;align-items:center;gap:7px}.graph-line-key{display:inline-block;width:20px;border-top:2px solid #76949d}.graph-line-key.participant{border-color:var(--aqua)}.graph-line-key.offline{border-top-style:dashed}.graph-attribution{margin-top:auto;padding:23px 24px;background:#0f1e24;border-top:1px solid var(--line)}.graph-share-head{display:flex;align-items:center;justify-content:space-between;gap:15px}.graph-share-head h4{margin:0;font-size:12px;font-weight:650}.graph-share-head p{margin:5px 0 0;font-size:10px;color:var(--muted)}.graph-share-head>strong{font:22px/1.3 var(--mono);letter-spacing:-1px;color:var(--aqua);text-align:right}.graph-share-track{height:9px;background:#426873;margin:17px 0 10px;overflow:hidden;border-radius:1px}.graph-share-track>div{height:100%;width:0;background:var(--aqua);transition:width .25s}.graph-share-track.unmeasured{background:repeating-linear-gradient(120deg,#2e4650 0 5px,#162b32 5px 10px)}.graph-share-legend{display:flex;justify-content:space-between;gap:16px;color:var(--muted);font-size:9px}.graph-share-legend>span:first-child{color:var(--aqua)}.graph-note{font-size:11px;line-height:1.75;color:var(--muted);margin:13px 0 0}.graph-rate{display:flex;flex-wrap:wrap;align-items:baseline;gap:7px 12px;margin-top:18px;padding-top:15px;border-top:1px solid var(--line);font-size:11px}.graph-rate>strong{font-family:var(--mono);font-size:13px}.graph-rate>span:last-child{font-size:10px;color:var(--muted);margin-left:auto}.graph-inspector{min-width:0;padding:24px 22px;border-left:1px solid var(--line);background:#112128}.graph-inspector>.micro{color:var(--aqua);font-size:9px;margin:0 0 9px}.graph-inspector h3{font-size:20px;letter-spacing:-.4px;margin:0;overflow-wrap:anywhere}.graph-inspector-role{font-size:11px;color:#c0d7dc;margin:5px 0 10px}.graph-freshness{font:9px/1.5 var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:0 0 21px}.stale{color:var(--amber)!important}.graph-fields{margin:0;display:grid;gap:0}.graph-field{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:10px;padding:8px 0;border-bottom:1px solid #29404780;line-height:1.55}.graph-field dt{font-size:10px;color:var(--muted)}.graph-field dd{margin:0;font-size:11px;text-align:right;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.graph-impact{margin-top:23px}.graph-impact h4{font-size:12px;margin:0 0 7px}.graph-more{border-top:1px solid var(--line);margin-top:19px;padding-top:14px}.graph-more summary{font-size:11px;cursor:pointer;font-weight:600;line-height:1.8}.graph-more .graph-fields{margin-top:10px}.device-diagnostics{margin-top:20px;border:1px solid var(--line);border-radius:5px;background:#0e1b20}.device-diagnostics>summary{padding:18px 22px;cursor:pointer;font-size:13px;font-weight:600}.device-diagnostics>summary>span:last-child{font-size:10px;font-weight:400;color:var(--muted);margin-left:15px}.device-diagnostics>.nodes{padding:0 20px 20px}.device-diagnostics .node{margin-top:10px}
+@media(min-width:1600px){.graph-peer-slots{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:1240px){.graph-toolbar{align-items:flex-start;flex-direction:column}.graph-controls{width:100%}.graph-controls label:last-child{flex:1}.graph-controls select{max-width:100%;width:100%}.graph-workspace{grid-template-columns:minmax(0,1fr) minmax(270px,39%)}.graph-peer-slots{grid-template-columns:1fr}.graph-device{min-height:140px}.graph-inspector{padding:22px 18px}}
+@media(max-width:760px){.graph-workspace{grid-template-columns:1fr}.graph-inspector{border-left:0;border-top:1px solid var(--line)}.graph-peer-slots{grid-template-columns:repeat(2,minmax(0,1fr))}.graph-run-context{align-items:flex-start;flex-direction:column;gap:10px}.graph-share-head>strong{font-size:20px}.graph-inspector .graph-fields{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:24px}.graph-inspector .graph-impact .graph-fields{grid-template-columns:1fr}}
+@media(max-width:480px){.graph-toolbar,.graph-run-context{padding:18px}.graph-toolbar h3{font-size:16px}.graph-controls{flex-direction:column;gap:12px}.graph-controls label{width:100%}.graph-map{padding:25px 18px 18px}.graph-peer-slots{grid-template-columns:1fr;gap:18px}.graph-device{min-height:145px}.graph-legend{padding:15px 18px}.graph-attribution{padding:20px 18px}.graph-share-head{align-items:flex-start;flex-direction:column;gap:10px}.graph-share-head>strong{text-align:left}.graph-inspector .graph-fields{grid-template-columns:1fr}.graph-share-legend{font-size:9px}.graph-rate>span:last-child{margin-left:0;width:100%}.device-diagnostics>summary>span:last-child{display:block;margin:8px 0 0}.device-diagnostics>.nodes{padding:0 10px 10px}.graph-relation-label{font-size:8px}.graph-device:focus-visible{outline-offset:3px}}
+.graph-device.is-unknown .graph-device-kicker{color:var(--amber)}.graph-edge.unknown{stroke:var(--amber);stroke-dasharray:2 5}.graph-line-key.unknown{border-top:2px dotted var(--amber)}
+.graph-sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.about-section{border-top:1px solid var(--line);padding-top:34px}.about-signature{font-size:20px;font-weight:650;letter-spacing:-.7px;white-space:nowrap}.about-signature>span{color:var(--aqua);padding-left:5px}.about-layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);border:1px solid var(--line);background:var(--panel)}.about-author{padding:30px 32px;min-width:0}.about-author>.micro{margin:0 0 9px;color:var(--aqua);font-size:9px}.about-author h3{margin:0;font-size:clamp(25px,2.6vw,38px);font-weight:550;letter-spacing:-1px;line-height:1.2}.about-author h3>span{color:var(--aqua)}.about-description{font-size:12px;color:var(--muted);margin:12px 0 22px;max-width:400px}.about-purpose{max-width:440px;font-size:15px;line-height:1.7;margin:0;color:#c2d6db}.about-author-links{display:flex;flex-wrap:wrap;gap:10px 20px;margin-top:20px}.about-author-links a,.about-download-link{display:inline-flex;align-items:center;gap:10px;min-height:44px;font-size:12px;color:var(--aqua);text-decoration:none}.about-author-links a:hover,.about-download-link:hover,.about-license a:hover{color:var(--ink);text-decoration:underline;text-underline-offset:4px}.about-license{font-size:10px;line-height:1.8;color:var(--muted);margin:23px 0 0}.about-license a{display:inline-flex;align-items:center;min-height:44px}.about-release{border-left:1px solid var(--line);padding:28px 30px;background:#0d191e;min-width:0}.about-version-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.about-version-heading .micro{color:var(--muted);font-size:9px}.about-channel{font-family:var(--mono);font-size:9px;border:1px solid #4d4c36;padding:4px 7px;color:var(--amber)}.about-version{font-family:var(--mono);font-size:25px;letter-spacing:-.7px;color:var(--aqua);line-height:1.3;margin:14px 0 4px;overflow-wrap:anywhere}.about-version[data-state="unavailable"],.about-version[data-state="loading"]{font-size:17px;letter-spacing:0;color:var(--muted)}.about-version-note{font-size:10px;color:var(--muted);line-height:1.7;margin:0 0 10px;min-height:17px}.about-version-scope{font-size:11px;line-height:1.75;color:var(--muted);margin:12px 0 19px}.about-update-link{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:46px;padding:11px 15px;background:var(--aqua);color:#082226;border:1px solid var(--aqua);border-radius:4px;font-size:12px;line-height:1.5;font-weight:650;text-decoration:none}.about-update-link:hover{background:#c4fff6;border-color:#c4fff6}.about-update-link:active{background:#78dcd0}.about-update-note{font-size:10px;color:var(--muted);line-height:1.75;margin:12px 0 5px}.about-download-link{font-size:11px}.about-references{margin-top:29px}.about-reference-heading{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;margin-bottom:13px}.about-reference-heading h3{font-size:16px;margin:0}.about-reference-heading p{font-size:11px;color:var(--muted);margin:0}.about-reference-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--line)}.about-reference-list li{min-width:0}.about-reference-list a{display:flex;align-items:center;justify-content:space-between;gap:15px;min-height:87px;padding:16px 17px 16px 0;border-bottom:1px solid var(--line);text-decoration:none;transition:background .15s}.about-reference-list li:not(:nth-child(3n+1)) a{padding-left:20px;border-left:1px solid var(--line)}.about-reference-list a>span:first-child{min-width:0}.about-reference-list small{display:block;font-family:var(--mono);font-size:8px;letter-spacing:.6px;color:var(--muted);line-height:1.6}.about-reference-list strong{display:block;font-size:12px;font-weight:500;margin-top:4px;overflow-wrap:anywhere}.about-reference-list a>span:last-child{color:var(--aqua);font-size:16px}.about-reference-list a:hover{background:var(--panel-2);color:var(--aqua)}.about-reference-list a:focus-visible{position:relative;z-index:1;outline-offset:-3px}.about-boundary{display:flex;align-items:flex-start;gap:10px;font-size:11px;line-height:1.8;color:var(--muted);margin:23px 0 0;max-width:880px}.about-boundary .status-dot{flex-shrink:0;background:var(--amber);margin-top:7px;width:6px;height:6px}.footer-about{display:inline-flex;align-items:center;min-height:44px;font-size:11px;color:var(--aqua);text-decoration:none}.footer-about:hover{text-decoration:underline;text-underline-offset:4px}
+@media(max-width:1100px){.about-author,.about-release{padding:25px}.about-reference-list{grid-template-columns:repeat(2,minmax(0,1fr))}.about-reference-list li:not(:nth-child(3n+1)) a{padding-left:0;border-left:0}.about-reference-list li:nth-child(even) a{padding-left:20px;border-left:1px solid var(--line)}}
+@media(max-width:760px){.about-layout{grid-template-columns:1fr}.about-release{border-left:0;border-top:1px solid var(--line)}.about-author h3{font-size:31px}.about-author,.about-release{padding:23px}.about-reference-heading{gap:7px}.about-boundary{font-size:10px}footer{flex-wrap:wrap}.footer-about{margin-left:auto}}
+@media(max-width:650px){:root{--section-nav-height:106px}.rail nav{grid-template-columns:repeat(3,minmax(0,1fr))}.rail nav a{font-size:10px}.about-section{padding-top:25px}.about-signature{font-size:16px}.about-purpose{font-size:14px}.about-reference-list strong{font-size:11px}.about-reference-list li:nth-child(even) a{padding-left:15px}.about-reference-list a{padding-right:12px}.about-update-link{font-size:12px}.about-reference-heading p{font-size:10px}.about-version-heading{gap:9px}}
+.graph-device[aria-pressed="true"] .graph-device-kicker::after{content:" · ✓";color:var(--aqua)}
+@media(prefers-reduced-motion:reduce){button[aria-busy="true"]::before{animation:none;border-right-color:currentColor}}
+.graph-edge{stroke-linecap:round;stroke-linejoin:round;transition:stroke .25s ease,stroke-width .35s ease}
+.graph-edge.weight-low{stroke:#57b6ff}.graph-edge.weight-medium{stroke:#70f0ce}.graph-edge.weight-high{stroke:#ba98ff}
+.graph-edge.offline,.graph-edge.revoked{stroke:#667c83;stroke-dasharray:5 5;opacity:.65}
+.graph-edge.unknown{stroke:var(--amber);stroke-dasharray:2 5}
+.graph-edge.flowing{stroke-dasharray:11 7;animation:graph-link-flow 1.4s linear infinite}
+.graph-map.motion-paused .graph-edge{animation:none}
+.graph-motion-controls,.graph-weight-key{padding:12px 25px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}
+.graph-motion-controls label{display:flex;align-items:center;gap:8px;margin:0;color:var(--text);font-size:12px}
+.graph-motion-controls input{width:18px;height:18px;margin:0;accent-color:var(--aqua)}
+.graph-motion-controls p,.graph-weight-key p{margin:8px 0 0;line-height:1.6}
+.graph-weight-key>span{display:inline-block;border-left:3px solid currentColor;padding-left:7px;margin:0 15px 5px 0}
+.graph-weight-key .weight-low{color:#57b6ff}.graph-weight-key .weight-medium{color:#70f0ce}.graph-weight-key .weight-high{color:#ba98ff}
+@media(prefers-reduced-motion:reduce){.graph-edge{animation:none!important;transition:none!important}}
+.graph-device .graph-device-address{font:11px/1.5 var(--mono);color:#c2d9df;overflow-wrap:anywhere}
+.graph-connection-details h4,.graph-assessment h4{font-size:13px;margin:0 0 9px;color:var(--ink)}
+.graph-connection-details{margin:18px 0 22px}.graph-assessment{padding:16px;border:1px solid #3f626b;border-left:3px solid var(--cyan);background:#0c1c22;margin:0 0 23px}
+.graph-assessment[data-state="failed"],.graph-assessment[data-state="partial"]{border-left-color:var(--amber)}
+.graph-assessment .assessment-title{font-size:16px;line-height:1.45;color:var(--ink);font-weight:650;margin:0 0 5px}.graph-assessment .assessment-status{font-size:12px;color:var(--muted);margin:0 0 13px}
+.graph-assessment .assessment-action{margin-top:17px;width:100%;min-height:44px;white-space:normal}.graph-assessment .graph-fields{grid-template-columns:1fr}
+.node-footer .assessment-action{min-height:44px}.graph-field dt{font-size:11px}.graph-field dd{font-size:12px}.graph-more summary{font-size:12px;min-height:32px}.graph-note{font-size:12px}.graph-device .graph-device-weight{font-size:11px}
+@media(max-width:650px){.node-connections .metric dt{font-size:11px}.node-connections .metric dd{font-size:12px}.node-footer .actions button{min-height:44px;white-space:normal}.node-footer .actions{align-items:stretch}.node-assessment{align-items:flex-start;flex-direction:column;gap:4px}.graph-assessment{padding:15px}}
+.graph-assessment:focus-visible{outline:2px solid var(--aqua);outline-offset:4px}
+.graph-inspector:focus-visible{outline:2px solid var(--aqua);outline-offset:-4px}
+.graph-inspector .graph-connection-details{margin:0 0 19px;padding-top:14px}
+.graph-inspector .graph-assessment{margin-top:0}
+  .graph-workspace{align-items:start}
+  .graph-inspector{max-height:calc(100vh - var(--header-height) - 36px);max-height:calc(100dvh - var(--header-height) - 36px);overflow-y:auto;overscroll-behavior-y:contain;scrollbar-gutter:stable;scroll-padding-block:20px}
+  .graph-overview{align-self:start}
+  .graph-attribution{margin-top:0}
+  .graph-workspace{grid-template-columns:1fr}
+  .graph-inspector{max-height:none;overflow:visible;border-left:0;border-top:1px solid var(--line)}
+.help-label-row,.help-heading-row,.help-action-row{display:flex;align-items:center;gap:8px;min-width:0}.help-label-row{margin:14px 0 7px}.help-label-row:first-child{margin-top:0}.help-label-row>label{margin:0;flex:1;min-width:0}.help-heading-row h2,.help-heading-row h3,.help-heading-row h4{min-width:0;margin:0}.help-action-row{flex-wrap:wrap}.context-field{min-width:0}.context-help-trigger{display:inline-flex;align-items:center;justify-content:center;flex:0 0 30px;width:30px;height:30px;min-height:30px;padding:0;border:1px solid #607f89;border-radius:50%;background:transparent;color:var(--aqua);font:600 14px/1 var(--mono);cursor:pointer}.context-help-trigger:hover,.context-help-trigger[aria-expanded="true"]{background:#18383e;border-color:var(--aqua)}.context-help-trigger:focus-visible,.dashboard-options summary:focus-visible{outline:2px solid var(--aqua);outline-offset:3px}.context-help-trigger[hidden]{display:none}.context-field .help-label-row{margin-top:0}.context-field>input,.context-field>select{width:100%}.parameter-grid .help-label-row{min-height:38px}.parameter-grid .context-field input{margin-top:0}.graph-controls .context-field{min-width:0}.graph-controls .context-field:last-child{flex:1}.graph-controls .help-label-row>label{display:block}.graph-controls .context-field select{min-height:40px}.dashboard-options{position:relative;flex-shrink:0}.dashboard-options>summary{list-style:none;cursor:pointer;padding:10px 12px;border:1px solid #526b75;border-radius:4px;color:var(--ink);font-size:12px}.dashboard-options>summary::-webkit-details-marker{display:none}.dashboard-options[open]>summary{border-color:var(--aqua);color:var(--aqua)}.dashboard-options-panel{position:absolute;right:0;top:calc(100% + 9px);width:290px;max-width:calc(100vw - 24px);background:#102128;border:1px solid #607f89;padding:17px;box-shadow:0 12px 32px #0008;z-index:25}.context-help-setting{display:flex;align-items:flex-start;gap:10px;margin:0;font-size:13px;line-height:1.5;cursor:pointer}.context-help-setting input{appearance:auto;flex:0 0 auto;width:20px;height:20px;margin:0;accent-color:var(--aqua)}.context-help-setting>span{font:inherit;color:var(--ink);margin:0}.dashboard-options-panel p{font-size:12px;line-height:1.6;color:var(--muted);margin:12px 0 0}#context-help-storage{color:var(--amber)}.context-help-dialog{width:min(480px,calc(100vw - 32px));max-height:calc(100dvh - 40px);padding:25px;border:1px solid #608d98;border-top:3px solid var(--aqua);border-radius:6px;background:#102128;color:var(--ink);box-shadow:0 24px 100px #0009;overflow-y:auto;box-sizing:border-box}.context-help-dialog::backdrop{background:#02090bc7}.context-help-top{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:22px}.context-help-top .micro{color:var(--aqua)}.context-help-top button{min-height:44px}.context-help-dialog h2{font-size:23px;line-height:1.3;margin:0 0 15px;overflow-wrap:anywhere}.context-help-dialog>p{font-size:15px;line-height:1.75;color:#d1e2e6;margin:0;overflow-wrap:anywhere}.topbar{gap:15px}.topbar-label{flex:1;min-width:0}
+@media(max-width:650px){.context-help-trigger{flex-basis:36px;width:36px;height:36px;min-height:36px}.dashboard-options-panel{position:fixed;top:auto;right:12px;margin-top:9px}.context-help-dialog{padding:20px}.context-help-dialog h2{font-size:21px}.context-help-dialog>p{font-size:15px}.graph-controls .context-field{width:100%}.parameter-grid{grid-template-columns:1fr}.parameter-grid .help-label-row{min-height:36px}.session-indicator{margin-left:auto}}
+
+=== COMPLETE PUBLIC FILE: docs/evidence/qr-pairing-2026-11-01/review-adjudication.md ===
+# External design review and disposition
+
+GLM-5.3 was selected in z.ai; Max effort had been selected in the same review session. The model reviewed the supplied protocol description and stated test scope, **not the source or physical devices**. Its response reports no observed defect and separates inference from untested areas. The response is retained in `glm-design-review.txt`; the earlier performance-methodology review remains separate from this pairing deliverable. Gemini 4 High was unavailable under the account quota observed earlier in this session (reset displayed as 1 November 08:45). No substitute Gemini model or successful Gemini QR review is claimed.
+
+- **Optical density:** record RSA-2048 identity generation, QR version 27 / 125 modules / medium error correction for the 1,114-byte isolated fixture. The native canvas is 532px with a four-module quiet zone; its 460px browser rendering was decoded independently by ZXing. Actual distance, focus, glare and first-scan success on hardware are unmeasured.
+- **TLS/SAN:** `make_identity` explicitly emits an IP-address SAN for the chosen bind address and loopback. The Swift protocol check actually completed positive TLS enrollment, upload/download and heartbeat as well as rejecting a wrong certificate. These are macOS client tests, not iPhone qualification. AVFoundation decodes the camera image; URLSession/Security handles iOS TLS. Android explicitly checks the leaf certificate digest and keeps hostname validation.
+- **Clock:** the server enforces its stored invitation expiry; it never accepts a caller-supplied expiry as authority. Seconds are used in the compact payload. A badly skewed phone clock can reject an otherwise valid invitation early; no clock-skew tolerance is claimed.
+- **Consume/Close race:** added 24 concurrent consume/revoke trials. SQLite serialization allows either completed pairing or revoked-unused invitation, never replay. Close does not revoke a session that already paired; the device's Revoke pairing control does. The desktop generation counter governs invitation creation responses, not a mobile enrollment response.
+- **Trust/user intent:** desktop and phone both display the host and the same fingerprint prefix. The guide recommends the in-app scanner and documents custom-scheme non-exclusivity. Pairing alone does not send a prompt: host inference requires an authenticated run request; native remote mode also requires the selected node ID and the phone's LLM opt-in/model. This release does not add a separate approval registry, device attestation or protection against deliberate disclosure of a live invitation.
+- **Credential lifetime:** the invite is deleted atomically and replaced by a separate random 256-bit bearer token delivered over pinned TLS; Android Keystore / iOS Keychain store the session. The invitation is not reused as the worker token. Cryptographic channel derivation is not required or claimed.
+- **Admin/fallback:** status returns only `pending`; both new endpoints require the existing admin bearer token and loopback Host/Origin checks. Manual inputs and scanned inputs use the same new-ticket validator. Manual copying still leaves user-controlled clipboard exposure.
+- **IP changes:** certificate SAN, bind address and generated invitation use the startup address. Existing state refuses an IP mismatch; the guide explains use of a new state directory and re-pairing after a network change. Network selection is not automatically repaired by QR scanning.
+
+Physical camera scanning is the outstanding release qualification, and is disclosed in the experimental release notes and download metadata. None of this review establishes inference speed or large-model capacity.
+
+
+=== COMPLETE PUBLIC FILE: docs/ABOUT_AND_UPDATES.md ===
+# About, references and update discovery
+
+**About & References** identifies Fabrizio Degni as NodeLift's creator, links the project, source, references and licenses, and shows the installed platform version. English is the default, followed by Simplified Chinese and Italian.
+
+| Surface | Version source | Update discovery |
+| --- | --- | --- |
+| Desktop control room | Authenticated local `/admin/about` | Official releases link; host source preview is separate from companion version |
+| Android 0.2.6 | Android package version and build | Automatic at process launch and weekly while running; explicit Check now |
+| iOS / iPadOS 0.2.6 | App bundle version and build | Automatic at process launch and weekly while running; overdue check on return from suspension; explicit Check now |
+| HarmonyOS source candidate | Runtime bundle metadata | Existing manual release link; native SDK build and automatic-check parity remain pending |
+
+## Automatic mobile checks
+
+The companion fetches the small public [mobile release manifest](https://www.fabriziodegni.com/NodeLift/data/mobile-downloads.json) over HTTPS. The experimental release channel includes published NodeLift companion prereleases. Three numeric version components are compared numerically, followed by the build number for the same version. An older manifest cannot trigger a downgrade prompt. Malformed or oversized responses fail without changing pairing or the engine.
+
+A fresh process checks at launch even if a prior check was recent. A successful check schedules the next check seven days later. Failed due checks retry after one hour while the process runs. There is one request in flight at a time. The OS may suspend timers, especially on iOS or during Android power saving; the app performs an overdue check when it returns to the foreground. It cannot promise background execution while the OS has suspended or terminated it.
+
+**Check now** is an explicit retry. The UI distinguishes checking, a newer release, no newer release and an unavailable check. Installation is always chosen by the user through the official download route. No APK, IPA or executable is downloaded or installed by the checker. iOS signing requirements still apply.
+
+Checks send a generic app user-agent and no device identifier, pairing token, prompt, model data or diagnostic report. The public server necessarily receives the network request and source IP like any HTTPS website. This is metadata discovery over HTTPS, not a signed automatic installer. A future installer would need separate package authenticity, platform signing and rollback design.
+
+## Diagnostics
+
+**Export diagnostics** and **Clear diagnostics** are separate from updates. Export uses the platform share sheet; no log upload runs automatically. See [wireless support and crash-report limitations](MOBILE_DIAGNOSTICS.md).
+
+Opening a browser or share destination may pause iOS delegated work under its existing foreground lifecycle. Return to NodeLift and resume when ready. Opening About or checking metadata does not alter engine consent or pairing.
+
+## Verification
+
+See [0.2.6 release evidence](evidence/companion-0.2.6/README.md) for automated checks, builds, external-review scope and device limitations. Earlier [About evaluation](evidence/about-2026-11-01/model-review.json) covers the earlier manual-link UI only; it is not evidence of these new automatic checks.
+
+
+=== COMPLETE PUBLIC FILE: apps/android/app/src/main/java/dev/nodelift/companion/AboutDialog.kt ===
+package dev.nodelift.companion
+
+import android.app.Activity
+import android.app.Dialog
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
+import android.net.Uri
+import android.os.Build
+import android.util.TypedValue
+import android.view.Gravity
+import android.view.Window
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.ScrollView
+import android.widget.TextView
+import android.widget.Toast
+
+@Suppress("DEPRECATION")
+fun installedCompanionVersion(activity: Activity): String {
+    return try {
+        val info = activity.packageManager.getPackageInfo(activity.packageName, 0)
+        val code = if (Build.VERSION.SDK_INT >= 28) info.longVersionCode else info.versionCode.toLong()
+        L10n.text(activity, "Version {0} · build {1}", info.versionName ?: "-", code)
+    } catch (_: PackageManager.NameNotFoundException) {
+        L10n.text(activity, "Version unavailable")
+    }
+}
+
+/** Public update metadata is checked by UpdateMonitor; diagnostics leave the device only after export. */
+fun showAbout(activity: Activity): Dialog {
+    val bg = Color.rgb(11, 21, 28)
+    val mint = Color.rgb(145, 243, 206)
+    val ink = Color.rgb(237, 245, 248)
+    val muted = Color.rgb(158, 177, 189)
+    fun dp(value: Int) = (value * activity.resources.displayMetrics.density).toInt()
+    fun t(key: String) = L10n.text(activity, key)
+    fun text(key: String, size: Float = 14f, color: Int = muted) = TextView(activity).apply {
+        text = t(key); textSize = size; setTextColor(color)
+        setPadding(0, dp(7), 0, dp(7))
+    }
+    fun open(url: String) {
+        try {
+            activity.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+                addCategory(Intent.CATEGORY_BROWSABLE)
+            })
+        } catch (_: ActivityNotFoundException) {
+            Toast.makeText(activity, t("Unable to open this link. Open the official website in your browser."), Toast.LENGTH_LONG).show()
+        } catch (_: SecurityException) {
+            Toast.makeText(activity, t("Unable to open this link. Open the official website in your browser."), Toast.LENGTH_LONG).show()
+        }
+    }
+    val dialog = Dialog(activity)
+    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    val root = LinearLayout(activity).apply {
+        orientation = LinearLayout.VERTICAL; setPadding(dp(22), dp(20), dp(22), dp(16))
+        setBackgroundColor(bg)
+    }
+    root.addView(text("About & References", 23f, ink).apply { setTypeface(null, Typeface.BOLD) })
+    val scroll = ScrollView(activity)
+    val content = LinearLayout(activity).apply { orientation = LinearLayout.VERTICAL }
+    fun link(label: String, url: String) {
+        content.addView(Button(activity).apply {
+            text = "${t(label)} ↗"; isAllCaps = false; textSize = 15f
+            setTextColor(mint)
+            val selectable = TypedValue()
+            if (activity.theme.resolveAttribute(android.R.attr.selectableItemBackground, selectable, true)) {
+                setBackgroundResource(selectable.resourceId)
+            }
+            gravity = Gravity.START or Gravity.CENTER_VERTICAL
+            minHeight = dp(48); setPadding(0, dp(8), 0, dp(8))
+            setOnClickListener { open(url) }
+        }, LinearLayout.LayoutParams(-1, -2))
+    }
+    content.addView(LinearLayout(activity).apply {
+        orientation = LinearLayout.HORIZONTAL; gravity = Gravity.CENTER_VERTICAL
+        addView(android.widget.ImageView(activity).apply {
+            setImageResource(R.drawable.ic_node_mark); importantForAccessibility = android.view.View.IMPORTANT_FOR_ACCESSIBILITY_NO
+        }, LinearLayout.LayoutParams(dp(42), dp(42)).apply { marginEnd = dp(12) })
+        addView(text("NodeLift", 29f, ink).apply { setTypeface(null, Typeface.BOLD) })
+    })
+    content.addView(text(installedCompanionVersion(activity), 13f, mint))
+    content.addView(text("Experimental companion", 12f, mint))
+    content.addView(text("Created by Fabrizio Degni", 19f, ink))
+    content.addView(text("Original concept, research direction and development."))
+    content.addView(text("Updates", 18f, ink))
+    content.addView(text("NodeLift checks the official version metadata at launch and weekly while running. If the system suspends the app, an overdue check runs when you return. Installation is always your choice."))
+    val updateState = text("", 14f, mint).apply { accessibilityLiveRegion = android.view.View.ACCESSIBILITY_LIVE_REGION_POLITE }
+    content.addView(updateState)
+    val checkUpdates = Button(activity).apply {
+        text = t("Check now"); ControlUI.style(this, ControlUI.Tone.SECONDARY)
+        setOnClickListener {
+            isEnabled = false; text = t("Checking for updates…")
+            UpdateMonitor.check(activity, manual = true)
+        }
+    }
+    content.addView(checkUpdates, LinearLayout.LayoutParams(-1, -2))
+    val viewRelease = Button(activity).apply {
+        text = t("View release notes & download"); ControlUI.style(this, ControlUI.Tone.PRIMARY)
+        setOnClickListener { UpdateMonitor.details?.let { showReleaseDetails(activity, it) } }
+    }
+    content.addView(viewRelease, LinearLayout.LayoutParams(-1, -2))
+    link("Check releases on GitHub", "https://github.com/sev7enITA/NodeLift/releases")
+    link("Official downloads & installation", "https://www.fabriziodegni.com/NodeLift/#downloads")
+    content.addView(text("Diagnostics", 18f, ink))
+    content.addView(text("A bounded seven-day log stays on this device. It records app and OS versions, technical events and limited error details. Pairing credentials, QR codes and prompt contents are excluded. Nothing is uploaded automatically."))
+    content.addView(text("After an error or interruption, export a report and choose where to save or share it. Some native crashes and system shutdowns may leave no complete report."))
+    val diagnosticState = text("", 14f, mint).apply {
+        accessibilityLiveRegion = android.view.View.ACCESSIBILITY_LIVE_REGION_POLITE
+        visibility = android.view.View.GONE
+    }
+    if (Diagnostics.hasPreviousIncident) {
+        diagnosticState.text = t("A previous interruption was recorded. Export diagnostics from About & References.")
+        diagnosticState.setTextColor(ControlUI.amber)
+        diagnosticState.visibility = android.view.View.VISIBLE
+    }
+    content.addView(diagnosticState)
+    content.addView(Button(activity).apply {
+        text = t("Export diagnostics"); ControlUI.style(this, ControlUI.Tone.SECONDARY)
+        setOnClickListener {
+            isEnabled = false
+            val exported = Diagnostics.export(activity)
+            diagnosticState.text = t(if (exported) "Diagnostic report prepared. Choose where to save or share it." else "Unable to export diagnostics. Try again.")
+            diagnosticState.setTextColor(if (exported) mint else ControlUI.amber)
+            diagnosticState.visibility = android.view.View.VISIBLE
+            isEnabled = true
+        }
+    }, LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(6) })
+    content.addView(Button(activity).apply {
+        text = t("Clear diagnostics"); ControlUI.style(this, ControlUI.Tone.DANGER)
+        setOnClickListener {
+            android.app.AlertDialog.Builder(activity)
+                .setTitle(t("Clear diagnostics"))
+                .setMessage(t("Delete the local diagnostic history? Previously exported copies are not affected."))
+                .setNegativeButton(t("Cancel"), null)
+                .setPositiveButton(t("Clear diagnostics")) { _, _ ->
+                    val cleared = Diagnostics.clear()
+                    diagnosticState.text = t(if (cleared) "Local diagnostic history cleared." else "Unable to clear diagnostics. Try again.")
+                    diagnosticState.setTextColor(if (cleared) mint else ControlUI.amber)
+                    diagnosticState.visibility = android.view.View.VISIBLE
+                }.show()
+        }
+    }, LinearLayout.LayoutParams(-1, -2).apply { topMargin = dp(6) })
+    content.addView(text("Project & author", 18f, ink))
+    link("Source repository", "https://github.com/sev7enITA/NodeLift")
+    link("Project website", "https://www.fabriziodegni.com/NodeLift/")
+    link("Author website", "https://www.fabriziodegni.com/")
+    link("LinkedIn", "https://www.linkedin.com/in/fdegni/")
+    content.addView(text("References & licenses", 18f, ink))
+    link("Architecture & technical documentation", "https://github.com/sev7enITA/NodeLift/blob/main/docs/ARCHITECTURE.md")
+    link("Research & comparison atlas", "https://github.com/sev7enITA/NodeLift/blob/main/research/comparison-2026-10-31/README.md")
+    link("Third-party acknowledgements", "https://github.com/sev7enITA/NodeLift/blob/main/THIRD_PARTY_NOTICES.md")
+    link("MIT license · original NodeLift code", "https://github.com/sev7enITA/NodeLift/blob/main/LICENSE")
+    content.addView(text("Dependencies and model weights retain their own licenses and authorship."))
+    content.addView(text("Capacity sharding is not implemented. Physical-phone inference speedup remains unproven."))
+    content.addView(text("Links open in your browser. NodeLift does not attach pairing keys, model data or diagnostics."))
+    content.addView(text("© 2026 Fabrizio Degni", 12f, muted))
+    scroll.addView(content)
+    root.addView(scroll, LinearLayout.LayoutParams(-1, 0, 1f))
+    root.addView(Button(activity).apply {
+        text = t("Close"); isAllCaps = false; minHeight = dp(48)
+        setTextColor(bg); backgroundTintList = android.content.res.ColorStateList.valueOf(mint)
+        setOnClickListener { dialog.dismiss() }
+    }, LinearLayout.LayoutParams(-1, -2))
+    dialog.setContentView(root)
+    val handler = android.os.Handler(android.os.Looper.getMainLooper())
+    val refreshUpdates = object : Runnable {
+        override fun run() {
+            val currentMessage = UpdateMonitor.message.render(activity)
+            if (updateState.text.toString() != currentMessage) updateState.text = currentMessage
+            viewRelease.isEnabled = !UpdateMonitor.checking && UpdateMonitor.details != null
+            checkUpdates.isEnabled = !UpdateMonitor.checking
+            checkUpdates.text = t(if (UpdateMonitor.checking) "Checking for updates…" else "Check now")
+            ControlUI.describe(checkUpdates, checkUpdates.text.toString())
+            if (dialog.isShowing) handler.postDelayed(this, 1000)
+        }
+    }
+    dialog.setOnDismissListener { handler.removeCallbacks(refreshUpdates) }
+    dialog.show()
+    handler.post(refreshUpdates)
+    dialog.window?.apply {
+        setBackgroundDrawable(ColorDrawable(bg))
+        setLayout(ViewGroup.LayoutParams.MATCH_PARENT, (activity.resources.displayMetrics.heightPixels * 0.88).toInt())
+    }
+    return dialog
+}
+
+/** Review is local and cancellable. Only the explicit final button opens the exact public asset. */
+fun showReleaseDetails(activity:Activity, details:ReleaseDetails):Dialog {
+    fun t(key:String)=L10n.text(activity,key)
+    fun dp(n:Int)=(n*activity.resources.displayMetrics.density).toInt()
+    val dialog=Dialog(activity);dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    val root=LinearLayout(activity).apply { orientation=LinearLayout.VERTICAL;setPadding(dp(22),dp(18),dp(22),dp(12));setBackgroundColor(ControlUI.canvas) }
+    val content=LinearLayout(activity).apply { orientation=LinearLayout.VERTICAL }
+    fun text(value:String,heading:Boolean=false) {
+        content.addView(TextView(activity).apply {
+            text=value;textSize=if(heading)20f else 16f;setTextColor(ControlUI.ink);setPadding(0,dp(8),0,dp(8))
+            if(heading){setTypeface(null,Typeface.BOLD);if(Build.VERSION.SDK_INT>=28)isAccessibilityHeading=true}
+            else setTextIsSelectable(true)
+        },LinearLayout.LayoutParams(-1,-2))
+    }
+    text(t("Release notes"),true)
+    text(L10n.text(activity,"Version {0} · build {1}",details.release.version,details.release.build))
+    text(t("Published (UTC)")+": "+details.date)
+    text(details.title,true)
+    text(t("Release notes are published in English."))
+    details.changes.forEach { text("• $it") }
+    text(t("Validation"),true);text(details.validation)
+    text(t("Limitations"),true);text(details.limitations)
+    text(t("Download details"),true);text(details.artifact)
+    text(L10n.text(activity,"Artifact size: {0} bytes",details.bytes))
+    text("SHA-256\n"+details.sha256)
+    text(t("This hash is published metadata. NodeLift does not verify the downloaded file when your browser downloads it."))
+    text(t("The APK download opens in your browser. Android asks you before installation; NodeLift does not install it automatically."))
+    val action=Button(activity).apply {
+        text=t("Download APK in browser");ControlUI.style(this,ControlUI.Tone.PRIMARY)
+        setOnClickListener {
+            if(UpdateMonitor.checking || UpdateMonitor.details !== details)return@setOnClickListener
+            try {activity.startActivity(Intent(Intent.ACTION_VIEW,Uri.parse(details.url)).addCategory(Intent.CATEGORY_BROWSABLE))}
+            catch(_:ActivityNotFoundException){Toast.makeText(activity,t("Unable to open this link. Open the official website in your browser."),Toast.LENGTH_LONG).show()}
+            catch(_:SecurityException){Toast.makeText(activity,t("Unable to open this link. Open the official website in your browser."),Toast.LENGTH_LONG).show()}
+        }
+    }
+    content.addView(action,LinearLayout.LayoutParams(-1,-2))
+    val expired=TextView(activity).apply {text=t("Release details need a new check. Close this view and choose Check now.");setTextColor(ControlUI.amber);textSize=16f;accessibilityLiveRegion=android.view.View.ACCESSIBILITY_LIVE_REGION_POLITE}
+    content.addView(expired)
+    root.addView(ScrollView(activity).apply{addView(content)},LinearLayout.LayoutParams(-1,0,1f))
+    root.addView(Button(activity).apply{text=t("Close");ControlUI.style(this,ControlUI.Tone.SECONDARY);setOnClickListener{dialog.dismiss()}},LinearLayout.LayoutParams(-1,-2))
+    dialog.setContentView(root)
+    val handler=android.os.Handler(android.os.Looper.getMainLooper())
+    val refresh=object:Runnable {override fun run(){
+        val valid=!UpdateMonitor.checking && UpdateMonitor.details === details
+        action.isEnabled=valid;expired.visibility=if(valid)android.view.View.GONE else android.view.View.VISIBLE
+        if(dialog.isShowing)handler.postDelayed(this,500)
+    }}
+    dialog.setOnDismissListener{handler.removeCallbacks(refresh)};dialog.show();handler.post(refresh)
+    dialog.window?.apply{setBackgroundDrawable(ColorDrawable(ControlUI.canvas));setLayout(-1,(activity.resources.displayMetrics.heightPixels*0.90).toInt())}
+    return dialog
+}
+
+
+=== COMPLETE PUBLIC FILE: apps/android/app/src/main/java/dev/nodelift/companion/UpdateMonitor.kt ===
+package dev.nodelift.companion
+
+import android.content.Context
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import org.json.JSONObject
+import java.net.URL
+import java.util.concurrent.Executors
+import javax.net.ssl.HttpsURLConnection
+
+/** Bounded public manifest and changelog requests; never attaches node credentials or device identifiers. */
+object UpdateMonitor {
+    private const val ENDPOINT="https://www.fabriziodegni.com/NodeLift/data/mobile-downloads.json"
+    private val handler=Handler(Looper.getMainLooper())
+    private val executor=Executors.newSingleThreadExecutor()
+    @Volatile var checking=false;private set
+    @Volatile var available=false;private set
+    @Volatile var details:ReleaseDetails?=null;private set
+    @Volatile var message:UiText=ui("Updates have not been checked yet.");private set
+    private var started=false
+    private var context:Context?=null
+    private val timer=Runnable {context?.let { onResume(it) }}
+    @Synchronized fun start(context:Context) {
+        if(started)return
+        started=true;this.context=context.applicationContext
+        check(context) // Every new application process, even if last success was recent.
+    }
+    fun onResume(context:Context) {
+        val prefs=context.getSharedPreferences("updates",0)
+        if(UpdatePolicy.due(System.currentTimeMillis(),prefs.getLong("success",0),prefs.getLong("attempt",0)))check(context)
+        else schedule(context)
+    }
+    private fun schedule(context:Context) {
+        val prefs=context.getSharedPreferences("updates",0)
+        val now=System.currentTimeMillis()
+        val success=prefs.getLong("success",0);val attempt=prefs.getLong("attempt",0)
+        val next=if(success>0 && now>=success && now-success<UpdatePolicy.WEEK_MS)success+UpdatePolicy.WEEK_MS else attempt+UpdatePolicy.RETRY_MS
+        handler.removeCallbacks(timer)
+        handler.postDelayed(timer,(next-now).coerceIn(1000,UpdatePolicy.WEEK_MS))
+    }
+    @Synchronized fun check(context:Context,manual:Boolean=false) {
+        if(checking)return
+        val app=context.applicationContext
+        val prefs=app.getSharedPreferences("updates",0)
+        // A manual action may retry immediately, but cannot fan out parallel requests.
+        checking=true;available=false;details=null;message=ui("Checking for updates…")
+        prefs.edit().putLong("attempt",System.currentTimeMillis()).apply()
+        Diagnostics.record(DiagnosticEvent.UPDATE_CHECK)
+        executor.execute {
+            try {
+                val manifest=fetch(ENDPOINT)
+                val changelog=fetch("https://www.fabriziodegni.com/NodeLift/data/changelog.json")
+                val info=app.packageManager.getPackageInfo(app.packageName,0)
+                val current=CompanionRelease(info.versionName ?: error("Version unavailable"),if(Build.VERSION.SDK_INT>=28)info.longVersionCode else @Suppress("DEPRECATION") info.versionCode.toLong())
+                val verified=ReleaseMetadata.parse(manifest,changelog,current)
+                val release=verified.release
+                details=verified
+                available=release>current
+                message=if(available)ui("Update available: {0} · build {1}",release.version,release.build) else ui("No newer companion release was found.")
+                prefs.edit().putLong("success",System.currentTimeMillis()).apply()
+                Diagnostics.record(if(available)DiagnosticEvent.UPDATE_AVAILABLE else DiagnosticEvent.UPDATE_CURRENT)
+            } catch(error:Exception) {
+                available=false;details=null
+                message=ui("Update check unavailable. Check your connection or try again later.")
+                Diagnostics.record(DiagnosticEvent.UPDATE_FAILED,error)
+            } finally {checking=false;schedule(app)}
+        }
+    }
+    private fun fetch(endpoint:String):Map<*,*> {
+        val connection=URL(endpoint).openConnection() as HttpsURLConnection
+        try {
+            connection.apply {connectTimeout=10000;readTimeout=10000;instanceFollowRedirects=false;useCaches=false;setRequestProperty("Accept","application/json");setRequestProperty("User-Agent","NodeLift-update-check")}
+            require(connection.responseCode==200)
+            require(connection.contentType?.substringBefore(';')?.trim()?.lowercase()=="application/json")
+            val data=connection.inputStream.use{it.readBytesBounded(524288)}
+            // Bound nesting before the platform JSON parser to avoid stack exhaustion.
+            var depth=0;var quoted=false;var escaped=false
+            for(byte in data){val c=byte.toInt().toChar();if(quoted){if(escaped)escaped=false else if(c=='\\')escaped=true else if(c=='"')quoted=false}
+                else if(c=='"')quoted=true else if(c=='{' || c=='['){depth++;require(depth<=16)} else if(c=='}' || c==']'){depth--;require(depth>=0)}}
+            require(!quoted && depth==0)
+            fun value(raw:Any?):Any?=when(raw){
+                is JSONObject -> raw.keys().asSequence().associateWith{value(raw.get(it))}
+                is org.json.JSONArray -> (0 until raw.length()).map{value(raw.get(it))}
+                JSONObject.NULL -> null
+                else -> raw
+            }
+            return value(JSONObject(String(data,Charsets.UTF_8))) as Map<*,*>
+        } finally {connection.disconnect()}
+    }
+    private fun java.io.InputStream.readBytesBounded(limit:Int):ByteArray {
+        val out=java.io.ByteArrayOutputStream();val buffer=ByteArray(4096)
+        while(true) {val n=read(buffer);if(n<0)break;require(out.size()+n<=limit);out.write(buffer,0,n)}
+        return out.toByteArray()
+    }
+}
+
+
+=== COMPLETE PUBLIC FILE: apps/android/app/src/main/java/dev/nodelift/companion/UpdatePolicy.kt ===
+package dev.nodelift.companion
+
+/** Public companion channel uses three numeric version components plus a monotonic build. */
+data class CompanionRelease(val version:String,val build:Long) : Comparable<CompanionRelease> {
+    private val parts=version.split('.').map { it.toLongOrNull() ?: -1 }
+    init { require(version.matches(Regex("[0-9]{1,6}\\.[0-9]{1,6}\\.[0-9]{1,6}")) && build in 1..Int.MAX_VALUE) }
+    override fun compareTo(other:CompanionRelease):Int {
+        for(i in parts.indices) {val result=parts[i].compareTo(other.parts[i]);if(result!=0)return result}
+        return build.compareTo(other.build)
+    }
+}
+object UpdatePolicy {
+    const val WEEK_MS=7*24*60*60*1000L
+    const val RETRY_MS=60*60*1000L
+    fun due(now:Long,lastSuccess:Long,lastAttempt:Long):Boolean {
+        if(now<lastSuccess || now<lastAttempt)return true // Clock correction must not postpone indefinitely.
+        return (lastSuccess<=0 || now-lastSuccess>=WEEK_MS) && (lastAttempt<=0 || now-lastAttempt>=RETRY_MS)
+    }
+}
+
+/** Validated public metadata, never an instruction to install or a verified artifact payload. */
+data class ReleaseDetails(val release:CompanionRelease,val date:String,val title:String,val changes:List<String>,val validation:String,val limitations:String,val artifact:String,val bytes:Long,val sha256:String,val url:String)
+object ReleaseMetadata {
+    private fun obj(value:Any?):Map<*,*> = value as? Map<*,*> ?: error("Expected object")
+    private fun string(value:Any?,limit:Int):String {
+        val s=value as? String ?: error("Expected string")
+        require(s.isNotBlank() && s.length<=limit && s.none { it<' ' && it!='\n' && it!='\t' });return s
+    }
+    private fun integer(value:Any?,maximum:Long):Long {
+        require(value is Int || value is Long);val n=(value as Number).toLong();require(n in 1..maximum);return n
+    }
+    fun parse(manifest:Map<*,*>,changelog:Map<*,*>,current:CompanionRelease):ReleaseDetails {
+        val release=CompanionRelease(string(manifest["version"],32),integer(manifest["build"],Int.MAX_VALUE.toLong()))
+        require(release>=current && release.build>=current.build)
+        require(integer(changelog["schema_version"],1)==1L)
+        val date=string(manifest["published_at"],32)
+        require(date.matches(Regex("[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z")))
+        java.time.Instant.parse(date)
+        val entries=changelog["releases"] as? List<*> ?: error("Expected releases")
+        require(entries.size in 1..256)
+        require(obj(entries.first())["version"]==release.version && integer(obj(entries.first())["build"],Int.MAX_VALUE.toLong())==release.build)
+        val matches=entries.map { obj(it) }.filter { it["version"]==release.version && it["build"] is Number && integer(it["build"],Int.MAX_VALUE.toLong())==release.build }
+        require(matches.size==1)
+        val notes=matches.single();require(notes["published_at"]==date)
+        require(notes["url"]=="https://github.com/sev7enITA/NodeLift/releases/tag/v${release.version}")
+        val changes=notes["changes"] as? List<*> ?: error("Expected changes")
+        require(changes.size in 1..40)
+        val name="NodeLift-${release.version}-android-debug.apk"
+        val platform=obj(obj(manifest["platforms"])["android"])
+        require(platform["artifact"]==name && platform["status"]=="compiled-debug-signed" && platform["architecture"]=="arm64-v8a")
+        val asset=obj(obj(manifest["assets"])[name])
+        val url="https://github.com/sev7enITA/NodeLift/releases/download/v${release.version}/$name"
+        require(asset["url"]==url)
+        val hash=string(asset["sha256"],64);require(hash.matches(Regex("[a-f0-9]{64}")))
+        return ReleaseDetails(release,date,string(notes["title"],240),changes.map{string(it,4096)},string(notes["validation"],8192),string(notes["limitations"],8192),name,integer(asset["bytes"],2L*1024*1024*1024),hash,url)
+    }
+}
+
+
+=== COMPLETE PUBLIC FILE: apps/ios/NodeLift/UpdateMonitor.swift ===
+import Foundation
+import Combine
+
+private final class UpdateSessionDelegate:NSObject,URLSessionTaskDelegate {
+    func urlSession(_ session:URLSession,task:URLSessionTask,willPerformHTTPRedirection response:HTTPURLResponse,newRequest request:URLRequest,completionHandler:@escaping(URLRequest?)->Void) {completionHandler(nil)}
+}
+
+@MainActor final class UpdateMonitor:ObservableObject {
+    static let shared=UpdateMonitor()
+    @Published private(set) var message:Message="Updates have not been checked yet."
+    @Published private(set) var checking=false
+    @Published private(set) var available=false
+    @Published private(set) var details:ReleaseDetails?
+    private let defaults=UserDefaults.standard
+    private var started=false
+    private var timer:Timer?
+    func start(){guard !started else{return};started=true;check()}
+    func onResume() {
+        if UpdatePolicy.due(now:Date().timeIntervalSince1970,success:defaults.double(forKey:"update-success"),attempt:defaults.double(forKey:"update-attempt")){check()}
+        else{schedule()}
+    }
+    private func schedule() {
+        let now=Date().timeIntervalSince1970
+        let success=defaults.double(forKey:"update-success");let attempt=defaults.double(forKey:"update-attempt")
+        let next=(success>0 && now>=success && now-success<UpdatePolicy.week) ? success+UpdatePolicy.week : attempt+UpdatePolicy.retry
+        timer?.invalidate()
+        timer=Timer.scheduledTimer(withTimeInterval:max(1,min(UpdatePolicy.week,next-now)),repeats:false){[weak self] _ in Task{@MainActor in self?.onResume()}}
+    }
+    func check(manual:Bool=false) {
+        guard !checking else{return}
+        checking=true;available=false;details=nil;message="Checking for updates…";defaults.set(Date().timeIntervalSince1970,forKey:"update-attempt")
+        Diagnostics.shared.record(.updateCheck)
+        Task {
+            let configuration=URLSessionConfiguration.ephemeral
+            configuration.timeoutIntervalForRequest=10;configuration.timeoutIntervalForResource=15
+            configuration.httpCookieStorage=nil;configuration.urlCredentialStorage=nil;configuration.urlCache=nil
+            let session=URLSession(configuration:configuration,delegate:UpdateSessionDelegate(),delegateQueue:nil)
+            defer{session.invalidateAndCancel();checking=false;schedule()}
+            do {
+                let manifest=try await fetch("https://www.fabriziodegni.com/NodeLift/data/mobile-downloads.json",session:session)
+                let changelog=try await fetch("https://www.fabriziodegni.com/NodeLift/data/changelog.json",session:session)
+                guard let current=CompanionRelease(version:Bundle.main.object(forInfoDictionaryKey:"CFBundleShortVersionString") as? String ?? "",build:Int(Bundle.main.object(forInfoDictionaryKey:"CFBundleVersion") as? String ?? "") ?? 0) else{throw URLError(.cannotParseResponse)}
+                let verified=try ReleaseMetadata.parse(manifest:manifest,changelog:changelog,current:current)
+                let release=verified.release
+                details=verified;available=release>current
+                message=available ? Message("Update available: {0} · build {1}",release.version,release.build) : "No newer companion release was found."
+                defaults.set(Date().timeIntervalSince1970,forKey:"update-success")
+                Diagnostics.shared.record(available ? .updateAvailable:.updateCurrent)
+            } catch {available=false;details=nil;message="Update check unavailable. Check your connection or try again later.";Diagnostics.shared.record(.updateFailed,error:error)}
+        }
+    }
+    private func fetch(_ endpoint:String,session:URLSession) async throws -> [String:Any] {
+        var request=URLRequest(url:URL(string:endpoint)!)
+        request.setValue("application/json",forHTTPHeaderField:"Accept");request.setValue("NodeLift-update-check",forHTTPHeaderField:"User-Agent")
+        let (stream,response)=try await session.bytes(for:request)
+        guard (response as? HTTPURLResponse)?.statusCode==200,response.mimeType?.lowercased()=="application/json" else{throw URLError(.badServerResponse)}
+        var data=Data()
+        for try await byte in stream {guard data.count<524288 else{throw URLError(.dataLengthExceedsMaximum)};data.append(byte)}
+        guard let object=try JSONSerialization.jsonObject(with:data) as? [String:Any] else{throw URLError(.cannotParseResponse)}
+        return object
+    }
+
+}
+
+
+=== HTML EXCERPT: About section ===
+<section id="about" class="section-block about-section" aria-labelledby="about-title">
+<div class="section-heading"><div><p class="eyebrow" data-i18n="04 / PROJECT & PROVENANCE">04 / PROJECT &amp; PROVENANCE</p><h2 id="about-title" data-i18n="About & References">About &amp; References</h2></div><span class="about-signature">NodeLift<span aria-hidden="true">/</span></span></div>
+<div class="about-layout">
+<div class="about-author"><p class="micro" data-i18n="CREATED BY">CREATED BY</p><h3>Fabrizio Degni<span aria-hidden="true">.</span></h3><p class="about-description" data-i18n="Original project concept, research direction and development.">Original project concept, research direction and development.</p><p class="about-purpose" data-i18n="An experimental local intelligence network, built to give existing hardware another useful role in AI.">An experimental local intelligence network, built to give existing hardware another useful role in AI.</p><div class="about-author-links"><a href="https://www.fabriziodegni.com/" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"><span data-i18n="Author website">Author website</span><span aria-hidden="true">↗</span></a><a href="https://www.linkedin.com/in/fdegni/" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer">LinkedIn<span aria-hidden="true">↗</span></a></div><p class="about-license"><span data-i18n="Original NodeLift code">Original NodeLift code</span> © 2026 Fabrizio Degni · <a href="https://github.com/sev7enITA/NodeLift/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer" data-i18n="MIT license">MIT license</a></p></div>
+<div class="about-release"><div class="about-version-heading"><span class="micro" data-i18n="INSTALLED HOST">INSTALLED HOST</span><span class="about-channel" data-i18n="Source preview">Source preview</span></div><p id="about-host-version" class="about-version" role="status" aria-live="polite" data-i18n="Version unavailable">Version unavailable</p><p id="about-version-note" class="about-version-note" data-i18n="Open a local session to read the installed host version.">Open a local session to read the installed host version.</p><p class="about-version-scope" data-i18n="The host source preview and mobile companions have separate versions.">The host source preview and mobile companions have separate versions.</p><a class="about-update-link" href="https://github.com/sev7enITA/NodeLift/releases" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"><span data-i18n="Check releases on GitHub">Check releases on GitHub</span><span aria-hidden="true">↗</span></a><p class="about-update-note" data-i18n="Opens the official release page in your browser. Compare the installed version with the release notes; updates are not installed automatically.">Opens the official release page in your browser. Compare the installed version with the release notes; updates are not installed automatically.</p><a class="about-download-link" href="https://www.fabriziodegni.com/NodeLift/#downloads" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"><span data-i18n="Official downloads & installation">Official downloads &amp; installation</span><span aria-hidden="true">↗</span></a></div>
+</div>
+<div class="about-references"><div class="about-reference-heading"><h3 data-i18n="References">References</h3><p data-i18n="Project sources, technical foundations and acknowledgements.">Project sources, technical foundations and acknowledgements.</p></div><ul class="about-reference-list">
+<li><a href="https://github.com/sev7enITA/NodeLift" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"><span><small>GITHUB</small><strong data-i18n="Source repository">Source repository</strong></span><span aria-hidden="true">↗</span></a></li>
+<li><a href="https://www.fabriziodegni.com/NodeLift/" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"><span><small>NODELIFT</small><strong data-i18n="Project website">Project website</strong></span><span aria-hidden="true">↗</span></a></li>
+<li><a href="https://github.com/sev7enITA/NodeLift/blob/main/docs/ENGINE_STATUS.md" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"><span><small data-i18n="LLM engine">LLM engine</small><strong data-i18n="Current engine capabilities and limits">Current engine capabilities and limits</strong></span><span aria-hidden="true">↗</span></a></li>
+<li><a href="https://github.com/sev7enITA/NodeLift/blob/main/docs/ARCHITECTURE.md" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"><span><small data-i18n="TECHNICAL DOCUMENTATION">TECHNICAL DOCUMENTATION</small><strong data-i18n="Architecture and design">Architecture and design</strong></span><span aria-hidden="true">↗</span></a></li>
+<li><a href="https://github.com/sev7enITA/NodeLift/blob/main/research/comparison-2026-10-31/README.md" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"><span><small data-i18n="RESEARCH">RESEARCH</small><strong data-i18n="Comparison and primary sources">Comparison and primary sources</strong></span><span aria-hidden="true">↗</span></a></li>
+<li><a href="https://github.com/sev7enITA/NodeLift/blob/main/THIRD_PARTY_NOTICES.md" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"><span><small data-i18n="ACKNOWLEDGEMENTS">ACKNOWLEDGEMENTS</small><strong data-i18n="Third-party notices">Third-party notices</strong></span><span aria-hidden="true">↗</span></a></li>
+<li><a href="https://github.com/sev7enITA/NodeLift/wiki" target="_blank" rel="noopener noreferrer" referrerpolicy="no-referrer"><span><small data-i18n="GUIDES">GUIDES</small><strong data-i18n="Wiki and how-to guides">Wiki and how-to guides</strong></span><span aria-hidden="true">↗</span></a></li>
+</ul></div>
+<p class="about-boundary"><span class="status-dot" aria-hidden="true"></span><span data-i18n="Experimental software. Capacity sharding is not implemented, and physical-phone inference speedup has not been demonstrated.">Experimental software. Capacity sharding is not implemented, and physical-phone inference speedup has not been demonstrated.</span></p>
+</section>
+
+
+=== Swift SOURCE EXCERPT: AboutView and following support views ===
+private struct AboutView: View {
+    let language: String
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
+    @State private var linkError = false
+    @State private var releaseDetails:ReleaseDetails?
+    @ObservedObject private var updates = UpdateMonitor.shared
+    @State private var diagnosticFeedback = ""
+    @State private var diagnosticFailed = false
+    @State private var preparingExport = false
+    @State private var confirmClear = false
+    @State private var diagnosticShare: DiagnosticShare?
+    @State private var previousIncident = Diagnostics.shared.hasPreviousIncident
+    private func T(_ key: String) -> String { Message(key).resolve(language) }
+
+    private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(T(title)).font(.headline).foregroundStyle(.primary)
+            content()
+        }
+        .frame(maxWidth: .infinity, alignment: .leading).padding(20)
+        .background(panelColor, in: RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).stroke(lineColor, lineWidth: 1))
+    }
+
+    private func note(_ key: String) -> some View {
+        Text(T(key)).font(.footnote).foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
+    }
+
+    private func link(_ label: String, _ value: String) -> some View {
+        Button {
+            guard let url = URL(string: value) else { linkError = true; return }
+            linkError = false
+            openURL(url) { accepted in linkError = !accepted }
+        } label: {
+            HStack(alignment: .firstTextBaseline, spacing: 12) {
+                Text(T(label)).multilineTextAlignment(.leading).fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 0)
+                Image(systemName: "arrow.up.right").accessibilityHidden(true)
+            }.font(.subheadline).frame(minHeight: 44)
+                .frame(maxWidth: .infinity, alignment: .leading).contentShape(Rectangle())
+        }.buttonStyle(.plain).foregroundStyle(aquaColor)
+    }
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 18) {
+                    HStack(spacing: 12) {
+                        NodeLiftMark()
+                            .frame(width: 38, height: 38).accessibilityHidden(true)
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("NodeLift").font(.largeTitle.weight(.semibold))
+                            Text(CompanionBuild.description(language)).font(.caption.monospaced()).foregroundStyle(aquaColor)
+                        }
+                    }.padding(.vertical, 8)
+                    note("Experimental companion")
+                    section("Created by Fabrizio Degni") {
+                        note("Original concept, research direction and development.")
+                        link("Author website", "https://www.fabriziodegni.com/")
+                        link("LinkedIn", "https://www.linkedin.com/in/fdegni/")
+                    }
+                    section("Updates") {
+                        note("NodeLift checks the official version metadata at launch and weekly while running. If the system suspends the app, an overdue check runs when you return. Installation is always your choice.")
+                        HStack(alignment: .top, spacing: 10) {
+                            if updates.checking { ProgressView().tint(aquaColor) }
+                            Text(updates.message.resolve(language)).font(.subheadline).foregroundStyle(aquaColor)
+                                .accessibilityIdentifier("update-status")
+                        }
+                        Button { updates.check(manual: true) } label: {
+                            Label(T(updates.checking ? "Checking for updates…" : "Check now"), systemImage: "arrow.clockwise")
+                                .frame(maxWidth: .infinity)
+                        }.buttonStyle(NodeLiftButtonStyle()).disabled(updates.checking)
+                            .accessibilityIdentifier("check-updates")
+                        Button(T("View release notes & download")) { releaseDetails=updates.details }
+                            .buttonStyle(NodeLiftButtonStyle()).disabled(updates.checking || updates.details == nil)
+                            .accessibilityIdentifier("view-release-notes")
+                        link("Check releases on GitHub", "https://github.com/sev7enITA/NodeLift/releases")
+                        link("Official downloads & installation", "https://www.fabriziodegni.com/NodeLift/#downloads")
+                    }
+                    section("Diagnostics") {
+                        note("A bounded seven-day log stays on this device. It records app and OS versions, technical events and limited error details. Pairing credentials, QR codes and prompt contents are excluded. Nothing is uploaded automatically.")
+                        note("After an error or interruption, export a report and choose where to save or share it. Some native crashes and system shutdowns may leave no complete report.")
+                        if previousIncident {
+                            Text(T("A previous interruption was recorded. Export diagnostics from About & References."))
+                                .font(.footnote).foregroundStyle(amberColor)
+                        }
+                        Button {
+                            preparingExport = true
+                            diagnosticFailed = false
+                            do {
+                                diagnosticShare = DiagnosticShare(url: try Diagnostics.shared.export())
+                                diagnosticFeedback = "Diagnostic report prepared. Choose where to save or share it."
+                            } catch {
+                                diagnosticFeedback = "Unable to export diagnostics. Try again."
+                                diagnosticFailed = true
+                            }
+                            preparingExport = false
+                        } label: {
+                            Label(T("Export diagnostics"), systemImage: "square.and.arrow.up").frame(maxWidth: .infinity)
+                        }.buttonStyle(NodeLiftButtonStyle()).disabled(preparingExport)
+                            .accessibilityIdentifier("export-diagnostics")
+                        Button { confirmClear = true } label: {
+                            Label(T("Clear diagnostics"), systemImage: "trash").frame(maxWidth: .infinity)
+                        }.buttonStyle(NodeLiftButtonStyle(destructive: true)).disabled(preparingExport)
+                            .accessibilityIdentifier("clear-diagnostics")
+                        if !diagnosticFeedback.isEmpty {
+                            Text(T(diagnosticFeedback)).font(.footnote).foregroundStyle(diagnosticFailed ? amberColor : aquaColor)
+                                .accessibilityIdentifier("diagnostic-feedback")
+                        }
+                    }
+                    section("Project & author") {
+                        link("Source repository", "https://github.com/sev7enITA/NodeLift")
+                        link("Project website", "https://www.fabriziodegni.com/NodeLift/")
+                    }
+                    section("References & licenses") {
+                        link("Architecture & technical documentation", "https://github.com/sev7enITA/NodeLift/blob/main/docs/ARCHITECTURE.md")
+                        link("Research & comparison atlas", "https://github.com/sev7enITA/NodeLift/blob/main/research/comparison-2026-10-31/README.md")
+                        link("Third-party acknowledgements", "https://github.com/sev7enITA/NodeLift/blob/main/THIRD_PARTY_NOTICES.md")
+                        link("MIT license · original NodeLift code", "https://github.com/sev7enITA/NodeLift/blob/main/LICENSE")
+                        note("Dependencies and model weights retain their own licenses and authorship.")
+                    }
+                    if linkError {
+                        Text(T("Unable to open this link. Open the official website in your browser."))
+                            .font(.footnote).foregroundStyle(amberColor).accessibilityIdentifier("about-link-error")
+                    }
+                    note("Capacity sharding is not implemented. Physical-phone inference speedup remains unproven.")
+                    note("Links open in your browser. NodeLift does not attach pairing keys, model data or diagnostics.")
+                    note("Opening a browser may pause this node. Return to NodeLift and resume when ready.")
+                    Text("© 2026 Fabrizio Degni").font(.caption).foregroundStyle(.secondary)
+                }.padding(22).frame(maxWidth: 700)
+            }.frame(maxWidth: .infinity).background(canvasColor)
+                .sheet(item: $releaseDetails) { ReleaseNotesView(details:$0,language:language) }
+                .navigationTitle(T("About & References")).navigationBarTitleDisplayMode(.inline)
+                .toolbar { ToolbarItem(placement: .confirmationAction) { Button(T("Close")) { dismiss() }.tint(aquaColor) } }
+        }.preferredColorScheme(.dark)
+            .sheet(item: $diagnosticShare) { item in DiagnosticShareSheet(url: item.url) }
+            .alert(T("Clear diagnostics"), isPresented: $confirmClear) {
+                Button(T("Cancel"), role: .cancel) {}
+                Button(T("Clear diagnostics"), role: .destructive) {
+                    let cleared = Diagnostics.shared.clear()
+                    if cleared { previousIncident = Diagnostics.shared.hasPreviousIncident }
+                    diagnosticFeedback = cleared ? "Local diagnostic history cleared." : "Unable to clear diagnostics. Try again."
+                    diagnosticFailed = !cleared
+                }
+            } message: {
+                Text(T("Delete the local diagnostic history? Previously exported copies are not affected."))
+            }
+    }
+}
+
+private struct DiagnosticShare: Identifiable {
+    let id = UUID()
+    let url: URL
+}
+
+private struct DiagnosticShareSheet: UIViewControllerRepresentable {
+    let url: URL
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: [url], applicationActivities: nil)
+    }
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+}
+
+
+
+private struct ReleaseNotesView:View {
+    let details:ReleaseDetails
+    let language:String
+    @ObservedObject private var updates=UpdateMonitor.shared
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
+    @State private var linkError=false
+    private var valid:Bool { !updates.checking && updates.details?.id==details.id }
+    private func T(_ key:String)->String {Message(key).resolve(language)}
+    private func heading(_ key:String)->some View {Text(T(key)).font(.title3.weight(.semibold)).accessibilityAddTraits(.isHeader)}
+    var body:some View {
+        NavigationStack {
+            ScrollView {
+                VStack(alignment:.leading,spacing:16) {
+                    Text(Message("Version {0} · build {1}",details.release.version,details.release.build).resolve(language)).font(.headline).foregroundStyle(aquaColor)
+                    Text(T("Published (UTC)")+": "+details.date).font(.subheadline)
+                    Text(details.title).font(.title2.weight(.semibold))
+                    Text(T("Release notes are published in English.")).font(.footnote).foregroundStyle(.secondary)
+                    ForEach(Array(details.changes.enumerated()),id:\.offset){_,value in Text("• "+value).fixedSize(horizontal:false,vertical:true)}
+                    heading("Validation");Text(details.validation)
+                    heading("Limitations");Text(details.limitations)
+                    heading("Download details");Text(details.artifact).font(.subheadline.monospaced())
+                    Text(Message("Artifact size: {0} bytes",details.bytes).resolve(language))
+                    Text("SHA-256\n"+details.sha256).font(.footnote.monospaced()).textSelection(.enabled)
+                    Text(T("This hash is published metadata. NodeLift does not verify the downloaded file when your browser downloads it.")).font(.footnote)
+                    Text(T("This IPA is unsigned. Download it to your Mac, then sign and provision it for your iPhone with Xcode. A browser download cannot install it. No automatic installation is available."))
+                    Button(T("Download unsigned IPA in browser")) {
+                        guard valid else{return}
+                        linkError=false;openURL(details.url){accepted in linkError = !accepted}
+                    }.buttonStyle(NodeLiftButtonStyle()).disabled(!valid).accessibilityIdentifier("download-release")
+                    if !valid {Text(T("Release details need a new check. Close this view and choose Check now.")).foregroundStyle(amberColor)}
+                    if linkError {Text(T("Unable to open this link. Open the official website in your browser.")).foregroundStyle(amberColor)}
+                }.frame(maxWidth:.infinity,alignment:.leading).padding(20)
+            }.background(canvasColor).navigationTitle(T("Release notes")).navigationBarTitleDisplayMode(.inline)
+                .toolbar{ToolbarItem(placement:.confirmationAction){Button(T("Close")){dismiss()}}}
+        }.preferredColorScheme(.dark)
+    }
+}
+
+
+=== 15 selected catalog entries, not complete catalogs ===
+[
+  {
+    "id": "Contribution not measured",
+    "en": "Contribution not measured",
+    "zh-Hans": "贡献未测量",
+    "it": "Contributo non misurato"
+  },
+  {
+    "id": "Coordinates one native run and verifies phone proposals. Current phone delegation uses one draft companion per run; device memory is not pooled.",
+    "en": "Coordinates one native run and verifies phone proposals. Current phone delegation uses one draft companion per run; device memory is not pooled.",
+    "zh-Hans": "协调一次原生运行并验证手机提案。当前每次运行仅使用一台草稿伴侣设备；设备内存不会合并。",
+    "it": "Coordina una prova nativa e verifica le proposte del telefono. La delega attuale usa una companion per prova; la memoria dei dispositivi non è unificata."
+  },
+  {
+    "id": "Create an invitation, open the companion on your phone and pair the device.",
+    "en": "Create an invitation, open the companion on your phone and pair the device.",
+    "zh-Hans": "创建邀请，打开手机上的配套应用，然后配对设备。",
+    "it": "Crea un invito, apri la companion sul telefono e associa il dispositivo."
+  },
+  {
+    "id": "Draft readiness is separate from measured contribution. See the computer for assessment and accepted tokens.",
+    "en": "Draft readiness is separate from measured contribution. See the computer for assessment and accepted tokens.",
+    "zh-Hans": "草稿就绪不代表已有实测贡献。请在电脑上查看评估和已接受的词元。",
+    "it": "Un draft pronto non indica un contributo già misurato. Sul computer trovi valutazione e token accettati."
+  },
+  {
+    "id": "GPU/NPU utilization, energy and separate phone compute time are not measured.",
+    "en": "GPU/NPU utilization, energy and separate phone compute time are not measured.",
+    "zh-Hans": "未测量 GPU/NPU 利用率、能耗及独立的手机计算时间。",
+    "it": "Utilizzo GPU/NPU, energia e tempo di calcolo isolato del telefono non sono misurati."
+  },
+  {
+    "id": "About & References",
+    "en": "About & References",
+    "zh-Hans": "关于与参考资料",
+    "it": "Informazioni e riferimenti"
+  },
+  {
+    "id": "Check releases on GitHub",
+    "en": "Check releases on GitHub",
+    "zh-Hans": "在 GitHub 上查看版本",
+    "it": "Verifica le release su GitHub"
+  },
+  {
+    "id": "Original project concept, research direction and development.",
+    "en": "Original project concept, research direction and development.",
+    "zh-Hans": "项目原创构思、研究方向与开发。",
+    "it": "Ideazione originale del progetto, direzione della ricerca e sviluppo."
+  },
+  {
+    "id": "The host source preview and mobile companions have separate versions.",
+    "en": "The host source preview and mobile companions have separate versions.",
+    "zh-Hans": "主机源码预览版和移动端配套应用采用独立的版本号。",
+    "it": "L’anteprima dell’host da sorgente e le companion mobile hanno versioni distinte."
+  },
+  {
+    "id": "Update available: {0} · build {1}",
+    "en": "Update available: {0} · build {1}",
+    "zh-Hans": "有可用更新：{0} · 构建 {1}",
+    "it": "Aggiornamento disponibile: {0} · build {1}"
+  },
+  {
+    "id": "No newer companion release was found.",
+    "en": "No newer companion release was found.",
+    "zh-Hans": "未发现更新版本的配套应用。",
+    "it": "Non è stata trovata una versione più recente della companion."
+  },
+  {
+    "id": "Draft paused: battery, thermal status or permission",
+    "en": "Draft paused: battery, thermal status or permission",
+    "zh-Hans": "候选词元生成已暂停：电量、温度或授权限制",
+    "it": "Draft in pausa: batteria, stato termico o consenso"
+  },
+  {
+    "id": "Basic checks passed. Native inference usefulness still needs a matched comparison.",
+    "en": "Basic checks passed. Native inference usefulness still needs a matched comparison.",
+    "zh-Hans": "基础检查已通过。原生推理是否受益仍需在匹配条件下比较。",
+    "it": "Verifiche di base superate. L’utilità nell’inferenza nativa richiede ancora un confronto a parità di condizioni."
+  },
+  {
+    "id": "Host evaluates every output token",
+    "en": "Host evaluates every output token",
+    "zh-Hans": "主机评估每个输出词元",
+    "it": "L’host valuta ogni token di output"
+  },
+  {
+    "id": "No accepted mobile proposals",
+    "en": "No accepted mobile proposals",
+    "zh-Hans": "没有已接受的手机提案",
+    "it": "Nessuna proposta mobile accettata"
+  }
+]

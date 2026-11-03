@@ -23,6 +23,13 @@ class SupportPolicyTest {
         assertTrue(UpdatePolicy.due(start-1,start,start))
         assertTrue(UpdatePolicy.due(start,0,0))
     }
+    @Test fun failedCheckAfterBackwardClockKeepsRetryCooldown() {
+        val now=10_000_000L
+        assertFalse(UpdatePolicy.due(now,now+UpdatePolicy.WEEK_MS,now-1000))
+        assertFalse(UpdatePolicy.due(now+UpdatePolicy.RETRY_MS-1,now+UpdatePolicy.WEEK_MS,now))
+        assertTrue(UpdatePolicy.due(now+UpdatePolicy.RETRY_MS,now+UpdatePolicy.WEEK_MS,now))
+        assertTrue(UpdatePolicy.due(now,now+1000,now+1000))
+    }
     @Test fun exceptionContentAndPathsNeverEnterJournalAndItSurvivesRestart() {
         val dir=Files.createTempDirectory("nodelift-diagnostics-").toFile()
         try {

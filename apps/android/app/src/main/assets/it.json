@@ -222,7 +222,7 @@
   "Contribution not measured": "Contributo non misurato",
   "Control experiment only": "Solo esperimento di controllo",
   "Control or synthetic evidence cannot establish device acceleration.": "Le prove di controllo o sintetiche non dimostrano un'accelerazione del dispositivo.",
-  "Coordinates one native run and verifies phone proposals. Current phone delegation uses one draft companion per run; device memory is not pooled.": "Coordina una prova nativa e verifica le proposte del telefono. La delega attuale usa una companion per prova; la memoria dei dispositivi non è unificata.",
+  "Coordinates one native run and verifies phone proposals. Current phone delegation uses one draft companion per run; device memory is not pooled.": "Coordina un’esecuzione nativa e verifica le proposte del telefono. La delega attuale usa una companion di draft per esecuzione; la memoria dei dispositivi non è unificata.",
   "Copied": "Copiato",
   "Copies a complete GGUF into the host library. Check free disk space and the model license first. Split GGUF sets are not supported by this import flow.": "Copia un GGUF completo nella libreria dell’host. Controlla prima spazio libero e licenza. Questa procedura non supporta modelli GGUF suddivisi in più file.",
   "Copy invitation": "Copia invito",

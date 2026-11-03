@@ -226,7 +226,7 @@ fun showReleaseDetails(activity:Activity, details:ReleaseDetails):Dialog {
         }
     }
     content.addView(action,LinearLayout.LayoutParams(-1,-2))
-    val expired=TextView(activity).apply {text=t("Release details need a new check. Close this view and choose Check now.");setTextColor(ControlUI.amber);textSize=16f;accessibilityLiveRegion=android.view.View.ACCESSIBILITY_LIVE_REGION_POLITE}
+    val expired=TextView(activity).apply {visibility=android.view.View.GONE;text=t("Release details need a new check. Close this view and choose Check now.");setTextColor(ControlUI.amber);textSize=16f;accessibilityLiveRegion=android.view.View.ACCESSIBILITY_LIVE_REGION_POLITE}
     content.addView(expired)
     root.addView(ScrollView(activity).apply{addView(content)},LinearLayout.LayoutParams(-1,0,1f))
     root.addView(Button(activity).apply{text=t("Close");ControlUI.style(this,ControlUI.Tone.SECONDARY);setOnClickListener{dialog.dismiss()}},LinearLayout.LayoutParams(-1,-2))

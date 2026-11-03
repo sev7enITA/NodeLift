@@ -78,7 +78,7 @@
     const cpuMs=cpuRows.reduce((a,s)=>a+s.ms,0);
     return {networkAt:network?.finished || network?.created || null,cpuAt:cpu?.finished || cpu?.created || null,
       rtt:[...rtt].sort((a,b)=>a[0]-b[0]).map(([pace,values])=>({pace,median:values.sort((a,b)=>a-b)[Math.ceil(values.length*.5)-1],samples:values.length})),
-      transfer:[...transfer.values()].map(g=>({...g,mbps:g.totalBytes/g.totalMs/1000})),
+      transfer:[...transfer.values()].map(g=>({...g,mibPerSecond:(g.totalBytes/1048576)/(g.totalMs/1000)})),
       cpuIterationsPerSecond:cpuMs?cpuRows.reduce((a,s)=>a+s.iterations,0)/cpuMs*1000:null};
   }
   // A visual weight is token attribution, never estimated RAM pooling or CPU usage.
@@ -119,7 +119,7 @@
   function telemetryAge(node) {
     if (node.id==='host')return tr('Host hardware inventory');
     const at=node.capabilities_updated_at;
-    if (!finite(at))return tr('Telemetry time unknown');
+    if (!finite(at) || at<=0)return tr('Telemetry time unknown');
     const now=Math.max(finite(state?.observed_at)?state.observed_at:0,Date.now()/1000);
     if (!connected || !node.online || node.revoked || now-at>20)return tr('Historical telemetry');
     return tr('Recent telemetry');
@@ -140,7 +140,7 @@
     const values=[host?tr('HOST / COORDINATOR')+(connected?'':' · '+tr('Contact unknown')):tr(deviceState(node)),host?tr('This computer'):node.name,
       [caps.model || tr('Hardware unknown'),bytes(caps.physical_memory_bytes)].join(' · '),tr(selectedRole(node,run)),
       tr('IP: {0}',node.ip_address||tr('Not observed')),
-      !host&&participating&&c.measured?tr('Accepted mobile draft: {0}%',fmt(100*c.share)):tr(contributionStatus(node,run,c))];
+      !host&&participating&&c.measured&&c.mobile>0?tr('Accepted mobile draft: {0}%',fmt(100*c.share)):tr(contributionStatus(node,run,c))];
     values.forEach((value,i)=>{if(button.children[i].textContent!==value)button.children[i].textContent=value;});
     return button;
   }
@@ -170,7 +170,7 @@
   }
 
   function renderInspector(node,run,c) {
-    const signature=JSON.stringify([node,run,c,state?.jobs,engine?.available,connected,NodeLiftI18n.language,telemetryAge(node)]);
+    const signature=JSON.stringify([node,run,c,node.id==='host'?null:measurements(state?.jobs,node.id),engine?.available,connected,NodeLiftI18n.language,telemetryAge(node)]);
     if(signature===detailSignature)return;detailSignature=signature;
     const area=$('graph-inspector'),focused=document.activeElement,focusedInside=area.contains(focused),focusedSection=focusedInside?focused.closest('details')?.dataset.section:null;
     const inspectorScroll=area.dataset.device===node.id?area.scrollTop:0;area.dataset.device=node.id;
@@ -255,7 +255,7 @@
     else{
       const m=measurements(state.jobs,node.id);field(measured,'Network test recorded',date(m.networkAt));
       for(const r of m.rtt)field(measured,tr('HTTPS RTT median · {0} ms pacing',fmt(r.pace,0)),fmt(r.median,2)+' ms');
-      for(const r of m.transfer)field(measured,tr(r.kind==='download'?'Host → device · {0} MiB':'Device → host · {0} MiB',fmt(r.bytes/1048576,2)),fmt(r.mbps,2)+' MB/s');
+      for(const r of m.transfer)field(measured,tr(r.kind==='download'?'Host → device · {0} MiB':'Device → host · {0} MiB',fmt(r.bytes/1048576,2)),fmt(r.mibPerSecond,2)+' MiB/s');
       field(measured,'Synthetic CPU test recorded',date(m.cpuAt));field(measured,'Synthetic CPU rate',finite(m.cpuIterationsPerSecond)?fmt(m.cpuIterationsPerSecond,0)+' '+tr('iterations/s'):tr('Not measured'));
       details.append(measured,notice('Last completed diagnostics, not live bandwidth or LLM speed. Transfers are grouped by direction and payload; RTT is grouped by pacing.'));
     }

@@ -222,7 +222,7 @@
   "Contribution not measured": "贡献未测量",
   "Control experiment only": "仅为对照实验",
   "Control or synthetic evidence cannot establish device acceleration.": "对照或合成证据不能证明设备加速效果。",
-  "Coordinates one native run and verifies phone proposals. Current phone delegation uses one draft companion per run; device memory is not pooled.": "协调一次原生运行并验证手机提案。当前每次运行仅使用一台草稿伴侣设备；设备内存不会合并。",
+  "Coordinates one native run and verifies phone proposals. Current phone delegation uses one draft companion per run; device memory is not pooled.": "协调一次原生运行并验证手机提案。当前每次运行仅将草稿生成任务委派给一个配套应用；设备内存不会合并。",
   "Copied": "已复制",
   "Copies a complete GGUF into the host library. Check free disk space and the model license first. Split GGUF sets are not supported by this import flow.": "将完整 GGUF 复制到主机库。请先检查磁盘空间和模型许可证。此导入流程不支持分片 GGUF。",
   "Copy invitation": "复制邀请",

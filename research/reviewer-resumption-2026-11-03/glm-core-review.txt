@@ -1,0 +1,32 @@
+Review complete. Method: pure static analysis of the three files you provided — I did not build, run, or test any NodeLift code. Every llama.cpp API claim was verified verbatim against the public include/llama.h. Full report (21 pages, 14 findings, test plan): download/NodeLift_Native_Core_Review.docx (+ rendered PDF). The substance:
+
+Verdict
+
+The core is carefully engineered. I traced the cache invariant — cached mirrors the tokens at KV positions [0, cached.size()) on seq 0, and next (when ≥ 0) is the greedy argmax after cached — through every path in both the default and NODELIFT_EXPERIMENTAL_DEFERRED_DRAFT builds (rollback, diverge-extend, chained verify, draft→verify). It holds. verify()'s deferred sync is sound because every entry point re-syncs an explicit prefix; the rc!=0 → reset() path correctly handles llama.cpp's documented "aborted decodes leave partial ubatches in memory" semantics. No memory-safety defect is demonstrated. The real findings:
+
+ID
+	
+AREA
+	
+PRI
+	
+CLASS
+	
+FINDING
+
+F1	Tokenization	P1	Demonstrated behavior; exploit risk host-conditional	parse_special=true/add_special=true hardcoded, no opt-out → special-token injection; API shape forces mid-sequence BOS on segment-wise tokenization
+F2	Cache/errors	P2	Demonstrated (availability) + latent hazard	Any error (even bad JSON) wipes the KV cache; masks non-exception-safe decode()
+F3	C ABI	P2	Escape path demonstrated; crash is OOM risk	dump()/strdup() outside try — bad_alloc crosses extern "C"
+F4	Identity	P2	Risk	tokenizer_fingerprint ≠ model identity (same across quants/fine-tunes)
+F5	Bench	P2	Methodology	n=6, medians only, no dispersion/env capture; scope string contradicts code ("no model load" — it loads); hardcoded model label
+F6	Cancellation	P2	Demonstrated vs doc; GPU part version-sensitive	Cancel can't abort load (no abort hook on llama_model_params); abort_callback documented "CPU execution" only
+F7–F12	—	P3	Minor	Detok drops specials; nctx vs llama_n_ctx/n_ctx_train; FA forced; empty-text error msg; strdup/NUL ABI notes; sync over-roll; bench mid-BOS
+F13/F14	—	Info	Verified sound	Cancel race is documented+inherent; lifecycle (destroy-during-call, shared_ptr retention) safe; KV invariant holds
+Three findings worth your attention
+F2 (the subtle one): in decode(), cached.insert() runs before next = best(...). If best() throws (non-finite logits), next is stale while cached grew — the fast path prefix==cached && next>=0 would then emit a wrong token. Today nl_call's catch-all e.reset() masks this, at the price of wiping the cache on every error, including malformed requests. Fix is two lines: next = -1; right after the successful decode, then narrow the catch-all. Anyone who "optimizes away" the reset without this introduces a wrong-output bug.
+F1: the header documents parse_special as "Allow tokenizing special and/or control tokens which otherwise are not exposed and treated as plaintext." Any untrusted text containing <|eot_id|>-style markers becomes special tokens (after chat-template application, too). The engine offers no special=false primitive, so a correct host can't be built today — smallest fix: optional special/add_special request fields + document the token-array composition pattern the ID-level API already supports.
+F6: llama_model_params has no abort callback (only progress_callback — which does abort load when it returns false: that's the 3-line fix), and the context abort_callback is documented "currently works only with CPU execution" — material since load accepts gpu_layers up to 999.
+
+Tests (T1–T12 in the report): highest-value are the cache-invariant property test vs. a cold-run oracle (both build flags), verify vs verify_serial differential, the F6 error-path cache-preservation test (fails before the fix), and ABI destroy/cancel-during-call stress.
+
+Suggested next steps: answer the three open questions in §7 (does any host path pass unescaped user text? which llama.cpp pin, and does its GPU backend honor abort? is the fingerprint used as a cache key?) — they decide whether F1/F4 are active vulnerabilities or hardening items. Happy to draft the concrete patches as diffs, or convert the test plan into a runnable harness spec.

@@ -1,6 +1,6 @@
 {
   "scope": "Cross-compiled NodeLift iOS framework; not a companion app or physical-device execution",
-  "timestamp_utc": "2026-11-03T00:53:56.511729+00:00",
+  "timestamp_utc": "2026-11-03T01:05:42.171345+00:00",
   "configure_exit": 0,
   "build_exit": 0,
   "upstream_commit": "ddf48f85c933c1f438212a02eb21e7b001d2d37d",
@@ -8,7 +8,7 @@
   "source_hashes": {
     "CMakeLists.txt": "08b224cecd9cc5f070afeaa059b4e8d34a3e89547c350d7f0eb5add9e652d5bd",
     "core.cpp": "42420ceebef44e7696063cffafba375766a14ade7e50eacca5a71f0cfa6c413b",
-    "core.h": "ba705eed0ca8303a1cb0b4dbf616f57790ad77de00f73a0225f016c8783ba6a0"
+    "core.h": "1ad04bd019e8e35a2289e861aec338f4ceda097294e8c383115f63ec1363668d"
   },
   "cmake_version": "3.22.1",
   "sdk": "iphoneos",
