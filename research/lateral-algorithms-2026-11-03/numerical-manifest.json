@@ -1,0 +1,51 @@
+{
+  "started_at_utc": "2026-11-03T22:43:42.356791+00:00",
+  "scope": "one-prefix numerical diagnostic, not a performance benchmark",
+  "binary_sha256": "c5e6a757d0888cab9f148711221836c648cd848464a7949bdbdbce8ee5980cc7",
+  "model_sha256": "667b0c1932bc6ffc593ed1d03f895bf2dc8dc6df21db3042284a6f4416b06a29",
+  "cases_sha256": "e139415e1b8845bd193fa1f6dcd04fd0ff26bee4b0aaefa6f218d79a10894201",
+  "plan_sha256": "bcee643b7a7a0e1d2dd52dae955a995c912cca11e4c7d89c01ab2c4b16c8c0a0",
+  "profiles": [
+    {
+      "profile": "metal-fa",
+      "exit_code": 0,
+      "diagnostic_elapsed_seconds": 22.524002792022657,
+      "positions": 18,
+      "argmax_flips": 2,
+      "serial_repeat_flips": 0,
+      "max_serial_repeat_logit_diff": 0.0,
+      "result_sha256": "94bde76912c7042b9f41a12aa1e05cdbe5af9dcda495330ea47716a233ba778e"
+    },
+    {
+      "profile": "metal-no-fa",
+      "exit_code": 0,
+      "diagnostic_elapsed_seconds": 23.268601374991704,
+      "positions": 18,
+      "argmax_flips": 2,
+      "serial_repeat_flips": 0,
+      "max_serial_repeat_logit_diff": 0.0,
+      "result_sha256": "9837b42515b004baa2048d4334d5635a377365628e5c839a1937c33e2b69eb53"
+    },
+    {
+      "profile": "cpu-fa",
+      "exit_code": 0,
+      "diagnostic_elapsed_seconds": 41.550014166976325,
+      "positions": 18,
+      "argmax_flips": 0,
+      "serial_repeat_flips": 0,
+      "max_serial_repeat_logit_diff": 0.0,
+      "result_sha256": "a47950c45e4755cac0dc0576c1f7024f04e03bfb6ba93c3ed2b315f8cd2dd4e6"
+    },
+    {
+      "profile": "cpu-no-fa",
+      "exit_code": 0,
+      "diagnostic_elapsed_seconds": 44.87406679202104,
+      "positions": 18,
+      "argmax_flips": 3,
+      "serial_repeat_flips": 0,
+      "max_serial_repeat_logit_diff": 0.0,
+      "result_sha256": "6ed12244f8e8b00a23fc450c82aee710b2854278d6c0ee84f221a162ab4764c6"
+    }
+  ],
+  "finished_at_utc": "2026-11-03T22:45:57.609698+00:00"
+}

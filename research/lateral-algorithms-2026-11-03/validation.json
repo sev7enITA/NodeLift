@@ -1,0 +1,7 @@
+{
+  "scope": "research-only pure-function protocol checks; no phone, concurrency, native integration or performance qualification",
+  "command": "python3 research/lateral-algorithms-2026-11-03/suffix_probe.py -v",
+  "exit_code": 0,
+  "tests": 12,
+  "source_sha256": "7d64cd8f02132dcf164c8f8edc625c1b07fe245e2789a740231aa911fae501f7"
+}

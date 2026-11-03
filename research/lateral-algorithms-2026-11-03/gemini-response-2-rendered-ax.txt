@@ -1,0 +1,200 @@
+													830 heading Gemini ha detto, Value: 6
+														831 text Gemini ha detto
+													832 container
+														833 heading 1. Numerical Divergence vs. Unverified Kernel Hypotheses, Value: 3
+															834 text 1. Numerical Divergence vs. Unverified Kernel Hypotheses
+														835 content list
+															836 container
+																837 text [Supplied Measurement]:  Varying only current batch width over a serially built KV history did not flip the argmax across 13 tested windows; building KV history in width 3 or 5  and  evaluating at width 5 reproduced the index-36 flip ( 6104  vs  5810 ),  with serial top-two margin  0.04478836  and max logit difference  0.14352226 .
+															838 container
+																839 text [Correction & Hypothesis Distinction]:  The prior review's claim of a specific  ggml-metal  width 
+																840 container
+																	841 text ≥ 2
+																842 text  GEMV/GEMM dispatch threshold and longitudinal floating-point accumulation is withdrawn as unverified speculation.  The supplied probe is consistent with arithmetic reduction differences,  KV write quantization/rounding,  subtle mask/position/stride indexing bugs,  or workspace contamination.  Neither a specific Metal kernel mechanism nor the absence of structural bugs is established.
+														843 heading 2. Android Timeout Semantics and Oracle Definitions, Value: 3
+															844 text 2. Android Timeout Semantics and Oracle Definitions
+														845 content list
+															846 container
+																847 text [Supplied Measurement]:  The two physical Android 0. 2. 13 O3 runs ( 17.879 s  vs  3.707 s ;  19.101 s  vs  5.241 s ) were interrupted by  bounded 10-second lease expiries  plus  ~2 s  cleanup at sequence 9 after accepting 26/36 draft tokens.  Reaching the 32 TLS connection slot limit was observed in a subsequent diagnostic.
+															848 container
+																849 text [Correction]:  The O3 runs did not suffer "unbounded waits, " and TLS-slot starvation is a candidate hypothesis—not a proven cause—for the two earlier O3 runs.
+															850 container
+																851 text [Oracle Distinction]:  A width-1 serial default path and numerical-state recovery are distinct from a fixed-tile width-
+																852 text 𝑊
+																853 text  oracle.  Padding batches to 
+																854 text 𝑊
+																855 text  does  not  by itself guarantee numerical invariance:  changes in active sequence length,  dummy-column attention masking,  KV cache write layout,  and backend operator scheduling must each be empirically verified against the chosen oracle.
+														856 heading 3. Grammar Constraints and Task Audit Replacement, Value: 3
+															857 text 3. Grammar Constraints and Task Audit Replacement
+														858 content list
+															859 container
+																860 text [Correction]:  Grammar-constrained decoding (GBNF) incurs per-step vocabulary-masking overhead and cannot guarantee a complete valid payload under  max_tokens  truncation,  request cancellation,  early EOS emission,  or unsupported schema rules.  Furthermore,  valid JSON syntax and exact source substrings do not prevent  semantic misattribution  (e. g.,  placing a valid date or quantity into the wrong schema key).
+															861 container
+																862 text [Audit Replacement]:  The teacher-forced host prefill audit is withdrawn:  it is vulnerable to the exact multi-column numerical divergence observed in the pilot and confuses token-level agreement with semantic correctness.  In the first task experiment,  replace it with an  external deterministic canonical evaluator  (parsing output JSON,  normalizing canonical types,  and checking exact field-key/value pairs against ground-truth labels on a held-out dataset),  comparing companion offloaded execution directly against a host-only execution baseline at equal quality.
+														863 heading 4. Withdrawal of Unmeasured Figures & Measured KV Break-Even Conditions, Value: 3
+															864 text 4. Withdrawal of Unmeasured Figures & Measured KV Break-Even Conditions
+														865 content list
+															866 container
+																867 text [Withdrawal]:  All unmeasured hardware numbers—30–70% phone branching overhead,  0. 5–2. 0 ms macOS scheduling delay,  0. 8–1. 3 s Mac prefill,  400 GB/s RAM,  5–7 GB/s SSD,  30–100 MB/s Wi-Fi,  raw 256 MiB KV size (which omits metadata,  alignment,  runtime framing,  and allocation overhead),  and universal thresholds (65, 536 tokens,  10 GbE)—are withdrawn as NodeLift evidence.
+															868 container
+																869 text [Measured Break-Even Conditions]:  Separate  request critical-path read hit  from  lifecycle/admission cost :
+																870 content list
+																	871 container
+																		872 text Critical-path TTFT gain (existing remote snapshot hit):
+																		873 container
+																			874 text 𝑇
+																			875 text lookup
+																			876 text +
+																			877 text 𝑇
+																			878 text net_down
+																			879 text (
+																			880 text 𝐵
+																			881 text serialized
+																			882 text ) +
+																			883 text 𝑇
+																			884 text verify_hash
+																			885 text +
+																			886 text 𝑇
+																			887 text import_kv
+																			888 text < min ⁡ (
+																			889 text 𝑇
+																			890 text recompute
+																			891 text ( 𝐿 ) ,
+																			892 text 𝑇
+																			893 text local_ssd_read
+																			894 text (
+																			895 text 𝐵
+																			896 text local
+																			897 text ) )
+																	898 container
+																		899 text Lifecycle and capacity admission:  Historical upload cost (
+																		900 container
+																			901 text 𝑇
+																			902 text serialize
+																			903 text +
+																			904 text 𝑇
+																			905 text net_up
+																		906 text ) and companion storage reservation must be amortized across expected cache reuse count 
+																		907 container
+																			908 text 𝐻 hits
+																		909 text ,  and is justified for capacity only when host RAM/SSD budget 
+																		910 container
+																			911 text 𝑀
+																			912 text host_free
+																			913 text <
+																			914 text 𝐵
+																			915 text local
+																		916 text .
+														917 heading 5. Statistical Design, Estimands, and Inconclusive Bounds, Value: 3
+															918 text 5. Statistical Design, Estimands, and Inconclusive Bounds
+														919 content list
+															920 container
+																921 text [Correction]:  Failure to reject a null hypothesis is insufficient evidence of a gain,  not proof of degradation.  For paired timing comparisons across 
+																922 text 𝑁
+																923 text  independent workload blocks (reducing technical repeats to a single summary per prompt before testing),  define the estimand as the median of paired log-time ratios 
+																924 container
+																	925 text Δ
+																	926 text 𝑖
+																	927 text = log ⁡ (
+																	928 text 𝑇
+																	929 container
+																		930 text cand , 𝑖
+																	931 text /
+																	932 text 𝑇
+																	933 container
+																		934 text base , 𝑖
+																	935 text )
+																936 text  with a pre-specified two-sided 95% confidence interval and an equivalence/superiority margin 
+																937 text 𝛿
+																938 text ,  separated strictly into a  calibration split  (for parameter tuning) and a  locked evaluation split  (no sequential peeking).
+															939 container
+																940 text Detecting 
+																941 container
+																	942 text 8 / 8
+																943 text  injected corruptions yields a 95% Clopper-Pearson lower bound of only 
+																944 container
+																	945 text 68.8 %
+																946 text ,  not 
+																947 container
+																	948 text 98 %
+																949 text .  Proving 
+																950 container
+																	951 text ≥ 98 %
+																952 text  detection at 
+																953 container
+																	954 text 𝛼 = 0.05
+																955 text  with zero false negatives requires 
+																956 container
+																	957 text 𝑛 ≥ 149
+																958 text  independent injected faults; smaller pilots must explicitly declare low-rate error detection  inconclusive .
+														959 heading 6. Layer Partitioning Objectives and Empirical Rate Matching, Value: 3
+															960 text 6. Layer Partitioning Objectives and Empirical Rate Matching
+														961 content list
+															962 container
+																963 text [Capacity vs. Latency]:  Layer partitioning serves two distinct objectives that must be evaluated separately:  (a)  Capacity ,  when aggregate model weights,  per-layer KV caches,  compute workspace,  and transfer buffers exceed a single machine's memory budget,  where failing to place all layers leaves no local fallback; and (b)  Latency/Throughput ,  where offloading layers from a memory-pressured or slower host to a faster remote desktop GPU (or avoiding host swap thrashing) can reduce step time even if the model nominally fits on one machine.
+															964 container
+																965 text [Rate Matching]:  Whether a remote phone draft outperforms a local draft cannot be decided by a generic theorem; it requires plugging measured configuration-specific draft step times,  host verification times,  contention,  and network RTTs into the critical-path inequality.
+														966 heading 7. Linear -Token Prefix-Subsumption Splicing Specification, Value: 3
+															967 text 7. Linear 
+															968 text 𝑚
+															969 text -Token Prefix-Subsumption Splicing Specification
+														970 text Before considering multi-branch trees,  generalize preemption to a single linear candidate 
+														971 container
+															972 text 𝐶 = [
+															973 text 𝑑
+															974 text 1
+															975 text , … ,
+															976 text 𝑑
+															977 text 𝑘
+															978 text ]
+														979 text  anchored at host prefix length 
+														980 text 𝑎
+														981 text ,  evaluated when the host is at prefix length 
+														982 container
+															983 text 𝑎 + 𝑚
+														984 text  (
+														985 container
+															986 text 𝑚 ≥ 0
+														987 text  tokens committed by the host since 
+														988 text 𝑎
+														989 text ):
+														990 container
+															991 text Plaintext
+															992 container
+																993 button Scarica codice
+																994 button Copia codice
+															995 text REQUIRE:
+  1. pkt.lease_id == host.active_lease_id AND pkt.epoch == host.epoch
+  2. pkt.model_target_id == host.model_id AND pkt.token_fp == host.token_fp
+  3. monotonic_now() <= host.step_deadline AND NOT host.is_cancelled
+  4. pkt.anchor_len == a AND pkt.anchor_hash == host.prefix_hash(0 : a)
+  5. 1 <= len(C) <= k_max
+
+EVALUATE OVERRUN & COMMITTED-REGION AGREEMENT:
+  m = host.current_len - a
+  IF m < 0:
+    DISCARD(pkt, reason="INVALID_FUTURE_ANCHOR")
+  ELSE IF m >= len(C):
+    # Host outran the entire ca
+														996 heading Two Prioritized Next Experiments, Value: 3
+															997 text Two Prioritized Next Experiments
+														998 content list
+															999 container
+																1000 text Differential Backend Isolation for the Index-36 Flip (Direction A):
+																1001 content list
+																	1002 container
+																		1003 text Protocol:  Run the exact diverging prompt and 20 held-out prompts (3 technical repeats collapsed per prompt) comparing width-1 serial against width-5 batch evaluation across:  (i) CPU FP32 vs.  Metal,  (ii) serial KV history vs.  batch KV history,  and (iii) layer-by-layer tensor checksums (RMSNorm,  QKV,  KV cache writes,  attention output).
+																	1004 container
+																		1005 text Explicit Non-Claim:  Reproducing or eliminating the flip on this 21-prompt diagnostic isolates where divergence enters the graph,  but  does not certify universal bit-exact equivalence  across unseen sequence lengths,  quantizations,  or hardware architectures.
+															1006 container
+																1007 text Post-Fix Physical Android Linear Splicing vs. Host Baseline (Direction B):
+																1008 content list
+																	1009 container
+																		1010 text Protocol:  Using the TLS-fix build,  run 
+																		1011 container
+																			1012 text 𝑁 = 24
+																		1013 text  independent held-out prompts on a locked evaluation split comparing host-only serial against physical Android remote drafting with linear 
+																		1014 text 𝑚
+																		1015 text -token prefix-subsumption under a width-1 serial verifier,  retaining all timeouts/cleanups in wall-clock latency and reporting the 95% CI of paired log-time ratios.
+																	1016 container
+																		1017 text Explicit Non-Claim:  Bounding tail losses and measuring draft survival under serial verification  does not establish end-to-end speculative speedup ,  which remains blocked on qualifying a multi-column verifier.

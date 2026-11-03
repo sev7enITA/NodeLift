@@ -1,0 +1,714 @@
+													144 heading Gemini ha detto, Value: 6
+														145 text Gemini ha detto
+													146 container
+														147 heading 1. Architectural Ranking Across Deployment Regimes, Value: 2
+															148 text 1. Architectural Ranking Across Deployment Regimes
+														149 heading Regime (i): Mac M3 Max (64 GiB) + Mobile Companions (Android/iOS), Value: 3
+															150 text Regime (i): Mac M3 Max (64 GiB) + Mobile Companions (Android/iOS)
+														151 container
+															152 table
+																153 row
+																	154 column header
+																		155 text Rank
+																	156 column header
+																		157 text Direction
+																	158 column header
+																		159 text Primary Objective
+																	160 column header
+																		161 text Engineering Justification
+																162 row
+																	163 cell
+																		164 text 1
+																	165 cell
+																		166 text A. Serial-equivalent multi-column verifier
+																	167 cell
+																		168 text Exact single-chat latency
+																	169 cell
+																		170 text [Supplied Measurement]  Serial verification (
+																		171 text 0.793x
+																		172 text ) and serial bounded lookahead (
+																		173 text 0.665x
+																		174 text ) degrade latency relative to host-only generation while preserving 
+																		175 text 9/9
+																		176 text  outputs; batch verification (
+																		177 text 1.291x
+																		178 text ) achieves speedup but diverges (
+																		179 text 6/9
+																		180 text , flipping token 
+																		181 text 6104
+																		182 text  vs 
+																		183 text 5810
+																		184 text  at index 36 where max logit drift 
+																		185 text 0.14352226
+																		186 text  exceeds the serial top-two margin 
+																		187 text 0.04478836
+																		188 text ).  [Deduction]  Speculative decoding is non-viable until multi-column verification amortizes weight-read bandwidth without violating the chosen output oracle.
+																189 row
+																	190 cell
+																		191 text 2
+																	192 cell
+																		193 text D. Throughput lane (grounded tasks)
+																	194 cell
+																		195 text Qualified task throughput
+																	196 cell
+																		197 text [Supplied Measurement]  Pre-filtering relevant records reduced median serialized bytes by 
+																		198 text 58.1%
+																		199 text , while unconstrained small Qwen models failed bare-JSON syntax 
+																		200 text 48/48
+																		201 text  times by adding Markdown fences.  [Deduction]  Enforcing grammar-constrained decoding (GBNF) at the companion layer deterministically eliminates syntax failures at negligible compute cost, enabling asynchronous offloaded extraction when the host faces multi-request queuing.
+																202 row
+																	203 cell
+																		204 text 3
+																	205 cell
+																		206 text B. Bounded-preemption remote producer
+																	207 cell
+																		208 text Exact single-chat latency
+																	209 cell
+																		210 text [Supplied Measurement]  Unbounded remote stalls and TLS slot exhaustion (
+																		211 text 32
+																		212 text  slots) drove physical Android runs to 
+																		213 text 17.879 s
+																		214 text  (vs 
+																		215 text 3.707 s
+																		216 text  host) and 
+																		217 text 19.101 s
+																		218 text  (vs 
+																		219 text 5.241 s
+																		220 text  host), dominated by a 
+																		221 text 10 s
+																		222 text  lease expiry and 
+																		223 text ~2 s
+																		224 text  cleanup.  [Deduction]  Under serial verification, B only caps tail-latency losses and never saves target work. Even with a qualified batch verifier (A), a local 
+																		225 text 1B Q4_K_M
+																		226 text  draft (~0.8 GiB) co-resident in the Mac's 64 GiB unified memory avoids Wi-Fi jitter.  [Hypothesis]  Remote drafting on phones only beats a Mac-resident draft when the Mac's memory capacity or bandwidth is saturated by a much larger target model (e.g., 32B–70B) or concurrent batching.
+																227 row
+																	228 cell
+																		229 text 4
+																	230 cell
+																		231 text C. Cache-affinity routing (excluding remote KV swap)
+																	232 cell
+																		233 text TTFT
+																	234 cell
+																		235 text [Deduction]  Routing whole small-model requests to companions with warm prefix caches reduces TTFT for draft-class workloads, collapsing into Direction D. Remote target KV storage on phones is anti-performant (see Section 5).
+																236 row
+																	237 cell
+																		238 text 5
+																	239 cell
+																		240 text E. Layer-owned desktop GPU workers
+																	241 cell
+																		242 text Capacity
+																	243 cell
+																		244 text [Deduction]  Inapplicable to Regime (i); mobile companions neither shard target weights nor possess desktop VRAM.
+															245 button Altre opzioni
+														246 heading Regime (ii): Future Office of Heterogeneous PCs, Value: 3
+															247 text Regime (ii): Future Office of Heterogeneous PCs
+														248 container
+															249 table
+																250 row
+																	251 column header
+																		252 text Rank
+																	253 column header
+																		254 text Direction
+																	255 column header
+																		256 text Primary Objective
+																	257 column header
+																		258 text Engineering Justification
+																259 row
+																	260 cell
+																		261 text 1
+																	262 cell
+																		263 text D. Throughput lane + Cross-request drafting
+																	264 cell
+																		265 text Qualified task throughput
+																	266 cell
+																		267 text [Deduction]  Independent grounded tasks with GBNF constraints and deterministic decomposition scale horizontally across heterogeneous PCs without token-level synchronization locks.
+																268 row
+																	269 cell
+																		270 text 2
+																	271 cell
+																		272 text C. Cache-affinity request routing
+																	273 cell
+																		274 text TTFT
+																	275 cell
+																		276 text [Deduction]  Routing multi-turn or shared-document requests to the PC holding the resident target KV prefix avoids both   prompt recomputation and cross-network KV tensor transfer.
+																277 row
+																	278 cell
+																		279 text 3
+																	280 cell
+																		281 text A. Serial-equivalent / Fixed-shape verifier
+																	282 cell
+																		283 text Exact single-chat latency
+																	284 cell
+																		285 text [Deduction]  Remains the prerequisite for any single-request speculative speedup on individual worker nodes.
+																286 row
+																	287 cell
+																		288 text 4
+																	289 cell
+																		290 text E. Layer-owned workers with microbatching
+																	291 cell
+																		292 text Capacity
+																	293 cell
+																		294 text [Deduction]  Required only when the target model plus KV cache and compute workspace exceeds a single machine's memory budget (e.g., running 70B+ FP16/Q8 across 16–24 GiB desktop GPUs). Pipeline parallelism increases single-stream latency via inter-node activation transfers; it requires microbatching across independent requests to amortize pipeline bubbles.
+																295 row
+																	296 cell
+																		297 text 5
+																	298 cell
+																		299 text B. Bounded-preemption remote draft
+																	300 cell
+																		301 text Exact single-chat latency
+																	302 cell
+																		303 text [Deduction]  Over wired LAN, a low-end PC can draft for a capacity-bound GPU node, provided preemption bounds tail latency to local step time.
+															304 button Altre opzioni
+														305 heading What Direction A Must Hold Invariant Beyond GEMM, Value: 3
+															306 text What Direction A Must Hold Invariant Beyond GEMM
+														307 text [Supplied Measurement]  Varying only the current batch evaluation width over a serially constructed KV cache did not flip the argmax across 13 tested windows,  whereas constructing KV history at width 3 or 5  and  evaluating at width 5 reproduced the index-36 flip. [Deduction]  Non-associative floating-point drift accumulates longitudinally inside the committed KV cache tensors across steps,  not solely in the final classifier projection.  To match the existing  serial oracle  bit-for-bit,  batch execution must enforce shape-invariant reduction order across:
+														308 content list
+															309 container
+																310 text RMSNorm / LayerNorm  variance accumulation per token row.
+															311 container
+																312 text QKV and MLP projections  (disabling 
+																313 text ggml-metal
+																314 text  dispatch switching between SIMD-group GEMV for width 1 and tiled 
+																315 text simdgroup_matrix
+																316 text  GEMM for width 
+																317 container
+																	318 text ≥ 2
+																319 text ).
+															320 container
+																321 text RoPE and KV cache write quantization/rounding  (ensuring identical FP32-to-FP16 conversion paths).
+															322 container
+																323 text Causal FlashAttention softmax online rescaling and value accumulation  (preventing tile-split changes when query sequence length 
+																324 container
+																	325 text 𝑄 > 1
+																326 text ).
+														327 text Adopting an  LLM-42 fixed-width replay contract  (always padding verification and KV commitment to fixed tile width 
+														328 container
+															329 text 𝑊 = 𝑘 + 1
+														330 text ,  rolling back and re-evaluating accepted prefixes in padded blocks) does  not  preserve the current serial 
+														331 container
+															332 text 𝑊 = 1
+														333 text  oracle; it defines a new,  self-consistent 
+														334 text 𝑊
+														335 text -padded oracle.  That requires an explicit contract migration.
+														336 heading 2. Two Concrete Lateral Variants, Value: 2
+															337 text 2. Two Concrete Lateral Variants
+														338 heading Variant 1: Prefix-Subsumption Splicing with Top- Root Branching (Enhancing A + B), Value: 3
+															339 text Variant 1: Prefix-Subsumption Splicing with Top-
+															340 text 𝐵
+															341 text  Root Branching (Enhancing A + B)
+														342 content list
+															343 container
+																344 text Prior Art:  SpecInfer (Miao et al.,  2023) tree attention; PipeSpec / Speculation at a Distance (2026) asynchronous lookahead pipelining.
+															345 container
+																346 text Mechanism:  Direction B discards any remote draft whose epoch/prefix lags the host.  If the host advances by 1 token (
+																347 container
+																	348 text 𝑦
+																	349 text 𝑡
+																	350 text +
+																	351 text 1
+																352 text ) while a remote draft rooted at 
+																353 container
+																	354 text 𝑃 𝑡
+																355 text  is in flight,  standard preemption wastes the entire remote packet.  Instead,  the companion generates a shallow tree rooted at its top-
+																356 text 𝐵
+																357 text  (
+																358 container
+																	359 text 𝐵 = 2
+																360 text ) candidates for position 
+																361 container
+																	362 text 𝑡 + 1
+																363 text ,  each extended greedily to depth 
+																364 text 𝑘
+																365 text .  Meanwhile,  the host computes one target token 
+																366 container
+																	367 text 𝑦
+																	368 text 𝑡
+																	369 text +
+																	370 text 1
+																371 text  without waiting.  If the remote packet arrives before 
+																372 container
+																	373 text 𝑡 + 2
+																374 text  begins and 
+																375 container
+																	376 text 𝑦
+																	377 text 𝑡
+																	378 text +
+																	379 text 1
+																380 text  matches one of the 
+																381 text 𝐵
+																382 text  roots,  the host splices that branch's remaining 
+																383 container
+																	384 text 𝑘 − 1
+																385 text  tokens directly into batch verification at 
+																386 container
+																	387 text 𝑃
+																	388 text 𝑡
+																	389 text +
+																	390 text 1
+																391 text .
+														392 container
+															393 text Python
+															394 container
+																395 button Scarica codice
+																396 button Copia codice
+															397 text # Explicit Host State Machine (Monotonic Clock, Single KV Handle Owner) def step_host_with_spliced_remote ( kv_state, prefix_tokens, companion_queue, poll_budget_us ): 
+    t_deadline = monotonic_us() + poll_budget_us
+     # Non-blocking poll for in-flight packet from epoch (t - 1) or t 
+    pkt = companion_queue.poll_until(t_deadline)
+    
+     if  pkt  is not None and  pkt.session_id == kv_state.session_id:
+         # Case 1: Exact prefix match at current position t if  pkt.base_len ==  len (prefix_tokens)  and  pkt.base_hash ==  hash (prefix_tokens):
+            cand_seq = pkt.branches[ 0 ].tokens  # primary greedy branch [d_{t+1} .. d_{t+k}] return  verify_and_commit_fixed_tile(kv_state, prefix_tokens, cand_seq)
+            
+         # Case 2: Host advanced by m=1 token; check if host token is subsumed by a root branch if  pkt.base_len ==  len (prefix_tokens) -  1 and  pkt.base_hash ==  hash (prefix_tokens[:- 1 ]):
+            host_last_token = prefix_tokens[- 1 ]
+             for  branch  in  pkt.branches:  # up to B branches if  branch.root_token == host_last_token  and len (branch.continuation) >  0 :
+                     return  verify_and_commit_fixed_tile(kv_state, prefix_tokens, branch.continuation)
+
+     # Fallback: No valid/subsumed draft within budget; advance target by 1 token immediately 
+    next_tok = target_forward_single_fixed_tile(kv_state, prefix_tokens[- 1 ])
+    async_notify_companion_prefix(kv_state.session_id, prefix_tokens + [next_tok])
+     return  [next_tok]
+
+														398 content list
+															399 container
+																400 text Structural Invariants:
+																401 content list
+																	402 container
+																		403 text Single-writer exclusivity on 
+																		404 text kv_state
+																		405 text ; network receiver writes only to an lock-free ring buffer (
+																		406 text companion_queue
+																		407 text ).
+																	408 container
+																		409 text Spliced continuations are verified only if 
+																		410 text pkt.base_hash
+																		411 text  matches the exact prefix preceding 
+																		412 text host_last_token
+																		413 text .
+															414 container
+																415 text Failure Cases:  Companion top-
+																416 text 𝐵
+																417 text  roots miss  host_last_token  (high-entropy target step); Wi-Fi RTT exceeds single target step time plus 
+																418 text 𝑘
+																419 text  draft steps; companion queue buildup if stale packets are not dropped by sequence number.
+															420 container
+																421 text Conditions for Gain:
+																422 content list
+																	423 container
+																		424 text Necessary:  Batch verification time 
+																		425 container
+																			426 text 𝑇
+																			427 text verify
+																			428 text ( 𝑘 ) < 𝑘 ⋅
+																			429 text 𝑇
+																			430 text target
+																			431 text ( 1 )
+																		432 text ,  and network+draft time 
+																		433 container
+																			434 text 𝑇
+																			435 text net
+																			436 text +
+																			437 text 𝑇
+																			438 text draft
+																			439 text ( 𝐵 , 𝑘 ) < 2 ⋅
+																			440 text 𝑇
+																			441 text target
+																			442 text ( 1 )
+																		443 text .
+																	444 container
+																		445 text Sufficient:  Expected accepted suffix length 
+																		446 container
+																			447 text 𝐸 [
+																			448 text 𝛼
+																			449 text spliced
+																			450 text ] >
+																			451 container
+																				452 text 𝑇
+																				453 text verify
+																				454 text ( 𝑘 − 1 ) +
+																				455 text 𝑇
+																				456 text poll
+																			457 container
+																				458 text 𝑇
+																				459 text target
+																				460 text ( 1 )
+																			461 text − 1
+																		462 text  under fixed-tile oracle invariance.
+														463 heading Value: 3, Variant 2: Grammar-Constrained Companion Generation with Single-Pass Host Prefill Auditing (Enhancing D + A)
+															464 text Variant 2: Grammar-Constrained Companion Generation with Single-Pass Host Prefill Auditing (Enhancing D + A)
+														465 content list
+															466 container
+																467 text Prior Art:  Willard & Louf (2023) FSM/GBNF constrained decoding; Lookahead Decoding (Fu et al.,  2024) parallel Jacobi verification.
+															468 container
+																469 text Mechanism:  Instead of trusting a 1B companion's extracted JSON or having the 8B host generate all outputs autoregressively,  the companion runs GBNF-constrained decoding to produce a syntactically valid JSON payload 
+																470 container
+																	471 text 𝑌 comp
+																472 text  of length 
+																473 text 𝑀
+																474 text  along with structural byte/token offsets for semantic value fields 
+																475 container
+																	476 text 𝑉 ⊂ { 1.. 𝑀 }
+																477 text .  The host concatenates the filtered record prompt 
+																478 container
+																	479 text 𝑅 𝑖
+																480 text  and 
+																481 container
+																	482 text 𝑌 comp
+																483 text  and executes  one parallel prefill pass  over 
+																484 container
+																	485 text [
+																	486 text 𝑅
+																	487 text 𝑖
+																	488 text ∥
+																	489 text 𝑌
+																	490 text comp
+																	491 text ]
+																492 text .  If the host target's greedy argmax at all value indices 
+																493 container
+																	494 text 𝑗 ∈ 𝑉
+																495 text  matches 
+																496 container
+																	497 text 𝑌
+																	498 text comp
+																	499 text [ 𝑗 ]
+																500 text ,  the output is accepted in a single prefill pass with zero host autoregressive steps.  If index 
+																501 container
+																	502 text 𝑗
+																	503 text ∗
+																	504 text ∈ 𝑉
+																505 text  mismatches,  the host rolls back the KV cache to 
+																506 container
+																	507 text 𝑗 ∗
+																508 text  and completes only the remaining suffix under the same GBNF grammar.
+														509 container
+															510 text Python
+															511 container
+																512 button Scarica codice
+																513 button Copia codice
+															514 text def audit_or_repair_task ( host_model, record_tokens, companion_json_tokens, value_token_indices, gbnf_state ): # 1. Single parallel prefill pass over prompt + companion proposal 
+    full_seq = record_tokens + companion_json_tokens
+    logits = host_model.forward_prefill(full_seq)  # Shape: [len(full_seq), vocab_size] # 2. Check target greedy agreement strictly at semantic value token positions 
+    offset =  len (record_tokens) -  1 for  idx  in sorted (value_token_indices):
+        target_argmax = argmax_with_gbnf_mask(logits[offset + idx], gbnf_state.at(idx))
+         if  target_argmax != companion_json_tokens[idx]:
+             # 3. Partial rollback: retain KV up to (offset + idx), repair suffix only 
+            prefix_ok = companion_json_tokens[:idx] + [target_argmax]
+            repaired_suffix = host_model.generate_gbnf(
+                kv_prefix_len= len (record_tokens) + idx,
+                first_token=target_argmax,
+                gbnf_state=gbnf_state.advance_to(idx +  1 )
+            )
+             return  prefix_ok + repaired_suffix,  False # Audited: False (Repaired) return  companion_json_tokens,  True # Certified in 1 prefill pass
+														515 content list
+															516 container
+																517 text Structural Invariants:
+																518 content list
+																	519 container
+																		520 text Both host and companion enforce the identical deterministic GBNF grammar and token-semantics fingerprint.
+																	521 container
+																		522 text Host KV cache beyond the first diverging index 
+																		523 container
+																			524 text 𝑗 ∗
+																		525 text  is invalidated prior to repair.
+															526 container
+																527 text Failure Cases:  Companion semantic error occurs on the very first value token (
+																528 container
+																	529 text 𝑗
+																	530 text ∗
+																	531 text ≈ 1
+																532 text ),  incurring both companion wait time and full host decode time; boilerplate structural tokens differ in whitespace tokenization if GBNF permits non-canonical spacing.
+															533 container
+																534 text Conditions for Gain:
+																535 content list
+																	536 container
+																		537 text Necessary:  Canonical GBNF grammar (zero whitespace ambiguity) so structural tokens are deterministic,  and host parallel prefill of 
+																		538 text 𝑀
+																		539 text  tokens is faster than 
+																		540 text 𝑀
+																		541 text  serial host decode steps (
+																		542 container
+																			543 text 𝑇
+																			544 text prefill
+																			545 text ( 𝑀 ) ≪ 𝑀 ⋅
+																			546 text 𝑇
+																			547 text decode
+																			548 text ( 1 )
+																		549 text ).
+																	550 container
+																		551 text Sufficient:  Across concurrent office tasks,
+																		552 container
+																			553 text 𝑁 companions
+																		554 text  absorb the sequential token generation bottleneck while the host audits 
+																		555 text 𝑀
+																		556 text -token responses in batched prefill passes with field-level acceptance rate 
+																		557 container
+																			558 text 𝑝
+																			559 text field
+																			560 text > 1 −
+																			561 container
+																				562 text 𝑀 ⋅
+																				563 text 𝑇
+																				564 text decode
+																				565 text ( 1 ) −
+																				566 text 𝑇
+																				567 text prefill
+																				568 text ( 𝑀 )
+																			569 container
+																				570 text 𝑀
+																				571 text suffix
+																				572 text ⋅
+																				573 text 𝑇
+																				574 text decode
+																				575 text ( 1 )
+																		576 text .
+														577 heading 3. Critical-Path Cost Model (Monotonic Host Elapsed Time), Value: 2
+															578 text 3. Critical-Path Cost Model (Monotonic Host Elapsed Time)
+														579 text All latencies are measured on the host's single monotonic clock (
+														580 text T_elapsed
+														581 text ).  Overlapped background work enters only via 
+														582 text max(...)
+														583 text ; uncalibrated companion timestamps are never subtracted from host timestamps.  Energy consumption remains strictly unknown (
+														584 text E_joules = UNKNOWN
+														585 text ).
+														586 heading A. Single-Request Speculative Step Cost ( -th Loop Iteration), Value: 3
+															587 text A. Single-Request Speculative Step Cost (
+															588 text 𝑠
+															589 text -th Loop Iteration)
+														590 container
+															591 text Plaintext
+															592 container
+																593 button Scarica codice
+																594 button Copia codice
+															595 text T_step(s) = T_sync_lock
+          + max(0, min(T_poll_budget, T_pkt_arrival(s) - T_step_start(s)))
+          + I_hit(s) * [ T_prefix_validate + T_verify_batch(k) + I_diverged(s) * T_kv_rollback ]
+          + (1 - I_hit(s)) * [ T_target_serial(1) ]
+          + I_fault(s) * [ T_lease_expiry + T_tls_cleanup + T_fallback_reinit ]
+
+														596 content list
+															597 container
+																598 text Accounting for the Supplied Android O3 Anomaly: [Supplied Measurement]  Host-only completed in  3.707 s  and  5.241 s ,  whereas remote bounded took  17.879 s  and  19.101 s ,  interrupting at sequence 9 with  10 s  expiry and  ~2 s  cleanup. [Deduction]  Setting  I_fault(9) = 1  injects  T_lease_expiry (10.0 s) + T_tls_cleanup (~2.0 s) = 12.0 s  directly onto the critical path.  The remaining  ~2.17 s  to  ~1.86 s  excess across sequences 1–8 ( ~230–270 ms  per sequence) reflects synchronous waiting on Wi-Fi round-trip + phone draft compute + serial verification overhead ( 0.665x  bounded lookahead penalty).
+														599 heading B. Grounded Task Batch Cost (Variant 2 vs Host-Only Baseline), Value: 3
+															600 text B. Grounded Task Batch Cost (Variant 2 vs Host-Only Baseline)
+														601 container
+															602 text Plaintext
+															603 container
+																604 button Scarica codice
+																605 button Copia codice
+															606 text T_batch_variant2(Q tasks) = T_decomp_filter
+                          + max_{i in 1..Q} ( T_queue_tls(i) + T_net_up(i) + T_comp_gbnf(i) + T_net_down(i) )
+                          + sum_{b in Batches} [ T_host_prefill_audit(b) + sum_{j in Failed(b)} T_host_gbnf_repair(j) ]
+                          + T_final_synthesis
+
+														607 heading 4. Minimum-Cost Falsification Experiments, Value: 2
+															608 text 4. Minimum-Cost Falsification Experiments
+														609 heading Experiment 1: Falsifying Fixed-Tile Oracle Equivalence & Variant 1 (Mac + Companion), Value: 3
+															610 text Experiment 1: Falsifying Fixed-Tile Oracle Equivalence & Variant 1 (Mac + Companion)
+														611 content list
+															612 container
+																613 text Hypothesis to Falsify:  Padding  ggml-metal  verification to a fixed width 
+																614 container
+																	615 text 𝑊 = 5
+																616 text  produces zero token divergence across a held-out workload while achieving median speedup 
+																617 container
+																	618 text ≥ 1.15 ×
+																619 text  over host-only generation,  and Variant 1's spliced branching reduces deadline-miss fallbacks by 
+																620 container
+																	621 text ≥ 30 %
+																622 text  on physical Android.
+															623 container
+																624 text Workload & Blocking:
+																625 container
+																	626 text 𝑁 = 30
+																627 text  independent held-out prompts stratified across 3 domains (10 code synthesis,  10 numerical reasoning,  10 document extraction; 256 output tokens each).  Each prompt is a single statistical block (
+																628 container
+																	629 text 𝑁 = 30
+																630 text ,  not 
+																631 container
+																	632 text 30 × repeats
+																633 text ).  Technical repeats (
+																634 container
+																	635 text 𝑅 = 3
+																636 text  per prompt) are collapsed to their within-prompt median before testing.
+															637 container
+																638 text Controls:
+																639 content list
+																	640 container
+																		641 text Positive Control:  Host-only serial greedy decoding (
+																		642 container
+																			643 text 𝑊 = 1
+																		644 text ) and fixed-tile greedy decoding (
+																		645 container
+																			646 text 𝑊 = 5
+																		647 text  with 4 dummy masked columns).
+																	648 container
+																		649 text Negative Control:  Inject a deterministic 1-token corruption at draft position 2 on every 4th step to verify  T_kv_rollback  and exact recovery against the oracle.
+															650 container
+																651 text Retained Failure Accounting:  Any TLS timeout,  lease expiry,  or socket drop is retained in the latency distribution as its full wall-clock duration (no censoring or re-running failed trials).
+															652 container
+																653 text Stopping & Falsification Rule:  Fixed sample size 
+																654 container
+																	655 text 𝑁 = 30
+																656 text  blocks (no intermediate peeking).  Falsify immediately if:  (a)  any
+																657 container
+																	658 text 1 / 30
+																659 text  prompt diverges from its matched 
+																660 text 𝑊
+																661 text -oracle ( 0  tolerance for exactness failure),  OR (b) a one-sided paired Wilcoxon signed-rank test on block median latencies fails to reject 
+																662 container
+																	663 text 𝐻
+																	664 text 0
+																	665 text : median (
+																	666 text 𝑇
+																	667 text spec
+																	668 text /
+																	669 text 𝑇
+																	670 text host
+																	671 text ) ≥ 0.90
+																672 text  at 
+																673 container
+																	674 text 𝛼 = 0.01
+																675 text .
+														676 heading Experiment 2: Falsifying Variant 2 Task Throughput (Mac + 2 Companions), Value: 3
+															677 text Experiment 2: Falsifying Variant 2 Task Throughput (Mac + 2 Companions)
+														678 content list
+															679 container
+																680 text Hypothesis to Falsify:  GBNF-constrained companion extraction + 1-pass host prefill auditing achieves higher net throughput (qualified valid records/sec) at equal semantic accuracy than a continuously batched host-only GBNF baseline.
+															681 container
+																682 text Workload & Blocking:
+																683 container
+																	684 text 𝑁 = 40
+																685 text  held-out multi-record extraction sessions (4 distinct schemas,  10 unseen records per schema,  zero overlap with the 6 pilot records).
+															686 container
+																687 text Controls:
+																688 content list
+																	689 container
+																		690 text Local Positive Control:  Continuously batched  llama.cpp  server on Mac M3 Max running the 8B target with the exact same GBNF grammar and  58.1% -style record pre-filtering applied locally.
+																	691 container
+																		692 text Negative Control:  Perturb 20% of companion numeric/date fields to measure host prefill audit recall (must detect 
+																		693 container
+																			694 text ≥ 98 %
+																		695 text  of injected semantic corruptions).
+															696 container
+																697 text Stopping & Falsification Rule:  Fixed sample 
+																698 container
+																	699 text 𝑁 = 40
+																700 text  sessions.  Falsify if host-only continuous batching achieves higher or equal qualified throughput (
+																701 container
+																	702 text  Throughput
+																	703 text Variant2
+																	704 text ≤ 1.10 ×
+																	705 text Throughput
+																	706 text HostBatched
+																707 text ) or if audit false-acceptance rate on the negative control exceeds 
+																708 container
+																	709 text 2 %
+																710 text .
+														711 heading 5. Attractive Idea to Reject Now: Remote Target KV Snapshot Storage on Phones (Direction C-Storage), Value: 2
+															712 text 5. Attractive Idea to Reject Now: Remote Target KV Snapshot Storage on Phones (Direction C-Storage)
+														713 heading Why Reject Immediately, Value: 3
+															714 text Why Reject Immediately
+														715 content list
+															716 container
+																717 text [Deduction] Memory Hierarchy Physics:  For 
+																718 text Llama 3.1 8B
+																719 text  (32 layers,  8 KV heads,  128 head dim,  FP16),  a 2048-token KV cache occupies exactly 
+																720 container
+																	721 text 256  MiB
+																722 text .  On the Mac M3 Max,  local unified RAM operates at 
+																723 container
+																	724 text ∼ 400  GB/s
+																725 text  and the internal PCIe Gen4 NVMe SSD reads/writes at 
+																726 container
+																	727 text 5 – 7  GB/s
+																728 text  (
+																729 container
+																	730 text ∼ 40 – 50  ms
+																731 text  to swap 
+																732 container
+																	733 text 256  MiB
+																734 text ).  Over Wi-Fi 6 under pinned TLS with SHA-256/AEAD integrity verification,  effective goodput is 
+																735 container
+																	736 text 30 – 100  MB/s
+																737 text ,  requiring 
+																738 container
+																	739 text 5.1 – 17.0  s
+																740 text  for a round-trip write+read of 
+																741 container
+																	742 text 256  MiB
+																743 text .
+															744 container
+																745 text [Deduction] Recomputation Dominates Network Transfer:  Recomputing a 2048-token prompt from raw text on M3 Max Metal (
+																746 text 8B Q4_K_M
+																747 text ) takes 
+																748 container
+																	749 text ∼ 0.8 – 1.3  s
+																750 text  and requires transmitting only 
+																751 container
+																	752 text ∼ 8  KiB
+																753 text  of token IDs.  Shipping opaque KV snapshots to phones is 
+																754 container
+																	755 text 4 ×  to  15 ×
+																756 text  slower than full prompt recomputation and 
+																757 container
+																	758 text 100 ×
+																759 text  slower than local SSD paging,  while introducing mobile OS background eviction and attack surface expansion.
+														760 heading Evidence Required to Reverse, Value: 3
+															761 text Evidence Required to Reverse
+														762 text Reversal requires  all  of the following measured conditions:
+														763 content list
+															764 container
+																765 text Context lengths 
+																766 container
+																	767 text 𝐿 ≥ 65 , 536
+																768 text  tokens where quadratic prefill cost 
+																769 container
+																	770 text 𝑂 (
+																	771 text 𝐿
+																	772 text 2
+																	773 text )
+																774 text  exceeds linear network transfer cost 
+																775 container
+																	776 text 𝑂 ( 𝐿 )
+																777 text .
+															778 container
+																779 text High-speed wired fabric (
+																780 container
+																	781 text ≥ 10  GbE
+																782 text  or Thunderbolt RDMA,
+																783 container
+																	784 text ≥ 1  GB/s
+																785 text  sustained after integrity verification).
+															786 container
+																787 text Local host RAM and local NVMe swap are strictly exhausted or disabled by security policy.
+														788 heading 6. What a Skeptical Implementer Should Correct in This Review, Value: 2
+															789 text 6. What a Skeptical Implementer Should Correct in This Review
+														790 content list
+															791 container
+																792 text Variant 1 Bandwidth Contention on Companion:  Computing top-
+																793 container
+																	794 text 𝐵 = 2
+																795 text  branches of length 
+																796 text 𝑘
+																797 text  on a mobile CPU/GPU is not free; moving from batch size 1 to 2 on a phone's memory-bound 1B draft increases per-step draft latency by 
+																798 container
+																	799 text 30 – 70 %
+																800 text ,  which can push packet arrival past the host's next token deadline and negate the splicing hit-rate gain.
+															801 container
+																802 text Variant 2 Oracle Mismatch During Prefill Audit:  Variant 2 assumes a single parallel prefill pass on the host accurately replicates the host's serial greedy decisions.  However, [Supplied Measurement]  already proved that multi-column evaluation flips low-margin tokens (
+																803 text 0.14352226
+																804 text  drift vs 
+																805 text 0.04478836
+																806 text  margin).  Furthermore,  strict greedy token matching rejects valid semantic paraphrases (e. g.,
+																807 text "10.00"
+																808 text  vs 
+																809 text "10"
+																810 text ),  causing unnecessary fallback repairs unless the GBNF schema enforces canonical formatting.
+															811 container
+																812 text Host Metal Queue Serialization:  The critical-path cost model assumes 
+																813 text target_forward_single
+																814 text  and background network/validation threads do not contend.  On macOS,  high-frequency TLS socket polling and JSON parsing on P-cores can delay Metal command buffer submission by 
+																815 container
+																	816 text 0.5 – 2.0  ms
+																817 text  per step unless pinned to separate QoS threads.

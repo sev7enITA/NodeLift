@@ -1,0 +1,111 @@
+													207 text NodeLift independent review (GLM 5.3 Max).  Evidence labels throughout:  [M]  supplied measurement,  [D]  deduction from supplied facts,  [H]  hypothesis requiring a test. I did not fetch the repository or the four cited sources; all external facts come from your baseline and bounded summaries. I re-checked the arithmetic below in Python; no tests were run.
+												208 heading 1. Ranking A–E, Value: 2
+													209 text 1. Ranking A–E
+												210 container
+													211 text Objective stated first.  (i) Today's Mac plus phones, the only honestly reachable objective is  qualified single-chat latency : speedups preserving the exact serial output contract. Capacity and throughput lack machinery (no complete-task protocol, single-run engine, no sharding [M]). (ii) An office of heterogeneous PCs shifts the objective to  capacity beyond one machine , with qualified multi-request throughput second.
+												212 text (i) Today: A > B > D > C > E.
+												213 content list
+													214 container
+														215 AXListMarker • 
+														216 text A first , for a structural reason stronger than hygiene: under serial verification a draft — local or remote — saves exactly zero host compute  [D] . Each proposed token costs the host one forward whether accepted or not (forwards = accepted + 1 = tokens emitted), so serial remote drafting can only add round-trip time; this is consistent with 0.793x  [M] . All target-work saving must come from width-amortized verification, i.e., from A. A also converts the observed batch gain (1.291x, 6/9 divergent  [M] ) into a contract-preserving one; within-harness headroom ≈ 1.291/0.793 ≈ 1.63x  [D]  (approximate — separate host-only references).
+													217 container
+														218 AXListMarker • 
+														219 text B second : it cannot create gain today (§3), but epochs, prefix fingerprints, deadlines and preemption are the loss-capping and honest-measurement substrate every lane reuses — and the post-fix physical repeat is still missing  [M] .
+													220 container
+														221 AXListMarker • 
+														222 text D third : the only lane where phones might add net value today, but its enabling evidence is negative (0/48 strict JSON  [M] ) and protocol, constrained decoding and held-out evaluation are all absent.
+													223 container
+														224 AXListMarker • 
+														225 text C fourth : the routing half has no protocol to ride on; the snapshot half loses to local SSD by orders of magnitude (§3).
+													226 container
+														227 AXListMarker • 
+														228 text E fifth : nothing to run it on today.
+												229 container
+													230 text (ii) Office: A > E > D > B > C.  A remains the qualification gate — without shape-stable exact verification, concurrent verification makes outputs request-order-dependent, unacceptable for a shared service. E is the only capacity lane; keep your own caveats (separate RAM/VRAM accounting including workspace, per-layer KV ownership so not every node holds all layers' KV, generic RPC ≠ tensor parallelism, no local fallback if no placement fits). D is the throughput bet ("office benefits even if a single chat does not"), contingent on beating Speculation at a Distance  framing applies only after replacing its contention-free assumptions with measured times. B dissolves into D/E as substrate; C's routing half survives as session affinity. If your objective is throughput-first, swap E and D.
+												231 heading 2. Two lateral variants, Value: 2
+													232 text 2. Two lateral variants
+												233 container
+													234 text V1 — Shape-pinned tree speculation.  Attack the actual bottleneck — per-epoch remote latency (≈0.65 s/epoch  [D] , §3) — by amortizing it over a  fixed  token tree, and make exactness checkable by pinning one verification shape forever.
+												235 container
+													236 text text
+													237 container Copy
+														238 button
+													239 text entry area (settable) loop:
+  tree = phone.next(prefix_fp, epoch)        # constant shape, e.g. 8 nodes, depth 4
+  if not (epoch/prefix/deadline valid):      # B's discipline; drop, never stall
+      emit local token; continue
+  logits[8] = fixed_shape_forward(ctx, tree) # same width, same mask layout, every call
+  accept node iff argmax(logits[node]) == tree.token[node]   # per-column serial order
+  commit longest accepted root-to-leaf path; ctx += it
+														240 text loop:
+														241 text   tree = phone.next(prefix_fp, epoch)        # constant shape, e.g. 8 nodes, depth 4
+														242 text   if not (epoch/prefix/deadline valid):      # B's discipline; drop, never stall
+														243 text       emit local token; continue
+														244 text   logits[8] = fixed_shape_forward(ctx, tree) # same width, same mask layout, every call
+														245 text   accept node iff argmax(logits[node]) == tree.token[node]   # per-column serial order
+														246 text   commit longest accepted root-to-leaf path; ctx += it
+												247 content list
+													248 container
+														249 AXListMarker • 
+														250 text Invariants : (I1) verification tensor shape and mask layout constant across all calls; (I2) each node's logits equal the serial oracle's on the same ancestor prefix — established by differential test, never by the 0.0448 margin heuristic (your baseline already rejects margin-without-bound); (I3) consumption only under matching epoch + exact prefix; (I4) acceptance is the longest greedy-consistent path, identical in rule to chain speculation.
+													251 container
+														252 AXListMarker • 
+														253 text Why lateral : A proposes exact batched chains; this pins a  single  shape so the width-3-vs-5 history contamination you measured  [M]  has no room to appear, and adds a tree to buy round trips, which no A–E direction does.
+													254 container
+														255 AXListMarker • 
+														256 text Failure cases : 1B-draft branch acceptance too low to lift expected accepted length; tree masks change the K-dimension reduction order, so I2 may be unattainable by any batched kernel — the honest fallback is a  declared  contract change (argmax-equality under a certified bound), not silent; slot exhaustion (you hit 32 slots  [M] ); TLS re-handshakes; poll-interval granularity.
+													257 container
+														258 AXListMarker • 
+														259 text Necessary for gain : E[accepted tokens/epoch]_tree × 29.0 ms > per-epoch remote cost, whose floor is the transport probe of §4.  Sufficient : nothing here; perfect exactness gains nothing if acceptance doesn't rise with width.
+													260 container
+														261 AXListMarker • 
+														262 text Prior art : SpecInfer/Medusa/EAGLE tree verification, llama.cpp speculative trees, Leviathan et al. (2023) acceptance-driven depth, LLM-42's fixed-shape verification (lead only).
+												263 container
+													264 text V2 — Deterministic gather lane: phones never generate.  Your pilot already votes: generation failed (0/48 bare JSON), context selection succeeded (58.1% byte reduction)  [M] . Keep the successful half, delete the failed one.
+												265 text State machine: REQUEST → DECOMPOSE (deterministic record-ID slice assignment) → GATHER [workers: filter/project/serialize; idempotent; retry ≤ r] → MERGE (host, deterministic slice order) → SYNTHESIZE (host target, grammar-constrained decoding) → VALIDATE (schema + record-grounding + ranges) → DONE | REPAIR (host-only, bounded) | FAIL (fallback: full-context host run).
+												266 content list
+													267 container
+														268 AXListMarker • 
+														269 text Invariants : workers emit no tokens — output is a pure function of the input slice (byte-deterministic); merge order fixed by slice ID; all stochastic work on the host; every referenced record ID exists in the source slice; failures retained and replayable.
+													270 container
+														271 AXListMarker • 
+														272 text Failure cases : shipping records to phones costs more than it saves; privacy scope of records on personal devices; host synthesis remains the serial bottleneck, making gather speedup invisible; context reduction  changes outputs  — a quality trade, not an exactness-preserving optimization, so gains must be shown at equal task quality (six fictional records are a smoke test, not an eval).
+													273 container
+														274 AXListMarker • 
+														275 text Necessary for gain : the gather+serialize share of end-to-end latency exceeds coordination overhead, at equal quality versus a full-context host.  Sufficient : none — 58.1% fewer bytes guarantees neither quality nor elapsed time.
+													276 container
+														277 AXListMarker • 
+														278 text Prior art : edge precomputation / RAG pre-fetch, map-reduce retrieval, grammar-constrained decoding (GBNF/Outlines/guidance). Cross-request remote drafting excluded — premature on a single-run engine.
+												279 heading 3. Critical-path cost model, Value: 2
+													280 text 3. Critical-path cost model
+												281 text Per epoch, all terms wall-clock on the critical path; nothing overlapped is credited, no uncalibrated clocks subtracted:
+												282 text T_epoch = t_dispatch + t_queue + t_tls + t_draft_phone(k) + t_serialize + t_net + t_poll_detect + t_verify + t_rollback·[mismatch] + t_expiry·[deadline]; T_chat = T_setup + Σ T_epoch + T_fallback_tail + T_cleanup. Energy excluded — unknown; battery percentage is not joules.
+												283 container
+													284 text Grounding  [M→D] : Android bounded run 17.879 s, 9 sequences, 26/36 accepted, one 10 s expiry, ~2 s cleanup ⇒ non-expiry ≈ 5.88 s / 9 ≈  0.653 s/epoch . Host-only: 3.707 s / 128 =  29.0 ms/token . Best-case saving per k=4 epoch: 115.8 ms (all accepted), 83.7 ms acceptance-matched. Break-even needs per-epoch remote cost ≤ 84–116 ms, i.e.  5.6–7.8× below the measured pre-fix value ; even multiplying the ceiling by the within-harness batch headroom (≈1.63× ⇒ ~189 ms) leaves a ~3.5× gap. Conclusion  [D] : on current latencies, remote drafting cannot break even regardless of draft quality; and under serial verification its compute ceiling is zero (§1). Caveats: the run was interrupted and pre-fix; the 40-client regression changed server behavior with no repeat  [M] . Flag: the baseline does not say whether the Mac-pilot draft (0.793x) ran locally or on a phone — if locally, that deficit is harness overhead, not transport, and B's interpretation changes. Pin this.
+												285 container
+													286 text For C's TTFT  [D + H] : Llama-3.1-8B KV = 2(K+V) × 8 KV-heads × 128 × 2 B × 32 layers = 128 KiB/token ⇒ 256 MiB at 2048 context. At assumed 30–100 MB/s phone links that is 2.7–8.9 s transfer  [H] , versus ~0.09 s at ~3 GB/s SSD  [H]  and recompute (measure it). Phone snapshots lose badly; the office-LAN variant is the only one worth measuring.
+												287 heading 4. Cheapest falsifiers, Value: 2
+													288 text 4. Cheapest falsifiers
+												289 content list
+													290 container
+														291 AXListMarker • 
+														292 text V1 exactness (host-only, cheapest) : fixed-shape tree verify vs serial oracle on ≥60 held-out prompts from a new source, one greedy rep each — under greedy decode divergence is deterministic per prompt, so breadth, not repetition, is the currency (your 3×3 pilot is 3 workloads, not 9). Controls: serial A/A (identity); positive control — the current variable-width batch path must reproduce the index-36 flip (validates the detector); negative control — a deliberately reordered reduction, which must be caught. Preregistered pass: zero divergenc
+													293 container
+														294 AXListMarker • 
+														295 text V1 transport (null-draft probe) : phone returns 8 canned tokens instantly; measure per-epoch floor over ≥100 epochs in fresh session blocks. Falsified if floor > 189 ms (batched ceiling). This costs almost nothing and bounds every remote-draft claim, including B's.
+													296 container
+														297 AXListMarker • 
+														298 text V1 yield : real trees vs chain k4 on the same held-out prompts; falsified if the accepted-length gain × 29 ms < added epoch cost.
+													299 container
+														300 AXListMarker • 
+														301 text V2 quality : ≥100 held-out grounded instances with programmatic ground truth; full-context vs selected-context host runs, matched decoding; negative control — random-record selection at matched byte budget (proves selection ≠ truncation). Falsified if quality drops beyond preregistered ε or end-to-end gain < δ.  V2 transport : null-worker echo probe for gather round-trip vs host-local gather.
+												302 heading 5. Reject now: the phone KV-snapshot storage tier, Value: 2
+													303 text 5. Reject now: the phone KV-snapshot storage tier
+												304 container
+													305 text Attractive — "spare phones are a free memory tier" — but 256 MiB per 2k tokens over phone links versus ~0.09 s on the Mac's own SSD, plus import cost, provenance invalidation on every KV-layout-affecting change, unresolved privacy scope of opaque blobs, and dishonest capacity reservation on personal devices  [D/H] .  Reversal evidence : measured import+transfer < measured recompute for the real workload's prefix lengths; wired ≥1 GB/s office links where another PC's RAM beats local SSD at very long contexts; fleet-wide runtime pinning. The request-routing half of C survives this rejection.
+												306 heading 6. What a skeptical implementer should correct in this answer, Value: 2
+													307 text 6. What a skeptical implementer should correct in this answer
+												308 text (1) The 0.653 s/epoch deduction cleans arithmetic over an interrupted, pre-fix, possibly slot-contaminated run; a post-fix physical repeat could move it. (2) The Mac-pilot draft-location ambiguity: my "zero serial ceiling" and break-even conclusions hold under the remote-draft reading; a local-draft reading reframes 0.793x as harness overhead and reorders B. (3) V1's I2 (bit-equality per tree column) may be unattainable because tree masks reorder the K-reduction; my "certified bound" fallback is a contract 
+												309 text All six items are covered above; the two decisive cheap probes are the null-draft transport floor and the shape-pinned exactness sweep — both runnable before any further architecture work.
+												310 container Copy
+													311 button

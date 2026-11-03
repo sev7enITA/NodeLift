@@ -1,0 +1,3 @@
+# Preserve verbose local diagnostics; curated configuration and hashes are tracked.
+*.log
+__pycache__/

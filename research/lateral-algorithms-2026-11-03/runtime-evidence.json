@@ -1,0 +1,34 @@
+{
+  "metal-fa": {
+    "raw_log_sha256": "d0a5ac056b0d8bd4284bff285b46e0a28e333ea28b78ae713d578bba3e02da8a",
+    "configuration_lines": [
+      "llama_context: flash_attn            = enabled",
+      "llama_kv_cache:       MTL0 KV buffer size =   256.00 MiB",
+      "load_tensors: offloaded 33/33 layers to GPU"
+    ]
+  },
+  "metal-no-fa": {
+    "raw_log_sha256": "02a1ede34a27473e3e3e01ba4df1dffe1d7a781028bb7e26ae6fcc41a553f780",
+    "configuration_lines": [
+      "llama_context: flash_attn            = disabled",
+      "llama_kv_cache:       MTL0 KV buffer size =   256.00 MiB",
+      "load_tensors: offloaded 33/33 layers to GPU"
+    ]
+  },
+  "cpu-fa": {
+    "raw_log_sha256": "433e16fc64da00033480a8b47cc5ff48bfaedeacff58b5e01d1159f496d2cbd2",
+    "configuration_lines": [
+      "llama_context: flash_attn            = enabled",
+      "llama_kv_cache:        CPU KV buffer size =   256.00 MiB",
+      "load_tensors: offloaded 0/33 layers to GPU"
+    ]
+  },
+  "cpu-no-fa": {
+    "raw_log_sha256": "e3b76b5689fed0a41d138a7a397f9dfd8026c0b8a407461db6a468010acd78d9",
+    "configuration_lines": [
+      "llama_context: flash_attn            = disabled",
+      "llama_kv_cache:        CPU KV buffer size =   256.00 MiB",
+      "load_tensors: offloaded 0/33 layers to GPU"
+    ]
+  }
+}

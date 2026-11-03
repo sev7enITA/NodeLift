@@ -1,0 +1,30 @@
+{
+  "recorded_at_utc": "2026-11-03T22:56:42.491252+00:00",
+  "repository_baseline": "53c070b821900246894b87c037303a8cba54af4f",
+  "runtime_pin": "ddf48f85c933c1f438212a02eb21e7b001d2d37d",
+  "reviews": [
+    {
+      "model": "Gemini 4 Argon",
+      "effort": "High",
+      "transport": "browser",
+      "acquired_final_responses": 2,
+      "additional_followup": "submitted, final response not acquired; Mac locked"
+    },
+    {
+      "model": "GLM 5.3",
+      "effort": "Max",
+      "transport": "browser",
+      "acquired_final_responses": 1,
+      "additional_followup": "submitted, final response not acquired; Mac locked"
+    }
+  ],
+  "review_scope": "Static review of supplied evidence packet, not independent repository execution or physical device tests",
+  "openrouter": {
+    "oauth_mcp_call_verified": true,
+    "available_inference_credits": false,
+    "model_inference_calls": 0
+  },
+  "physical_work_this_run": "Mac numerical diagnostic only; no physical phone test",
+  "production_changes": false,
+  "new_speedup_demonstrated": false
+}
