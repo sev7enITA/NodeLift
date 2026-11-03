@@ -3,6 +3,8 @@ package dev.nodelift.companion
 import android.app.ActivityManager
 import android.content.Context
 import org.json.JSONObject
+import org.json.JSONArray
+import android.os.SystemClock
 import java.io.File
 import java.security.MessageDigest
 
@@ -61,22 +63,75 @@ class MobileDraft(private val context: Context) : AutoCloseable {
         prefs.edit().putString("sha256",sha).putString("name",offer.getString("name")).apply()
         loadSaved()
     }
+    private data class Prepared(val parent: String, val epoch: String, val sequence: Int,
+        val base: List<Int>, val tokens: List<Int>, val timing: JSONObject, val completed: Long)
+    private var prepared: Prepared? = null
+    private fun ids(array: JSONArray) = (0 until array.length()).map { array.getInt(it) }
+    private fun now() = SystemClock.elapsedRealtimeNanos()
+    private fun elapsed(start: Long) = (now()-start)/1e6
+    private fun collectPrior(t: JSONObject, p: Prepared, used: LookaheadPolicy.Reuse) {
+        t.put("lookahead_parent_id",p.parent).put("lookahead_computed",p.tokens.size)
+            .put("lookahead_reused",used.tokens.size).put("lookahead_prefix_consumed",used.consumed)
+            .put("lookahead_discarded",used.discarded)
+            .put("lookahead_prior_native_ms",p.timing.optDouble("native_total_ms",0.0))
+            .put("lookahead_prior_sync_ms",p.timing.optDouble("native_sync_ms",0.0))
+            .put("lookahead_prior_after_sync_ms",p.timing.optDouble("native_after_sync_ms",0.0))
+    }
     fun draft(work: JSONObject): JSONObject {
-        val answer=JSONObject()
+        val started=now();val answer=JSONObject();val timing=JSONObject().put("schema_version",1)
         try {
             for(key in listOf("id","epoch","prefix_hash","tokenizer_fingerprint","model_sha256")) answer.put(key,work.get(key))
-            check(work.getString("op")=="draft")
+            if(work.has("sequence")) answer.put("sequence",work.getInt("sequence"))
             check(work.getString("model_sha256")==sha256 && work.getString("tokenizer_fingerprint")==fingerprint) { "Model or tokenizer mismatch" }
-            val prefix=work.getJSONArray("prefix");check(prefix.length() in 1 until loadedContext)
+            val op=work.getString("op");check(op=="draft" || op=="finish")
+            val prefix=work.getJSONArray("prefix");check(prefix.length() in 1..loadedContext)
             val digest=MessageDigest.getInstance("SHA-256").digest(prefix.toString().toByteArray()).joinToString(""){"%02x".format(it)}
             check(digest==work.getString("prefix_hash")) { "Invalid context" }
-            val count=work.getInt("count");check(count in 1..16 && prefix.length()+count<=loadedContext) { "Mobile context capacity exceeded" }
-            val result=native?.call("draft",JSONObject().put("prefix",prefix).put("count",count)) ?: error("Draft not loaded")
-            answer.put("tokens",result.getJSONArray("tokens"))
-            NodeService.lastResult=ui("Draft: {0} proposed tokens · {1} ms",result.getJSONArray("tokens").length(),"%.1f".format(result.getDouble("ms")))
-        } catch(e:Exception) { answer.put("error",e.message ?: "Draft generation failed") }
+            val count=work.getInt("count")
+            check(if(op=="finish") count==0 else count in 1..16 && prefix.length()+count<=loadedContext) { "Mobile context capacity exceeded" }
+            val prior=prepared;prepared=null
+            var tokens=emptyList<Int>()
+            if(prior!=null && prior.epoch==work.getString("epoch")) {
+                val use=if(op=="finish") LookaheadPolicy.Reuse(emptyList(),0,prior.tokens.size)
+                    else LookaheadPolicy.select(prior.base,prior.tokens,ids(prefix),count,
+                        work.optString("pipeline")=="bounded_v1" && prior.sequence==work.getInt("sequence"),
+                        now()-prior.completed>2_000_000_000L)
+                collectPrior(timing,prior,use);tokens=use.tokens
+            }
+            timing.put("worker_validation_ms",elapsed(started))
+            if(op=="draft" && tokens.isEmpty()) {
+                val nativeStart=now()
+                val result=native?.call("draft",JSONObject().put("prefix",prefix).put("count",count)) ?: error("Draft not loaded")
+                timing.put("worker_native_ms",elapsed(nativeStart))
+                result.optJSONObject("timing")?.let { nativeTiming ->
+                    for(key in nativeTiming.keys()) if(key!="schema_version") timing.put(key,nativeTiming.get(key))
+                }
+                tokens=ids(result.getJSONArray("tokens"))
+                answer.put("eos",result.optBoolean("eos"))
+            }
+            answer.put("tokens",JSONArray(tokens))
+            if(op=="draft") NodeService.lastResult=ui("Draft: {0} proposed tokens · {1} ms",tokens.size,"%.1f".format(elapsed(started)))
+        } catch(e:Exception) { prepared=null;answer.put("error",e.message ?: "Draft generation failed") }
+        timing.put("worker_total_ms",elapsed(started));answer.put("telemetry",timing)
         return answer
     }
+    // Runs only after the host acknowledges the current result. The service has
+    // one inference thread, so at most one bounded block exists at any time.
+    fun prepareLookahead(work: JSONObject, answer: JSONObject) {
+        if(work.optString("pipeline")!="bounded_v1" || work.optString("op")!="draft" ||
+            answer.has("error") || answer.optBoolean("eos")) return
+        val proposal=answer.optJSONArray("tokens") ?: return
+        val remaining=work.optInt("remaining",0)-proposal.length()
+        if(proposal.length()==0 || remaining<=1) return
+        val base=ids(work.getJSONArray("prefix"))+ids(proposal)
+        val count=minOf(work.getInt("count")+1,remaining,loadedContext-base.size)
+        if(count<=0) return
+        try {
+            val result=native?.call("draft",JSONObject().put("prefix",JSONArray(base)).put("count",count)) ?: return
+            prepared=Prepared(work.getString("id"),work.getString("epoch"),work.getInt("sequence")+1,
+                base,ids(result.getJSONArray("tokens")),result.optJSONObject("timing") ?: JSONObject(),now())
+        } catch(e:Exception) { prepared=null } // A failed prediction never becomes output.
+    }
     fun cancel(){native?.cancel()}
-    override fun close(){native?.close();native=null}
+    override fun close(){prepared=null;native?.close();native=null}
 }

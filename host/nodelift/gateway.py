@@ -6,7 +6,7 @@ import time
 def chat(handler, engine, body):
     allowed={'model','messages','temperature','n','top_p','max_tokens','max_completion_tokens',
              'stream','nodelift_mode','nodelift_node_id','nodelift_draft_k','nodelift_remote_timeout_ms','nodelift_draft_policy',
-             'presence_penalty','frequency_penalty','nodelift_backend','nodelift_provider_model'}
+             'nodelift_pipeline','nodelift_verification_mode','presence_penalty','frequency_penalty','nodelift_backend','nodelift_provider_model'}
     unknown=set(body)-allowed
     if unknown:raise ValueError('parameters not qualified: '+', '.join(sorted(unknown)))
     body={key:value for key,value in body.items() if value is not None}
@@ -24,6 +24,8 @@ def chat(handler, engine, body):
     run_id=engine.start({'backend':body.get('nodelift_backend','native'),'provider_model':body.get('nodelift_provider_model'),'messages':messages,'mode':body.get('nodelift_mode','host'),
                          'node_id':body.get('nodelift_node_id'),'draft_k':body.get('nodelift_draft_k',4),
                          'draft_policy':body.get('nodelift_draft_policy','fixed'),
+                         'pipeline':body.get('nodelift_pipeline','serial'),
+                         'verification_mode':body.get('nodelift_verification_mode','serial'),
                          'remote_timeout_ms':body.get('nodelift_remote_timeout_ms',30000),
                          'max_tokens':body.get('max_completion_tokens',body.get('max_tokens',128))})['run_id']
     created=int(time.time());sent='';deadline=time.monotonic()+300;last_event=time.monotonic()

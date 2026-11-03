@@ -56,6 +56,45 @@ class MailboxTests(unittest.TestCase):
 
 
 class ControllerTests(unittest.TestCase):
+    def test_timing_separates_prefill_first_token_and_complete_utf8(self):
+        now=[0.0]
+        class TimedNative:
+            def __init__(self):self.index=0
+            def call(self,op,**args):
+                if op=='reset':now[0]+=.010;return {}
+                if op=='tokenize':now[0]+=.020;return {'tokens':[42]}
+                if op=='prefill':now[0]+=.200;return {'ms':180.0}
+                if op=='draft':
+                    now[0]+=.010;self.index+=1
+                    return {'tokens':[self.index],'eos':self.index==2,'ms':9.0}
+                if op=='text':
+                    now[0]+=.002
+                    return {'bytes_hex':{1:'f09f',2:'8c8d'}[args['tokens'][0]]}
+                raise AssertionError(op)
+        with tempfile.TemporaryDirectory() as folder:
+            engine=Controller(State(Path(folder)));engine.target=TimedNative()
+            engine.target_info={'tokenizer_fingerprint':'test','gpu_layers_requested':999}
+            run={'id':'timing','mode':'host','prompt':'Hello','max_tokens':2,'draft_k':1,'text':'','metrics':{},'blocks':[]}
+            def load(*args):now[0]+=.100
+            with patch.object(engine,'_load',side_effect=load),patch.object(engine,'_sha',return_value='test'),patch('nodelift.engine.time.perf_counter',side_effect=lambda:now[0]):
+                engine._execute(run,{'n_ctx':256,'target_model':'unused'})
+            self.assertEqual(run['status'],'completed',run.get('error'))
+            m=run['metrics']
+            self.assertEqual(m['timing_schema_version'],3)
+            self.assertAlmostEqual(m['load_ms'],100)
+            self.assertAlmostEqual(m['target_prefill_wall_ms'],200)
+            self.assertEqual(m['target_prefill_native_ms'],180)
+            self.assertAlmostEqual(m['target_prefill_tokens_per_second'],1000/180)
+            self.assertAlmostEqual(m['ttft_ms'],212)
+            self.assertAlmostEqual(m['worker_first_token_ready_ms'],342)
+            self.assertAlmostEqual(m['worker_first_text_ready_ms'],354)
+            self.assertAlmostEqual(m['decode_seconds'],.024)
+            self.assertEqual(run['text'],'🌍')
+            self.assertIsNone(m['draft_initial_prefill_native_ms'])
+            self.assertFalse(run['identity']['local_draft_resident_at_start'])
+            self.assertEqual(len(run['blocks']),2)
+            self.assertAlmostEqual(run['blocks'][0]['ready_offset_ms'],342)
+
     def test_adaptive_remote_timeout_is_not_a_completed_cost_sample(self):
         now=[0.0]
         class HostNative:

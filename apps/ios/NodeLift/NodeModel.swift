@@ -105,6 +105,8 @@ import CryptoKit
             Message("{0} · thermal: {1}",Message(transport),Message(thermal)))
         var value:[String:Any] = ["model":machine,"os":osName,"app_version":Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "unknown","physical_memory_bytes":info.physicalMemory,"available_memory_bytes":available,"cpu_cores":info.activeProcessorCount,"battery_percent":max(0,Int(UIDevice.current.batteryLevel*100)),"thermal":thermal,"transport":transport,"lifecycle":"foreground-only","supported_jobs":["network","network_paced","cpu"]]
         if draft != nil {
+            value["draft_timing_version"]=1;value["bounded_lookahead"]=false
+            value["native_build"]="timing-v1-0.2.13"
             value["draft_sha256"]=draftSHA;value["tokenizer_fingerprint"]=draftFingerprint
             value["engine_ready"]=engineEnabled && permitsDraft
         }
@@ -189,8 +191,10 @@ import CryptoKit
         engineStatus=Message("Draft ready · {0} · foreground only",engineMetal ? "Metal":"CPU")
     }
     private func draftResult(_ work:[String:Any]) async -> [String:Any] {
+        let started=ProcessInfo.processInfo.systemUptime
+        var timing:[String:Any]=["schema_version":1]
         var result:[String:Any]=[:]
-        for key in ["id","epoch","prefix_hash","tokenizer_fingerprint","model_sha256"] {result[key]=work[key]}
+        for key in ["id","epoch","prefix_hash","tokenizer_fingerprint","model_sha256","sequence"] {result[key]=work[key]}
         do {
             guard engineEnabled && permitsDraft, let worker=draft else {throw NodeError.message("Draft paused: battery, thermal status or permission")}
             guard work["op"] as? String == "draft", work["model_sha256"] as? String == draftSHA,
@@ -200,12 +204,20 @@ import CryptoKit
             let data=try JSONSerialization.data(withJSONObject:prefix)
             let digest=SHA256.hash(data:data).map{String(format:"%02x",$0)}.joined()
             guard digest==work["prefix_hash"] as? String else {throw NodeError.message("Invalid context")}
+            timing["worker_validation_ms"]=(ProcessInfo.processInfo.systemUptime-started)*1000
+            let nativeStarted=ProcessInfo.processInfo.systemUptime
             let value=try await worker.call(["op":"draft","prefix":prefix,"count":count])
+            timing["worker_native_ms"]=(ProcessInfo.processInfo.systemUptime-nativeStarted)*1000
+            if let nativeTiming=value["timing"] as? [String:Any] {
+                for (key,value) in nativeTiming where key != "schema_version" {timing[key]=value}
+            }
             try Task.checkCancellation()
             guard permitsDraft else {throw NodeError.message("Thermal or battery pause")}
             result["tokens"]=value["tokens"]
             lastResult=Message("Native draft: {0} ms · proposals require verification on your Mac",String(format:"%.1f",value["ms"] as? Double ?? 0))
         } catch {Diagnostics.shared.record(.jobFailed,error:error);result["error"]=error.localizedDescription}
+        timing["worker_total_ms"]=(ProcessInfo.processInfo.systemUptime-started)*1000
+        result["telemetry"]=timing
         return result
     }
     func connect(newTicket: Bool) {

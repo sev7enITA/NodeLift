@@ -143,10 +143,12 @@ class NodeService : Service() {
                             val work=JSONObject(String(c.bytes("/v1/engine/poll"),Charsets.UTF_8)).optJSONObject("work")
                             if(work!=null) {
                                 val answer=if(energyAllowed() && enginePrefs.getBoolean("enabled",false)) mobileDraft!!.draft(work)
-                                else JSONObject().apply {for(key in listOf("id","epoch","prefix_hash","tokenizer_fingerprint","model_sha256"))put(key,work.getString(key));put("error","Node paused to protect battery")}
+                                else JSONObject().apply {for(key in listOf("id","epoch","prefix_hash","tokenizer_fingerprint","model_sha256"))put(key,work.getString(key));if(work.has("sequence"))put("sequence",work.getInt("sequence"));put("error","Node paused to protect battery")}
                                 if(stop.get()) break
                                 if(!energyAllowed()) {answer.remove("tokens");answer.put("error","Draft paused to protect battery")}
-                                c.json("/v1/engine/result",answer)
+                                val accepted=try {c.json("/v1/engine/result",answer);true} catch(e:DiscardedDraft) {false}
+                                if(accepted && !stop.get() && energyAllowed() && enginePrefs.getBoolean("enabled",false))
+                                    mobileDraft?.prepareLookahead(work,answer)
                             }
                         } else Thread.sleep(3000)
                         errors = 0
@@ -183,6 +185,8 @@ class NodeService : Service() {
             ui("{0} · thermal: {1}",ui(transport),ui(thermalName)))
         return JSONObject().put("model", "${Build.MANUFACTURER} ${Build.MODEL}").put("os", "Android ${Build.VERSION.RELEASE} / API ${Build.VERSION.SDK_INT}").put("app_version", packageManager.getPackageInfo(packageName, 0).versionName ?: "unknown").put("physical_memory_bytes", mem.totalMem).put("available_memory_bytes", mem.availMem).put("process_memory_bytes", Debug.getPss()*1024L).put("cpu_cores", Runtime.getRuntime().availableProcessors()).put("battery_percent", pct.coerceAtLeast(0)).put("thermal", thermalName).put("transport", transport).put("lifecycle", "foreground-service").put("supported_jobs", JSONArray(listOf("network", "network_paced", "cpu")))
             .put("engine_ready",mobileDraft?.ready==true && energyAllowed() && enginePrefs.getBoolean("enabled",false))
+            .put("draft_timing_version",1).put("bounded_lookahead",true)
+            .put("native_build","timing-v1-0.2.13").put("native_optimization","O3")
             .put("draft_sha256",mobileDraft?.sha256 ?: "").put("tokenizer_fingerprint",mobileDraft?.fingerprint ?: "")
     }
     private fun checkReady(started: Long) {

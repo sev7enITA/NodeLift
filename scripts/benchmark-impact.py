@@ -63,11 +63,12 @@ class Client:
         finally:
             c.close()
 
-    def capture(self, prompt, mode, node, budget, timeout_ms, policy="fixed", draft_k=4):
+    def capture(self, prompt, mode, node, budget, timeout_ms, policy="fixed", draft_k=4, pipeline="serial", verification_mode="serial"):
         body = {'model': 'nodelift', 'messages': [{'role': 'user', 'content': prompt}],
                 'stream': True, 'temperature': 0, 'max_tokens': budget,
                 'nodelift_mode': mode, 'nodelift_draft_k': draft_k,
-                'nodelift_draft_policy': policy, 'nodelift_remote_timeout_ms': timeout_ms}
+                'nodelift_draft_policy': policy, 'nodelift_remote_timeout_ms': timeout_ms,
+                'nodelift_pipeline':pipeline,'nodelift_verification_mode':verification_mode}
         if mode == 'remote_draft':
             body['nodelift_node_id'] = node
         c = http.client.HTTPConnection('127.0.0.1', self.port, timeout=30)
@@ -147,9 +148,12 @@ class Client:
                   'tokens_sha256': digest(tokens) if tokens else None, 'token_count': len(tokens),
                   'finish_reason': finish, 'fallback': bool(metrics.get('fallbacks') or (final or {}).get('fallback_reason')),
                   'chunk_arrivals': arrivals, 'stream_text_sha256': digest(''.join(text)),
-                  'metrics': {k: metrics.get(k) for k in ('load_ms', 'prefill_ms', 'request_total_ms', 'remote_wait_ms', 'accepted_tokens', 'proposed_tokens', 'fallbacks', 'draft_disabled_reason')},
-                  'blocks': [{k: b.get(k) for k in ('generated','accepted','proposed','draft_ms','block_ms','effective_mode','verification_batch_width','native_ms','effective_timeout_ms','decision','round_ms')} for b in (final or {}).get('blocks', [])],
-                  'identity': (final or {}).get('identity', {})}
+                  'metrics': metrics,
+                  'blocks': [{k: b.get(k) for k in ('generated','accepted','proposed','draft_ms','block_ms','effective_mode','verification_batch_width','native_ms','effective_timeout_ms','decision','round_ms','ready_offset_ms','published_offset_ms','native_timing','local_draft_timing','remote_timing','uncommitted_proposals','verification_mode')} for b in (final or {}).get('blocks', [])],
+                  'identity': (final or {}).get('identity', {}),
+                  'remote_trace': (final or {}).get('remote_trace', []),
+                  'lookahead_trace': (final or {}).get('lookahead_trace', []),
+                  'lookahead_cleanup_incomplete': (final or {}).get('lookahead_cleanup_incomplete', False)}
         return result
 
 

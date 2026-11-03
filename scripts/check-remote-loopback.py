@@ -1,4 +1,5 @@
 """Real-weight TLS protocol integration with an emulated node. NOT a phone benchmark."""
+import argparse
 import hashlib
 import http.client
 import json
@@ -17,6 +18,7 @@ from nodelift.state import State
 
 target=ROOT/'.models/qwen2.5-1.5b-instruct-q4_k_m.gguf';draft=ROOT/'.models/qwen2.5-0.5b-instruct-q4_k_m.gguf'
 with draft.open('rb') as f:sha=hashlib.file_digest(f,'sha256').hexdigest()
+parser=argparse.ArgumentParser();parser.add_argument('--output',type=Path,default=ROOT/'artifacts/remote-loopback.json');args=parser.parse_args()
 checks=[]
 with tempfile.TemporaryDirectory(prefix='nodelift-protocol-') as temp, Native() as worker:
     info=worker.call('load',path=str(draft),n_ctx=1024,threads=4,gpu_layers=999)
@@ -105,5 +107,6 @@ with tempfile.TemporaryDirectory(prefix='nodelift-protocol-') as temp, Native() 
             if native:native.close()
 report={'scope':'loopback TLS with emulated native node; NOT Android/iOS device evidence',
         'real_weights':True,'checks':checks,'timestamp':time.time()}
-(ROOT/'artifacts/remote-loopback.json').write_text(json.dumps(report,indent=2)+'\n')
+args.output.parent.mkdir(parents=True,exist_ok=True)
+temporary=args.output.with_suffix('.tmp');temporary.write_text(json.dumps(report,indent=2)+'\n');temporary.replace(args.output)
 print(json.dumps(report))

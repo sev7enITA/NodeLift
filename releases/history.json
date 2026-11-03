@@ -3,6 +3,21 @@
   "documentation_language": "en",
   "releases": [
     {
+      "version": "0.2.13",
+      "build": 16,
+      "published_at": null,
+      "status": "unpublished-experimental-build",
+      "title": "Native timing and bounded Android lookahead experiments",
+      "url": "https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.13",
+      "changes": [
+        "Separate native prefix synchronization, decode diagnostics and worker durations. Record late and uncommitted proposals on the host.",
+        "Add an explicit one-block Android lookahead experiment with exact committed-prefix matching, sequence checks and expiry. Serial target verification remains the default.",
+        "Handle expired Android inference leases without breaking the session. Harden chat control-token handling, response allocation failures and cooperative cancellation during native model loading."
+      ],
+      "validation": "Build and physical-device validation in progress; do not interpret this source entry as a published or tested binary.",
+      "limitations": "Android optimization and timing require this new binary on the physical device. iOS has timing source changes but does not advertise bounded lookahead. Experimental batch verification remains unqualified because previous tests found token divergence. No distributed speedup, pooled memory or energy saving is claimed."
+    },
+    {
       "version": "0.2.11",
       "build": 13,
       "published_at": "2026-11-02T02:34:00Z",

@@ -1,4 +1,4 @@
-"""Small-model upstream comparators. Real weights, serial arms, actual token IDs."""
+"""Matched upstream comparators. Real weights, serial arms, actual token IDs."""
 import argparse
 import hashlib
 import json
@@ -18,26 +18,30 @@ def digest(path):
     with open(path,'rb') as stream:return hashlib.file_digest(stream,'sha256').hexdigest()
 
 parser=argparse.ArgumentParser()
+parser.add_argument('--target',type=Path,default=ROOT/'.models/qwen2.5-1.5b-instruct-q4_k_m.gguf')
+parser.add_argument('--draft',type=Path,default=ROOT/'.models/qwen2.5-0.5b-instruct-q4_k_m.gguf')
+parser.add_argument('--prompt-manifest',type=Path,default=ROOT/'research/measurements/engine-control-pilot/manifest.json')
+parser.add_argument('--draft-widths',type=int,nargs='+',default=[4])
 parser.add_argument('--repetitions',type=int,default=2)
 parser.add_argument('--tokens',type=int,default=64)
 parser.add_argument('--output',default=str(ROOT/'research/measurements/upstream-control-pilot'))
 args=parser.parse_args()
 folder=Path(args.output);folder.mkdir(parents=True,exist_ok=True)
-target=ROOT/'.models/qwen2.5-1.5b-instruct-q4_k_m.gguf'
-draft=ROOT/'.models/qwen2.5-0.5b-instruct-q4_k_m.gguf'
+target=args.target.resolve()
+draft=args.draft.resolve()
 binary=ROOT/'.deps/llama.cpp/build/bin/llama-server'
-prompts=json.loads((ROOT/'research/measurements/engine-control-pilot/manifest.json').read_text())['prompts']
+prompts=json.loads(args.prompt_manifest.read_text())['prompts']
 with Native() as engine:
     engine.call('load',path=str(target),n_ctx=2048,threads=8,gpu_layers=999)
     prefixes=[engine.call('tokenize',text=p,chat=True)['tokens'] for p in prompts]
 manifest={'llama_commit':(ROOT/'native/llama.lock').read_text().strip(),'server_sha256':digest(binary),
           'native_tokenizer_sha256':digest(library_path()),'target_sha256':digest(target),'draft_sha256':digest(draft),
           'prompts':prompts,'prompt_token_ids':prefixes,'max_tokens':args.tokens,'repetitions':args.repetitions,
-          'seed':20261031,'started':time.time(),'limitations':['small control pair only',
+          'draft_widths':args.draft_widths,'source_sha256':digest(Path(__file__)),'seed':20261031,'started':time.time(),'limitations':['selected target/draft pair only',
           'arm order randomized in blocks; process/model restarted per arm',
           'warm request wall time includes HTTP; excludes model load',
           'EOS respected; not all requests generate the full token budget',
-          'best-local candidates for this pair, not an exhaustive optimized-runtime search']}
+          'best-local candidates for this pair, not an exhaustive optimized-runtime search', 'output equality assessed within upstream path; cross-harness timing is not a paired speedup']}
 (folder/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
 
 def request(path,value=None):
@@ -46,15 +50,17 @@ def request(path,value=None):
                                headers={'Content-Type':'application/json'})
     with urllib.request.urlopen(req,timeout=180) as response:return json.load(response)
 
-arms=['none','draft-simple','ngram-mod'];rng=random.Random(20261031);rows=[]
+assert all(1<=k<=16 for k in args.draft_widths)
+arms=[('none',4)]+[(mode,k) for mode in ('draft-simple','ngram-mod') for k in args.draft_widths];rng=random.Random(20261031);rows=[]
 with (folder/'runs.jsonl').open('w') as output:
     for repetition in range(args.repetitions):
         order=arms[:];rng.shuffle(order)
-        for arm in order:
+        for spec,k in order:
+            arm=spec if spec=='none' else spec+'-k'+str(k)
             command=[str(binary),'-m',str(target),'-ngl','999','-c','2048','-b','512','-ub','512',
                      '-t','8','-tb','8','-fa','on','--parallel','1','--host','127.0.0.1','--port','19869',
-                     '--spec-type',arm,'--spec-draft-n-max','4','--no-context-shift','--no-webui']
-            if arm=='draft-simple':command+=['-md',str(draft),'-ngld','999','-td','8','--spec-draft-p-min','0']
+                     '--spec-type',spec,'--spec-draft-n-max',str(k),'--no-context-shift','--no-webui']
+            if spec=='draft-simple':command+=['-md',str(draft),'-ngld','999','-td','8','--spec-draft-p-min','0']
             with (ROOT/'artifacts'/f'upstream-{repetition}-{arm}.log').open('w') as log:
                 process=subprocess.Popen(command,stdout=log,stderr=log)
                 try:
@@ -88,7 +94,8 @@ with (folder/'runs.jsonl').open('w') as output:
                     except subprocess.TimeoutExpired:process.kill();process.wait()
     baseline={(r['repetition'],r['prompt_id']):r for r in rows if r['arm']=='none'}
     summary=[]
-    for arm in arms[1:]:
+    for spec,k in arms[1:]:
+        arm=spec+'-k'+str(k)
         comparisons=[]
         for row in rows:
             if row['arm']!=arm:continue

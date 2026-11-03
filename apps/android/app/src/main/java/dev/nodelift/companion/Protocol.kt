@@ -43,6 +43,8 @@ data class Pairing(val url: String, val certificate: String, val sha256: String,
     }
 }
 
+class DiscardedDraft : Exception("Draft lease expired; result discarded")
+
 class Client(val pairing: Pairing, var token: String = "", private val context: Context? = null, private val onAuthenticatedResponse: (() -> Unit)? = null) {
     @Volatile var lastConnectionId: String = ""
         private set
@@ -118,6 +120,12 @@ class Client(val pairing: Pairing, var token: String = "", private val context: 
                 while(true){val count=input.read(buffer);if(count<0)break;require(output.size()+count<=1048576){"Response too large."};output.write(buffer,0,count)}
                 output.toByteArray()
             } ?: byteArrayOf()
+            if(path=="/v1/engine/result" && status==400 &&
+                runCatching { JSONObject(String(data,Charsets.UTF_8)).optString("error") }.getOrNull()=="unknown, expired or replayed inference lease") {
+                completed=true
+                if(token.isNotEmpty())onAuthenticatedResponse?.invoke()
+                throw DiscardedDraft()
+            }
             require(status in 200..299) { if (status == 401) "Pairing expired or revoked. Create a new invitation." else "The computer rejected the request ($status)." }
             require(data.size <= 1048576) { "Response too large." }
             if(token.isNotEmpty())onAuthenticatedResponse?.invoke()

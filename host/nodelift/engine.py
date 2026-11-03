@@ -2,6 +2,7 @@
 import copy
 import codecs
 from contextlib import closing
+from concurrent.futures import ThreadPoolExecutor
 import hashlib
 import json
 import secrets
@@ -13,6 +14,8 @@ from .native import Native, ROOT, library_path
 from .scheduling import AdaptiveDraftGate, PromptLookup
 from .model_library import ModelLibrary
 from .providers import Providers
+from .leases import Mailbox
+from .lookahead import LocalLookahead
 
 
 def prefix_digest(tokens):
@@ -23,58 +26,6 @@ def integer(value, low, high):
     if type(value) is not int or not low <= value <= high:
         raise ValueError('integer outside supported limits')
     return value
-
-
-class Mailbox:
-    def __init__(self):
-        self.condition = threading.Condition()
-        self.pending = {}
-
-    def request(self, node, payload, cancel, timeout=30):
-        message = {**payload, 'id': secrets.token_hex(16)}
-        entry = {'message': message, 'expires': time.monotonic()+timeout, 'delivered': False, 'result': None}
-        with self.condition:
-            if node in self.pending: raise RuntimeError('node already has an inference lease')
-            self.pending[node] = entry
-            self.condition.notify_all()
-            try:
-                while entry['result'] is None:
-                    if cancel.is_set(): raise RuntimeError('cancelled')
-                    remaining = entry['expires']-time.monotonic()
-                    if remaining <= 0: raise TimeoutError('remote draft deadline exceeded')
-                    self.condition.wait(min(remaining, .2))
-                return entry['result']
-            finally:
-                if self.pending.get(node) is entry: del self.pending[node]
-                self.condition.notify_all()
-
-    def poll(self, node, timeout=5):
-        deadline = time.monotonic()+timeout
-        with self.condition:
-            while True:
-                entry = self.pending.get(node)
-                if entry and not entry['delivered'] and entry['expires'] > time.monotonic():
-                    entry['delivered'] = True
-                    return {'work': entry['message']}
-                remaining = deadline-time.monotonic()
-                if remaining <= 0: return {'work': None}
-                self.condition.wait(remaining)
-
-    def submit(self, node, result):
-        with self.condition:
-            entry = self.pending.get(node)
-            if not entry or not entry['delivered'] or entry['expires'] <= time.monotonic() or entry['result'] is not None:
-                raise ValueError('unknown, expired or replayed inference lease')
-            expected = entry['message']
-            for field in ('id', 'epoch', 'prefix_hash', 'tokenizer_fingerprint', 'model_sha256'):
-                if result.get(field) != expected[field]: raise ValueError('stale or mismatched draft identity')
-            ids = result.get('tokens', [])
-            if not isinstance(ids, list) or len(ids) > expected['count'] or any(type(i) is not int or i<0 or i>=expected['vocab_size'] for i in ids):
-                raise ValueError('invalid draft token IDs')
-            if not ids and not result.get('error'): raise ValueError('empty successful draft')
-            entry['result'] = {'tokens':ids, 'error':str(result.get('error',''))[:300]}
-            self.condition.notify_all()
-            return {'accepted':True}
 
 
 class Controller:
@@ -122,8 +73,11 @@ class Controller:
 
     def status(self):
         with self.lock:
+            runs=copy.deepcopy(self.runs[-30:][::-1])
+            for run in runs:
+                if run.get('epoch'):run['remote_trace']=self.mailbox.trace(run['epoch'])
             return {'available':library_path().exists(), 'busy':self.busy, 'models':self.models(),
-                    'config':dict(self.config), 'runs':copy.deepcopy(self.runs[-30:][::-1]),
+                    'config':dict(self.config), 'runs':runs,
                     'backend':'llama.cpp locked native core · greedy experiment',
                     'sampler':'greedy', 'capacity_sharding':False, 'library':self.library.status(), 'providers':self.providers.status()}
 
@@ -172,8 +126,14 @@ class Controller:
         if not isinstance(prompt,str) or not prompt.strip() or len(prompt.encode())>32768:raise ValueError('prompt required, maximum 32 KiB')
         mode=values.get('mode','host')
         if mode not in ('host','local_draft','remote_draft','lookup'):raise ValueError('unsupported inference mode')
+        verification_mode=values.get('verification_mode','serial')
+        if verification_mode not in ('serial','experimental_batch'):raise ValueError('unsupported verification mode')
+        pipeline=values.get('pipeline','serial')
+        if pipeline not in ('serial','bounded_v1'):raise ValueError('unsupported pipeline')
+        if pipeline!='serial' and mode not in ('local_draft','remote_draft'):raise ValueError('lookahead requires a draft mode')
         draft_policy=values.get('draft_policy','fixed')
         if draft_policy not in ('fixed','adaptive'):raise ValueError('unsupported draft policy')
+        if pipeline!='serial' and draft_policy!='fixed':raise ValueError('bounded lookahead requires fixed policy')
         budget=integer(values.get('max_tokens',64),1,512);k=integer(values.get('draft_k',4),1,16)
         remote_timeout_ms=integer(values.get('remote_timeout_ms',30000),500,60000)
         backend=values.get('backend','native')
@@ -189,10 +149,11 @@ class Controller:
             if mode=='remote_draft':
                 peer=next((n for n in self.state.snapshot()['nodes'] if n['id']==node_id),None)
                 if not peer or not peer['online'] or not peer['capabilities'].get('engine_ready'):raise ValueError('select an online native draft node')
+                if pipeline!='serial' and not peer['capabilities'].get('bounded_lookahead'):raise ValueError('companion does not support bounded lookahead')
             run={'id':secrets.token_hex(12),'epoch':secrets.token_hex(16),'created':time.time(),'status':'loading',
                  'backend':backend,'provider_model':values.get('provider_model') if backend!='native' else None,
                  'mode':mode,'prompt':prompt,'max_tokens':budget,'draft_k':k,'node_id':node_id,
-                 'draft_policy':draft_policy,
+                 'draft_policy':draft_policy,'verification_mode':verification_mode,'pipeline':pipeline,
                  'remote_timeout_ms':remote_timeout_ms,'text':'','metrics':{},'blocks':[]}
             if messages is not None:run['messages']=messages
             self.busy=True;self.cancelled.clear();self.runs.append(copy.deepcopy(run))
@@ -277,6 +238,10 @@ class Controller:
 
     def _execute(self, run, config):
         submitted=time.perf_counter();generated=[];accepted=proposed=0;fallbacks=0;remote_wait_ms=0
+        run['metrics']['timing_schema_version']=3
+        local_pipeline=None;remote_pool=None;first_remote=None;sequence=0
+        pipeline=run.get('pipeline','serial')
+        verification_mode=run.get('verification_mode','serial')
         gate=AdaptiveDraftGate() if run.get('draft_policy')=='adaptive' and run['mode']!='host' else None
         lookup=PromptLookup() if run['mode']=='lookup' else None
         decoder=codecs.getincrementaldecoder('utf-8')('replace')
@@ -292,22 +257,48 @@ class Controller:
             draft_sha=self._sha(config['draft_model']) if run['mode'] in ('local_draft','remote_draft') else None
             run['identity']={'target_sha256':self._sha(config['target_model']),'draft_sha256':draft_sha,
                              'tokenizer_fingerprint':fingerprint,'config':config,'llama_commit':(ROOT/'native/llama.lock').read_text().strip()}
+            run['identity']['verification_mode']=verification_mode
+            run['identity']['pipeline']=pipeline
+            run['identity']['target_runtime']=copy.deepcopy(self.target_info)
+            run['identity']['local_draft_resident_at_start']=self.draft is not None
             if gate:run['identity']['draft_policy_version']=gate.version
             started=time.perf_counter();run['status']='running';self._publish(run)
             if self.cancelled.is_set():raise RuntimeError('cancelled')
-            self.target.call('prefill',prefix=prefix)
+            def payload_for(current,count,seq,op='draft'):
+                return {'op':op,'epoch':run['epoch'],'prefix':list(current),'prefix_hash':prefix_digest(current),
+                        'count':count,'sequence':seq,'pipeline':pipeline,'remaining':run['max_tokens']-len(generated),
+                        'tokenizer_fingerprint':fingerprint,'model_sha256':draft_sha,'vocab_size':self.target_info['vocab_size']}
+            if pipeline=='bounded_v1':
+                if run['mode']=='local_draft':
+                    self.draft.call('reset');local_pipeline=LocalLookahead(self.draft,self.cancelled)
+                    local_pipeline.initialize(prefix,min(run['draft_k'],run['max_tokens']))
+                elif run['mode']=='remote_draft':
+                    remote_pool=ThreadPoolExecutor(max_workers=1,thread_name_prefix='nodelift-prefill-overlap')
+                    first_remote=remote_pool.submit(self.mailbox.request,run['node_id'],payload_for(prefix,min(run['draft_k'],run['max_tokens']),0),self.cancelled,run['remote_timeout_ms']/1000)
+            prefill_start=time.perf_counter()
+            target_prefill=self.target.call('prefill',prefix=prefix)
+            target_prefill_wall_ms=(time.perf_counter()-prefill_start)*1000
+            target_prefill_native_ms=target_prefill.get('ms')
+            run['metrics'].update(target_prefill_wall_ms=target_prefill_wall_ms,
+                                  target_prefill_native_ms=target_prefill_native_ms,
+                                  target_prefill_tokens_per_second=len(prefix)*1000/target_prefill_native_ms if target_prefill_native_ms and target_prefill_native_ms>0 else None,
+                                  draft_initial_prefill_wall_ms=None,draft_initial_prefill_native_ms=None)
             if self.cancelled.is_set():raise RuntimeError('cancelled')
-            if run['mode']=='local_draft' and self.draft is not None:
+            if run['mode']=='local_draft' and self.draft is not None and local_pipeline is None:
                 self.draft.call('reset')
                 # Adaptive probes pay their own prefix prefill in the measured
                 # draft round, after useful host calibration tokens are emitted.
-                if not gate:self.draft.call('prefill',prefix=prefix)
+                if not gate:
+                    draft_prefill_start=time.perf_counter()
+                    draft_prefill=self.draft.call('prefill',prefix=prefix)
+                    run['metrics']['draft_initial_prefill_wall_ms']=(time.perf_counter()-draft_prefill_start)*1000
+                    run['metrics']['draft_initial_prefill_native_ms']=draft_prefill.get('ms')
             decoding=time.perf_counter();mode=run['mode']
             run['metrics']['prefill_ms']=(decoding-started)*1000
             while len(generated)<run['max_tokens']:
                 if self.cancelled.is_set():raise RuntimeError('cancelled')
                 block_start=time.perf_counter();count=min(run['draft_k'],run['max_tokens']-len(generated));draft_ms=0
-                verification_batch_width=0
+                verification_batch_width=0;response=None;draft_timing=None
                 decision=gate.choose() if gate else None
                 step_mode='host' if mode=='host' or (decision and decision.route=='host') else mode
                 attempted_draft=step_mode!='host';effective_timeout_ms=None
@@ -323,19 +314,24 @@ class Controller:
                         try:
                             if self.draft is None:self._load(config,True)
                             if self.cancelled.is_set():raise RuntimeError('cancelled')
-                            proposal=self.draft.call('draft',prefix=prefix,count=count)['tokens']
+                            if local_pipeline:
+                                local_reply=local_pipeline.request(prefix,count,run['max_tokens']-len(generated));proposal=local_reply['tokens']
+                            else:
+                                local_reply=self.draft.call('draft',prefix=prefix,count=count);proposal=local_reply['tokens']
+                            draft_timing=local_reply.get('timing')
                         except Exception:
                             if self.cancelled.is_set() or not gate:raise
                             gate.disable('local_draft_failure');proposal=[]
                     else:
                         try:
-                            payload={'op':'draft','epoch':run['epoch'],'prefix':prefix,'prefix_hash':prefix_digest(prefix),
-                                     'count':count,'tokenizer_fingerprint':fingerprint,'model_sha256':draft_sha,
-                                     'vocab_size':self.target_info['vocab_size']}
+                            payload=payload_for(prefix,count,sequence)
                             timeout=run['remote_timeout_ms']/1000
                             if gate:timeout=gate.remote_timeout(count,timeout)
                             effective_timeout_ms=timeout*1000
-                            response=self.mailbox.request(run['node_id'],payload,self.cancelled,timeout=timeout)
+                            if first_remote is not None:
+                                future=first_remote;first_remote=None;response=future.result()
+                            else:response=self.mailbox.request(run['node_id'],payload,self.cancelled,timeout=timeout)
+                            sequence+=1
                             if response.get('error'):raise RuntimeError(response['error'])
                             proposal=response['tokens']
                         except Exception as error:
@@ -347,7 +343,8 @@ class Controller:
                     if run['mode']=='remote_draft':remote_wait_ms+=draft_ms
                     if proposal:
                         verification_batch_width=len(proposal)+1
-                        result=self.target.call('verify',prefix=prefix,proposal=proposal,remaining=run['max_tokens']-len(generated))
+                        result=self.target.call('verify',prefix=prefix,proposal=proposal,remaining=run['max_tokens']-len(generated),strict=verification_mode=='serial')
+                        if response and response.get('lease_id'):self.mailbox.verified(run['node_id'],response['lease_id'],result.get('accepted',0))
                     else:
                         # Lookup misses and failed leases need no speculative
                         # batch. The ordinary target path synchronizes its KV.
@@ -362,17 +359,26 @@ class Controller:
                 run['text']+=decoder.decode(bytes.fromhex(decoded['bytes_hex']),final=False)
                 now=time.perf_counter()
                 if 'ttft_ms' not in run['metrics']:run['metrics']['ttft_ms']=(now-started)*1000
+                if 'worker_first_token_ready_ms' not in run['metrics']:run['metrics']['worker_first_token_ready_ms']=(now-submitted)*1000
+                if run['text'] and 'worker_first_text_ready_ms' not in run['metrics']:run['metrics']['worker_first_text_ready_ms']=(now-submitted)*1000
                 run['blocks'].append({'generated':len(ids),'accepted':result.get('accepted',0),'proposed':result.get('proposed',0),
                                       'draft_ms':draft_ms,'block_ms':(now-block_start)*1000,'effective_mode':step_mode,
+                                      'ready_offset_ms':(now-submitted)*1000,
+                                      'uncommitted_proposals':result.get('proposed',0)-result.get('accepted',0),
                                       'verification_batch_width':verification_batch_width,
-                                      'native_ms':result.get('ms'),'effective_timeout_ms':effective_timeout_ms,
+                                      'native_ms':result.get('ms'),'native_timing':result.get('timing'),'local_draft_timing':draft_timing,
+                                      'verification_mode':result.get('verification_mode','target_only'),
+                                      'remote_timing':response.get('timing') if response else None,
+                                      'effective_timeout_ms':effective_timeout_ms,
                                       'decision':decision.to_dict() if decision else None})
                 run['metrics'].update(generated_tokens=len(generated),accepted_tokens=accepted,proposed_tokens=proposed,
                                       elapsed_seconds=now-started,tokens_per_second=len(generated)/max(now-decoding,1e-9),
+                                      decode_seconds=now-decoding,uncommitted_proposals=proposed-accepted,
                                       fallbacks=fallbacks,remote_wait_ms=remote_wait_ms)
                 self._publish(run)
                 round_ms=(time.perf_counter()-block_start)*1000
                 run['blocks'][-1]['round_ms']=round_ms
+                run['blocks'][-1]['published_offset_ms']=(time.perf_counter()-submitted)*1000
                 if gate:
                     if attempted_draft and verification_batch_width:
                         gate.observe_draft(round_ms,len(ids),count)
@@ -386,6 +392,19 @@ class Controller:
         except Exception as error:
             run['status']='cancelled' if self.cancelled.is_set() else 'failed';run['error']=str(error)[:500];run['tokens']=generated
         finally:
+            cleanup_start=time.perf_counter()
+            if first_remote is not None and not first_remote.done():self.cancelled.set()
+            if remote_pool:remote_pool.shutdown(wait=True,cancel_futures=True)
+            if local_pipeline:
+                try:run['lookahead_trace']=local_pipeline.close()
+                except Exception:run['lookahead_cleanup_incomplete']=True
+            if pipeline=='bounded_v1' and run['mode']=='remote_draft' and 'identity' in run:
+                try:
+                    self.mailbox.request(run['node_id'],payload_for(prefix,0,sequence,'finish'),threading.Event(),timeout=2)
+                except Exception:run['lookahead_cleanup_incomplete']=True
+            run['metrics']['cleanup_ms']=(time.perf_counter()-cleanup_start)*1000
+            if run.get('epoch'):run['remote_trace']=self.mailbox.trace(run['epoch'])
+            if 'identity' in run:run['identity']['local_draft_resident_at_finish']=self.draft is not None
             run['finished']=time.time()
             run['metrics']['request_total_ms']=(time.perf_counter()-submitted)*1000
             self._publish(run)
