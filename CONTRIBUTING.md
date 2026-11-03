@@ -10,6 +10,6 @@ Retain third-party licenses and notices; do not vendor weights. Focused reproduc
 
 ## Documentation and release notes
 
-Maintain authored repository documentation, Wiki pages, issue/PR templates and release notes in English. Runtime localization catalogs, non-English benchmark fixtures, third-party originals and verbatim review evidence retain their original text and provenance; explain them through English guides. Do not rewrite original measurement data or transcripts as though a translation were the source.
+Maintain authored repository documentation, Wiki pages, issue/PR templates, release notes and presentation screenshots in English. Capture the real interface with English selected; never translate image pixels or relabel an older capture as a new observation. Runtime localization catalogs, non-English benchmark fixtures, third-party originals and verbatim review evidence retain their original text and provenance; explain them through English guides. Do not rewrite original measurement data or transcripts as though a translation were the source.
 
 Every published mobile build must have a version/build entry in `releases/history.json`. Generate the repository and portal changelogs with `python3 scripts/release-history.py`, then check with `--check`. Android/iOS build scripts require matching notes before compilation. Follow [the release process](docs/RELEASING.md), publish the portal, and verify the actual remote bytes. CI cannot establish that the website was deployed.

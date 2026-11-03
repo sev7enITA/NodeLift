@@ -8,11 +8,9 @@ Original project artwork, not measured network activity. [Authorship and creatio
 
 ## Public showcase
 
-![NodeLift public showcase on desktop, captured 31 October 2026](evidence/showcase-2026-10-31/live-desktop.jpg)
+![NodeLift public showcase in English, captured 3 November 2026](images/showcase-en-2026-11-03.jpg)
 
-![NodeLift public showcase at a mobile viewport, captured 31 October 2026](evidence/showcase-2026-10-31/live-mobile.jpg)
-
-These are actual captures of the **public showcase**, dated 31 October 2026, before the later credits section. The mobile image is a browser layout, not the Android/iOS companion. [Publication evidence](SHOWCASE_QA.md) · [Live site](https://www.fabriziodegni.com/NodeLift/).
+This is an actual English-language browser capture of the public showcase, not the Android/iOS companion. Earlier Italian captures remain dated historical publication evidence and are no longer the repository's presentation images. [Publication evidence](SHOWCASE_QA.md) · [Live English site](https://www.fabriziodegni.com/NodeLift/?lang=en).
 
 ## Execution flow
 
@@ -26,4 +24,4 @@ The desktop control room includes authorship, runtime host version, manual relea
 
 ![Desktop About and References, English](evidence/about-2026-11-01/desktop-about-en.png)
 
-[390px Italian browser view](evidence/about-2026-11-01/mobile-about-it.png) · [UI verification scope](evidence/about-2026-11-01/desktop-qa.json) · [Build verification](evidence/about-2026-11-01/build-verification.json)
+[UI verification scope](evidence/about-2026-11-01/desktop-qa.json) · [Build verification](evidence/about-2026-11-01/build-verification.json)

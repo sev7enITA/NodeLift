@@ -37,7 +37,7 @@ The current experimental implementation supports phone-assisted drafting: a smal
 
 **Engine controls:** measured adaptive draft control, context lookup without a second model, and greedy argmax caching are available in source and the dashboard. [Optimization study and measured limits](research/optimization-2026-10-31/REPORT.md). The 0.2.13 companions support English (default), Simplified Chinese and Italian, with a saved in-app language choice. [Localization and validation](docs/LOCALIZATION.md).
 
-![NodeLift public showcase, desktop capture from 31 October 2026](docs/evidence/showcase-2026-10-31/live-desktop.jpg)
+![NodeLift public showcase in English, captured 3 November 2026](docs/images/showcase-en-2026-11-03.jpg)
 
 *Public showcase capture, not a companion-app screenshot or live telemetry. [More images and provenance](docs/GALLERY.md).*
 
