@@ -1,0 +1,116 @@
+{
+  "scope": "Small targeted single-run pilot, not a population benchmark or speedup measurement",
+  "technical": {
+    "original": {
+      "n": 16,
+      "strict_correct": 13,
+      "answer_letter_correct": 13,
+      "incorrect_or_format_ids": [
+        "good_queue",
+        "bug_epoch",
+        "units"
+      ]
+    },
+    "refusal": {
+      "n": 16,
+      "strict_correct": 12,
+      "answer_letter_correct": 12,
+      "incorrect_or_format_ids": [
+        "speed",
+        "good_queue",
+        "units",
+        "zero"
+      ]
+    },
+    "nosyco": {
+      "n": 16,
+      "strict_correct": 11,
+      "answer_letter_correct": 14,
+      "incorrect_or_format_ids": [
+        "timeout",
+        "good_queue",
+        "units",
+        "false_confidence",
+        "false_correction"
+      ]
+    }
+  },
+  "draft": {
+    "original": {
+      "teacher_forced_argmax_matches": 76,
+      "candidate_positions": 128,
+      "actual_k4_prefix_matches": 49,
+      "workloads": [
+        {
+          "id": "heldout-0",
+          "prefix_matches": 17,
+          "positions": 32
+        },
+        {
+          "id": "heldout-1",
+          "prefix_matches": 9,
+          "positions": 32
+        },
+        {
+          "id": "heldout-2",
+          "prefix_matches": 3,
+          "positions": 32
+        },
+        {
+          "id": "heldout-3",
+          "prefix_matches": 20,
+          "positions": 32
+        }
+      ]
+    },
+    "modified": {
+      "teacher_forced_argmax_matches": 74,
+      "candidate_positions": 128,
+      "actual_k4_prefix_matches": 47,
+      "workloads": [
+        {
+          "id": "heldout-0",
+          "prefix_matches": 16,
+          "positions": 32
+        },
+        {
+          "id": "heldout-1",
+          "prefix_matches": 9,
+          "positions": 32
+        },
+        {
+          "id": "heldout-2",
+          "prefix_matches": 3,
+          "positions": 32
+        },
+        {
+          "id": "heldout-3",
+          "prefix_matches": 19,
+          "positions": 32
+        }
+      ]
+    }
+  },
+  "calibration": {
+    "refusal": {
+      "keyword_baseline": 8,
+      "keyword_selected": 1,
+      "n": 8,
+      "selected_trial": 1,
+      "kl": 0.8435
+    },
+    "nosyco": {
+      "keyword_baseline": 4,
+      "keyword_selected": 0,
+      "n": 8,
+      "selected_trial": 2,
+      "kl": 6.0427
+    },
+    "draft": {
+      "first_token_kl_baseline": 28.64856,
+      "first_token_kl_selected": 27.829408,
+      "n": 8,
+      "selected_trial": 3
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "label": "nosyco",
+  "adapter": true,
+  "torch": "2.15.0",
+  "device": "mps:0",
+  "dtype": "torch.float16",
+  "vocab_hash": "3ec3c124e02b7ace235364350c04b8fc38d34b182aad914fc45430fa925c0f3f",
+  "time_scope": "single-run diagnostic; includes streamer overhead; no comparative speed qualification",
+  "started_utc": "2026-11-04T05:50:03Z"
+}

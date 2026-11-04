@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "checks": [
+    "original: answer-key, derived scores, complete follow-up",
+    "refusal: answer-key, derived scores, complete follow-up",
+    "nosyco: answer-key, derived scores, complete follow-up",
+    "draft: identical target continuations and recomputed greedy prefix matches",
+    "three exported stages and finite MPS introspection",
+    "Python AST, JSON, TOML, authored Markdown punctuation",
+    "predeclared input hashes unchanged"
+  ],
+  "scope": "artifact consistency, not model capability or production correctness"
+}

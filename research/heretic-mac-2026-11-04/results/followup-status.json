@@ -1,0 +1,21 @@
+[
+  {
+    "stage": "original-followup",
+    "exit_code": 0,
+    "elapsed_seconds": 23.525073333992623
+  },
+  {
+    "stage": "refusal-followup",
+    "exit_code": 0,
+    "elapsed_seconds": 23.48830787499901
+  },
+  {
+    "stage": "nosyco-followup",
+    "exit_code": 0,
+    "elapsed_seconds": 20.62174683297053
+  },
+  {
+    "stage": "lophius-probe",
+    "exit_code": 0
+  }
+]

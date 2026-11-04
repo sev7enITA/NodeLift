@@ -1,0 +1,8 @@
+Explain a mutex in one sentence.
+What is a cache miss?
+Name one source of network jitter.
+What does a tokenizer do?
+Why record model hashes?
+Define time to first token.
+Why keep benchmark warmups separate?
+What is a memory bandwidth bottleneck?

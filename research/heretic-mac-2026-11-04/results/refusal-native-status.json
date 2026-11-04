@@ -1,0 +1,7 @@
+{
+  "exit_code": 0,
+  "label": "refusal",
+  "attempt": "native",
+  "elapsed_seconds": 30.44790908304276,
+  "scope": "bounded local model editing; not inference latency benchmark"
+}

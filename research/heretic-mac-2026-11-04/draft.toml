@@ -1,0 +1,42 @@
+model = "Qwen/Qwen3-0.6B"
+model_commit = "c1899de289a04d12100db370d81485cdf75e47ca"
+dtypes = [
+    "float16",
+]
+device_map = "mps"
+quantization = "none"
+batch_size = 1
+max_batch_size = 1
+max_response_length = 32
+response_prefix = ""
+n_trials = 4
+n_startup_trials = 2
+seed = 42
+study_checkpoint_dir = "/Users/fabriziodegni/Desktop/EVENTS, SPEECH, MY RESEARCHES and FRAMEWORKS/ExpandMyHW/artifacts/heretic-mac-2026-11-04/draft-checkpoints"
+trial_index = 0
+model_action = "save"
+save_directory = "/Users/fabriziodegni/Desktop/EVENTS, SPEECH, MY RESEARCHES and FRAMEWORKS/ExpandMyHW/artifacts/heretic-mac-2026-11-04/draft-adapter"
+export_strategy = "adapter"
+system_prompt = "You are a helpful assistant."
+modified_model_type = "teacher-kl-pilot"
+
+[scorer.TeacherKL]
+teacher_directory = "/Users/fabriziodegni/Desktop/EVENTS, SPEECH, MY RESEARCHES and FRAMEWORKS/ExpandMyHW/artifacts/heretic-mac-2026-11-04/original"
+
+[modifier.ARA]
+lora_rank = 8
+n_optimization_steps = 1
+max_iter = 5
+
+[modifier.ARA.good_prompts]
+dataset = "mlabonne/harmless_alpaca"
+commit = "02c6a92cfcf11bb0c387334f8146d149d65b587f"
+split = "train[:16]"
+column = "text"
+
+[modifier.ARA.bad_prompts]
+dataset = "/Users/fabriziodegni/Desktop/EVENTS, SPEECH, MY RESEARCHES and FRAMEWORKS/ExpandMyHW/research/heretic-mac-2026-11-04/calibration.txt"
+
+[[scorers]]
+plugin = "/Users/fabriziodegni/Desktop/EVENTS, SPEECH, MY RESEARCHES and FRAMEWORKS/ExpandMyHW/research/heretic-mac-2026-11-04/teacher_scorer.py:TeacherKL"
+optimization = "minimize"

@@ -1,0 +1,23 @@
+W1104 06:36:50.037000 1616 nodelift-heretic-2-env/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:   0%|          | 1/311 [00:00<02:20,  2.20it/s]Loading weights:  33%|███▎      | 104/311 [00:00<00:00, 246.30it/s]Loading weights:  74%|███████▍  | 230/311 [00:00<00:00, 495.19it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 426.67it/s]
+Traceback (most recent call last):
+  File "/tmp/nodelift-heretic-2-env/lib/python3.12/site-packages/transformers/tokenization_utils_base.py", line 293, in __getattr__
+    return self.data[item]
+           ~~~~~~~~~^^^^^^
+KeyError: 'shape'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/tmp/nodelift-heretic-smoke.py", line 8, in <module>
+    y=m.generate(input_ids=x,max_new_tokens=8,do_sample=False,pad_token_id=tok.eos_token_id)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/nodelift-heretic-2-env/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 158, in no_grad
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/nodelift-heretic-2-env/lib/python3.12/site-packages/transformers/generation/utils.py", line 2835, in generate
+    batch_size = inputs_tensor.shape[0]
+                 ^^^^^^^^^^^^^^^^^^^
+  File "/tmp/nodelift-heretic-2-env/lib/python3.12/site-packages/transformers/tokenization_utils_base.py", line 295, in __getattr__
+    raise AttributeError
+AttributeError

@@ -1,0 +1,7 @@
+{
+  "machine": "arm64",
+  "os": "macOS-27.2-arm64-arm-64bit-Mach-O",
+  "chip": "Apple M3 Max",
+  "memory_bytes": 68719476736,
+  "scope": "Non-identifying host properties; no energy or thermal measurements"
+}

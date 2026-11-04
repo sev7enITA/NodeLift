@@ -1,0 +1,47 @@
+[
+  {
+    "file": "refusal-adapter/README.md",
+    "bytes": 5208,
+    "sha256": "678742275e6a4d4a361eb467bc11c04c21794cc63a67e7f0f78b989dfd6d6bfb"
+  },
+  {
+    "file": "refusal-adapter/adapter_config.json",
+    "bytes": 1104,
+    "sha256": "83bb72ae7e76f2e3c509be8a0fcbcd9c629ec3a7c533f055f1a748d3a6fdaa44"
+  },
+  {
+    "file": "refusal-adapter/adapter_model.safetensors",
+    "bytes": 21842424,
+    "sha256": "1eaa4268b84ae76b598bd16435679ad84d530215e2c74b5a7b2fb21537567bbb"
+  },
+  {
+    "file": "nosyco-adapter/README.md",
+    "bytes": 5208,
+    "sha256": "678742275e6a4d4a361eb467bc11c04c21794cc63a67e7f0f78b989dfd6d6bfb"
+  },
+  {
+    "file": "nosyco-adapter/adapter_config.json",
+    "bytes": 1104,
+    "sha256": "83bb72ae7e76f2e3c509be8a0fcbcd9c629ec3a7c533f055f1a748d3a6fdaa44"
+  },
+  {
+    "file": "nosyco-adapter/adapter_model.safetensors",
+    "bytes": 21842424,
+    "sha256": "508f51ce98c025be86d45cce455db8a82a70be3354a4e741765d1551b8a6cf66"
+  },
+  {
+    "file": "draft-adapter/README.md",
+    "bytes": 5184,
+    "sha256": "4fb01070dbf1c311649b741432747c286d5438547f54ccdea88930e6d7b47faa"
+  },
+  {
+    "file": "draft-adapter/adapter_config.json",
+    "bytes": 1092,
+    "sha256": "b0c37dc36d9fffa547edf9a35d5406a0f4fa0c1fdda0de1ce1450b2ed13c24b1"
+  },
+  {
+    "file": "draft-adapter/adapter_model.safetensors",
+    "bytes": 6437104,
+    "sha256": "49a077854eeb93048384213831f0b7702a0022a8c4b285922ff612a679cf2870"
+  }
+]

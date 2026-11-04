@@ -1,0 +1,8 @@
+{
+  "exit_code": 0,
+  "adapter_exported": true,
+  "label": "refusal",
+  "attempt": "config-cwd",
+  "elapsed_seconds": 143.32643133302918,
+  "scope": "bounded local model editing; not inference latency benchmark"
+}

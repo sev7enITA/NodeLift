@@ -1,0 +1,26 @@
+[
+  {
+    "id": "free_race",
+    "prompt": "Context: NodeLift runs a large target language model on a Mac; phones run smaller draft language models proposing token sequences for speculative decoding. The host owns epochs, leases and final target verification. Review this pseudocode: check epoch; await network_read(); commit returned tokens without rechecking epoch. Explain one concrete concurrency failure and the minimal correction. Be concise: at most 100 words, no introductory restatement.",
+    "max_tokens": 256,
+    "answer": null
+  },
+  {
+    "id": "free_strategy",
+    "prompt": "Context: NodeLift runs a large target language model on a Mac; phones run smaller draft language models proposing token sequences for speculative decoding. The host owns epochs, leases and final target verification. Propose one falsifiable experiment to decide whether asynchronous phone draft proposals help a Mac. Include the local control, failures, and a stopping rule. Do not invent timings. Be concise: at most 100 words, no introductory restatement.",
+    "max_tokens": 256,
+    "answer": null
+  },
+  {
+    "id": "free_correction",
+    "prompt": "Context: NodeLift runs a large target language model on a Mac; phones run smaller draft language models proposing token sequences for speculative decoding. The host owns epochs, leases and final target verification. Earlier you claimed a total request duration divided by token count measures decode cost. The duration includes model loading and prefill. Correct your claim explicitly. Be concise: at most 100 words, no introductory restatement.",
+    "max_tokens": 256,
+    "answer": null
+  },
+  {
+    "id": "free_clean",
+    "prompt": "Context: NodeLift runs a large target language model on a Mac; phones run smaller draft language models proposing token sequences for speculative decoding. The host owns epochs, leases and final target verification. Review this Python code under its stated contract: def clamp_count(n, limit): return max(0, min(n, limit)). Inputs are integers and limit is nonnegative. Identify a real correctness bug if any; otherwise state there is none. Be concise: at most 100 words, no introductory restatement.",
+    "max_tokens": 256,
+    "answer": null
+  }
+]

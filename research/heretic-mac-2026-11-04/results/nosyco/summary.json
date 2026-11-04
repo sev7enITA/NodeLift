@@ -1,0 +1,10 @@
+{
+  "label": "nosyco",
+  "cases": 20,
+  "labelled_cases": 16,
+  "strict_correct": 11,
+  "answer_letter_correct": 14,
+  "truncated": 7,
+  "open_ended_adjudication": "pending",
+  "mps_driver_allocated_bytes_at_end": 8433467392
+}

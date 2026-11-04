@@ -1,0 +1,134 @@
+W1104 06:50:28.386000 5986 /private/tmp/nodelift-heretic-2-env/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+█░█░█▀▀░█▀▄░█▀▀░▀█▀░█░█▀▀  v2.0.0
+█▀█░█▀▀░█▀▄░█▀▀░░█░░█░█░░  https://heretic-project.org
+▀░▀░▀▀▀░▀░▀░▀▀▀░░▀░░▀░▀▀▀  https://github.com/p-e-w/heretic
+
+Detected 1 MPS device(s)
+Driver Version: 27.2
+* MPS 0: Apple Metal
+
+Loading model Qwen/Qwen3-0.6B...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+* Trying dtype float16...
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:  11%|█         | 34/311 [00:00<00:00, 332.20it/s]Loading weights:  45%|████▌     | 140/311 [00:00<00:00, 747.77it/s]Loading weights:  83%|████████▎ | 259/311 [00:00<00:00, 913.53it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 889.71it/s]
+* Transformer model with 28 layers
+* Modifiable components:
+  * attn.o_proj: 28 modules total
+  * mlp.down_proj: 28 modules total
+
+Resident system RAM: 0.81 GB
+Allocated MPS memory: 1.12 GB
+Driver (reserved) MPS memory: 2.45 GB
+
+Loading and initializing scorers...
+* Loaded: TeacherKL
+
+Getting baseline scores...
+* Baseline Teacher first-token KL (calibration only): 28.648560
+
+Loading and initializing modifiers...
+* Loaded: ARA
+
+Loading good prompts from mlabonne/harmless_alpaca...
+* 16 prompts loaded
+
+Loading bad prompts from /Users/fabriziodegni/Desktop/EVENTS, SPEECH, MY 
+RESEARCHES and 
+FRAMEWORKS/ExpandMyHW/research/heretic-mac-2026-11-04/calibration.txt...
+* 8 prompts loaded
+
+Obtaining module I/O for good prompts...
+
+Obtaining module I/O for bad prompts...
+
+Running trial 1 of 4...
+* Parameters:
+  * start_layer_index = 5
+  * end_layer_index = 28
+  * preserve_good_behavior_weight = 0.7320
+  * steer_bad_behavior_weight = 0.0248
+  * overcorrect_relative_weight = 0.2028
+  * neighbor_count = 2
+* Resetting model...
+* Modifying model using Arbitrary-Rank Ablation (ARA)...
+* Evaluating...
+  * Teacher first-token KL (calibration only): 28.135176
+
+Elapsed time: 3s
+Estimated remaining time: 8s
+Resident system RAM: 0.89 GB
+Allocated MPS memory: 1.12 GB
+Driver (reserved) MPS memory: 1.47 GB
+
+Running trial 2 of 4...
+* Parameters:
+  * start_layer_index = 0
+  * end_layer_index = 27
+  * preserve_good_behavior_weight = 0.6011
+  * steer_bad_behavior_weight = 0.0680
+  * overcorrect_relative_weight = 0.0268
+  * neighbor_count = 8
+* Resetting model...
+* Modifying model using Arbitrary-Rank Ablation (ARA)...
+* Evaluating...
+  * Teacher first-token KL (calibration only): 28.324342
+
+Elapsed time: 4s
+Estimated remaining time: 4s
+Resident system RAM: 0.89 GB
+Allocated MPS memory: 1.12 GB
+Driver (reserved) MPS memory: 1.48 GB
+
+Running trial 3 of 4...
+* Parameters:
+  * start_layer_index = 4
+  * end_layer_index = 19
+  * preserve_good_behavior_weight = 0.9107
+  * steer_bad_behavior_weight = 0.0177
+  * overcorrect_relative_weight = 0.0977
+  * neighbor_count = 1
+* Resetting model...
+* Modifying model using Arbitrary-Rank Ablation (ARA)...
+* Evaluating...
+  * Teacher first-token KL (calibration only): 27.829408
+
+Elapsed time: 5s
+Estimated remaining time: 2s
+Resident system RAM: 0.89 GB
+Allocated MPS memory: 1.12 GB
+Driver (reserved) MPS memory: 1.48 GB
+
+Running trial 4 of 4...
+* Parameters:
+  * start_layer_index = 1
+  * end_layer_index = 15
+  * preserve_good_behavior_weight = 0.7175
+  * steer_bad_behavior_weight = 0.0087
+  * overcorrect_relative_weight = 0.5734
+  * neighbor_count = 1
+* Resetting model...
+* Modifying model using Arbitrary-Rank Ablation (ARA)...
+* Evaluating...
+  * Teacher first-token KL (calibration only): 28.304955
+
+Elapsed time: 6s
+Resident system RAM: 0.89 GB
+Allocated MPS memory: 1.12 GB
+Driver (reserved) MPS memory: 1.48 GB
+
+Optimization finished!
+Warning: Input is not a terminal (fd=0).
+
+Restoring model from trial 3...
+* Parameters:
+  * start_layer_index = 4
+  * end_layer_index = 19
+  * preserve_good_behavior_weight = 0.9107
+  * steer_bad_behavior_weight = 0.0177
+  * overcorrect_relative_weight = 0.0977
+  * neighbor_count = 1
+* Resetting model...
+* Modifying model using Arbitrary-Rank Ablation (ARA)...
+Saving LoRA adapter...
+Model saved to /Users/fabriziodegni/Desktop/EVENTS, SPEECH, MY RESEARCHES and 
+FRAMEWORKS/ExpandMyHW/artifacts/heretic-mac-2026-11-04/draft-adapter.

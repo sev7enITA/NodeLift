@@ -1,0 +1,6 @@
+W1104 06:38:12.889000 2123 nodelift-heretic-2-env/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:   5%|▍         | 14/311 [00:00<00:02, 136.53it/s]Loading weights:  18%|█▊        | 56/311 [00:00<00:00, 279.44it/s]Loading weights:  32%|███▏      | 101/311 [00:00<00:00, 352.04it/s]Loading weights:  46%|████▌     | 143/311 [00:00<00:00, 368.22it/s]Loading weights:  59%|█████▊    | 182/311 [00:00<00:00, 367.52it/s]Loading weights:  70%|███████   | 219/311 [00:00<00:00, 362.00it/s]Loading weights:  82%|████████▏ | 256/311 [00:00<00:00, 363.07it/s]Loading weights:  96%|█████████▋| 300/311 [00:00<00:00, 382.13it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 363.64it/s]
+{
+  "device": "mps:0",
+  "text": "6 \u00d7 7 = 42"
+}

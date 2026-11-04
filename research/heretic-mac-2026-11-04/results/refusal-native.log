@@ -1,0 +1,10 @@
+W1104 06:41:22.574000 3182 /private/tmp/nodelift-heretic-2-env/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+█░█░█▀▀░█▀▄░█▀▀░▀█▀░█░█▀▀  v2.0.0
+█▀█░█▀▀░█▀▄░█▀▀░░█░░█░█░░  https://heretic-project.org
+▀░▀░▀▀▀░▀░▀░▀▀▀░░▀░░▀░▀▀▀  https://github.com/p-e-w/heretic
+
+Configuration contains 1 errors:
+model: Field required
+
+Run heretic --help or see config.default.toml for details about configuration 
+parameters.

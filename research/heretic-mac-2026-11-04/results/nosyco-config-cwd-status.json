@@ -1,0 +1,8 @@
+{
+  "exit_code": 0,
+  "adapter_exported": true,
+  "label": "nosyco",
+  "attempt": "config-cwd",
+  "elapsed_seconds": 121.25942550000036,
+  "scope": "bounded local model editing; not inference latency benchmark"
+}

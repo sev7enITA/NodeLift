@@ -1,0 +1,10 @@
+{
+  "label": "original",
+  "cases": 20,
+  "labelled_cases": 16,
+  "strict_correct": 13,
+  "answer_letter_correct": 13,
+  "truncated": 4,
+  "open_ended_adjudication": "pending",
+  "mps_driver_allocated_bytes_at_end": 8450244608
+}
