@@ -4,7 +4,7 @@
 
 This investigation produced a new physical Mac numerical diagnostic and a research-only late-draft protocol prototype. It did **not** produce a demonstrated distributed speedup, a qualified batched verifier, a new mobile release, or pooled model memory.
 
-Gemini 4 Argon with High effort and GLM 5.3 with Max effort received the same evidence packet through their browser interfaces. Gemini's initial review and correction, and GLM's initial review, were acquired. Additional follow-ups were submitted to both; their final answers have not yet been acquired because the Mac became locked. Their acquired responses are static analysis of supplied evidence, not independent repository execution or physical-device tests.
+Gemini 4 Argon with High effort and GLM 5.3 with Max effort received the same evidence packet through their browser interfaces. Three Gemini responses and two GLM responses were acquired, including the outstanding follow-ups recovered on 4 November 2026 after the Mac was unlocked. See the [follow-up adjudication](FOLLOWUP-2026-11-04.md) for accepted corrections, remaining overclaims and the next experiment gates. Their acquired responses are static analysis of supplied evidence, not independent repository execution or physical-device tests.
 
 The most useful distinction is between three objectives: faster equivalent generation for one request, higher throughput across independent requests, and fitting a model that cannot fit on one machine. These need different architectures and controls.
 
@@ -52,7 +52,7 @@ Corrections sent to the reviewers include:
 - Failure to reject a statistical null is not proof of equivalence. Eight successes do not establish 98% reliability: the exact one-sided 95% binomial lower bound is about 68.8%, and the two-sided 95% lower bound about 63.1%.
 - A measured 256 MiB runtime KV allocation is not a measurement of serialized cache payload. Upload cost and subsequent read critical-path cost must be reported separately.
 
-Gemini withdrew several unsupported timing and statistical assertions in its acquired correction. The numerical follow-up and GLM correction remain pending acquisition. No consensus or completed final audit is claimed.
+Gemini corrected its statistical conventions, and GLM withdrew the unsupported timing thresholds and several equivalence claims. The final follow-ups were acquired and adjudicated on 4 November 2026. Remaining overclaims are explicitly rejected in the follow-up document. This is a completed static review cycle, not an implementation audit or performance qualification.
 
 ## Experimental tracks and decision gates
 
@@ -123,4 +123,4 @@ Run `python3 research/lateral-algorithms-2026-11-03/suffix_probe.py -v` from the
 
 `run_numerical.py` is the actual collector used on this Mac, including its local binary/model paths and strict artifact hashes. It is not a portable installer. It overwrites this run's profile outputs if executed directly: copy the experiment and change its output directory before a new run. Rebuild instructions and the shape-probe source belong to the existing `research/async-pipeline-2026-11-03/` and `native/experiments/` materials. Record a new binary hash after any rebuild; do not silently reuse this run's identity.
 
-No new production engine, mobile binary or portal release is implied. Remaining gates are final reviewer follow-up acquisition, native integration and concurrency testing, expanded correctness cases, and physical Android/iOS comparative runs under the declared controls.
+No new production engine, mobile binary or portal release is implied. Remaining gates are native integration and concurrency testing, expanded correctness cases, and physical Android/iOS comparative runs under the declared controls.

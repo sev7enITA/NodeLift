@@ -1,0 +1,96 @@
+													1028 heading Gemini ha detto
+														1029 text Gemini ha detto
+													1030 container
+														1031 heading Statistical Correction
+															1032 text Statistical Correction
+														1033 text The prior review mixed one-sided and two-sided binomial confidence conventions.  Observing 
+														1034 container
+															1035 text 8 / 8
+														1036 text  detections yields a  one-sided  95% lower confidence bound of 
+														1037 container
+															1038 text 0.05
+															1039 container
+																1040 text 1 / 8
+															1041 text ≈ 68.8 %
+														1042 text ,  whereas the  two-sided  95% Clopper-Pearson lower endpoint is 
+														1043 container
+															1044 text 0.025
+															1045 container
+																1046 text 1 / 8
+															1047 text ≈ 63.1 %
+														1048 text .  Likewise,
+														1049 container
+															1050 text 𝑛 = 149
+														1051 text  zero-failure trials establishes a 
+														1052 container
+															1053 text ≥ 98 %
+														1054 text  lower bound only at  one-sided  95% confidence (
+														1055 container
+															1056 text 𝛼 = 0.05
+														1057 text ); a  two-sided  95% Clopper-Pearson interval (
+														1058 container
+															1059 text 𝛼 / 2 = 0.025
+														1060 text ) requires 
+														1061 container
+															1062 text 𝑛 = 183
+														1063 text  zero-failure trials.  Any test protocol must pre-specify one convention and apply it consistently.
+														1064 heading 1. Narrow Hypotheses Falsified by the Probe
+															1065 text 1. Narrow Hypotheses Falsified by the Probe
+														1066 content list
+															1067 container
+																1068 text Metal-exclusive or Flash-Attention-exclusive root cause:  Falsified.  The exact  6104 -> 5810  flip occurs on CPU without Flash Attention ( 0/33  GPU layers) and occurs identically on Metal whether Flash Attention is enabled or disabled ( history3/current5  and  history5/current5 ).
+															1069 container
+																1070 text Requirement of multi-column current evaluation ( current > 1 ) to trigger the flip:  Falsified.  On CPU without Flash Attention, history5/current1  flips at the first position even though the current step is evaluated at width 1.  Once multi-column history construction alters the committed KV cache,  even a width-1 evaluation step can cross the  0.04478836  serial logit margin.
+														1071 heading 2. What the Probe Does Not Establish
+															1072 text 2. What the Probe Does Not Establish
+														1073 content list
+															1074 container
+																1075 text Intermediate-layer causality:  Final logits cannot isolate which intermediate operator ( Q4_K_M  matrix multiplication,  RMSNorm,  RoPE,  KV cache write/read rounding,  or attention reduction) introduces or dominates the perturbation.
+															1076 container
+																1077 text General batch invariance of  CPU + Flash Attention :  Zero flips on a single prefix does not prove  CPU + FA  is invariant; its reduction order may simply keep net drift at index 36 below  0.04478836  or shift both competing logits in the same direction.
+															1078 container
+																1079 text Quantized vs. floating-point kernel responsibility:  Because the CPU profile used  Q4_K_M  weights rather than  FP32 ,  the diagnostic does not separate quantized block-dot-product ( vec_dot_q4_K ) batching differences from attention or KV-cache path differences,  nor does it rule out a shared graph/mask/stride bug.
+														1080 heading 3. Next Two Most Discriminating Experiments
+															1081 text 3. Next Two Most Discriminating Experiments
+														1082 content list
+															1083 container
+																1084 text Per-Operator Intermediate Tensor Checksums/Diffs on the Frozen Index-36 Prefix:  Instrument the probe binary to log per-layer,  per-operator max absolute deviations (
+																1085 container
+																	1086 text ∥ Δ 𝑋 ∥
+																	1087 text ∞
+																1088 text  relative to the 
+																1089 text history1/current1
+																1090 text  serial baseline) from Layer 0 through Layer 32 across all four profiles (
+																1091 text Metal±FA
+																1092 text ,
+																1093 text CPU±FA
+																1094 text ).  Identify the earliest graph node where 
+																1095 text history>1
+																1096 text  diverges from 
+																1097 text history1
+																1098 text  in committed KV tensors,  and where 
+																1099 text history5/current1
+																1100 text  diverges between 
+																1101 text CPU-no-FA
+																1102 text  and 
+																1103 text CPU+FA
+																1104 text .
+															1105 container
+																1106 text Scoped Single-Column Loop Wrapping by Operator Family:  Before engineering a custom multi-column kernel,  add a diagnostic flag in 
+																1107 text ggml
+																1108 text  that wraps  only
+																1109 text mul_mat
+																1110 text  (or  only  the attention operator) in a sequential column-by-column loop (
+																1111 container
+																	1112 text 𝑐 = 1 … 𝑊
+																1113 text ) while leaving the rest of the batch graph untouched.  Testing combinations across the index-36 prefix and a low-margin multi-prefix set directly proves which subset of operators must be made width-invariant to restore serial equivalence.
+														1114 heading 4. Scope for the Linear Candidate-Suffix Prototype Meanwhile
+															1115 text 4. Scope for the Linear Candidate-Suffix Prototype Meanwhile
+														1116 text Allow the linear candidate-suffix prototype to run strictly as a  control-plane and state-machine harness :
+														1117 content list
+															1118 container
+																1119 text Enforce serialized host-actor execution with strict checks on host-owned lease,  epoch,  model ID,  tokenizer fingerprint,  worker identity,  and step deadline.
+															1120 container
+																1121 text Compute exact committed-prefix overlap,  discard mismatched or outrun candidates,  and pass  only the unverified suffix  to the  existing  width=1  serial verifier  (or explicitly non-oracle diagnostic modes),  never committing any remote token or KV state directly.
+															1122 container
+																1123 text This validates protocol liveness,  lease cleanup,  and suffix-splicing invariants now without assuming multi-column numerical equivalence.

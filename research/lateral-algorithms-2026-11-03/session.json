@@ -7,15 +7,15 @@
       "model": "Gemini 4 Argon",
       "effort": "High",
       "transport": "browser",
-      "acquired_final_responses": 2,
-      "additional_followup": "submitted, final response not acquired; Mac locked"
+      "acquired_final_responses": 3,
+      "additional_followup": "final response acquired and adjudicated; static review only"
     },
     {
       "model": "GLM 5.3",
       "effort": "Max",
       "transport": "browser",
-      "acquired_final_responses": 1,
-      "additional_followup": "submitted, final response not acquired; Mac locked"
+      "acquired_final_responses": 2,
+      "additional_followup": "final response acquired and adjudicated; static review only"
     }
   ],
   "review_scope": "Static review of supplied evidence packet, not independent repository execution or physical device tests",
@@ -26,5 +26,22 @@
   },
   "physical_work_this_run": "Mac numerical diagnostic only; no physical phone test",
   "production_changes": false,
-  "new_speedup_demonstrated": false
+  "new_speedup_demonstrated": false,
+  "followup_acquired_at_utc": "2026-11-04T02:59:41.826176+00:00",
+  "review_history": [
+    {
+      "event": "initial_publication",
+      "recorded_at_utc": "2026-11-03T22:56:42.491252+00:00",
+      "gemini_responses_acquired": 2,
+      "glm_responses_acquired": 1,
+      "pending_reason": "Mac locked before final follow-up acquisition"
+    },
+    {
+      "event": "followup_acquired_and_adjudicated",
+      "recorded_at_utc": "2026-11-04T02:59:41.826176+00:00",
+      "gemini_responses_acquired": 3,
+      "glm_responses_acquired": 2
+    }
+  ],
+  "followup_physical_tests": false
 }
