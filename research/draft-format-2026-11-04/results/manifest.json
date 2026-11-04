@@ -1,0 +1,496 @@
+{
+  "scope": "Local PyTorch MPS prototype, no native NodeLift/network/energy measurement",
+  "budget": 64,
+  "repetitions": 3,
+  "plan": [
+    {
+      "rep": 0,
+      "prompt": 0,
+      "arm": "target"
+    },
+    {
+      "rep": 0,
+      "prompt": 0,
+      "arm": "aligned_serial"
+    },
+    {
+      "rep": 0,
+      "prompt": 0,
+      "arm": "upstream_assisted"
+    },
+    {
+      "rep": 0,
+      "prompt": 0,
+      "arm": "aligned_batch"
+    },
+    {
+      "rep": 0,
+      "prompt": 0,
+      "arm": "raw_batch"
+    },
+    {
+      "rep": 0,
+      "prompt": 1,
+      "arm": "aligned_batch"
+    },
+    {
+      "rep": 0,
+      "prompt": 1,
+      "arm": "raw_batch"
+    },
+    {
+      "rep": 0,
+      "prompt": 1,
+      "arm": "aligned_serial"
+    },
+    {
+      "rep": 0,
+      "prompt": 1,
+      "arm": "target"
+    },
+    {
+      "rep": 0,
+      "prompt": 1,
+      "arm": "upstream_assisted"
+    },
+    {
+      "rep": 0,
+      "prompt": 2,
+      "arm": "aligned_serial"
+    },
+    {
+      "rep": 0,
+      "prompt": 2,
+      "arm": "aligned_batch"
+    },
+    {
+      "rep": 0,
+      "prompt": 2,
+      "arm": "raw_batch"
+    },
+    {
+      "rep": 0,
+      "prompt": 2,
+      "arm": "upstream_assisted"
+    },
+    {
+      "rep": 0,
+      "prompt": 2,
+      "arm": "target"
+    },
+    {
+      "rep": 0,
+      "prompt": 3,
+      "arm": "raw_batch"
+    },
+    {
+      "rep": 0,
+      "prompt": 3,
+      "arm": "upstream_assisted"
+    },
+    {
+      "rep": 0,
+      "prompt": 3,
+      "arm": "aligned_batch"
+    },
+    {
+      "rep": 0,
+      "prompt": 3,
+      "arm": "aligned_serial"
+    },
+    {
+      "rep": 0,
+      "prompt": 3,
+      "arm": "target"
+    },
+    {
+      "rep": 0,
+      "prompt": 4,
+      "arm": "raw_batch"
+    },
+    {
+      "rep": 0,
+      "prompt": 4,
+      "arm": "target"
+    },
+    {
+      "rep": 0,
+      "prompt": 4,
+      "arm": "aligned_batch"
+    },
+    {
+      "rep": 0,
+      "prompt": 4,
+      "arm": "aligned_serial"
+    },
+    {
+      "rep": 0,
+      "prompt": 4,
+      "arm": "upstream_assisted"
+    },
+    {
+      "rep": 0,
+      "prompt": 5,
+      "arm": "upstream_assisted"
+    },
+    {
+      "rep": 0,
+      "prompt": 5,
+      "arm": "raw_batch"
+    },
+    {
+      "rep": 0,
+      "prompt": 5,
+      "arm": "aligned_serial"
+    },
+    {
+      "rep": 0,
+      "prompt": 5,
+      "arm": "aligned_batch"
+    },
+    {
+      "rep": 0,
+      "prompt": 5,
+      "arm": "target"
+    },
+    {
+      "rep": 1,
+      "prompt": 0,
+      "arm": "aligned_serial"
+    },
+    {
+      "rep": 1,
+      "prompt": 0,
+      "arm": "upstream_assisted"
+    },
+    {
+      "rep": 1,
+      "prompt": 0,
+      "arm": "aligned_batch"
+    },
+    {
+      "rep": 1,
+      "prompt": 0,
+      "arm": "target"
+    },
+    {
+      "rep": 1,
+      "prompt": 0,
+      "arm": "raw_batch"
+    },
+    {
+      "rep": 1,
+      "prompt": 1,
+      "arm": "target"
+    },
+    {
+      "rep": 1,
+      "prompt": 1,
+      "arm": "raw_batch"
+    },
+    {
+      "rep": 1,
+      "prompt": 1,
+      "arm": "aligned_batch"
+    },
+    {
+      "rep": 1,
+      "prompt": 1,
+      "arm": "aligned_serial"
+    },
+    {
+      "rep": 1,
+      "prompt": 1,
+      "arm": "upstream_assisted"
+    },
+    {
+      "rep": 1,
+      "prompt": 2,
+      "arm": "aligned_batch"
+    },
+    {
+      "rep": 1,
+      "prompt": 2,
+      "arm": "target"
+    },
+    {
+      "rep": 1,
+      "prompt": 2,
+      "arm": "raw_batch"
+    },
+    {
+      "rep": 1,
+      "prompt": 2,
+      "arm": "upstream_assisted"
+    },
+    {
+      "rep": 1,
+      "prompt": 2,
+      "arm": "aligned_serial"
+    },
+    {
+      "rep": 1,
+      "prompt": 3,
+      "arm": "upstream_assisted"
+    },
+    {
+      "rep": 1,
+      "prompt": 3,
+      "arm": "aligned_batch"
+    },
+    {
+      "rep": 1,
+      "prompt": 3,
+      "arm": "target"
+    },
+    {
+      "rep": 1,
+      "prompt": 3,
+      "arm": "raw_batch"
+    },
+    {
+      "rep": 1,
+      "prompt": 3,
+      "arm": "aligned_serial"
+    },
+    {
+      "rep": 1,
+      "prompt": 4,
+      "arm": "upstream_assisted"
+    },
+    {
+      "rep": 1,
+      "prompt": 4,
+      "arm": "raw_batch"
+    },
+    {
+      "rep": 1,
+      "prompt": 4,
+      "arm": "aligned_serial"
+    },
+    {
+      "rep": 1,
+      "prompt": 4,
+      "arm": "aligned_batch"
+    },
+    {
+      "rep": 1,
+      "prompt": 4,
+      "arm": "target"
+    },
+    {
+      "rep": 1,
+      "prompt": 5,
+      "arm": "aligned_serial"
+    },
+    {
+      "rep": 1,
+      "prompt": 5,
+      "arm": "raw_batch"
+    },
+    {
+      "rep": 1,
+      "prompt": 5,
+      "arm": "aligned_batch"
+    },
+    {
+      "rep": 1,
+      "prompt": 5,
+      "arm": "target"
+    },
+    {
+      "rep": 1,
+      "prompt": 5,
+      "arm": "upstream_assisted"
+    },
+    {
+      "rep": 2,
+      "prompt": 0,
+      "arm": "aligned_batch"
+    },
+    {
+      "rep": 2,
+      "prompt": 0,
+      "arm": "target"
+    },
+    {
+      "rep": 2,
+      "prompt": 0,
+      "arm": "raw_batch"
+    },
+    {
+      "rep": 2,
+      "prompt": 0,
+      "arm": "upstream_assisted"
+    },
+    {
+      "rep": 2,
+      "prompt": 0,
+      "arm": "aligned_serial"
+    },
+    {
+      "rep": 2,
+      "prompt": 1,
+      "arm": "aligned_serial"
+    },
+    {
+      "rep": 2,
+      "prompt": 1,
+      "arm": "upstream_assisted"
+    },
+    {
+      "rep": 2,
+      "prompt": 1,
+      "arm": "aligned_batch"
+    },
+    {
+      "rep": 2,
+      "prompt": 1,
+      "arm": "target"
+    },
+    {
+      "rep": 2,
+      "prompt": 1,
+      "arm": "raw_batch"
+    },
+    {
+      "rep": 2,
+      "prompt": 2,
+      "arm": "target"
+    },
+    {
+      "rep": 2,
+      "prompt": 2,
+      "arm": "aligned_serial"
+    },
+    {
+      "rep": 2,
+      "prompt": 2,
+      "arm": "aligned_batch"
+    },
+    {
+      "rep": 2,
+      "prompt": 2,
+      "arm": "raw_batch"
+    },
+    {
+      "rep": 2,
+      "prompt": 2,
+      "arm": "upstream_assisted"
+    },
+    {
+      "rep": 2,
+      "prompt": 3,
+      "arm": "raw_batch"
+    },
+    {
+      "rep": 2,
+      "prompt": 3,
+      "arm": "aligned_batch"
+    },
+    {
+      "rep": 2,
+      "prompt": 3,
+      "arm": "upstream_assisted"
+    },
+    {
+      "rep": 2,
+      "prompt": 3,
+      "arm": "target"
+    },
+    {
+      "rep": 2,
+      "prompt": 3,
+      "arm": "aligned_serial"
+    },
+    {
+      "rep": 2,
+      "prompt": 4,
+      "arm": "raw_batch"
+    },
+    {
+      "rep": 2,
+      "prompt": 4,
+      "arm": "upstream_assisted"
+    },
+    {
+      "rep": 2,
+      "prompt": 4,
+      "arm": "target"
+    },
+    {
+      "rep": 2,
+      "prompt": 4,
+      "arm": "aligned_serial"
+    },
+    {
+      "rep": 2,
+      "prompt": 4,
+      "arm": "aligned_batch"
+    },
+    {
+      "rep": 2,
+      "prompt": 5,
+      "arm": "raw_batch"
+    },
+    {
+      "rep": 2,
+      "prompt": 5,
+      "arm": "aligned_serial"
+    },
+    {
+      "rep": 2,
+      "prompt": 5,
+      "arm": "target"
+    },
+    {
+      "rep": 2,
+      "prompt": 5,
+      "arm": "upstream_assisted"
+    },
+    {
+      "rep": 2,
+      "prompt": 5,
+      "arm": "aligned_batch"
+    }
+  ],
+  "prompts": [
+    {
+      "id": "unique",
+      "prompt": "Write a Python function that removes duplicates from a list while preserving order, then explain its complexity in one sentence."
+    },
+    {
+      "id": "epoch",
+      "prompt": "Explain why an epoch must be rechecked atomically with commit after awaiting a network response in a speculative language-model engine."
+    },
+    {
+      "id": "ttft",
+      "prompt": "Explain the difference between time to first token, prefill duration and decode tokens per second. Give no invented measurements."
+    },
+    {
+      "id": "json",
+      "prompt": "Return a JSON object with keys observed, unknown and rejected for this evidence: latency is 12 ms; energy is missing; a proposed speedup changes output."
+    },
+    {
+      "id": "queue",
+      "prompt": "Write a minimal Python example of a bounded asynchronous queue with a timeout and cancellation cleanup."
+    },
+    {
+      "id": "memory",
+      "prompt": "Explain in three short sentences why four computers each running a complete small model do not automatically pool memory for a single large model."
+    }
+  ],
+  "arms": [
+    "target",
+    "raw_batch",
+    "aligned_batch",
+    "aligned_serial",
+    "upstream_assisted"
+  ],
+  "torch": "2.15.0",
+  "source_sha256": "cd00664f4abfb361e64b3556dbd8c3b9e227b551cd9c028dd8c80cd774c65b7e",
+  "target_revision": "cdbee75f17c01a7cc42f958dc650907174af0554",
+  "draft_revision": "c1899de289a04d12100db370d81485cdf75e47ca",
+  "timing": "Resident models; fresh KV per request; MPS synchronization and finite checks included; upstream arm has different instrumentation",
+  "first_token": "Authoritative first token emitted before draft prefill in custom speculative arms"
+}

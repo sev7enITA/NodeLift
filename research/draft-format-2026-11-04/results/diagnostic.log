@@ -1,0 +1,18 @@
+W1104 17:09:49.789000 86123 /private/tmp/nodelift-heretic-2-env/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   3%|▎         | 11/398 [00:00<00:03, 102.01it/s]Loading weights:   9%|▉         | 36/398 [00:00<00:02, 171.54it/s]Loading weights:  19%|█▉        | 75/398 [00:00<00:01, 242.96it/s]Loading weights:  28%|██▊       | 110/398 [00:00<00:01, 269.61it/s]Loading weights:  34%|███▍      | 137/398 [00:00<00:01, 258.47it/s]Loading weights:  41%|████      | 163/398 [00:00<00:00, 245.94it/s]Loading weights:  47%|████▋     | 188/398 [00:00<00:00, 232.74it/s]Loading weights:  53%|█████▎    | 212/398 [00:00<00:00, 229.24it/s]Loading weights:  59%|█████▉    | 235/398 [00:01<00:00, 223.78it/s]Loading weights:  65%|██████▍   | 258/398 [00:01<00:00, 218.72it/s]Loading weights:  70%|███████   | 280/398 [00:01<00:00, 207.44it/s]Loading weights:  77%|███████▋  | 307/398 [00:01<00:00, 223.93it/s]Loading weights:  83%|████████▎ | 331/398 [00:01<00:00, 228.45it/s]Loading weights:  89%|████████▉ | 354/398 [00:01<00:00, 227.55it/s]Loading weights:  95%|█████████▌| 379/398 [00:01<00:00, 231.44it/s]Loading weights: 100%|██████████| 398/398 [00:01<00:00, 232.28it/s]
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:  32%|███▏      | 99/311 [00:00<00:00, 894.84it/s]Loading weights:  65%|██████▌   | 203/311 [00:00<00:00, 967.28it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 1039.33it/s]
+{
+  "scope": "Instrumented replay; one prompt, not a performance measurement or kernel attribution",
+  "prompt_id": 0,
+  "replay_matches_recorded_batch": true,
+  "first_difference_index": 48,
+  "context_ids_equal": true,
+  "context_matches_original_reference": true,
+  "phase": "target_sync",
+  "batch_argmax": 23094,
+  "fresh_serial_argmax": 70618,
+  "reference_token": 70618,
+  "max_abs_logit_delta": 0.041015625,
+  "reference_minus_batch_choice_logit_batch": 0.0,
+  "reference_minus_batch_choice_logit_fresh_serial": 0.03125
+}

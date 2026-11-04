@@ -1,0 +1,35 @@
+W1104 17:03:09.064000 84233 /private/tmp/nodelift-heretic-2-env/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   1%|▏         | 5/398 [00:00<00:09, 42.73it/s]Loading weights:   6%|▌         | 23/398 [00:00<00:03, 101.58it/s]Loading weights:  11%|█         | 42/398 [00:00<00:02, 128.24it/s]Loading weights:  16%|█▌        | 64/398 [00:00<00:02, 152.77it/s]Loading weights:  20%|██        | 81/398 [00:00<00:02, 144.23it/s]Loading weights:  26%|██▌       | 103/398 [00:00<00:01, 164.60it/s]Loading weights:  30%|███       | 120/398 [00:00<00:02, 131.07it/s]Loading weights:  36%|███▌      | 142/398 [00:01<00:01, 146.63it/s]Loading weights:  40%|███▉      | 158/398 [00:01<00:01, 150.02it/s]Loading weights:  44%|████▎     | 174/398 [00:01<00:01, 143.28it/s]Loading weights:  48%|████▊     | 190/398 [00:01<00:01, 143.80it/s]Loading weights:  52%|█████▏    | 205/398 [00:01<00:01, 141.20it/s]Loading weights:  55%|█████▌    | 220/398 [00:01<00:01, 115.52it/s]Loading weights:  59%|█████▉    | 235/398 [00:01<00:01, 119.62it/s]Loading weights:  63%|██████▎   | 251/398 [00:01<00:01, 125.28it/s]Loading weights:  67%|██████▋   | 265/398 [00:02<00:01, 93.34it/s] Loading weights:  69%|██████▉   | 276/398 [00:02<00:01, 86.55it/s]Loading weights:  73%|███████▎  | 290/398 [00:02<00:01, 93.39it/s]Loading weights:  76%|███████▌  | 302/398 [00:02<00:01, 87.23it/s]Loading weights:  80%|████████  | 319/398 [00:02<00:00, 92.77it/s]Loading weights:  83%|████████▎ | 330/398 [00:02<00:00, 90.84it/s]Loading weights:  85%|████████▌ | 340/398 [00:02<00:00, 92.82it/s]Loading weights:  88%|████████▊ | 352/398 [00:03<00:00, 89.67it/s]Loading weights:  91%|█████████ | 362/398 [00:03<00:00, 91.54it/s]Loading weights:  93%|█████████▎| 372/398 [00:03<00:00, 90.52it/s]Loading weights:  98%|█████████▊| 389/398 [00:03<00:00, 107.32it/s]Loading weights: 100%|██████████| 398/398 [00:03<00:00, 115.55it/s]
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:  39%|███▉      | 121/311 [00:00<00:00, 1209.57it/s]Loading weights:  78%|███████▊  | 242/311 [00:00<00:00, 1182.22it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 1205.33it/s]
+WARM target 0.657
+WARM raw_batch 0.98
+WARM aligned_batch 0.946
+WARM aligned_serial 0.677
+Traceback (most recent call last):
+  File "/Users/fabriziodegni/Desktop/EVENTS, SPEECH, MY RESEARCHES and FRAMEWORKS/ExpandMyHW/research/draft-format-2026-11-04/cached_probe.py", line 141, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/Users/fabriziodegni/Desktop/EVENTS, SPEECH, MY RESEARCHES and FRAMEWORKS/ExpandMyHW/research/draft-format-2026-11-04/cached_probe.py", line 124, in main
+    r=run(arm,'Explain a mutex in one sentence.');warm.append({'arm':arm,**r});print('WARM',arm,round(r['seconds'],3),flush=True)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/fabriziodegni/Desktop/EVENTS, SPEECH, MY RESEARCHES and FRAMEWORKS/ExpandMyHW/research/draft-format-2026-11-04/cached_probe.py", line 118, in run
+    if arm=='upstream_assisted':return upstream(target,draft,tp,budget,True)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/fabriziodegni/Desktop/EVENTS, SPEECH, MY RESEARCHES and FRAMEWORKS/ExpandMyHW/research/draft-format-2026-11-04/cached_probe.py", line 96, in upstream
+    y=target.generate(input_ids=x,attention_mask=torch.ones_like(x),max_new_tokens=budget,do_sample=False,pad_token_id=target.generation_config.eos_token_id,streamer=clock,**kwargs)
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/nodelift-heretic-2-env/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 158, in no_grad
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/nodelift-heretic-2-env/lib/python3.12/site-packages/transformers/generation/utils.py", line 2786, in generate
+    generation_config, model_kwargs = self._prepare_generation_config(generation_config, **kwargs)
+                                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/nodelift-heretic-2-env/lib/python3.12/site-packages/transformers/generation/utils.py", line 2104, in _prepare_generation_config
+    model_kwargs = generation_config.update(**kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/nodelift-heretic-2-env/lib/python3.12/site-packages/transformers/generation/configuration_utils.py", line 1368, in update
+    self.validate(user_set_attributes=set(to_remove))
+  File "/tmp/nodelift-heretic-2-env/lib/python3.12/site-packages/transformers/generation/configuration_utils.py", line 677, in validate
+    if self.pad_token_id is not None and self.pad_token_id < 0:
+                                         ^^^^^^^^^^^^^^^^^^^^^
+TypeError: '<' not supported between instances of 'list' and 'int'

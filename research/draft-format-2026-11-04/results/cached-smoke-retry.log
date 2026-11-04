@@ -1,0 +1,16 @@
+W1104 17:03:49.708000 84445 /private/tmp/nodelift-heretic-2-env/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   4%|▎         | 14/398 [00:00<00:02, 136.36it/s]Loading weights:  12%|█▏        | 48/398 [00:00<00:01, 225.73it/s]Loading weights:  22%|██▏       | 86/398 [00:00<00:01, 264.40it/s]Loading weights:  31%|███       | 122/398 [00:00<00:00, 293.71it/s]Loading weights:  39%|███▊      | 154/398 [00:00<00:00, 302.12it/s]Loading weights:  46%|████▋     | 185/398 [00:00<00:00, 303.13it/s]Loading weights:  54%|█████▍    | 216/398 [00:00<00:00, 273.44it/s]Loading weights:  63%|██████▎   | 252/398 [00:00<00:00, 289.67it/s]Loading weights:  74%|███████▍  | 296/398 [00:01<00:00, 323.35it/s]Loading weights:  84%|████████▍ | 336/398 [00:01<00:00, 342.93it/s]Loading weights:  93%|█████████▎| 371/398 [00:01<00:00, 337.25it/s]Loading weights: 100%|██████████| 398/398 [00:01<00:00, 313.10it/s]
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:  10%|█         | 32/311 [00:00<00:00, 316.69it/s]Loading weights:  22%|██▏       | 68/311 [00:00<00:00, 338.08it/s]Loading weights:  33%|███▎      | 102/311 [00:00<00:00, 312.26it/s]Loading weights:  47%|████▋     | 146/311 [00:00<00:00, 321.79it/s]Loading weights:  59%|█████▉    | 183/311 [00:00<00:00, 337.21it/s]Loading weights:  71%|███████▏  | 222/311 [00:00<00:00, 347.36it/s]Loading weights:  88%|████████▊ | 274/311 [00:00<00:00, 383.61it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 365.30it/s]
+WARM target 0.671
+WARM raw_batch 0.546
+WARM aligned_batch 0.457
+WARM aligned_serial 0.657
+[transformers] The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+[transformers] Passing `generation_config` together with generation-related arguments=({'use_cache', 'max_new_tokens', 'min_new_tokens'}) is deprecated and will be removed in future versions. Please pass either a `generation_config` object OR all generation parameters explicitly, but not both.
+WARM upstream_assisted 1.482
+1 5 {'rep': 0, 'prompt': 0, 'arm': 'target'} 0.534 12
+2 5 {'rep': 0, 'prompt': 0, 'arm': 'aligned_serial'} 0.762 12
+3 5 {'rep': 0, 'prompt': 0, 'arm': 'upstream_assisted'} 0.538 12
+4 5 {'rep': 0, 'prompt': 0, 'arm': 'aligned_batch'} 0.524 12
+5 5 {'rep': 0, 'prompt': 0, 'arm': 'raw_batch'} 0.526 12
+COMPLETE

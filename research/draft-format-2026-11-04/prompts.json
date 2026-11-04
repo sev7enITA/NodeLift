@@ -1,0 +1,26 @@
+[
+  {
+    "id": "unique",
+    "prompt": "Write a Python function that removes duplicates from a list while preserving order, then explain its complexity in one sentence."
+  },
+  {
+    "id": "epoch",
+    "prompt": "Explain why an epoch must be rechecked atomically with commit after awaiting a network response in a speculative language-model engine."
+  },
+  {
+    "id": "ttft",
+    "prompt": "Explain the difference between time to first token, prefill duration and decode tokens per second. Give no invented measurements."
+  },
+  {
+    "id": "json",
+    "prompt": "Return a JSON object with keys observed, unknown and rejected for this evidence: latency is 12 ms; energy is missing; a proposed speedup changes output."
+  },
+  {
+    "id": "queue",
+    "prompt": "Write a minimal Python example of a bounded asynchronous queue with a timeout and cancellation cleanup."
+  },
+  {
+    "id": "memory",
+    "prompt": "Explain in three short sentences why four computers each running a complete small model do not automatically pool memory for a single large model."
+  }
+]

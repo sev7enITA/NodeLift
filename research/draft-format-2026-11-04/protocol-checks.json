@@ -1,0 +1,5 @@
+{
+  "checks": 288,
+  "passed": true,
+  "scope": "Synthetic exact, wrong and mixed candidates; EOS and output limits. Fake state does not validate GPU kernels or real KV cache."
+}

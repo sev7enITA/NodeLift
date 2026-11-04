@@ -1,0 +1,101 @@
+W1104 17:04:57.714000 84769 /private/tmp/nodelift-heretic-2-env/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   4%|▍         | 15/398 [00:00<00:02, 129.20it/s]Loading weights:  12%|█▏        | 48/398 [00:00<00:01, 223.43it/s]Loading weights:  22%|██▏       | 87/398 [00:00<00:01, 289.38it/s]Loading weights:  29%|██▉       | 117/398 [00:00<00:00, 289.84it/s]Loading weights:  39%|███▉      | 156/398 [00:00<00:00, 323.91it/s]Loading weights:  48%|████▊     | 191/398 [00:00<00:00, 326.04it/s]Loading weights:  58%|█████▊    | 231/398 [00:00<00:00, 342.29it/s]Loading weights:  67%|██████▋   | 266/398 [00:00<00:00, 337.55it/s]Loading weights:  76%|███████▌  | 301/398 [00:00<00:00, 340.26it/s]Loading weights:  84%|████████▍ | 336/398 [00:01<00:00, 333.68it/s]Loading weights:  94%|█████████▍| 374/398 [00:01<00:00, 345.86it/s]Loading weights: 100%|██████████| 398/398 [00:01<00:00, 329.11it/s]
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:  36%|███▋      | 113/311 [00:00<00:00, 1082.98it/s]Loading weights:  71%|███████▏  | 222/311 [00:00<00:00, 1052.47it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 1133.80it/s]
+WARM target 1.293
+WARM raw_batch 1.35
+WARM aligned_batch 1.182
+WARM aligned_serial 1.773
+[transformers] The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+[transformers] Passing `generation_config` together with generation-related arguments=({'use_cache', 'min_new_tokens', 'max_new_tokens'}) is deprecated and will be removed in future versions. Please pass either a `generation_config` object OR all generation parameters explicitly, but not both.
+WARM upstream_assisted 1.703
+1 90 {'rep': 0, 'prompt': 0, 'arm': 'target'} 2.615 64
+2 90 {'rep': 0, 'prompt': 0, 'arm': 'aligned_serial'} 3.623 64
+3 90 {'rep': 0, 'prompt': 0, 'arm': 'upstream_assisted'} 2.746 64
+4 90 {'rep': 0, 'prompt': 0, 'arm': 'aligned_batch'} 2.328 64
+5 90 {'rep': 0, 'prompt': 0, 'arm': 'raw_batch'} 2.602 64
+6 90 {'rep': 0, 'prompt': 1, 'arm': 'aligned_batch'} 4.02 64
+7 90 {'rep': 0, 'prompt': 1, 'arm': 'raw_batch'} 3.442 64
+8 90 {'rep': 0, 'prompt': 1, 'arm': 'aligned_serial'} 4.235 64
+9 90 {'rep': 0, 'prompt': 1, 'arm': 'target'} 2.535 64
+10 90 {'rep': 0, 'prompt': 1, 'arm': 'upstream_assisted'} 3.31 64
+11 90 {'rep': 0, 'prompt': 2, 'arm': 'aligned_serial'} 3.91 64
+12 90 {'rep': 0, 'prompt': 2, 'arm': 'aligned_batch'} 3.044 64
+13 90 {'rep': 0, 'prompt': 2, 'arm': 'raw_batch'} 3.198 64
+14 90 {'rep': 0, 'prompt': 2, 'arm': 'upstream_assisted'} 2.919 64
+15 90 {'rep': 0, 'prompt': 2, 'arm': 'target'} 2.468 64
+16 90 {'rep': 0, 'prompt': 3, 'arm': 'raw_batch'} 1.45 38
+17 90 {'rep': 0, 'prompt': 3, 'arm': 'upstream_assisted'} 1.201 38
+18 90 {'rep': 0, 'prompt': 3, 'arm': 'aligned_batch'} 1.435 38
+19 90 {'rep': 0, 'prompt': 3, 'arm': 'aligned_serial'} 2.126 38
+20 90 {'rep': 0, 'prompt': 3, 'arm': 'target'} 1.527 38
+21 90 {'rep': 0, 'prompt': 4, 'arm': 'raw_batch'} 2.71 64
+22 90 {'rep': 0, 'prompt': 4, 'arm': 'target'} 2.529 64
+23 90 {'rep': 0, 'prompt': 4, 'arm': 'aligned_batch'} 2.57 64
+24 90 {'rep': 0, 'prompt': 4, 'arm': 'aligned_serial'} 3.74 64
+25 90 {'rep': 0, 'prompt': 4, 'arm': 'upstream_assisted'} 2.265 64
+26 90 {'rep': 0, 'prompt': 5, 'arm': 'upstream_assisted'} 3.546 64
+27 90 {'rep': 0, 'prompt': 5, 'arm': 'raw_batch'} 3.813 64
+28 90 {'rep': 0, 'prompt': 5, 'arm': 'aligned_serial'} 4.431 64
+29 90 {'rep': 0, 'prompt': 5, 'arm': 'aligned_batch'} 4.022 64
+30 90 {'rep': 0, 'prompt': 5, 'arm': 'target'} 2.549 64
+31 90 {'rep': 1, 'prompt': 0, 'arm': 'aligned_serial'} 3.568 64
+32 90 {'rep': 1, 'prompt': 0, 'arm': 'upstream_assisted'} 2.186 64
+33 90 {'rep': 1, 'prompt': 0, 'arm': 'aligned_batch'} 2.303 64
+34 90 {'rep': 1, 'prompt': 0, 'arm': 'target'} 2.539 64
+35 90 {'rep': 1, 'prompt': 0, 'arm': 'raw_batch'} 2.632 64
+36 90 {'rep': 1, 'prompt': 1, 'arm': 'target'} 2.532 64
+37 90 {'rep': 1, 'prompt': 1, 'arm': 'raw_batch'} 3.479 64
+38 90 {'rep': 1, 'prompt': 1, 'arm': 'aligned_batch'} 3.512 64
+39 90 {'rep': 1, 'prompt': 1, 'arm': 'aligned_serial'} 4.225 64
+40 90 {'rep': 1, 'prompt': 1, 'arm': 'upstream_assisted'} 3.214 64
+41 90 {'rep': 1, 'prompt': 2, 'arm': 'aligned_batch'} 3.026 64
+42 90 {'rep': 1, 'prompt': 2, 'arm': 'target'} 2.521 64
+43 90 {'rep': 1, 'prompt': 2, 'arm': 'raw_batch'} 3.305 64
+44 90 {'rep': 1, 'prompt': 2, 'arm': 'upstream_assisted'} 2.87 64
+45 90 {'rep': 1, 'prompt': 2, 'arm': 'aligned_serial'} 3.922 64
+46 90 {'rep': 1, 'prompt': 3, 'arm': 'upstream_assisted'} 1.207 38
+47 90 {'rep': 1, 'prompt': 3, 'arm': 'aligned_batch'} 1.434 38
+48 90 {'rep': 1, 'prompt': 3, 'arm': 'target'} 1.539 38
+49 90 {'rep': 1, 'prompt': 3, 'arm': 'raw_batch'} 1.471 38
+50 90 {'rep': 1, 'prompt': 3, 'arm': 'aligned_serial'} 2.213 38
+51 90 {'rep': 1, 'prompt': 4, 'arm': 'upstream_assisted'} 2.267 64
+52 90 {'rep': 1, 'prompt': 4, 'arm': 'raw_batch'} 2.682 64
+53 90 {'rep': 1, 'prompt': 4, 'arm': 'aligned_serial'} 3.742 64
+54 90 {'rep': 1, 'prompt': 4, 'arm': 'aligned_batch'} 2.596 64
+55 90 {'rep': 1, 'prompt': 4, 'arm': 'target'} 2.533 64
+56 90 {'rep': 1, 'prompt': 5, 'arm': 'aligned_serial'} 4.533 64
+57 90 {'rep': 1, 'prompt': 5, 'arm': 'raw_batch'} 3.858 64
+58 90 {'rep': 1, 'prompt': 5, 'arm': 'aligned_batch'} 4.016 64
+59 90 {'rep': 1, 'prompt': 5, 'arm': 'target'} 2.563 64
+60 90 {'rep': 1, 'prompt': 5, 'arm': 'upstream_assisted'} 3.614 64
+61 90 {'rep': 2, 'prompt': 0, 'arm': 'aligned_batch'} 2.284 64
+62 90 {'rep': 2, 'prompt': 0, 'arm': 'target'} 2.549 64
+63 90 {'rep': 2, 'prompt': 0, 'arm': 'raw_batch'} 2.662 64
+64 90 {'rep': 2, 'prompt': 0, 'arm': 'upstream_assisted'} 2.206 64
+65 90 {'rep': 2, 'prompt': 0, 'arm': 'aligned_serial'} 3.481 64
+66 90 {'rep': 2, 'prompt': 1, 'arm': 'aligned_serial'} 4.247 64
+67 90 {'rep': 2, 'prompt': 1, 'arm': 'upstream_assisted'} 3.223 64
+68 90 {'rep': 2, 'prompt': 1, 'arm': 'aligned_batch'} 3.431 64
+69 90 {'rep': 2, 'prompt': 1, 'arm': 'target'} 2.493 64
+70 90 {'rep': 2, 'prompt': 1, 'arm': 'raw_batch'} 3.497 64
+71 90 {'rep': 2, 'prompt': 2, 'arm': 'target'} 2.526 64
+72 90 {'rep': 2, 'prompt': 2, 'arm': 'aligned_serial'} 3.949 64
+73 90 {'rep': 2, 'prompt': 2, 'arm': 'aligned_batch'} 3.035 64
+74 90 {'rep': 2, 'prompt': 2, 'arm': 'raw_batch'} 3.245 64
+75 90 {'rep': 2, 'prompt': 2, 'arm': 'upstream_assisted'} 2.888 64
+76 90 {'rep': 2, 'prompt': 3, 'arm': 'raw_batch'} 1.367 38
+77 90 {'rep': 2, 'prompt': 3, 'arm': 'aligned_batch'} 1.454 38
+78 90 {'rep': 2, 'prompt': 3, 'arm': 'upstream_assisted'} 1.199 38
+79 90 {'rep': 2, 'prompt': 3, 'arm': 'target'} 1.545 38
+80 90 {'rep': 2, 'prompt': 3, 'arm': 'aligned_serial'} 2.148 38
+81 90 {'rep': 2, 'prompt': 4, 'arm': 'raw_batch'} 2.682 64
+82 90 {'rep': 2, 'prompt': 4, 'arm': 'upstream_assisted'} 2.261 64
+83 90 {'rep': 2, 'prompt': 4, 'arm': 'target'} 2.558 64
+84 90 {'rep': 2, 'prompt': 4, 'arm': 'aligned_serial'} 3.673 64
+85 90 {'rep': 2, 'prompt': 4, 'arm': 'aligned_batch'} 2.554 64
+86 90 {'rep': 2, 'prompt': 5, 'arm': 'raw_batch'} 3.842 64
+87 90 {'rep': 2, 'prompt': 5, 'arm': 'aligned_serial'} 4.487 64
+88 90 {'rep': 2, 'prompt': 5, 'arm': 'target'} 2.573 64
+89 90 {'rep': 2, 'prompt': 5, 'arm': 'upstream_assisted'} 3.564 64
+90 90 {'rep': 2, 'prompt': 5, 'arm': 'aligned_batch'} 3.991 64
+COMPLETE

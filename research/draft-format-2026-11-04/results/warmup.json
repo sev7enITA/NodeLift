@@ -1,0 +1,595 @@
+{
+  "rows": [
+    {
+      "arm": "target",
+      "tokens": [
+        32,
+        30863,
+        320,
+        6984,
+        928,
+        41208,
+        8,
+        374,
+        264,
+        57912,
+        16953,
+        429,
+        25351,
+        1172,
+        825,
+        4516,
+        476,
+        1882,
+        646,
+        2615,
+        264,
+        6094,
+        5101,
+        518,
+        264,
+        882,
+        11,
+        26160,
+        6957,
+        4682,
+        13,
+        151645
+      ],
+      "seconds": 1.293098459020257,
+      "ttft_seconds": 0.09092975000385195,
+      "phases_seconds": {
+        "target_prefill": 0.0904927080264315,
+        "target_decode": 1.1919887106632814
+      },
+      "unattributed_seconds": 0.010617040330544114,
+      "proposed": 0,
+      "accepted": 0,
+      "discarded": 0,
+      "rounds": 0,
+      "trace": []
+    },
+    {
+      "arm": "raw_batch",
+      "tokens": [
+        32,
+        30863,
+        320,
+        6984,
+        928,
+        41208,
+        8,
+        374,
+        264,
+        57912,
+        16953,
+        429,
+        25351,
+        1172,
+        825,
+        4516,
+        476,
+        1882,
+        646,
+        2615,
+        264,
+        6094,
+        5101,
+        518,
+        264,
+        882,
+        11,
+        26160,
+        6957,
+        4682,
+        13,
+        151645
+      ],
+      "seconds": 1.349648499977775,
+      "ttft_seconds": 0.09519929101224989,
+      "phases_seconds": {
+        "target_prefill": 0.09457679197657853,
+        "target_decode": 0.04224133293610066,
+        "draft_prefill": 0.05760029191151261,
+        "draft_decode": 0.35999187477864325,
+        "target_verify_batch": 0.35978162509854883,
+        "target_sync": 0.28707879211287946,
+        "draft_sync": 0.13021925103385001
+      },
+      "unattributed_seconds": 0.01815854012966156,
+      "proposed": 33,
+      "accepted": 23,
+      "discarded": 10,
+      "rounds": 9,
+      "trace": [
+        {
+          "offset": 1,
+          "proposed": 4,
+          "accepted": 1,
+          "committed": 2,
+          "candidate_ids": [
+            30863,
+            374,
+            264,
+            57912
+          ]
+        },
+        {
+          "offset": 3,
+          "proposed": 4,
+          "accepted": 3,
+          "committed": 4,
+          "candidate_ids": [
+            6984,
+            928,
+            41208,
+            1633
+          ]
+        },
+        {
+          "offset": 7,
+          "proposed": 4,
+          "accepted": 4,
+          "committed": 5,
+          "candidate_ids": [
+            374,
+            264,
+            57912,
+            16953
+          ]
+        },
+        {
+          "offset": 12,
+          "proposed": 4,
+          "accepted": 1,
+          "committed": 2,
+          "candidate_ids": [
+            25351,
+            429,
+            1172,
+            825
+          ]
+        },
+        {
+          "offset": 14,
+          "proposed": 4,
+          "accepted": 2,
+          "committed": 3,
+          "candidate_ids": [
+            825,
+            4516,
+            646,
+            2615
+          ]
+        },
+        {
+          "offset": 17,
+          "proposed": 4,
+          "accepted": 4,
+          "committed": 5,
+          "candidate_ids": [
+            1882,
+            646,
+            2615,
+            264
+          ]
+        },
+        {
+          "offset": 22,
+          "proposed": 4,
+          "accepted": 4,
+          "committed": 5,
+          "candidate_ids": [
+            5101,
+            518,
+            264,
+            882
+          ]
+        },
+        {
+          "offset": 27,
+          "proposed": 4,
+          "accepted": 3,
+          "committed": 4,
+          "candidate_ids": [
+            26160,
+            6957,
+            4682,
+            624
+          ]
+        },
+        {
+          "offset": 31,
+          "proposed": 1,
+          "accepted": 1,
+          "committed": 1,
+          "candidate_ids": [
+            151645
+          ]
+        }
+      ]
+    },
+    {
+      "arm": "aligned_batch",
+      "tokens": [
+        32,
+        30863,
+        320,
+        6984,
+        928,
+        41208,
+        8,
+        374,
+        264,
+        57912,
+        16953,
+        429,
+        25351,
+        1172,
+        825,
+        4516,
+        476,
+        1882,
+        646,
+        2615,
+        264,
+        6094,
+        5101,
+        518,
+        264,
+        882,
+        11,
+        26160,
+        6957,
+        4682,
+        13,
+        151645
+      ],
+      "seconds": 1.181672791019082,
+      "ttft_seconds": 0.06174666609149426,
+      "phases_seconds": {
+        "target_prefill": 0.061222041957080364,
+        "target_decode": 0.037116624996997416,
+        "draft_prefill": 0.025437625008635223,
+        "draft_decode": 0.3793954602442682,
+        "target_verify_batch": 0.28837833390571177,
+        "target_sync": 0.25228312297258526,
+        "draft_sync": 0.12025637412443757
+      },
+      "unattributed_seconds": 0.017583207809366286,
+      "proposed": 32,
+      "accepted": 23,
+      "discarded": 9,
+      "rounds": 8,
+      "trace": [
+        {
+          "offset": 1,
+          "proposed": 4,
+          "accepted": 4,
+          "committed": 5,
+          "candidate_ids": [
+            30863,
+            320,
+            6984,
+            928
+          ]
+        },
+        {
+          "offset": 6,
+          "proposed": 4,
+          "accepted": 0,
+          "committed": 1,
+          "candidate_ids": [
+            1633,
+            8,
+            374,
+            264
+          ]
+        },
+        {
+          "offset": 7,
+          "proposed": 4,
+          "accepted": 4,
+          "committed": 5,
+          "candidate_ids": [
+            374,
+            264,
+            57912,
+            16953
+          ]
+        },
+        {
+          "offset": 12,
+          "proposed": 4,
+          "accepted": 1,
+          "committed": 2,
+          "candidate_ids": [
+            25351,
+            1378,
+            476,
+            803
+          ]
+        },
+        {
+          "offset": 14,
+          "proposed": 4,
+          "accepted": 2,
+          "committed": 3,
+          "candidate_ids": [
+            825,
+            4516,
+            518,
+            264
+          ]
+        },
+        {
+          "offset": 17,
+          "proposed": 4,
+          "accepted": 4,
+          "committed": 5,
+          "candidate_ids": [
+            1882,
+            646,
+            2615,
+            264
+          ]
+        },
+        {
+          "offset": 22,
+          "proposed": 4,
+          "accepted": 4,
+          "committed": 5,
+          "candidate_ids": [
+            5101,
+            518,
+            264,
+            882
+          ]
+        },
+        {
+          "offset": 27,
+          "proposed": 4,
+          "accepted": 4,
+          "committed": 5,
+          "candidate_ids": [
+            26160,
+            6957,
+            4682,
+            13
+          ]
+        }
+      ]
+    },
+    {
+      "arm": "aligned_serial",
+      "tokens": [
+        32,
+        30863,
+        320,
+        6984,
+        928,
+        41208,
+        8,
+        374,
+        264,
+        57912,
+        16953,
+        429,
+        25351,
+        1172,
+        825,
+        4516,
+        476,
+        1882,
+        646,
+        2615,
+        264,
+        6094,
+        5101,
+        518,
+        264,
+        882,
+        11,
+        26160,
+        6957,
+        4682,
+        13,
+        151645
+      ],
+      "seconds": 1.772952290950343,
+      "ttft_seconds": 0.0690941249486059,
+      "phases_seconds": {
+        "target_prefill": 0.06879537494387478,
+        "target_decode": 0.03708549996372312,
+        "draft_prefill": 0.025009124889038503,
+        "draft_decode": 0.38956720870919526,
+        "target_verify_serial": 1.1039899541065097,
+        "draft_sync": 0.12935912504326552
+      },
+      "unattributed_seconds": 0.019146003294736147,
+      "proposed": 32,
+      "accepted": 23,
+      "discarded": 9,
+      "rounds": 8,
+      "trace": [
+        {
+          "offset": 1,
+          "proposed": 4,
+          "accepted": 4,
+          "committed": 5,
+          "candidate_ids": [
+            30863,
+            320,
+            6984,
+            928
+          ]
+        },
+        {
+          "offset": 6,
+          "proposed": 4,
+          "accepted": 0,
+          "committed": 1,
+          "candidate_ids": [
+            1633,
+            8,
+            374,
+            264
+          ]
+        },
+        {
+          "offset": 7,
+          "proposed": 4,
+          "accepted": 4,
+          "committed": 5,
+          "candidate_ids": [
+            374,
+            264,
+            57912,
+            16953
+          ]
+        },
+        {
+          "offset": 12,
+          "proposed": 4,
+          "accepted": 1,
+          "committed": 2,
+          "candidate_ids": [
+            25351,
+            1378,
+            476,
+            803
+          ]
+        },
+        {
+          "offset": 14,
+          "proposed": 4,
+          "accepted": 2,
+          "committed": 3,
+          "candidate_ids": [
+            825,
+            4516,
+            518,
+            264
+          ]
+        },
+        {
+          "offset": 17,
+          "proposed": 4,
+          "accepted": 4,
+          "committed": 5,
+          "candidate_ids": [
+            1882,
+            646,
+            2615,
+            264
+          ]
+        },
+        {
+          "offset": 22,
+          "proposed": 4,
+          "accepted": 4,
+          "committed": 5,
+          "candidate_ids": [
+            5101,
+            518,
+            264,
+            882
+          ]
+        },
+        {
+          "offset": 27,
+          "proposed": 4,
+          "accepted": 4,
+          "committed": 5,
+          "candidate_ids": [
+            26160,
+            6957,
+            4682,
+            13
+          ]
+        }
+      ]
+    },
+    {
+      "arm": "upstream_assisted",
+      "tokens": [
+        32,
+        30863,
+        320,
+        6984,
+        928,
+        41208,
+        8,
+        374,
+        264,
+        57912,
+        16953,
+        429,
+        25351,
+        1172,
+        825,
+        4516,
+        476,
+        1882,
+        646,
+        2615,
+        264,
+        6094,
+        5101,
+        518,
+        264,
+        882,
+        11,
+        26160,
+        6957,
+        4682,
+        13,
+        151645
+      ],
+      "seconds": 1.7032133330358192,
+      "ttft_seconds": 0.18324325000867248,
+      "phases_seconds": null,
+      "scope": "Upstream API including streamer; no per-phase instrumentation"
+    }
+  ],
+  "upstream_serial": {
+    "tokens": [
+      32,
+      30863,
+      320,
+      6984,
+      928,
+      41208,
+      8,
+      374,
+      264,
+      57912,
+      16953,
+      429,
+      25351,
+      1172,
+      825,
+      4516,
+      476,
+      1882,
+      646,
+      2615,
+      264,
+      6094,
+      5101,
+      518,
+      264,
+      882,
+      11,
+      26160,
+      6957,
+      4682,
+      13,
+      151645
+    ],
+    "seconds": 1.068485499941744,
+    "ttft_seconds": 0.0887342089554295,
+    "phases_seconds": null,
+    "scope": "Upstream API including streamer; no per-phase instrumentation"
+  }
+}

@@ -1,0 +1,214 @@
+{
+  "plan": [
+    {
+      "rep": 0,
+      "prompt": 0,
+      "arm": "assisted"
+    },
+    {
+      "rep": 0,
+      "prompt": 0,
+      "arm": "greedy"
+    },
+    {
+      "rep": 0,
+      "prompt": 1,
+      "arm": "assisted"
+    },
+    {
+      "rep": 0,
+      "prompt": 1,
+      "arm": "greedy"
+    },
+    {
+      "rep": 0,
+      "prompt": 2,
+      "arm": "assisted"
+    },
+    {
+      "rep": 0,
+      "prompt": 2,
+      "arm": "greedy"
+    },
+    {
+      "rep": 0,
+      "prompt": 3,
+      "arm": "greedy"
+    },
+    {
+      "rep": 0,
+      "prompt": 3,
+      "arm": "assisted"
+    },
+    {
+      "rep": 0,
+      "prompt": 4,
+      "arm": "assisted"
+    },
+    {
+      "rep": 0,
+      "prompt": 4,
+      "arm": "greedy"
+    },
+    {
+      "rep": 0,
+      "prompt": 5,
+      "arm": "greedy"
+    },
+    {
+      "rep": 0,
+      "prompt": 5,
+      "arm": "assisted"
+    },
+    {
+      "rep": 1,
+      "prompt": 0,
+      "arm": "greedy"
+    },
+    {
+      "rep": 1,
+      "prompt": 0,
+      "arm": "assisted"
+    },
+    {
+      "rep": 1,
+      "prompt": 1,
+      "arm": "assisted"
+    },
+    {
+      "rep": 1,
+      "prompt": 1,
+      "arm": "greedy"
+    },
+    {
+      "rep": 1,
+      "prompt": 2,
+      "arm": "greedy"
+    },
+    {
+      "rep": 1,
+      "prompt": 2,
+      "arm": "assisted"
+    },
+    {
+      "rep": 1,
+      "prompt": 3,
+      "arm": "greedy"
+    },
+    {
+      "rep": 1,
+      "prompt": 3,
+      "arm": "assisted"
+    },
+    {
+      "rep": 1,
+      "prompt": 4,
+      "arm": "assisted"
+    },
+    {
+      "rep": 1,
+      "prompt": 4,
+      "arm": "greedy"
+    },
+    {
+      "rep": 1,
+      "prompt": 5,
+      "arm": "assisted"
+    },
+    {
+      "rep": 1,
+      "prompt": 5,
+      "arm": "greedy"
+    },
+    {
+      "rep": 2,
+      "prompt": 0,
+      "arm": "assisted"
+    },
+    {
+      "rep": 2,
+      "prompt": 0,
+      "arm": "greedy"
+    },
+    {
+      "rep": 2,
+      "prompt": 1,
+      "arm": "greedy"
+    },
+    {
+      "rep": 2,
+      "prompt": 1,
+      "arm": "assisted"
+    },
+    {
+      "rep": 2,
+      "prompt": 2,
+      "arm": "greedy"
+    },
+    {
+      "rep": 2,
+      "prompt": 2,
+      "arm": "assisted"
+    },
+    {
+      "rep": 2,
+      "prompt": 3,
+      "arm": "greedy"
+    },
+    {
+      "rep": 2,
+      "prompt": 3,
+      "arm": "assisted"
+    },
+    {
+      "rep": 2,
+      "prompt": 4,
+      "arm": "assisted"
+    },
+    {
+      "rep": 2,
+      "prompt": 4,
+      "arm": "greedy"
+    },
+    {
+      "rep": 2,
+      "prompt": 5,
+      "arm": "greedy"
+    },
+    {
+      "rep": 2,
+      "prompt": 5,
+      "arm": "assisted"
+    }
+  ],
+  "prompts": [
+    {
+      "id": "unique",
+      "prompt": "Write a Python function that removes duplicates from a list while preserving order, then explain its complexity in one sentence."
+    },
+    {
+      "id": "epoch",
+      "prompt": "Explain why an epoch must be rechecked atomically with commit after awaiting a network response in a speculative language-model engine."
+    },
+    {
+      "id": "ttft",
+      "prompt": "Explain the difference between time to first token, prefill duration and decode tokens per second. Give no invented measurements."
+    },
+    {
+      "id": "json",
+      "prompt": "Return a JSON object with keys observed, unknown and rejected for this evidence: latency is 12 ms; energy is missing; a proposed speedup changes output."
+    },
+    {
+      "id": "queue",
+      "prompt": "Write a minimal Python example of a bounded asynchronous queue with a timeout and cancellation cleanup."
+    },
+    {
+      "id": "memory",
+      "prompt": "Explain in three short sentences why four computers each running a complete small model do not automatically pool memory for a single large model."
+    }
+  ],
+  "budget": 64,
+  "source_sha256": "141fe55489f79746fabb00e0b38fe7a82b579c1721b87eb9ce949226a0864ca2",
+  "helper_sha256": "cd00664f4abfb361e64b3556dbd8c3b9e227b551cd9c028dd8c80cd774c65b7e",
+  "scope": "Post-hoc matched upstream API timing control; local MPS, both models resident, no network or energy"
+}

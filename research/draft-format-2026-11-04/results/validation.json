@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "checks": [
+    "Frozen primary plan and prompts unchanged",
+    "results: complete run plan, unique observations, source hash and timing ranges",
+    "api-control: complete run plan, unique observations, source hash and timing ranges",
+    "Primary token equality, paired ratios, candidate accounting and phase residuals",
+    "Recomputed format-probe matches and unchanged target prefixes",
+    "Matched upstream API output equality independently counted",
+    "Diagnostic first-difference and fresh serial argmax consistency",
+    "Python syntax, JSON parsing and authored prose punctuation"
+  ],
+  "scope": "Artifact integrity and derived calculations only"
+}

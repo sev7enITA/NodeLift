@@ -1,0 +1,42 @@
+W1104 17:11:32.965000 86608 /private/tmp/nodelift-heretic-2-env/lib/python3.12/site-packages/torch/distributed/elastic/multiprocessing/redirects.py:35] NOTE: Redirects are currently not supported in MacOs.
+Loading weights:   0%|          | 0/398 [00:00<?, ?it/s]Loading weights:   4%|▎         | 14/398 [00:00<00:02, 138.55it/s]Loading weights:  14%|█▎        | 54/398 [00:00<00:01, 267.87it/s]Loading weights:  23%|██▎       | 91/398 [00:00<00:01, 305.72it/s]Loading weights:  31%|███       | 122/398 [00:00<00:00, 301.10it/s]Loading weights:  38%|███▊      | 152/398 [00:00<00:00, 300.70it/s]Loading weights:  49%|████▊     | 194/398 [00:00<00:00, 332.54it/s]Loading weights:  58%|█████▊    | 230/398 [00:00<00:00, 338.97it/s]Loading weights:  68%|██████▊   | 269/398 [00:00<00:00, 347.14it/s]Loading weights:  76%|███████▋  | 304/398 [00:00<00:00, 332.98it/s]Loading weights:  85%|████████▍ | 338/398 [00:01<00:00, 332.72it/s]Loading weights:  93%|█████████▎| 372/398 [00:01<00:00, 311.25it/s]Loading weights: 100%|██████████| 398/398 [00:01<00:00, 323.76it/s]
+Loading weights:   0%|          | 0/311 [00:00<?, ?it/s]Loading weights:  36%|███▋      | 113/311 [00:00<00:00, 1046.98it/s]Loading weights:  72%|███████▏  | 224/311 [00:00<00:00, 1075.91it/s]Loading weights: 100%|██████████| 311/311 [00:00<00:00, 1137.51it/s]
+[transformers] The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+[transformers] Passing `generation_config` together with generation-related arguments=({'min_new_tokens', 'use_cache', 'max_new_tokens'}) is deprecated and will be removed in future versions. Please pass either a `generation_config` object OR all generation parameters explicitly, but not both.
+1 36 {'rep': 0, 'prompt': 0, 'arm': 'assisted'} 2.243
+2 36 {'rep': 0, 'prompt': 0, 'arm': 'greedy'} 2.033
+3 36 {'rep': 0, 'prompt': 1, 'arm': 'assisted'} 3.321
+4 36 {'rep': 0, 'prompt': 1, 'arm': 'greedy'} 2.028
+5 36 {'rep': 0, 'prompt': 2, 'arm': 'assisted'} 2.979
+6 36 {'rep': 0, 'prompt': 2, 'arm': 'greedy'} 2.057
+7 36 {'rep': 0, 'prompt': 3, 'arm': 'greedy'} 1.309
+8 36 {'rep': 0, 'prompt': 3, 'arm': 'assisted'} 1.255
+9 36 {'rep': 0, 'prompt': 4, 'arm': 'assisted'} 2.265
+10 36 {'rep': 0, 'prompt': 4, 'arm': 'greedy'} 2.037
+11 36 {'rep': 0, 'prompt': 5, 'arm': 'greedy'} 2.138
+12 36 {'rep': 0, 'prompt': 5, 'arm': 'assisted'} 3.602
+13 36 {'rep': 1, 'prompt': 0, 'arm': 'greedy'} 2.078
+14 36 {'rep': 1, 'prompt': 0, 'arm': 'assisted'} 2.243
+15 36 {'rep': 1, 'prompt': 1, 'arm': 'assisted'} 3.187
+16 36 {'rep': 1, 'prompt': 1, 'arm': 'greedy'} 2.087
+17 36 {'rep': 1, 'prompt': 2, 'arm': 'greedy'} 2.094
+18 36 {'rep': 1, 'prompt': 2, 'arm': 'assisted'} 2.907
+19 36 {'rep': 1, 'prompt': 3, 'arm': 'greedy'} 1.262
+20 36 {'rep': 1, 'prompt': 3, 'arm': 'assisted'} 1.254
+21 36 {'rep': 1, 'prompt': 4, 'arm': 'assisted'} 2.245
+22 36 {'rep': 1, 'prompt': 4, 'arm': 'greedy'} 2.084
+23 36 {'rep': 1, 'prompt': 5, 'arm': 'assisted'} 3.594
+24 36 {'rep': 1, 'prompt': 5, 'arm': 'greedy'} 1.997
+25 36 {'rep': 2, 'prompt': 0, 'arm': 'assisted'} 2.243
+26 36 {'rep': 2, 'prompt': 0, 'arm': 'greedy'} 2.042
+27 36 {'rep': 2, 'prompt': 1, 'arm': 'greedy'} 2.118
+28 36 {'rep': 2, 'prompt': 1, 'arm': 'assisted'} 3.254
+29 36 {'rep': 2, 'prompt': 2, 'arm': 'greedy'} 2.029
+30 36 {'rep': 2, 'prompt': 2, 'arm': 'assisted'} 2.927
+31 36 {'rep': 2, 'prompt': 3, 'arm': 'greedy'} 1.224
+32 36 {'rep': 2, 'prompt': 3, 'arm': 'assisted'} 1.251
+33 36 {'rep': 2, 'prompt': 4, 'arm': 'assisted'} 2.238
+34 36 {'rep': 2, 'prompt': 4, 'arm': 'greedy'} 2.038
+35 36 {'rep': 2, 'prompt': 5, 'arm': 'greedy'} 2.105
+36 36 {'rep': 2, 'prompt': 5, 'arm': 'assisted'} 3.596
+COMPLETE
