@@ -1177,5 +1177,11 @@ export const italianMessages: Record<string, string> = {
   "✓ Draft ready": "✓ Draft pronto",
   "✓ Session active": "✓ Sessione attiva",
   "Local network unavailable. NodeLift will retry automatically; paired devices are preserved.": "Rete locale non disponibile. NodeLift riproverà automaticamente; i dispositivi abbinati sono conservati.",
-  "The computer network address changed. The host is ready at {0}. Current companions may need a new QR code; automatic rediscovery is not available in this version.": "L’indirizzo di rete del computer è cambiato. L’host è pronto su {0}. Le companion attuali potrebbero richiedere un nuovo QR; questa versione non supporta la ricerca automatica del computer."
+  "The computer network address changed. The host is ready at {0}. Current companions may need a new QR code; automatic rediscovery is not available in this version.": "L’indirizzo di rete del computer è cambiato. L’host è pronto su {0}. Le companion attuali potrebbero richiedere un nuovo QR; questa versione non supporta la ricerca automatica del computer.",
+  "Finding your paired computer on the local network…": "Ricerca del computer abbinato sulla rete locale…",
+  "Computer found · reconnecting…": "Computer trovato · riconnessione…",
+  "Host not found. Check the local network or discovery permissions.": "Host non trovato. Controlla la rete locale o i permessi di ricerca.",
+  "The network address changed. Paired companions will search for this computer at {0}.": "L’indirizzo di rete è cambiato. Le companion abbinate cercheranno questo computer su {0}.",
+  "Automatic discovery is unavailable on this computer. Check Bonjour or Avahi; QR pairing still works on the current address.": "Ricerca automatica non disponibile su questo computer. Controlla Bonjour o Avahi; il QR funziona ancora sull’indirizzo attuale.",
+  "Requires companion 0.2.14 or later. The invitation is private, single-use and valid for 5 minutes.": "Richiede la companion 0.2.14 o successiva. L’invito è privato, monouso e valido per 5 minuti."
 };

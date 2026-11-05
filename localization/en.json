@@ -1176,5 +1176,11 @@
   "✓ Draft ready": "✓ Draft ready",
   "✓ Session active": "✓ Session active",
   "Local network unavailable. NodeLift will retry automatically; paired devices are preserved.": "Local network unavailable. NodeLift will retry automatically; paired devices are preserved.",
-  "The computer network address changed. The host is ready at {0}. Current companions may need a new QR code; automatic rediscovery is not available in this version.": "The computer network address changed. The host is ready at {0}. Current companions may need a new QR code; automatic rediscovery is not available in this version."
+  "The computer network address changed. The host is ready at {0}. Current companions may need a new QR code; automatic rediscovery is not available in this version.": "The computer network address changed. The host is ready at {0}. Current companions may need a new QR code; automatic rediscovery is not available in this version.",
+  "Finding your paired computer on the local network…": "Finding your paired computer on the local network…",
+  "Computer found · reconnecting…": "Computer found · reconnecting…",
+  "Host not found. Check the local network or discovery permissions.": "Host not found. Check the local network or discovery permissions.",
+  "The network address changed. Paired companions will search for this computer at {0}.": "The network address changed. Paired companions will search for this computer at {0}.",
+  "Automatic discovery is unavailable on this computer. Check Bonjour or Avahi; QR pairing still works on the current address.": "Automatic discovery is unavailable on this computer. Check Bonjour or Avahi; QR pairing still works on the current address.",
+  "Requires companion 0.2.14 or later. The invitation is private, single-use and valid for 5 minutes.": "Requires companion 0.2.14 or later. The invitation is private, single-use and valid for 5 minutes."
 }

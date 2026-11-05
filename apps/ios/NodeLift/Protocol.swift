@@ -4,26 +4,28 @@ import CryptoKit
 
 struct Ticket: Codable, Sendable {
     let `protocol`: Int
-    let url: String
+    var url: String
     let certificate: String
     let sha256: String
     var invite: String?
     var expires_at: Double?
+    var tls_name: String? = nil
 
     static func decodeInvitation(_ value: String, now: Double = Date().timeIntervalSince1970) throws -> Ticket {
         guard value.utf8.count <= 8192 else { throw NodeError.message("Invalid invitation") }
         let text = value.trimmingCharacters(in: .whitespacesAndNewlines)
-        let prefix = "nodelift://pair/v1/"
+        let version = text.hasPrefix("nodelift://pair/v2/") ? 2 : 1
+        let prefix = "nodelift://pair/v\(version)/"
         let ticket: Ticket
         if text.hasPrefix(prefix) {
             let parts = text.dropFirst(prefix.count).components(separatedBy: "/")
             func matches(_ value: String, _ pattern: String) -> Bool { value.range(of: "^" + pattern + "$", options: .regularExpression) != nil }
-            guard parts.count == 4, matches(parts[0], "[0-9.]+:[0-9]{1,5}"), matches(parts[1], "[0-9]{10}"), matches(parts[2], "[A-Za-z0-9_-]{32}"), matches(parts[3], "[A-Za-z0-9_-]{64,6000}"), let expiry = Double(parts[1]) else { throw NodeError.message("Invalid invitation") }
-            var encoded = parts[3].replacingOccurrences(of: "-", with: "+").replacingOccurrences(of: "_", with: "/")
+            guard parts.count == (version == 2 ? 5 : 4), matches(parts[0], "[0-9.]+:[0-9]{1,5}"), matches(parts[1], "[0-9]{10}"), matches(parts[2], "[A-Za-z0-9_-]{32}"), matches(parts.last!, "[A-Za-z0-9_-]{64,6000}"), let expiry = Double(parts[1]) else { throw NodeError.message("Invalid invitation") }
+            var encoded = parts.last!.replacingOccurrences(of: "-", with: "+").replacingOccurrences(of: "_", with: "/")
             encoded += String(repeating: "=", count: (4 - encoded.count % 4) % 4)
             guard let der = Data(base64Encoded: encoded) else { throw NodeError.message("Invalid invitation") }
             let certificate = "-----BEGIN CERTIFICATE-----\n" + der.base64EncodedString(options: [.lineLength64Characters, .endLineWithLineFeed]) + "\n-----END CERTIFICATE-----\n"
-            ticket = Ticket(protocol: 1, url: "https://" + parts[0], certificate: certificate, sha256: SHA256.hash(data: der).map { String(format: "%02x", $0) }.joined(), invite: parts[2], expires_at: expiry)
+            ticket = Ticket(protocol: version, url: "https://" + parts[0], certificate: certificate, sha256: SHA256.hash(data: der).map { String(format: "%02x", $0) }.joined(), invite: parts[2], expires_at: expiry, tls_name: version == 2 ? parts[3] : nil)
         } else {
             do { ticket = try JSONDecoder().decode(Ticket.self, from: Data(text.utf8)) }
             catch { throw NodeError.message("Invalid invitation") }
@@ -39,7 +41,10 @@ struct Ticket: Codable, Sendable {
         return Data(base64Encoded: lines)
     }
     func validate() throws {
-        guard self.protocol == 1, let u = URLComponents(string: url), u.scheme == "https", u.user == nil, u.password == nil, u.query == nil, u.fragment == nil, u.path.isEmpty || u.path == "/", let host = u.host else { throw NodeError.message("Invalid HTTPS invitation") }
+        guard (1...2).contains(self.protocol), let u = URLComponents(string: url), u.scheme == "https", u.user == nil, u.password == nil, u.query == nil, u.fragment == nil, u.path.isEmpty || u.path == "/", let host = u.host else { throw NodeError.message("Invalid HTTPS invitation") }
+        if self.protocol == 2 {
+            guard let name=tls_name, name.range(of:"^nodelift-[0-9a-f]{32}\\.local$",options:.regularExpression) != nil else {throw NodeError.message("Invalid computer identity")}
+        }
         guard u.port == nil || (1...65535).contains(u.port!) else { throw NodeError.message("Invalid HTTPS invitation") }
         let labels = host.split(separator: ".", omittingEmptySubsequences: false)
         let parts = labels.compactMap { Int($0) }
@@ -79,7 +84,7 @@ final class PinnedDelegate: NSObject, URLSessionDelegate, URLSessionTaskDelegate
         }
         SecTrustSetAnchorCertificates(trust, [anchor] as CFArray)
         SecTrustSetAnchorCertificatesOnly(trust, true)
-        SecTrustSetPolicies(trust, SecPolicyCreateSSL(true, challenge.protectionSpace.host as CFString))
+        SecTrustSetPolicies(trust, SecPolicyCreateSSL(true, (ticket.protocol == 2 ? ticket.tls_name! : challenge.protectionSpace.host) as CFString))
         if SecTrustEvaluateWithError(trust, nil) { completionHandler(.useCredential, URLCredential(trust: trust)) }
         else { completionHandler(.cancelAuthenticationChallenge, nil) }
     }

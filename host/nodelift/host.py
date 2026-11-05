@@ -163,11 +163,13 @@ class Handler(http.server.BaseHTTPRequestHandler):
             if self.server.admin_token is not None:
                 return self.admin(method, path)
             if method == "GET" and path == "/health":
-                return self.send(200, {"service": "NodeLift", "protocol": 1, "pairing_scope": self.server.state.pairing_scope()})
+                return self.send(200, {"service": "NodeLift", "protocol": 2 if getattr(self.server,"host_identity",None) else 1, "host_identity": getattr(self.server,"host_identity",None), "pairing_scope": self.server.state.pairing_scope()})
             if method == "POST" and path == "/v1/pair":
                 v = self.body()
                 return self.send(200, self.server.state.pair(v.get("invite"), v.get("name"), v.get("capabilities", {}), v.get("device_key"), v.get("previous"), peer_address=self.client_address[0]))
             node = self.server.state.authenticate(self.bearer(), peer_address=self.client_address[0])
+            if method == "GET" and path == "/v1/session":
+                return self.send(200, {"node_id": node})
             if self.server.engine:
                 if method == "GET" and path == "/v1/engine/poll":
                     return self.send(200, self.server.engine.mailbox.poll(node))
@@ -341,7 +343,7 @@ class PairingEndpoint:
     A new address gets a separate pinned TLS identity. Existing companions must scan
     a fresh invitation; never weaken hostname or certificate checks to hide a move.
     """
-    def __init__(self, state, address="auto", port=9867, engine=None):
+    def __init__(self, state, address="auto", port=9867, engine=None, roaming=False):
         self.state, self.requested, self.port, self.engine = state, address, port, engine
         self.api = None
         self.address = None
@@ -350,6 +352,10 @@ class PairingEndpoint:
         self.last_error = None
         self.network_changes = 0
         self.last_address = None
+        self.roaming = roaming
+        self.tls_name = None
+        from .roaming import Publisher
+        self.publisher = Publisher() if roaming else None
 
     def refresh_network(self):
         """Follow route changes independently of QR creation; fail closed when offline.
@@ -376,7 +382,7 @@ class PairingEndpoint:
         with self.lock:
             return {"ready": self.network_ready(), "address": self.address if self.api else None,
                     "automatic_address": self.requested == "auto", "changes": self.network_changes,
-                    "companion_auto_reconnect": False, "error": self.last_error}
+                    "companion_auto_reconnect": self.roaming, "discovery_available": bool(self.publisher and self.publisher.available), "error": self.last_error}
 
     def desired_address(self):
         address = route_address() if self.requested == "auto" else self.requested
@@ -394,14 +400,18 @@ class PairingEndpoint:
         with self.lock:
             address = self.desired_address()
             if self.api is not None and self.address == address:
+                if self.publisher:self.publisher.update(address,self.api.server_port,self.identity[1],self.tls_name)
                 return
-            # Reuse the legacy pin only at the address for which it was issued.
-            folder = self.state.folder
-            metadata = folder / "identity.json"
-            if metadata.exists() and json.loads(metadata.read_text()).get("address") != address:
-                folder = folder / "identities" / address
-                folder.mkdir(parents=True, exist_ok=True, mode=0o700)
-            cert, key, pem, fingerprint = make_identity(folder, address)
+            if self.roaming:
+                from .roaming import identity
+                cert,key,pem,fingerprint,self.tls_name = identity(self.state.folder)
+            else:
+                folder = self.state.folder
+                metadata = folder / "identity.json"
+                if metadata.exists() and json.loads(metadata.read_text()).get("address") != address:
+                    folder = folder / "identities" / address
+                    folder.mkdir(parents=True, exist_ok=True, mode=0o700)
+                cert, key, pem, fingerprint = make_identity(folder, address)
             context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
             context.minimum_version = ssl.TLSVersion.TLSv1_2
             context.load_cert_chain(cert, key)
@@ -409,6 +419,7 @@ class PairingEndpoint:
                 candidate = Server((address, self.port), self.state, context=context, engine=self.engine)
             except OSError:
                 raise ValueError("The local connection could not start. Check the computer's network and whether another NodeLift host is running.") from None
+            candidate.host_identity = fingerprint if self.roaming else None
             threading.Thread(target=candidate.serve_forever, daemon=True).start()
             previous = self.api
             self.api, self.address = candidate, address
@@ -416,6 +427,7 @@ class PairingEndpoint:
                 self.network_changes += 1
             self.last_address = address
             self.identity = (pem, fingerprint, public_key_pin(cert))
+            if self.publisher:self.publisher.update(address,candidate.server_port,fingerprint,self.tls_name)
             if previous:
                 previous.shutdown()
                 previous.server_close()
@@ -428,12 +440,13 @@ class PairingEndpoint:
             self.ensure()  # A failed bind never produces an invitation.
             invite, expires = self.state.invite()
             pem, fingerprint, pin = self.identity
-            return {"protocol": 1, "url": f"https://{self.address}:{self.api.server_port}",
+            return {"protocol": 2 if self.roaming else 1, "tls_name": self.tls_name, "url": f"https://{self.address}:{self.api.server_port}",
                     "certificate": pem, "sha256": fingerprint, "public_key_pin": pin,
                     "invite": invite, "expires_at": expires}
 
     def close(self):
         with self.lock:
+            if self.publisher:self.publisher.close()
             if self.api:
                 self.api.shutdown()
                 self.api.server_close()
@@ -447,6 +460,7 @@ def main():
     parser.add_argument("--dashboard-port", type=int, default=9868)
     parser.add_argument("--state", type=Path, default=Path.home()/".local/share/nodelift")
     parser.add_argument("--bonjour", action="store_true", help="Advertise the host on the local network via dns-sd")
+    parser.add_argument("--legacy-pairing", action="store_true", help="Use protocol-1 IP certificates for older companions; no automatic mobile rediscovery")
     args = parser.parse_args()
     if args.address != "auto":
         try:
@@ -458,7 +472,7 @@ def main():
     state = State(args.state, automatic_assessment=True)
     from .engine import Controller
     engine = Controller(state)
-    endpoint = PairingEndpoint(state, args.address, args.port, engine)
+    endpoint = PairingEndpoint(state, args.address, args.port, engine, roaming=not args.legacy_pairing)
     try:
         endpoint.ensure()
     except ValueError as error:
@@ -474,7 +488,7 @@ def main():
     for t in threads:
         t.start()
     discovery = None
-    if args.bonjour:
+    if args.bonjour and args.legacy_pairing:
         try:
             discovery = subprocess.Popen(["dns-sd", "-R", "NodeLift", "_nodelift._tcp", "local", str(args.port), "protocol=1"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except FileNotFoundError:

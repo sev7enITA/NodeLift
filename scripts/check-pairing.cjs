@@ -8,6 +8,12 @@ const context=vm.createContext({URL,console,Date:class extends Date{static now()
 vm.runInContext(fs.readFileSync(path.join(root,'vendor/qrcodegen.js'),'utf8')+'\n'+fs.readFileSync(path.join(root,'pairing.js'),'utf8')+'\nthis.pairing=NodeLiftPairing;',context);
 const fixture={protocol:1,url:'https://192.168.1.9:9867',certificate:'-----BEGIN CERTIFICATE-----\n'+Buffer.alloc(800,31).toString('base64')+'\n-----END CERTIFICATE-----',invite:'a'.repeat(32),sha256:'b'.repeat(64),expires_at:now/1000+300};
 assert.ok(context.pairing.encode(fixture).startsWith('nodelift://pair/v1/192.168.1.9:9867/'));
+const roaming={...fixture,protocol:2,tls_name:'nodelift-'+'c'.repeat(32)+'.local'};
+const compact=context.pairing.encode(roaming);
+assert.ok(compact.startsWith('nodelift://pair/v2/192.168.1.9:9867/'));
+assert.ok(compact.includes('/'+roaming.tls_name+'/'));
+assert.throws(()=>context.pairing.encode({...roaming,tls_name:'*.local'}));
+assert.throws(()=>context.pairing.encode({...roaming,protocol:3}));
 let pending=true,calls=[],deferred=null,errors=[],revokeFails=false;
 const api=async(route,body)=>{calls.push([route,body]);if(route==='invite')return deferred?await deferred:structuredClone(fixture);if(route==='invite/status')return {pending};if(revokeFails)throw Error('offline');return {pending:false};};
 const controller=context.pairing.mount({api,t:(s,...args)=>s.replace(/\{(\d+)\}/g,(_,i)=>args[i]),authenticated:()=>true,error:e=>errors.push(e.message)});

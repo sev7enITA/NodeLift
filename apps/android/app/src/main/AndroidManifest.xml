@@ -3,6 +3,7 @@
     <uses-feature android:name="android.hardware.camera" android:required="false"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE"/>
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE"/>
@@ -13,7 +14,7 @@
         </provider>
         <activity android:name=".MainActivity" android:exported="true" android:launchMode="singleTop">
             <intent-filter><action android:name="android.intent.action.MAIN"/><category android:name="android.intent.category.LAUNCHER"/></intent-filter>
-            <intent-filter><action android:name="android.intent.action.VIEW"/><category android:name="android.intent.category.DEFAULT"/><category android:name="android.intent.category.BROWSABLE"/><data android:scheme="nodelift" android:host="pair" android:pathPrefix="/v1/"/></intent-filter>
+            <intent-filter><action android:name="android.intent.action.VIEW"/><category android:name="android.intent.category.DEFAULT"/><category android:name="android.intent.category.BROWSABLE"/><data android:scheme="nodelift" android:host="pair" android:pathPrefix="/v1/"/><data android:scheme="nodelift" android:host="pair" android:pathPrefix="/v2/"/></intent-filter>
         </activity>
         <activity android:name=".QRScannerActivity" android:exported="false" android:theme="@style/AppTheme"/>
         <service android:name=".NodeService" android:exported="false" android:foregroundServiceType="connectedDevice" android:stopWithTask="true"/>

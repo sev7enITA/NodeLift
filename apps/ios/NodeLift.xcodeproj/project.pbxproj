@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0183BF5905A238A66636AB10 /* DraftTransfer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFEF6741FEBFB6030FA3D8F9 /* DraftTransfer.swift */; };
 		0B8B2768D6B83F520DB122DF /* NodeModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 537FA0BE82EB8E5EE89F9D50 /* NodeModel.swift */; };
+		1269743F7094C4171C5BA342 /* HostDiscovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB5BA0D38F83E71EBA47E45B /* HostDiscovery.swift */; };
 		3C767E561695C701CCFF3B4C /* NativeDraft.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0BC8571261D6AF4ED2C28E /* NativeDraft.swift */; };
 		3E02319FCA780DC2E0B8E62E /* llama.cpp.txt in Resources */ = {isa = PBXBuildFile; fileRef = A5F69903C55976B5FC01ED0D /* llama.cpp.txt */; };
 		444953C279884E1E6FAE3A42 /* ItalianMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8161DDD447F29F50D3D4619C /* ItalianMessages.swift */; };
@@ -65,6 +67,8 @@
 		DB03A955D674B9CA78EEC031 /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
 		DC898468EBD92F30765669F1 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		DD0BC8571261D6AF4ED2C28E /* NativeDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativeDraft.swift; sourceTree = "<group>"; };
+		EB5BA0D38F83E71EBA47E45B /* HostDiscovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDiscovery.swift; sourceTree = "<group>"; };
+		EFEF6741FEBFB6030FA3D8F9 /* DraftTransfer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftTransfer.swift; sourceTree = "<group>"; };
 		F0F5EC33074D4B578A1B2FCE /* sha256.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = sha256.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -88,6 +92,8 @@
 				C957B5AD93898AF0E5030039 /* ChineseMessages.swift */,
 				256E47365D3BB081151BE2E4 /* DiagnosticJournal.swift */,
 				513534EC02356C30EE17AE6F /* Diagnostics.swift */,
+				EFEF6741FEBFB6030FA3D8F9 /* DraftTransfer.swift */,
+				EB5BA0D38F83E71EBA47E45B /* HostDiscovery.swift */,
 				267B8AF36579EF1C8F8FE371 /* Info.plist */,
 				8161DDD447F29F50D3D4619C /* ItalianMessages.swift */,
 				DB03A955D674B9CA78EEC031 /* Localization.swift */,
@@ -221,6 +227,8 @@
 				BE5439AA9625AA4360ECF881 /* ChineseMessages.swift in Sources */,
 				6448C9A7738FAF89205224ED /* DiagnosticJournal.swift in Sources */,
 				62F4D2E034BBF658AB85B9E6 /* Diagnostics.swift in Sources */,
+				0183BF5905A238A66636AB10 /* DraftTransfer.swift in Sources */,
+				1269743F7094C4171C5BA342 /* HostDiscovery.swift in Sources */,
 				444953C279884E1E6FAE3A42 /* ItalianMessages.swift in Sources */,
 				B3C4432748E459A48ABC5FA0 /* Localization.swift in Sources */,
 				3C767E561695C701CCFF3B4C /* NativeDraft.swift in Sources */,
@@ -254,7 +262,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 17;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"../../native/build/iphoneos/lib\"",
@@ -269,7 +277,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.2.11;
+				MARKETING_VERSION = 0.2.14;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.nodelift.companion;
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = NodeLift/Bridge.h;
@@ -405,7 +413,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 13;
+				CURRENT_PROJECT_VERSION = 17;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"../../native/build/iphoneos/lib\"",
@@ -420,7 +428,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.2.11;
+				MARKETING_VERSION = 0.2.14;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.nodelift.companion;
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = NodeLift/Bridge.h;

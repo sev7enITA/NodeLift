@@ -420,10 +420,12 @@ async function refreshAboutVersion() {
 }
 function renderNetworkStatus() {
   const notice=$('network-notice'), network=snapshot?.network;
-  notice.hidden=!authenticated || !network || (network.ready && !network.changes);
+  notice.hidden=!authenticated || !network || (network.ready && !network.changes && (!network.companion_auto_reconnect || network.discovery_available));
   if(notice.hidden){notice.textContent='';return;}
   notice.textContent=!network.ready
     ? t('Local network unavailable. NodeLift will retry automatically; paired devices are preserved.')
+    : network.companion_auto_reconnect
+      ? (!network.discovery_available ? t('Automatic discovery is unavailable on this computer. Check Bonjour or Avahi; QR pairing still works on the current address.') : t('The network address changed. Paired companions will search for this computer at {0}.',network.address))
     : t('The computer network address changed. The host is ready at {0}. Current companions may need a new QR code; automatic rediscovery is not available in this version.', network.address);
 }
 async function refresh() {

@@ -1177,5 +1177,11 @@ export const chineseMessages: Record<string, string> = {
   "✓ Draft ready": "✓ 草稿模型已就绪",
   "✓ Session active": "✓ 会话已启用",
   "Local network unavailable. NodeLift will retry automatically; paired devices are preserved.": "本地网络不可用。NodeLift 将自动重试；已配对设备会保留。",
-  "The computer network address changed. The host is ready at {0}. Current companions may need a new QR code; automatic rediscovery is not available in this version.": "计算机的网络地址已更改。主机已在 {0} 就绪。当前配套应用可能需要新的二维码；此版本尚不支持自动重新发现主机。"
+  "The computer network address changed. The host is ready at {0}. Current companions may need a new QR code; automatic rediscovery is not available in this version.": "计算机的网络地址已更改。主机已在 {0} 就绪。当前配套应用可能需要新的二维码；此版本尚不支持自动重新发现主机。",
+  "Finding your paired computer on the local network…": "正在本地网络中查找已配对的计算机…",
+  "Computer found · reconnecting…": "已找到计算机 · 正在重新连接…",
+  "Host not found. Check the local network or discovery permissions.": "未找到主机。请检查本地网络或发现权限。",
+  "The network address changed. Paired companions will search for this computer at {0}.": "网络地址已更改。已配对的应用将搜索位于 {0} 的此计算机。",
+  "Automatic discovery is unavailable on this computer. Check Bonjour or Avahi; QR pairing still works on the current address.": "此计算机无法使用自动发现。请检查 Bonjour 或 Avahi；仍可通过当前地址的二维码配对。",
+  "Requires companion 0.2.14 or later. The invitation is private, single-use and valid for 5 minutes.": "需要 0.2.14 或更高版本的配套应用。邀请为私密、一次性使用，有效期为 5 分钟。"
 };
