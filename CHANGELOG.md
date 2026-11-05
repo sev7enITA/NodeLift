@@ -171,6 +171,10 @@ Every published companion build has an entry below. Android packages are laborat
 
 ## Host, documentation and tooling updates
 
+### 2026-11-05: Standalone host preview 2 with authenticated network rediscovery
+
+- Publish a self-contained macOS arm64 host with embedded Python and protocol-2 discovery. On one M3 Max, startup, dashboard, branding, inventory, an eight-token native generation, a protocol-2 invitation and a running discovery publisher passed. Physical phone roaming and other Macs remain unqualified. The binary is ad-hoc signed and not notarized.
+
 ### 2026-11-03: Local Qwen review and verified request-boundary corrections
 
 - Run the pinned HauhauCS Qwen3.8 27B Q4_K_P model locally through NodeLift, retaining source packets, model identity, raw responses, truncation markers and independent finding adjudication. MTP is disabled; this is static code review, not a distributed performance result.

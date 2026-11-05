@@ -1,6 +1,6 @@
 # Standalone NodeLift host for macOS Apple silicon
 
-This is an experimental self-contained host preview, separate from the standalone [node probe](NODE_PROBE.md). [Download the ZIP](https://github.com/sev7enITA/NodeLift/releases/download/host-standalone-v0.3.0-preview.1/NodeLift-host-0.3.0-preview-macos-arm64.zip) and verify the [package manifest](../releases/standalone-host.json).
+This is an experimental self-contained host preview, separate from the standalone [node probe](NODE_PROBE.md). [Download the ZIP](https://github.com/sev7enITA/NodeLift/releases/download/host-standalone-v0.3.0-preview.2/NodeLift-host-0.3.0-preview.2-macos-arm64.zip) and verify the [package manifest](../releases/standalone-host.json).
 
 The package includes Python, the native inference library, dashboard and launcher. On startup it checks the native library, required dashboard assets and engine provenance. macOS supplies its system frameworks and `/usr/bin/openssl`, which is checked for local TLS identity creation. Models are not bundled. No Python installation, runtime download or system-wide library installation is required. A missing or broken component produces a startup error; repair is not an automatic network download.
 
@@ -14,6 +14,10 @@ Alternatively, in Terminal from the extracted folder:
 ```
 
 Then use the private local URL printed by the host. Add a compatible GGUF through the dashboard before running inference. A system model, phone or external GPU driver is not downloaded by this package.
+
+## Protocol-2 recovery
+
+Preview 2 supports companion 0.2.14 host rediscovery after a private IPv4 change. One new QR migrates legacy pairings. Bonjour and peer traffic must be permitted; physical phone roaming remains untested. See [network mobility](NETWORK_MOBILITY.md) for identity, certificate renewal and platform limits.
 
 ## Scope and limitations
 

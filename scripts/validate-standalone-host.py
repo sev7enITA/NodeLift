@@ -56,6 +56,10 @@ with tempfile.TemporaryDirectory(prefix='nodelift-host-validation-') as temp:
 
             if b'NodeLift' not in call('/', admin=False) or b'<svg' not in call('/brand/nodelift-mark.svg', admin=False):
                 raise RuntimeError('dashboard assets unavailable')
+            network=json.loads(call('/admin/status'))['network']
+            ticket=json.loads(call('/admin/invite', {}))
+            if not network['companion_auto_reconnect'] or not network['discovery_available'] or ticket['protocol'] != 2 or not ticket.get('tls_name'):
+                raise RuntimeError('protocol-2 host discovery unavailable')
             if not json.loads(call('/admin/engine/status'))['available']:
                 raise RuntimeError('native library unavailable')
             if json.loads(call('/admin/probe', {}))['schema'] != 'nodelift.node-probe.v1':
@@ -74,7 +78,7 @@ with tempfile.TemporaryDirectory(prefix='nodelift-host-validation-') as temp:
                 raise RuntimeError('native GGUF generation did not complete: '+str((run or {}).get('status', 'missing')))
             print(json.dumps({'dashboard_and_brand': 'passed', 'native_library': 'loaded', 'inventory': 'passed',
                               'native_gguf_generation': 'completed', 'output_tokens': len(run['tokens']),
-                              'transport': 'loopback only', 'state': 'temporary'}))
+                              'transport': 'loopback only', 'state': 'temporary', 'pairing_protocol': 2, 'discovery_publisher': 'running'}))
         finally:
             process.terminate()
             try:

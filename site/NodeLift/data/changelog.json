@@ -209,6 +209,13 @@
   ],
   "documentation_updates": [
     {
+      "date": "2026-11-05",
+      "title": "Standalone host preview 2 with authenticated network rediscovery",
+      "changes": [
+        "Publish a self-contained macOS arm64 host with embedded Python and protocol-2 discovery. On one M3 Max, startup, dashboard, branding, inventory, an eight-token native generation, a protocol-2 invitation and a running discovery publisher passed. Physical phone roaming and other Macs remain unqualified. The binary is ad-hoc signed and not notarized."
+      ]
+    },
+    {
       "date": "2026-11-03",
       "title": "Local Qwen review and verified request-boundary corrections",
       "changes": [
