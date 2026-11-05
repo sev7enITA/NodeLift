@@ -601,6 +601,10 @@
       "passed": true
     },
     {
+      "name": "initial boolean readiness is false",
+      "passed": true
+    },
+    {
       "name": "planned complete request count",
       "passed": true
     },

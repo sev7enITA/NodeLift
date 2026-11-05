@@ -7,9 +7,9 @@ Status: this cycle is a static research review, never external execution of Node
 | NVIDIA Nemotron 3 Ultra 550B A55B, free endpoint, medium effort | `reviewer-prompt.txt`, then explicit correction request | Two complete responses retained | General measurement questions retained; unsupported mechanisms rejected |
 | Cohere North Mini Code, free endpoint | Same five-case brief plus instruction against invented claims | Complete response retained | Cost-accounting question retained; most specific proposed diagnoses rejected |
 | Gemma 4 31B IT, free endpoint | Original brief, later a second request with new local results | Both requests returned HTTP 429, no assessment received | None |
-| Gemini 4 Argon High | Browser session requested | Current-cycle submission not completed because the browser was being used concurrently | Previous-cycle review is not relabeled as this review |
-| GLM 5.3 Max | Browser session requested | Current-cycle submission pending browser availability | Previous-cycle review is not relabeled as this review |
-| Kimi | Browser session requested | Current-cycle submission pending browser availability | None |
+| Gemini 4 Argon High | Current five-case measurements; correction request | Complete response and explicit withdrawals received after browser access resumed | Useful falsifiers retained; residual ratio/accounting errors rejected |
+| GLM 5.3 Max | Current five-case measurements; correction request | Complete response and explicit withdrawals received | Primitive intervention and measured cost-grid ideas retained as hypotheses |
+| Kimi K3.1 Pro High | Current five-case prompt submitted in the browser | Capacity message returned; no review received | None |
 
 OpenRouter reported zero available credits. Only catalog-confirmed free endpoints were called. Availability and response quality, rather than the number of agreeing models, limit the evidence. Raw responses deliberately remain uncorrected as audit evidence. They are not instructions or citations to adopt.
 
@@ -36,3 +36,9 @@ OpenRouter reported zero available credits. Only catalog-confirmed free endpoint
 4. Would a controlled idle/power experiment reproduce diagnostic results? This is still required for qualification.
 
 These questions were already present in the frozen protocol. Their repetition by reviewers is not independent experimental confirmation.
+
+## Browser review follow-through
+
+The user made Vivaldi available later in the cycle. Gemini 4 Argon Alta and GLM-5.3 Effort Max were visibly selected; both returned actual five-case responses and then explicit corrections. `review-browser-excerpts.json` retains selected accessibility-text excerpts with spacing normalized and a clear transcript limitation. Kimi K3.1 Pro High accepted a submission briefly, then returned its capacity message without an assessment. No subscription was purchased.
+
+Both completed reviewers initially misread complete-request/replay ratios as calibration or per-step ratios and overstated what the isolated projection proved. Those claims were challenged and withdrawn. Gemini still gave incorrect elapsed-time percentages from `1-ratio` and attributed a difference to request accounting boundaries that did not change. GLM still treated different instrumentation paths with matching k decisions as strict A/A samples. These residual claims are rejected. The retained next experiments are a controlled single-primitive intervention and genuinely identical-configuration A/A runs plus an executed k-grid. They are research hypotheses, not completed fixes.

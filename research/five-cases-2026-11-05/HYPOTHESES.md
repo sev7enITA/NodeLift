@@ -31,3 +31,13 @@ No architecture replacement is selected here. This is a bounded hypothesis regis
 - [Apple MLX-LM](https://github.com/ml-explore/mlx-lm), particularly installed version 0.32.2: reused generator under the retained MIT license. [Issue 1470](https://github.com/ml-explore/mlx-lm/issues/1470) is related evidence, not proof of our root cause.
 
 These projects deserve credit for the ideas and implementation foundations. External reviewers' unverified references are excluded; see `review-adjudication.md`.
+
+## Prioritized next experiment cards after the browser reviews
+
+These priorities choose experiments, not an architecture replacement.
+
+**A. Causal primitive intervention.** On the frozen diagnostic prefix, replace only the first-layer attention output projection with explicit per-token width-one calls. Preserve the serial reference, weights and prefix. Run interventions separately during history construction and the current forward; include an unchanged wrapper control. Check full logits, final argmax, populated KV and the next divergent component. A restored token supports only that intervention on that prefix. If the wrapper alters the width-one reference, record a changed contract and do not call it an equivalent optimization. If it passes, expand to a predeclared new-prefix set and measure the complete performance cost. Source/kernel inspection, rather than a zero-padding result alone, is needed to establish the dispatch mechanism.
+
+**B. Real cost surface with a noise control.** Execute genuine identical-code A/A trials, plus an actual fixed-width grid, in matched workload/context cells. Derive acceptance, startup, verification, rewind and completion costs from executed arms. Do not synthesize unobserved-width costs from one trajectory, and do not treat the old/charged aggregate ratios as raw A/A samples. Only then freeze an admission rule and test it prospectively. Record single-request latency and throughput separately.
+
+**C. Bounded remote continuation, conditional on a fresh worker.** Verify current artifact/tokenizer identity and link measurements first. Allow at most one future candidate block beyond the one being verified; tag branch ancestry and expiry. Test delayed, duplicated, rejected and expired blocks with exact target commits. Log which physical resource progresses during each interval. A producer that waits for every commit is a stop-and-wait control, not the desired overlap experiment. The all-accepted trace simulation remains an optimistic control, not the admission evidence.

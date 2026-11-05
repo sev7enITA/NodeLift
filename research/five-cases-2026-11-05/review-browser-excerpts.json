@@ -1,0 +1,58 @@
+{
+  "scope": "Selected verbatim accessibility-text excerpts from actual browser responses, not complete transcripts; UI text may truncate long paragraphs. Reviews are static and did not execute hardware or repository tests.",
+  "input_summary": "Five-case brief with current local measurements: sequential draft/verify; same-prompt request ratios 0.892/0.934 and identical k trajectories; native and FP32 replay widths and exactness; historical token-29 2x2 cache/current-width test; isolated projection reproduction; shared-host low-power conditions. Asked for conclusions, confounds, falsifiers and bounded unusual experiments. Correction messages clarified ratio definitions, unchanged full-request timing boundaries, unproven causal attribution, and absence of unobserved-width counterfactual data.",
+  "gemini": {
+    "model_observed": "Gemini 4 Argon, Alta",
+    "response_received": true,
+    "correction_response_received": true,
+    "initial_invalid_excerpts": [
+      "Furthermore, computing time ratios against a scalar serial baseline calibrated on a different prompt invalidates the sub-unity (0.892 and 0.934) speedup claims.",
+      "C4 Zero-Pad Dispatch Proof: I withdraw claiming that a zero-padded input test can prove the internal Metal kernel dispatch branch; establishing dispatch selection requires MLX source inspection and kernel instrumentation."
+    ],
+    "transcription_note": "Spacing normalized in excerpts. The second item above is a withdrawal in the correction response, retained alongside the invalid claim it addresses.",
+    "corrected_excerpts": [
+      "C1 Producer Pipelining Limit: I withdraw implying that a single-block producer halting until verifier commit overlaps draft generation during target verification of that block.",
+      "C3 Ratio Direction & Derived Thresholds: I withdraw treating C3 ratios as per-step latency multipliers, along with all derived break-even acceptance thresholds and the 1.66 cross-lane threshold.",
+      "It does not prove this single element delta alone caused the position-29 argmax flip (11136 vs 279), nor that linear projections are the sole source of batch-width divergence across attention and KV state.",
+      "Same-Prompt A/A Noise Floor & In-Request Controller Calibration (C2/C5): Measure paired target-only A/A full-request ratios across the prompt suite to quantify host variance, and replace external-prompt scalar calibration with online measurement of the current prompt's prefill/decode step cost before admitting draft execution."
+    ],
+    "coordinator_rejections_after_correction": [
+      "The correction still converts 1-ratio into elapsed-time slowdown percentages. That conversion is incorrect; paired elapsed-time increases must be computed from the raw pairs.",
+      "Both original and charged full-request timers already include startup, rewind and cleanup. Their timing difference cannot be attributed to a changed request accounting boundary.",
+      "A matched prompt pilot does not prove which overhead caused the net slowdown, and a primitive intervention still needs downstream and cache-history controls."
+    ]
+  },
+  "glm": {
+    "model_observed": "GLM-5.3 selected, Effort Max",
+    "response_received": true,
+    "correction_response_received": true,
+    "initial_excerpts": [
+      "No code was executed and no sources are claimed; every number below comes from your five cases only.",
+      "Both preserve exact target verification and full cost accounting; both leave paradigm decisions deferred until the matrix is complete."
+    ],
+    "coordinator_rejections": [
+      "The initial response confuses full-replay time ratios with per-step ratios and calls the policy timing difference accounting sensitivity despite identical full-request timing boundaries.",
+      "FP32 diagnostic equality does not isolate the mechanism to floating parameters alone: dtype changes affect arithmetic and kernel paths.",
+      "One isolated projection delta does not establish that this delta caused the final target argmax flip. High-precision tolerance checks do not diagnose a kernel defect or prove pinning will work.",
+      "One observed k trajectory does not reveal counterfactual acceptance and costs for every unobserved width."
+    ],
+    "corrected_excerpts": [
+      "Static review; no hardware executed. Corrections accepted.",
+      "Unobserved widths have no measured costs or acceptances; one logged trajectory cannot price them. Every k comparison requires executed runs.",
+      "FP32 exactness on three prompts does not localize the cause to floating parameters: a dtype change alters arithmetic and kernel paths across the graph.",
+      "The isolated layer-0 projection establishes a reproducible shape-dependent numerical delta at that primitive, not that this delta caused the final argmax flip; multiple later projections and attention can differ."
+    ],
+    "coordinator_rejections_after_correction": [
+      "The old and charged paths are not strict A/A replicates: instrumentation differs even when k trajectories match. Aggregate ratios 0.892 and 0.934 are not two raw A/A samples and cannot estimate a noise distribution.",
+      "Fixing one intervention and restoring one argmax would be scoped to that prefix and intervention; it would not prove a unique original cause, global batch invariance or preserved serial-reference semantics."
+    ]
+  },
+  "kimi": {
+    "model_observed": "K3.1 Pro High",
+    "submitted": true,
+    "response_received": false,
+    "outcome": "A chat briefly opened after submission, then the page returned to its draft and displayed a capacity message.",
+    "observed_message": "Too many people are chatting with Kimi; a subscription will grant you priority access.",
+    "input_caveat": "The earlier NodeLift packet remained attached in the existing composer; the new prompt explicitly instructed the model to ignore that earlier cycle. No assessment was returned."
+  }
+}

@@ -93,7 +93,7 @@ The optional control-model download is approximately 1.61 GB, with fixed [revisi
 
 [Adaptive scheduling and larger targets](research/adaptive-targets-2026-11-05/README.md): 150 same-Mac requests, pinned official Qwen3 MLX snapshots, and held-out 14B validation. Both selected FP32 paths matched 32/32 paired outputs but remained slower than target-only; no configuration qualifies. The 32B target was downloaded but failed memory admission. Includes cost traces, charts, shared-host limitations and corrected GLM/Gemini methodological reviews.
 
-[Five-case investigation](research/five-cases-2026-11-05/README.md): 48 verifier replays, 18 complete same-Mac requests and an isolated batch-shape numerical reproduction. Startup/rewind accounting remains slower than target-only; ideal pipeline simulations are not phone benchmarks. Includes raw evidence, English charts, falsifiable hypotheses and explicit pending physical/browser reviews. No paradigm replacement is selected.
+[Five-case investigation](research/five-cases-2026-11-05/README.md): 48 verifier replays, 18 complete same-Mac requests and an isolated batch-shape numerical reproduction. Startup/rewind accounting remains slower than target-only; ideal pipeline simulations are not phone benchmarks. Includes raw evidence, English charts, falsifiable hypotheses, four completed static model reviews with adjudication, and explicit unavailable-reviewer/physical-test states. No paradigm replacement is selected.
 
 [Visual phone benchmarks](research/visual-benchmarks-2026-11-02/README.md): inspect paired timing, first-token delay, fallback and useful proposals. [Open the chart gallery](https://www.fabriziodegni.com/NodeLift/#benchmark-charts).
 

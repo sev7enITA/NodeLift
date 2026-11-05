@@ -1,0 +1,129 @@
+{
+  "outcome": "no_fresh_node",
+  "elapsed_seconds": 120.28928666608408,
+  "readiness": [
+    {
+      "unix": 1793857953.221853,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793857958.235739,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793857963.246868,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793857968.259756,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793857973.273516,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793857978.2893288,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793857983.3042402,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793857988.3136919,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793857993.321218,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793857998.330104,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793858003.338973,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793858008.349356,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793858013.362916,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793858018.376657,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793858023.385103,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793858028.3970098,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793858033.411515,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793858038.42045,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793858043.4350212,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793858048.448677,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793858053.459722,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793858058.467964,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793858063.474495,
+      "online_count": 0,
+      "fresh_count": 0
+    },
+    {
+      "unix": 1793858068.4886909,
+      "online_count": 0,
+      "fresh_count": 0
+    }
+  ],
+  "result": null,
+  "helper_sha256": "9f2554cbfc4e64e7aeb82f774c53e7cfab3cc00977d0a777fd05c0f46af819e3",
+  "scope": "Paced application transport only. No remote inference, energy, model sharding or physical acceleration claim. Current topology not independently verified."
+}

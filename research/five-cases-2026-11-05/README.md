@@ -11,7 +11,7 @@ Research by Fabrizio Degni for [NodeLift](https://github.com/sev7enITA/NodeLift)
 - Six additional executions comparing accounting-only instrumentation to the old fixed generator at caps 1, 5 and 17. All three pairs matched.
 - A four-cell history/current-width diagnostic at a historical failing token position, with instrumented and uninstrumented forwards. Follow-up attention-input and isolated projection probes further localize the difference.
 - Twelve helper negative controls for admission and bounded queue accounting. These are not LLM correctness tests.
-- Fresh device readiness: no currently available phone worker. Historical readiness flags were not treated as live capability.
+- Fresh device readiness: no currently available phone worker. After the user offered to reopen the Xiaomi, a separate two-minute readiness window still received no fresh node. No transport job was submitted. Historical readiness flags were not treated as live capability.
 
 The pinned Qwen3 14B four-bit target, 0.6B draft, dependencies and canonical token template are inherited from [the previous cycle](../adaptive-targets-2026-11-05/README.md). No further model weights were downloaded. Each arithmetic lane uses its own serial reference; FP32 is not asserted to reproduce native-precision outputs. Model loading is excluded; caches are fresh per request, EOS is respected, and the output cap is 128. These three diagnostic prompts are not a qualification or held-out model-selection dataset.
 
@@ -82,13 +82,13 @@ Fresh process boundaries, shuffled width/arm order and matched inputs reduce som
 
 ## Reviews, knowledge base and completion boundary
 
-Actual current-cycle responses were obtained from Nemotron 3 Ultra and Cohere North Mini Code via free OpenRouter endpoints. Several detailed claims and citations were unsupported or inconsistent with the supplied code; they were rejected, not converted into consensus. Gemma returned a rate limit and no review. **New Gemini 4 Argon High, GLM 5.3 Max and Kimi assessments remain pending browser availability.** Earlier reviews are not counted again. See [raw responses and adjudication](review-adjudication.md).
+Actual current-cycle responses were obtained from Nemotron 3 Ultra and Cohere North Mini Code via free OpenRouter endpoints. Several detailed claims and citations were unsupported or inconsistent with the supplied code; they were rejected, not converted into consensus. Gemma returned a rate limit and no review. New browser responses and correction responses were subsequently obtained from **Gemini 4 Argon High and GLM 5.3 Max**. Their ratio-definition and causal overclaims were challenged; residual errors remain explicitly rejected in the adjudication. Kimi K3.1 Pro High returned a capacity message without an assessment. Earlier reviews are not counted again. See [raw responses and adjudication](review-adjudication.md).
 
-[The hypothesis register](HYPOTHESES.md) separates locally measured, simulated, proposed and physically untested work for each case, including bounded unusual approaches and falsifiers. It credits the primary research and MLX implementation foundations. The first local diagnostic cycle is complete; the full requested multi-model and physical-device assessment is not. A paradigm change remains deferred.
+[The hypothesis register](HYPOTHESES.md) separates locally measured, simulated, proposed and physically untested work for each case, including bounded unusual approaches and falsifiers. It credits the primary research and MLX implementation foundations. The first local diagnostic cycle is complete; the physical-device assessment remains incomplete, and unavailable reviewers are not counted as completed. A paradigm change remains deferred.
 
 ## Reproduction and evidence
 
-Read `PLAN.md`, `prompts.json`, `summary.json`, `checks.json` and `results/`. The previous cycle's model manifest maps pinned snapshots to local cache paths; reconstruct those paths locally rather than publishing private absolute locations. Use the dependency versions frozen in the previous cycle's `environment.txt`.
+Read `PLAN.md`, `DEVIATIONS.md`, `prompts.json`, `summary.json`, `checks.json` and `results/`. The previous cycle's model manifest maps pinned snapshots to local cache paths; reconstruct those paths locally rather than publishing private absolute locations. Use the dependency versions frozen in the previous cycle's `environment.txt`.
 
 1. Compile `sample-host.swift` as `/tmp/nodelift-five-thermal` on macOS.
 2. Run `python checks.py` and the envelope twice in separate processes, once with `--precision native`, once with `--precision fp32`. Supply fresh `--out` directories.

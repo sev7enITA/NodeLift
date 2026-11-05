@@ -13,6 +13,7 @@ for lane in ['native','fp32']:
   check(f'{lane} {i} honest exact flag',v['exact']==(v['predictions']==v['reference_tokens']))
   check(f'{lane} {i} positive measured timing',v['seconds']>0 and v['decode_seconds']>0 and v['prefill_seconds']>=0)
  data1=[v for v in data if v['width']==1];check(lane+' width-one reference alignment',all(v['exact'] for v in data1))
+readiness=json.loads((R/'device-readiness.json').read_text());check('initial boolean readiness is false',readiness['available_worker_selected'] is False)
 data=rows(R/'accounting/runs.jsonl');check('planned complete request count',len(data)==18)
 for i,v in enumerate(data):
  if v['arm']=='charged':
