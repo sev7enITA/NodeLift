@@ -108,9 +108,12 @@ class NetworkPairingTests(unittest.TestCase):
         first = self.ticket_at('127.0.0.1')
         paired = self.state.pair(first['invite'], 'Existing companion', {})
         with patch('nodelift.host.route_address', return_value='127.0.0.2'), patch(
+            'nodelift.host.local_address_available', return_value=True
+        ), patch(
             'nodelift.host.Server', side_effect=OSError('port unavailable')
-        ):
+        ) as server:
             self.endpoint.refresh_network()
+            server.assert_called_once()
         self.assertIsNone(self.endpoint.api)
         self.assertEqual(self.endpoint.last_error, 'network_unavailable')
         with patch('nodelift.host.route_address', return_value='127.0.0.1'):

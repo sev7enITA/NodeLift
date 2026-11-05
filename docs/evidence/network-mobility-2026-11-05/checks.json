@@ -20,7 +20,7 @@
     "host/nodelift/host.py": "337883d9b6275f2bd42c7ef6e8f9c8bc3a5ac8ee5465f51a5c27dbb16fc26856",
     "host/nodelift/dashboard.js": "244b1d751f58d06f20802ef000748a54a2b8021a4df0e0368ddeb6ba5abb19e9",
     "host/nodelift/dashboard.html": "482e5cd40e1cfec024ff98812a8dbc8f36fc30645b1e3eff6af96ca71577c690",
-    "host/tests/test_network_pairing.py": "a4a466d74369e18518a92011aa7ece794abdcb1b8baa5be7e1a4ae59616e0f53",
+    "host/tests/test_network_pairing.py": "a5beba896ee037f8502d4f8146a11243b1553444a5b96c172eeb80f778c0ce47",
     "docs/NETWORK_MOBILITY.md": "83ae98e2bfe4025bdee7e9cfee51211154fc218a78534f8021663abe24880f24",
     "localization/en.json": "e42c4fc5ab6a93e508162a1ceb5d584a117b96d21d47a01b1a91928c42a83d17",
     "localization/it.json": "1cd3880826544982c376835f11dcd17d7f9ce6651fa71548a1ad3e25f33809ed",
