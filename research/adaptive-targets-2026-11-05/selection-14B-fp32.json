@@ -1,0 +1,88 @@
+{
+  "scope": "14B FP32 lane only; frozen before validation",
+  "screening_sha256": "45ca0d88a48020e30748469d721254b20f2a4573978f83dd3e118329c3ac8f0d",
+  "scores": [
+    {
+      "arm": {
+        "name": "Qwen3-0.6B-MLX-4bit-fixed-2",
+        "draft": "Qwen/Qwen3-0.6B-MLX-4bit",
+        "mode": "fixed-2"
+      },
+      "exact": 3,
+      "median_ratio": 0.9594684472459092
+    },
+    {
+      "arm": {
+        "name": "Qwen3-0.6B-MLX-4bit-fixed-4",
+        "draft": "Qwen/Qwen3-0.6B-MLX-4bit",
+        "mode": "fixed-4"
+      },
+      "exact": 3,
+      "median_ratio": 0.7318320230667511
+    },
+    {
+      "arm": {
+        "name": "Qwen3-0.6B-MLX-4bit-fixed-8",
+        "draft": "Qwen/Qwen3-0.6B-MLX-4bit",
+        "mode": "fixed-8"
+      },
+      "exact": 3,
+      "median_ratio": 0.5026776329503032
+    },
+    {
+      "arm": {
+        "name": "Qwen3-0.6B-MLX-4bit-adaptive",
+        "draft": "Qwen/Qwen3-0.6B-MLX-4bit",
+        "mode": "adaptive"
+      },
+      "exact": 3,
+      "median_ratio": 0.9980040930150635
+    },
+    {
+      "arm": {
+        "name": "Qwen3-1.7B-MLX-4bit-fixed-2",
+        "draft": "Qwen/Qwen3-1.7B-MLX-4bit",
+        "mode": "fixed-2"
+      },
+      "exact": 3,
+      "median_ratio": 0.8094957717168556
+    },
+    {
+      "arm": {
+        "name": "Qwen3-1.7B-MLX-4bit-fixed-4",
+        "draft": "Qwen/Qwen3-1.7B-MLX-4bit",
+        "mode": "fixed-4"
+      },
+      "exact": 3,
+      "median_ratio": 0.756962052355527
+    },
+    {
+      "arm": {
+        "name": "Qwen3-1.7B-MLX-4bit-fixed-8",
+        "draft": "Qwen/Qwen3-1.7B-MLX-4bit",
+        "mode": "fixed-8"
+      },
+      "exact": 3,
+      "median_ratio": 0.555356264067254
+    },
+    {
+      "arm": {
+        "name": "Qwen3-1.7B-MLX-4bit-adaptive",
+        "draft": "Qwen/Qwen3-1.7B-MLX-4bit",
+        "mode": "adaptive"
+      },
+      "exact": 3,
+      "median_ratio": 0.9862630524403685
+    }
+  ],
+  "fixed": {
+    "name": "Qwen3-0.6B-MLX-4bit-fixed-2",
+    "draft": "Qwen/Qwen3-0.6B-MLX-4bit",
+    "mode": "fixed-2"
+  },
+  "adaptive": {
+    "name": "Qwen3-0.6B-MLX-4bit-adaptive",
+    "draft": "Qwen/Qwen3-0.6B-MLX-4bit",
+    "mode": "adaptive"
+  }
+}

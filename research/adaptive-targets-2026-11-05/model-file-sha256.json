@@ -1,0 +1,186 @@
+[
+  {
+    "repo": "Qwen/Qwen3-0.6B-MLX-4bit",
+    "revision": "173234aa840d113125e9f2271100ddbaf16c9620",
+    "files": [
+      {
+        "file": "config.json",
+        "bytes": 988,
+        "sha256": "0a07b68f1699472c68859db0fe6b46415c3ea1dee4d842216aadc1d2cda2e9c7"
+      },
+      {
+        "file": "merges.txt",
+        "bytes": 1671853,
+        "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+      },
+      {
+        "file": "model.safetensors",
+        "bytes": 316825742,
+        "sha256": "36162e7f72fe3eca308471e55161269e4605ab87d2666ae1f33ef800749c97dd"
+      },
+      {
+        "file": "model.safetensors.index.json",
+        "bytes": 49731,
+        "sha256": "70b3eb63114d68f40936b2cad3bec174af9c4d85849a88b36f308e8e9dd05ccb"
+      },
+      {
+        "file": "tokenizer.json",
+        "bytes": 11422654,
+        "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+      },
+      {
+        "file": "tokenizer_config.json",
+        "bytes": 9689,
+        "sha256": "a6389dfe64f259c5626a9b7e6d7e5a152bfe2973eae9b20e362bc450fea09239"
+      },
+      {
+        "file": "vocab.json",
+        "bytes": 2776833,
+        "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+      }
+    ]
+  },
+  {
+    "repo": "Qwen/Qwen3-1.7B-MLX-4bit",
+    "revision": "21457c6f51ed54a7c16e988c0844db973815c137",
+    "files": [
+      {
+        "file": "config.json",
+        "bytes": 988,
+        "sha256": "4e95bb0b083bf4847aacc08e67c5d59410f45fff6f43889d6ff400511c243fa5"
+      },
+      {
+        "file": "merges.txt",
+        "bytes": 1671853,
+        "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+      },
+      {
+        "file": "model.safetensors",
+        "bytes": 914316100,
+        "sha256": "42e688d626b3e144bf721af7517a82f3ea7e97bb5764fef1c89942bf9165072a"
+      },
+      {
+        "file": "model.safetensors.index.json",
+        "bytes": 49731,
+        "sha256": "dae65ea418d2d8ea25e72d0b1f5b1d0a12633c1f46ca2c5ca97903bbcc3a6ce2"
+      },
+      {
+        "file": "tokenizer.json",
+        "bytes": 11422654,
+        "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+      },
+      {
+        "file": "tokenizer_config.json",
+        "bytes": 8311,
+        "sha256": "5fdfe1416aaa323832d52c5bd8624a6e9bba3e9acc6ca8104f017abc775e2368"
+      },
+      {
+        "file": "vocab.json",
+        "bytes": 2776833,
+        "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+      }
+    ]
+  },
+  {
+    "repo": "Qwen/Qwen3-14B-MLX-4bit",
+    "revision": "ba63a5141812f9870287df53341123a71ba41433",
+    "files": [
+      {
+        "file": "config.json",
+        "bytes": 941,
+        "sha256": "b2b3caeb0beef3a231730ec846241585b64c7c88b99dba427450f6a9f2a04214"
+      },
+      {
+        "file": "merges.txt",
+        "bytes": 1671853,
+        "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+      },
+      {
+        "file": "model-00001-of-00002.safetensors",
+        "bytes": 5360593224,
+        "sha256": "f2f502ca7604ad6789b124bf9cd7a192fda5a60e6f52b1fe521c3aa4dad598ce"
+      },
+      {
+        "file": "model-00002-of-00002.safetensors",
+        "bytes": 2485808912,
+        "sha256": "d3758e05e08bcfb5fcd1b76d74758366355c80464398702051ce0388045e898e"
+      },
+      {
+        "file": "model.safetensors.index.json",
+        "bytes": 86266,
+        "sha256": "4825c397a7eb6ddde3827310ced22cdc3f6d1c2d5ca393e111bdcd9ad5601b05"
+      },
+      {
+        "file": "tokenizer.json",
+        "bytes": 11422654,
+        "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+      },
+      {
+        "file": "tokenizer_config.json",
+        "bytes": 9690,
+        "sha256": "f45a828b27bfe1ae2080246d6de51c29370a0978f15b3299123830d5ba9e08a1"
+      },
+      {
+        "file": "vocab.json",
+        "bytes": 2776833,
+        "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+      }
+    ]
+  },
+  {
+    "repo": "Qwen/Qwen3-32B-MLX-4bit",
+    "revision": "ceb4c4aad0164033af0c8dd37a0641693d0d6321",
+    "files": [
+      {
+        "file": "config.json",
+        "bytes": 941,
+        "sha256": "0059296f60b039b09e00bd5cbad130abd7277d2a2b6bf520839a3d633de4ae15"
+      },
+      {
+        "file": "merges.txt",
+        "bytes": 1671853,
+        "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+      },
+      {
+        "file": "model-00001-of-00004.safetensors",
+        "bytes": 5363162698,
+        "sha256": "c09c797044b3a0481c8718c1e20342580d83e248238b4dfe93dd600c403f599d"
+      },
+      {
+        "file": "model-00002-of-00004.safetensors",
+        "bytes": 5342645855,
+        "sha256": "fcc830611e03d175a034d04bfdafa433ca218e2574b2c034596a2ea348f5b608"
+      },
+      {
+        "file": "model-00003-of-00004.safetensors",
+        "bytes": 5368472294,
+        "sha256": "efd53790497af9614d484437dbb6d8303e11ba961c765e859a5ac38a683582eb"
+      },
+      {
+        "file": "model-00004-of-00004.safetensors",
+        "bytes": 1331774591,
+        "sha256": "61df74f545bc1ebf254dbce58e36b35f03c9bc1bbe722886250ddeedc3b167cf"
+      },
+      {
+        "file": "model.safetensors.index.json",
+        "bytes": 137843,
+        "sha256": "ac9806a9f6768f35b404ae9179fc65231203a53476e606235d1413b4b2586374"
+      },
+      {
+        "file": "tokenizer.json",
+        "bytes": 11422654,
+        "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+      },
+      {
+        "file": "tokenizer_config.json",
+        "bytes": 9690,
+        "sha256": "f45a828b27bfe1ae2080246d6de51c29370a0978f15b3299123830d5ba9e08a1"
+      },
+      {
+        "file": "vocab.json",
+        "bytes": 2776833,
+        "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+      }
+    ]
+  }
+]

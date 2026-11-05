@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-05",
+  "model_ui": "GLM-5.3",
+  "effort_ui": "Max",
+  "scope": "Selected verbatim accessibility excerpts from the completed correction. Not a full transcript; not source review or execution.",
+  "excerpts": [
+    "Retained: cluster-bootstrap over 8 prompts (not 16 instances), config-order counterbalancing, exactness gating all timing claims, and the caveat that selecting fixed/adaptive configurations from 3 screening prompts selects noise.",
+    "Stage B — direct break-even.  On the same prompts, measure serial per-token cost of each draft and target directly, per pair; report a*(k,d) beside observed acceptance. This bounds feasibility before anything is unfrozen."
+  ],
+  "coordinator_note": "Raw quotation punctuation is preserved. The break-even formula is an approximation, not a proof; empirical cost and exact-output checks remain authoritative."
+}

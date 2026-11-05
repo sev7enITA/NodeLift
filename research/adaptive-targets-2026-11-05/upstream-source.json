@@ -1,0 +1,13 @@
+{
+  "package": "mlx-lm",
+  "version": "0.32.2",
+  "generate_sha256": "9d46803799f99d6fc7c35fff2d4357c79b1a25ae98cc63efeaaebeb50a7b5f33",
+  "original_function_sha256": "e978831a0c54bc427ed6ff16a3e18561a810ee0e70e4ae92563bfed94c4140b4",
+  "changes": [
+    "per-block measured costs",
+    "bounded policy k selection",
+    "permanent per-request fallback",
+    "candidate and emitted-token accounting"
+  ],
+  "license": "MIT"
+}

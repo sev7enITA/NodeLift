@@ -1,0 +1,11 @@
+{
+  "date": "2026-11-05",
+  "model_ui": "4 Argon",
+  "effort_ui": "Alta (High)",
+  "scope": "Selected verbatim accessibility excerpts from the completed correction. Not a full transcript; not source review or execution.",
+  "excerpts": [
+    "Memory Pressure and Unprofiled Hardware Mechanics:  With active MLX weights occupying ~9 GiB within an 18. 1 GiB available envelope,  claims of resident-model memory thrashing are withdrawn.  Unprofiled attributions to memory-bandwidth saturation and GEMV/GEMM reduction-tree disparities are likewise withdrawn.",
+    "Numerical Guarantees and Hybrid Oracle Flaws:  Assertions that FP32  will  diverge on untested prompts,  or that matching reduction tiling alone guarantees bitwise identity across all kernels and cache states,  are withdrawn.  Furthermore,  previous-token logit margins do not bound subsequent token errors,  and re-running a block in FP32 over a native-precision KV cache cannot restore a valid serial oracle because the conditioning history is already altered."
+  ],
+  "coordinator_note": "Resource figures refer to different observation points; they are not proof of an idle host. Global load and swap telemetry remain in the measured dataset."
+}

@@ -1,0 +1,258 @@
+{
+  "target": "Qwen/Qwen3-14B-MLX-4bit",
+  "target_revision": "ba63a5141812f9870287df53341123a71ba41433",
+  "draft_revisions": {
+    "Qwen/Qwen3-0.6B-MLX-4bit": "173234aa840d113125e9f2271100ddbaf16c9620",
+    "Qwen/Qwen3-1.7B-MLX-4bit": "21457c6f51ed54a7c16e988c0844db973815c137"
+  },
+  "stage": "screen",
+  "block": 0,
+  "prompts": [
+    {
+      "id": "screen-code",
+      "prompt": "Write a Python function that merges two already sorted integer lists. Explain its complexity."
+    },
+    {
+      "id": "screen-json",
+      "prompt": "Return a JSON object describing three states of a worker: ready, busy, unavailable. Use keys state and can_accept_work."
+    },
+    {
+      "id": "screen-explain",
+      "prompt": "Explain how memory bandwidth differs from network bandwidth when running a large language model across machines."
+    }
+  ],
+  "arms": [
+    {
+      "name": "host",
+      "draft": null,
+      "mode": "host"
+    },
+    {
+      "name": "Qwen3-0.6B-MLX-4bit-fixed-2",
+      "draft": "Qwen/Qwen3-0.6B-MLX-4bit",
+      "mode": "fixed-2"
+    },
+    {
+      "name": "Qwen3-0.6B-MLX-4bit-fixed-4",
+      "draft": "Qwen/Qwen3-0.6B-MLX-4bit",
+      "mode": "fixed-4"
+    },
+    {
+      "name": "Qwen3-0.6B-MLX-4bit-fixed-8",
+      "draft": "Qwen/Qwen3-0.6B-MLX-4bit",
+      "mode": "fixed-8"
+    },
+    {
+      "name": "Qwen3-0.6B-MLX-4bit-adaptive",
+      "draft": "Qwen/Qwen3-0.6B-MLX-4bit",
+      "mode": "adaptive"
+    },
+    {
+      "name": "Qwen3-1.7B-MLX-4bit-fixed-2",
+      "draft": "Qwen/Qwen3-1.7B-MLX-4bit",
+      "mode": "fixed-2"
+    },
+    {
+      "name": "Qwen3-1.7B-MLX-4bit-fixed-4",
+      "draft": "Qwen/Qwen3-1.7B-MLX-4bit",
+      "mode": "fixed-4"
+    },
+    {
+      "name": "Qwen3-1.7B-MLX-4bit-fixed-8",
+      "draft": "Qwen/Qwen3-1.7B-MLX-4bit",
+      "mode": "fixed-8"
+    },
+    {
+      "name": "Qwen3-1.7B-MLX-4bit-adaptive",
+      "draft": "Qwen/Qwen3-1.7B-MLX-4bit",
+      "mode": "adaptive"
+    }
+  ],
+  "plan": [
+    {
+      "rep": 0,
+      "prompt": 0,
+      "arm_index": 1
+    },
+    {
+      "rep": 0,
+      "prompt": 0,
+      "arm_index": 5
+    },
+    {
+      "rep": 0,
+      "prompt": 0,
+      "arm_index": 7
+    },
+    {
+      "rep": 0,
+      "prompt": 0,
+      "arm_index": 3
+    },
+    {
+      "rep": 0,
+      "prompt": 0,
+      "arm_index": 0
+    },
+    {
+      "rep": 0,
+      "prompt": 0,
+      "arm_index": 4
+    },
+    {
+      "rep": 0,
+      "prompt": 0,
+      "arm_index": 6
+    },
+    {
+      "rep": 0,
+      "prompt": 0,
+      "arm_index": 8
+    },
+    {
+      "rep": 0,
+      "prompt": 0,
+      "arm_index": 2
+    },
+    {
+      "rep": 0,
+      "prompt": 1,
+      "arm_index": 8
+    },
+    {
+      "rep": 0,
+      "prompt": 1,
+      "arm_index": 7
+    },
+    {
+      "rep": 0,
+      "prompt": 1,
+      "arm_index": 0
+    },
+    {
+      "rep": 0,
+      "prompt": 1,
+      "arm_index": 2
+    },
+    {
+      "rep": 0,
+      "prompt": 1,
+      "arm_index": 3
+    },
+    {
+      "rep": 0,
+      "prompt": 1,
+      "arm_index": 5
+    },
+    {
+      "rep": 0,
+      "prompt": 1,
+      "arm_index": 1
+    },
+    {
+      "rep": 0,
+      "prompt": 1,
+      "arm_index": 4
+    },
+    {
+      "rep": 0,
+      "prompt": 1,
+      "arm_index": 6
+    },
+    {
+      "rep": 0,
+      "prompt": 2,
+      "arm_index": 5
+    },
+    {
+      "rep": 0,
+      "prompt": 2,
+      "arm_index": 1
+    },
+    {
+      "rep": 0,
+      "prompt": 2,
+      "arm_index": 7
+    },
+    {
+      "rep": 0,
+      "prompt": 2,
+      "arm_index": 3
+    },
+    {
+      "rep": 0,
+      "prompt": 2,
+      "arm_index": 8
+    },
+    {
+      "rep": 0,
+      "prompt": 2,
+      "arm_index": 6
+    },
+    {
+      "rep": 0,
+      "prompt": 2,
+      "arm_index": 2
+    },
+    {
+      "rep": 0,
+      "prompt": 2,
+      "arm_index": 4
+    },
+    {
+      "rep": 0,
+      "prompt": 2,
+      "arm_index": 0
+    }
+  ],
+  "max_tokens": 128,
+  "vocabulary_hash": "3ec3c124e02b7ace235364350c04b8fc38d34b182aad914fc45430fa925c0f3f",
+  "canonical_template_repo": "Qwen/Qwen3-0.6B-MLX-4bit",
+  "host_seconds_per_token": 0.04550154703188568,
+  "source_hashes": {
+    "runner.py": "be8fe1d779fa94f76f8e09f10f4f8c84f6ceacfe73c23ee811b089655fe8a53a",
+    "adaptive_mlx.py": "f842bd0ccf94da01ade97d7f89804aef72a66175001ad48eb4fcd6a0331f92b7",
+    "policy.py": "45004f2478aacc5b92003c2f36895eaa918e1d7a808616cc5cb3c31c955b3c46",
+    "runner_fp32.py": "66c16fc7adfbce1f0e88b39802ff831642469215440cf14f0cd0c7bf4971a771"
+  },
+  "scope": "Same-Mac MLX prototype; weights resident, fresh KV; EOS respected; no remote or energy test",
+  "arithmetic_lane": "fp32-floating-parameters",
+  "parameter_dtype_observations": [
+    {
+      "model_directory_name": "173234aa840d113125e9f2271100ddbaf16c9620",
+      "dtypes_before": [
+        "mlx.core.bfloat16",
+        "mlx.core.uint32"
+      ],
+      "dtypes_after": [
+        "mlx.core.float32",
+        "mlx.core.uint32"
+      ],
+      "packed_integer_dtypes_preserved": true
+    },
+    {
+      "model_directory_name": "21457c6f51ed54a7c16e988c0844db973815c137",
+      "dtypes_before": [
+        "mlx.core.bfloat16",
+        "mlx.core.uint32"
+      ],
+      "dtypes_after": [
+        "mlx.core.float32",
+        "mlx.core.uint32"
+      ],
+      "packed_integer_dtypes_preserved": true
+    },
+    {
+      "model_directory_name": "ba63a5141812f9870287df53341123a71ba41433",
+      "dtypes_before": [
+        "mlx.core.bfloat16",
+        "mlx.core.uint32"
+      ],
+      "dtypes_after": [
+        "mlx.core.float32",
+        "mlx.core.uint32"
+      ],
+      "packed_integer_dtypes_preserved": true
+    }
+  ]
+}

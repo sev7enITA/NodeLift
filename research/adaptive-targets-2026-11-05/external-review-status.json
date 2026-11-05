@@ -1,0 +1,38 @@
+[
+  {
+    "requested_model": "z-ai/glm-5.3",
+    "requested_reasoning_effort": "max",
+    "status": "incomplete_no_message_at_output_limit",
+    "review_completed": false,
+    "scope": "Static review requested, not physical testing",
+    "generation_id": "gen-1793849065-g2yT3TIM71ZYGRlm809D"
+  },
+  {
+    "requested_model": "google/gemini-4-argon",
+    "requested_reasoning_effort": "high",
+    "status": "blocked_http_402",
+    "review_completed": false,
+    "scope": "Static review requested, not physical testing",
+    "generation_id": null
+  },
+  {
+    "requested_model": "GLM-5.3",
+    "requested_reasoning_effort": "Max",
+    "transport": "browser",
+    "status": "completed_initial_review_and_correction",
+    "review_completed": true,
+    "scope": "Static review of supplied experiment description; no source access or hardware execution",
+    "retained_evidence": "review-glm-excerpts.json",
+    "adjudication": "review-adjudication.md"
+  },
+  {
+    "requested_model": "Gemini 4 Argon",
+    "requested_reasoning_effort": "High",
+    "transport": "browser",
+    "status": "completed_initial_review_and_correction",
+    "review_completed": true,
+    "scope": "Static review of supplied experiment description; no source access or hardware execution",
+    "retained_evidence": "review-gemini-excerpts.json",
+    "adjudication": "review-adjudication.md"
+  }
+]

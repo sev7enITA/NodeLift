@@ -91,6 +91,8 @@ The optional control-model download is approximately 1.61 GB, with fixed [revisi
 
 [Local 8B/3B experiments](research/llama-8b-pilot-2026-11-02/README.md): two exploratory same-Mac sessions, a fixed versus adaptive follow-up, and a separate upstream server control. Width 4 showed a small median total-time benefit in the first two NodeLift periods, alongside a later first token; these results do not establish a phone or distributed speedup. [Batch-shape diagnostics](research/batch-numerics-2026-11-02/README.md) and [cache-state stress](research/cache-stress-2026-11-02/README.md) retain the negative and positive controls.
 
+[Adaptive scheduling and larger targets](research/adaptive-targets-2026-11-05/README.md): 150 same-Mac requests, pinned official Qwen3 MLX snapshots, and held-out 14B validation. Both selected FP32 paths matched 32/32 paired outputs but remained slower than target-only; no configuration qualifies. The 32B target was downloaded but failed memory admission. Includes cost traces, charts, shared-host limitations and corrected GLM/Gemini methodological reviews.
+
 [Visual phone benchmarks](research/visual-benchmarks-2026-11-02/README.md): inspect paired timing, first-token delay, fallback and useful proposals. [Open the chart gallery](https://www.fabriziodegni.com/NodeLift/#benchmark-charts).
 
 [Performance diagnosis](https://github.com/sev7enITA/NodeLift/blob/main/research/performance-diagnosis-2026-11-02/REPORT.md): an unoptimized Android native build is corrected and cross-compiled; nine new iPhone pairs reject a width-only solution. That report predates the optimized 0.2.13 Android release; the new binary has since passed a short physical timing check, while longer 8B trials were interrupted.

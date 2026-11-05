@@ -1,0 +1,11 @@
+{
+  "checks": [
+    "A fully exact, consistently faster synthetic candidate passes",
+    "One mismatch disqualifies despite speed",
+    "One process is insufficient",
+    "A subthreshold process prevents promotion",
+    "Workload uncertainty prevents promotion despite favorable median"
+  ],
+  "passed": 5,
+  "scope": "Synthetic negative controls, not inference or performance evidence"
+}

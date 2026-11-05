@@ -1,0 +1,568 @@
+{
+  "scope": "Same-Mac MLX prototype, not distributed inference",
+  "screening": {
+    "14B-screen": [
+      {
+        "arm": "Qwen3-0.6B-MLX-4bit-adaptive",
+        "pairs": 3,
+        "exact_pairs": 2,
+        "median_paired_speed_ratio": 1.000038586859163,
+        "median_workload_speed_ratio": 1.000038586859163,
+        "workload_bootstrap_95_interval": [
+          0.9757967983998562,
+          1.6893346039072838
+        ],
+        "block_median_ratios": {
+          "0": 1.000038586859163
+        },
+        "workload_median_ratios": {
+          "screen-code": 0.9757967983998562,
+          "screen-explain": 1.000038586859163,
+          "screen-json": 1.6893346039072838
+        },
+        "regressing_workloads": [
+          "screen-code"
+        ],
+        "median_saved_seconds": 0.00022287608589977026,
+        "median_paired_duration_change_percent": -0.00385853702747907,
+        "median_ttft_change_seconds": 0.020911000086925924,
+        "disabled_requests": 2,
+        "candidate_swap_growth_bytes": -41943040,
+        "qualified": false
+      },
+      {
+        "arm": "Qwen3-0.6B-MLX-4bit-fixed-2",
+        "pairs": 3,
+        "exact_pairs": 2,
+        "median_paired_speed_ratio": 1.2055020621896229,
+        "median_workload_speed_ratio": 1.2055020621896229,
+        "workload_bootstrap_95_interval": [
+          1.1573782153098278,
+          1.4503760521411657
+        ],
+        "block_median_ratios": {
+          "0": 1.2055020621896229
+        },
+        "workload_median_ratios": {
+          "screen-code": 1.2055020621896229,
+          "screen-explain": 1.1573782153098278,
+          "screen-json": 1.4503760521411657
+        },
+        "regressing_workloads": [],
+        "median_saved_seconds": 0.9950210000388324,
+        "median_paired_duration_change_percent": -17.04701042289033,
+        "median_ttft_change_seconds": 0.00741749897133559,
+        "disabled_requests": 0,
+        "candidate_swap_growth_bytes": -159449088,
+        "qualified": false
+      },
+      {
+        "arm": "Qwen3-0.6B-MLX-4bit-fixed-4",
+        "pairs": 3,
+        "exact_pairs": 2,
+        "median_paired_speed_ratio": 1.3072590984870285,
+        "median_workload_speed_ratio": 1.3072590984870285,
+        "workload_bootstrap_95_interval": [
+          1.088584996888274,
+          1.631635133302758
+        ],
+        "block_median_ratios": {
+          "0": 1.3072590984870285
+        },
+        "workload_median_ratios": {
+          "screen-code": 1.3072590984870285,
+          "screen-explain": 1.088584996888274,
+          "screen-json": 1.631635133302758
+        },
+        "regressing_workloads": [],
+        "median_saved_seconds": 1.3623825829708949,
+        "median_paired_duration_change_percent": -23.5040703746211,
+        "median_ttft_change_seconds": 0.04420791601296514,
+        "disabled_requests": 0,
+        "candidate_swap_growth_bytes": -25165824,
+        "qualified": false
+      },
+      {
+        "arm": "Qwen3-0.6B-MLX-4bit-fixed-8",
+        "pairs": 3,
+        "exact_pairs": 2,
+        "median_paired_speed_ratio": 0.9410973255305761,
+        "median_workload_speed_ratio": 0.9410973255305761,
+        "workload_bootstrap_95_interval": [
+          0.797075006377634,
+          1.7353766721006543
+        ],
+        "block_median_ratios": {
+          "0": 0.9410973255305761
+        },
+        "workload_median_ratios": {
+          "screen-code": 0.9410973255305761,
+          "screen-explain": 0.797075006377634,
+          "screen-json": 1.7353766721006543
+        },
+        "regressing_workloads": [
+          "screen-code",
+          "screen-explain"
+        ],
+        "median_saved_seconds": -0.36532929190434515,
+        "median_paired_duration_change_percent": 6.258935486424377,
+        "median_ttft_change_seconds": 0.11047695903107524,
+        "disabled_requests": 0,
+        "candidate_swap_growth_bytes": -50331648,
+        "qualified": false
+      },
+      {
+        "arm": "Qwen3-1.7B-MLX-4bit-adaptive",
+        "pairs": 3,
+        "exact_pairs": 2,
+        "median_paired_speed_ratio": 0.9947711413734263,
+        "median_workload_speed_ratio": 0.9947711413734263,
+        "workload_bootstrap_95_interval": [
+          0.970495941483332,
+          1.4490431939831394
+        ],
+        "block_median_ratios": {
+          "0": 0.9947711413734263
+        },
+        "workload_median_ratios": {
+          "screen-code": 0.9947711413734263,
+          "screen-explain": 0.970495941483332,
+          "screen-json": 1.4490431939831394
+        },
+        "regressing_workloads": [
+          "screen-code",
+          "screen-explain"
+        ],
+        "median_saved_seconds": -0.03068087506107986,
+        "median_paired_duration_change_percent": 0.5256343302595834,
+        "median_ttft_change_seconds": 0.052854456938803196,
+        "disabled_requests": 2,
+        "candidate_swap_growth_bytes": -41943040,
+        "qualified": false
+      },
+      {
+        "arm": "Qwen3-1.7B-MLX-4bit-fixed-2",
+        "pairs": 3,
+        "exact_pairs": 2,
+        "median_paired_speed_ratio": 1.1463636315450894,
+        "median_workload_speed_ratio": 1.1463636315450894,
+        "workload_bootstrap_95_interval": [
+          1.0892561931507483,
+          1.291417761316604
+        ],
+        "block_median_ratios": {
+          "0": 1.1463636315450894
+        },
+        "workload_median_ratios": {
+          "screen-code": 1.1463636315450894,
+          "screen-explain": 1.0892561931507483,
+          "screen-json": 1.291417761316604
+        },
+        "regressing_workloads": [],
+        "median_saved_seconds": 0.7452376659493893,
+        "median_paired_duration_change_percent": -12.767644359741059,
+        "median_ttft_change_seconds": 0.012073207064531744,
+        "disabled_requests": 0,
+        "candidate_swap_growth_bytes": -41943040,
+        "qualified": false
+      },
+      {
+        "arm": "Qwen3-1.7B-MLX-4bit-fixed-4",
+        "pairs": 3,
+        "exact_pairs": 2,
+        "median_paired_speed_ratio": 1.1832614362632148,
+        "median_workload_speed_ratio": 1.1832614362632148,
+        "workload_bootstrap_95_interval": [
+          1.0279967881509953,
+          1.426291344631213
+        ],
+        "block_median_ratios": {
+          "0": 1.1832614362632148
+        },
+        "workload_median_ratios": {
+          "screen-code": 1.1832614362632148,
+          "screen-explain": 1.0279967881509953,
+          "screen-json": 1.426291344631213
+        },
+        "regressing_workloads": [],
+        "median_saved_seconds": 0.904012416023761,
+        "median_paired_duration_change_percent": -15.487822948237163,
+        "median_ttft_change_seconds": 0.06812554190400988,
+        "disabled_requests": 0,
+        "candidate_swap_growth_bytes": 0,
+        "qualified": false
+      },
+      {
+        "arm": "Qwen3-1.7B-MLX-4bit-fixed-8",
+        "pairs": 3,
+        "exact_pairs": 2,
+        "median_paired_speed_ratio": 0.9287377583722733,
+        "median_workload_speed_ratio": 0.9287377583722733,
+        "workload_bootstrap_95_interval": [
+          0.7306163697271242,
+          1.3732340666509928
+        ],
+        "block_median_ratios": {
+          "0": 0.9287377583722733
+        },
+        "workload_median_ratios": {
+          "screen-code": 0.9287377583722733,
+          "screen-explain": 0.7306163697271242,
+          "screen-json": 1.3732340666509928
+        },
+        "regressing_workloads": [
+          "screen-code",
+          "screen-explain"
+        ],
+        "median_saved_seconds": -0.44786837499123067,
+        "median_paired_duration_change_percent": 7.67302082695791,
+        "median_ttft_change_seconds": 0.16218679200392216,
+        "disabled_requests": 0,
+        "candidate_swap_growth_bytes": -67108864,
+        "qualified": false
+      }
+    ],
+    "14B-fp32-screen": [
+      {
+        "arm": "Qwen3-0.6B-MLX-4bit-adaptive",
+        "pairs": 3,
+        "exact_pairs": 3,
+        "median_paired_speed_ratio": 0.9980040930150635,
+        "median_workload_speed_ratio": 0.9980040930150635,
+        "workload_bootstrap_95_interval": [
+          0.9394704669202782,
+          1.0988221536387137
+        ],
+        "block_median_ratios": {
+          "0": 0.9980040930150635
+        },
+        "workload_median_ratios": {
+          "screen-code": 0.9394704669202782,
+          "screen-explain": 1.0988221536387137,
+          "screen-json": 0.9980040930150635
+        },
+        "regressing_workloads": [
+          "screen-code",
+          "screen-json"
+        ],
+        "median_saved_seconds": -0.007596916053444147,
+        "median_paired_duration_change_percent": 0.19998985965143934,
+        "median_ttft_change_seconds": 0.07833733304869384,
+        "disabled_requests": 3,
+        "candidate_swap_growth_bytes": -8388608,
+        "qualified": false
+      },
+      {
+        "arm": "Qwen3-0.6B-MLX-4bit-fixed-2",
+        "pairs": 3,
+        "exact_pairs": 3,
+        "median_paired_speed_ratio": 0.9594684472459092,
+        "median_workload_speed_ratio": 0.9594684472459092,
+        "workload_bootstrap_95_interval": [
+          0.7544832340595784,
+          1.0170388075161472
+        ],
+        "block_median_ratios": {
+          "0": 0.9594684472459092
+        },
+        "workload_median_ratios": {
+          "screen-code": 0.7544832340595784,
+          "screen-explain": 0.9594684472459092,
+          "screen-json": 1.0170388075161472
+        },
+        "regressing_workloads": [
+          "screen-code",
+          "screen-explain"
+        ],
+        "median_saved_seconds": -0.3046947909751907,
+        "median_paired_duration_change_percent": 4.224375785408463,
+        "median_ttft_change_seconds": 0.07866862590890378,
+        "disabled_requests": 0,
+        "candidate_swap_growth_bytes": -8388608,
+        "qualified": false
+      },
+      {
+        "arm": "Qwen3-0.6B-MLX-4bit-fixed-4",
+        "pairs": 3,
+        "exact_pairs": 3,
+        "median_paired_speed_ratio": 0.7318320230667511,
+        "median_workload_speed_ratio": 0.7318320230667511,
+        "workload_bootstrap_95_interval": [
+          0.6951310317712766,
+          0.9993165624324768
+        ],
+        "block_median_ratios": {
+          "0": 0.7318320230667511
+        },
+        "workload_median_ratios": {
+          "screen-code": 0.6951310317712766,
+          "screen-explain": 0.7318320230667511,
+          "screen-json": 0.9993165624324768
+        },
+        "regressing_workloads": [
+          "screen-code",
+          "screen-explain",
+          "screen-json"
+        ],
+        "median_saved_seconds": -2.5475167920812964,
+        "median_paired_duration_change_percent": 36.64337832737732,
+        "median_ttft_change_seconds": 0.1683424999937415,
+        "disabled_requests": 0,
+        "candidate_swap_growth_bytes": 0,
+        "qualified": false
+      },
+      {
+        "arm": "Qwen3-0.6B-MLX-4bit-fixed-8",
+        "pairs": 3,
+        "exact_pairs": 3,
+        "median_paired_speed_ratio": 0.5026776329503032,
+        "median_workload_speed_ratio": 0.5026776329503032,
+        "workload_bootstrap_95_interval": [
+          0.4611614237162638,
+          0.8978198449163586
+        ],
+        "block_median_ratios": {
+          "0": 0.5026776329503032
+        },
+        "workload_median_ratios": {
+          "screen-code": 0.5026776329503032,
+          "screen-explain": 0.4611614237162638,
+          "screen-json": 0.8978198449163586
+        },
+        "regressing_workloads": [
+          "screen-code",
+          "screen-explain",
+          "screen-json"
+        ],
+        "median_saved_seconds": -5.746705501107499,
+        "median_paired_duration_change_percent": 98.9346520414733,
+        "median_ttft_change_seconds": 0.4096928749931976,
+        "disabled_requests": 0,
+        "candidate_swap_growth_bytes": -25165824,
+        "qualified": false
+      },
+      {
+        "arm": "Qwen3-1.7B-MLX-4bit-adaptive",
+        "pairs": 3,
+        "exact_pairs": 3,
+        "median_paired_speed_ratio": 0.9862630524403685,
+        "median_workload_speed_ratio": 0.9862630524403685,
+        "workload_bootstrap_95_interval": [
+          0.8983991580145143,
+          1.055232583091842
+        ],
+        "block_median_ratios": {
+          "0": 0.9862630524403685
+        },
+        "workload_median_ratios": {
+          "screen-code": 0.9862630524403685,
+          "screen-explain": 1.055232583091842,
+          "screen-json": 0.8983991580145143
+        },
+        "regressing_workloads": [
+          "screen-code",
+          "screen-json"
+        ],
+        "median_saved_seconds": -0.08090362616349012,
+        "median_paired_duration_change_percent": 1.3928279606177485,
+        "median_ttft_change_seconds": 0.13884637597948313,
+        "disabled_requests": 3,
+        "candidate_swap_growth_bytes": 0,
+        "qualified": false
+      },
+      {
+        "arm": "Qwen3-1.7B-MLX-4bit-fixed-2",
+        "pairs": 3,
+        "exact_pairs": 3,
+        "median_paired_speed_ratio": 0.8094957717168556,
+        "median_workload_speed_ratio": 0.8094957717168556,
+        "workload_bootstrap_95_interval": [
+          0.7851499380296829,
+          0.8946653499054638
+        ],
+        "block_median_ratios": {
+          "0": 0.8094957717168556
+        },
+        "workload_median_ratios": {
+          "screen-code": 0.8094957717168556,
+          "screen-explain": 0.7851499380296829,
+          "screen-json": 0.8946653499054638
+        },
+        "regressing_workloads": [
+          "screen-code",
+          "screen-explain",
+          "screen-json"
+        ],
+        "median_saved_seconds": -1.3669749171240255,
+        "median_paired_duration_change_percent": 23.533690346412172,
+        "median_ttft_change_seconds": 0.19191516702994704,
+        "disabled_requests": 0,
+        "candidate_swap_growth_bytes": -25165824,
+        "qualified": false
+      },
+      {
+        "arm": "Qwen3-1.7B-MLX-4bit-fixed-4",
+        "pairs": 3,
+        "exact_pairs": 3,
+        "median_paired_speed_ratio": 0.756962052355527,
+        "median_workload_speed_ratio": 0.756962052355527,
+        "workload_bootstrap_95_interval": [
+          0.6692213912483752,
+          0.8688543090502239
+        ],
+        "block_median_ratios": {
+          "0": 0.756962052355527
+        },
+        "workload_median_ratios": {
+          "screen-code": 0.756962052355527,
+          "screen-explain": 0.6692213912483752,
+          "screen-json": 0.8688543090502239
+        },
+        "regressing_workloads": [
+          "screen-code",
+          "screen-explain",
+          "screen-json"
+        ],
+        "median_saved_seconds": -1.8649641671217978,
+        "median_paired_duration_change_percent": 32.10701869244086,
+        "median_ttft_change_seconds": 0.25458508299198,
+        "disabled_requests": 0,
+        "candidate_swap_growth_bytes": 0,
+        "qualified": false
+      },
+      {
+        "arm": "Qwen3-1.7B-MLX-4bit-fixed-8",
+        "pairs": 3,
+        "exact_pairs": 3,
+        "median_paired_speed_ratio": 0.555356264067254,
+        "median_workload_speed_ratio": 0.555356264067254,
+        "workload_bootstrap_95_interval": [
+          0.4852543476044384,
+          0.7606298931041147
+        ],
+        "block_median_ratios": {
+          "0": 0.555356264067254
+        },
+        "workload_median_ratios": {
+          "screen-code": 0.555356264067254,
+          "screen-explain": 0.4852543476044384,
+          "screen-json": 0.7606298931041147
+        },
+        "regressing_workloads": [
+          "screen-code",
+          "screen-explain",
+          "screen-json"
+        ],
+        "median_saved_seconds": -4.6506217090645805,
+        "median_paired_duration_change_percent": 80.06459361353298,
+        "median_ttft_change_seconds": 0.4551961669931188,
+        "disabled_requests": 0,
+        "candidate_swap_growth_bytes": -16777216,
+        "qualified": false
+      }
+    ]
+  },
+  "validation": {
+    "14B-fp32": [
+      {
+        "arm": "Qwen3-0.6B-MLX-4bit-adaptive",
+        "pairs": 32,
+        "exact_pairs": 32,
+        "median_paired_speed_ratio": 0.9498489021022951,
+        "median_workload_speed_ratio": 0.9552886317232339,
+        "workload_bootstrap_95_interval": [
+          0.9252492478349545,
+          0.9719283648772414
+        ],
+        "block_median_ratios": {
+          "0": 0.9148798199586217,
+          "1": 0.9558318063717945
+        },
+        "workload_median_ratios": {
+          "chinese": 0.964665771165933,
+          "code-lru": 0.8975439735055438,
+          "code-timeout": 0.9629643893219553,
+          "italian": 0.9252492478349545,
+          "json-evidence": 0.9443231395279724,
+          "long-code": 0.9966052226190267,
+          "long-log": 0.9476128741245124,
+          "reasoning": 0.9719283648772414
+        },
+        "regressing_workloads": [
+          "chinese",
+          "code-lru",
+          "code-timeout",
+          "italian",
+          "json-evidence",
+          "long-code",
+          "long-log",
+          "reasoning"
+        ],
+        "median_saved_seconds": -0.3498927910113707,
+        "median_paired_duration_change_percent": 5.28057829520121,
+        "median_ttft_change_seconds": 0.10906300053466111,
+        "disabled_requests": 29,
+        "candidate_swap_growth_bytes": -92274688,
+        "qualified": false
+      },
+      {
+        "arm": "Qwen3-0.6B-MLX-4bit-fixed-2",
+        "pairs": 32,
+        "exact_pairs": 32,
+        "median_paired_speed_ratio": 0.8348504590145087,
+        "median_workload_speed_ratio": 0.8167993680661076,
+        "workload_bootstrap_95_interval": [
+          0.7325240760479523,
+          0.8826235904707913
+        ],
+        "block_median_ratios": {
+          "0": 0.8483544367252014,
+          "1": 0.7842978117996124
+        },
+        "workload_median_ratios": {
+          "chinese": 0.7828348282401588,
+          "code-lru": 0.8788334715523923,
+          "code-timeout": 0.7214363245068929,
+          "italian": 0.7325240760479523,
+          "json-evidence": 0.9195643800692257,
+          "long-code": 0.7927495997204135,
+          "long-log": 0.8408491364118019,
+          "reasoning": 0.8826235904707913
+        },
+        "regressing_workloads": [
+          "chinese",
+          "code-lru",
+          "code-timeout",
+          "italian",
+          "json-evidence",
+          "long-code",
+          "long-log",
+          "reasoning"
+        ],
+        "median_saved_seconds": -1.699442187033128,
+        "median_paired_duration_change_percent": 19.78320814998199,
+        "median_ttft_change_seconds": 0.10423343750881031,
+        "disabled_requests": 0,
+        "candidate_swap_growth_bytes": 187432960,
+        "qualified": false
+      }
+    ]
+  },
+  "host_repeat_equivalence": {
+    "code-lru": true,
+    "code-timeout": true,
+    "json-evidence": true,
+    "italian": true,
+    "chinese": true,
+    "reasoning": true,
+    "long-log": true,
+    "long-code": true
+  },
+  "32B": {
+    "status": "not_admitted",
+    "estimated_weight_bytes": 18685079212,
+    "available_bytes": 19429900288,
+    "working_allowance_bytes": 1610612736,
+    "required_bytes": 21790498284
+  }
+}

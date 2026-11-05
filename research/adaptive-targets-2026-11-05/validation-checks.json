@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "comparison_requests": 150,
+  "instrumented_adaptive_requests": 44,
+  "fixed_upstream_smoke_comparisons": 12,
+  "scope": "Integrity and accounting checks; no formal numerical proof or distributed validation"
+}

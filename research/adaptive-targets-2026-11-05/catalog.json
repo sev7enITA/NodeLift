@@ -1,0 +1,158 @@
+[
+  {
+    "repo": "Qwen/Qwen3-0.6B-MLX-4bit",
+    "revision": "173234aa840d113125e9f2271100ddbaf16c9620",
+    "files": [
+      {
+        "name": "config.json",
+        "size": 988
+      },
+      {
+        "name": "merges.txt",
+        "size": 1671853
+      },
+      {
+        "name": "model.safetensors",
+        "size": 316825742
+      },
+      {
+        "name": "model.safetensors.index.json",
+        "size": 49731
+      },
+      {
+        "name": "tokenizer.json",
+        "size": 11422654
+      },
+      {
+        "name": "tokenizer_config.json",
+        "size": 9689
+      },
+      {
+        "name": "vocab.json",
+        "size": 2776833
+      }
+    ],
+    "bytes": 332757490
+  },
+  {
+    "repo": "Qwen/Qwen3-1.7B-MLX-4bit",
+    "revision": "21457c6f51ed54a7c16e988c0844db973815c137",
+    "files": [
+      {
+        "name": "config.json",
+        "size": 988
+      },
+      {
+        "name": "merges.txt",
+        "size": 1671853
+      },
+      {
+        "name": "model.safetensors",
+        "size": 914316100
+      },
+      {
+        "name": "model.safetensors.index.json",
+        "size": 49731
+      },
+      {
+        "name": "tokenizer.json",
+        "size": 11422654
+      },
+      {
+        "name": "tokenizer_config.json",
+        "size": 8311
+      },
+      {
+        "name": "vocab.json",
+        "size": 2776833
+      }
+    ],
+    "bytes": 930246470
+  },
+  {
+    "repo": "Qwen/Qwen3-14B-MLX-4bit",
+    "revision": "ba63a5141812f9870287df53341123a71ba41433",
+    "files": [
+      {
+        "name": "config.json",
+        "size": 941
+      },
+      {
+        "name": "merges.txt",
+        "size": 1671853
+      },
+      {
+        "name": "model-00001-of-00002.safetensors",
+        "size": 5360593224
+      },
+      {
+        "name": "model-00002-of-00002.safetensors",
+        "size": 2485808912
+      },
+      {
+        "name": "model.safetensors.index.json",
+        "size": 86266
+      },
+      {
+        "name": "tokenizer.json",
+        "size": 11422654
+      },
+      {
+        "name": "tokenizer_config.json",
+        "size": 9690
+      },
+      {
+        "name": "vocab.json",
+        "size": 2776833
+      }
+    ],
+    "bytes": 7862370373
+  },
+  {
+    "repo": "Qwen/Qwen3-32B-MLX-4bit",
+    "revision": "ceb4c4aad0164033af0c8dd37a0641693d0d6321",
+    "files": [
+      {
+        "name": "config.json",
+        "size": 941
+      },
+      {
+        "name": "merges.txt",
+        "size": 1671853
+      },
+      {
+        "name": "model-00001-of-00004.safetensors",
+        "size": 5363162698
+      },
+      {
+        "name": "model-00002-of-00004.safetensors",
+        "size": 5342645855
+      },
+      {
+        "name": "model-00003-of-00004.safetensors",
+        "size": 5368472294
+      },
+      {
+        "name": "model-00004-of-00004.safetensors",
+        "size": 1331774591
+      },
+      {
+        "name": "model.safetensors.index.json",
+        "size": 137843
+      },
+      {
+        "name": "tokenizer.json",
+        "size": 11422654
+      },
+      {
+        "name": "tokenizer_config.json",
+        "size": 9690
+      },
+      {
+        "name": "vocab.json",
+        "size": 2776833
+      }
+    ],
+    "bytes": 17422075252
+  }
+]
