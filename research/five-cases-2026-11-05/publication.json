@@ -1,0 +1,28 @@
+{
+  "published_at": "2026-11-05T06:02:39.960397+00:00",
+  "previous_index_sha256": "6a1c7b606596fe18653e08b0dd458894245a4c239c771fb741121b93e54aac03",
+  "assets": [
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/assets/five-cases-20261105.png",
+      "bytes": 237439,
+      "sha256": "6995580d549aeabbe38d1a3f5a44e21847d2e49fd94d26ad06bf9660ae1f6e8b",
+      "https_verified": true
+    },
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/index.html",
+      "bytes": 190026,
+      "sha256": "2c42bc6476ea8b1622db2bcc55e080bba8e77894e37939d1fe5cae9dbe58267c",
+      "https_verified": true
+    }
+  ],
+  "research_commit": "2f1abdba000363a2468be7ec24b662018bb34725",
+  "rendered_browser_verification": {
+    "completed": false,
+    "reason": "The in-app browser initially retained the previous page. Reload returned ERR_CONNECTION_CLOSED; no current three-language rendered verification is claimed."
+  },
+  "site_languages": [
+    "en",
+    "zh-Hans",
+    "it"
+  ]
+}
