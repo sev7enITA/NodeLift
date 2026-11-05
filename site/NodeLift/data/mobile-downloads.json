@@ -1,33 +1,33 @@
 {
-  "updated": "2026-11-03",
-  "version": "0.2.13",
-  "build": 16,
-  "source_commit": "ffd3de894e3fe6d36c6a0024892e3ce417d6f746",
+  "updated": "2026-11-05",
+  "version": "0.2.14",
+  "build": 17,
+  "source_commit": "15374efe680e3a3d055520c1c06bd3bffa16b076",
   "languages": [
     "en",
     "zh-Hans",
     "it"
   ],
   "assets": {
-    "NodeLift-0.2.13-ios-unsigned.zip": {
-      "bytes": 5490255,
-      "sha256": "8779f2e0120a8538c0cd9f8dc25a7089c4e404584ce65a539dbb0497216ec35a",
-      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.13/NodeLift-0.2.13-ios-unsigned.zip"
+    "NodeLift-0.2.14-ios-unsigned.ipa": {
+      "bytes": 5507518,
+      "sha256": "ad3da6359211e56264b848b86e01f9fa768044757d1aa1bd3ceff163a7abc951",
+      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.14/NodeLift-0.2.14-ios-unsigned.ipa"
     },
-    "NodeLift-0.2.13-android-debug.apk": {
-      "bytes": 14039919,
-      "sha256": "59732048c6c07601968e33bce6adb7675f6792944fda84378c7eb69a1ae1af01",
-      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.13/NodeLift-0.2.13-android-debug.apk"
+    "NodeLift-0.2.14-ios-unsigned.zip": {
+      "bytes": 5507294,
+      "sha256": "5dc75985304fa450bb5b75697c5e49aa1305c93861ffe21fae4bdaf36a2bedda",
+      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.14/NodeLift-0.2.14-ios-unsigned.zip"
     },
-    "NodeLift-0.2.13-ios-unsigned.ipa": {
-      "bytes": 5490479,
-      "sha256": "cb9aceddbb8a10cd0eea2fac3e76a054050bb54f4edd394b0551ffb26ac96fb6",
-      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.13/NodeLift-0.2.13-ios-unsigned.ipa"
+    "NodeLift-0.2.14-android-debug.apk": {
+      "bytes": 14180481,
+      "sha256": "2dc503f750529608ee2a4ba2bb0ba96c9ff0f486bb5f624dceb3551de041dc35",
+      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.14/NodeLift-0.2.14-android-debug.apk"
     }
   },
   "platforms": {
     "android": {
-      "artifact": "NodeLift-0.2.13-android-debug.apk",
+      "artifact": "NodeLift-0.2.14-android-debug.apk",
       "status": "compiled-debug-signed",
       "minimum_api": 26,
       "architecture": "arm64-v8a",
@@ -35,8 +35,8 @@
     },
     "ios": {
       "artifacts": [
-        "NodeLift-0.2.13-ios-unsigned.ipa",
-        "NodeLift-0.2.13-ios-unsigned.zip"
+        "NodeLift-0.2.14-ios-unsigned.ipa",
+        "NodeLift-0.2.14-ios-unsigned.zip"
       ],
       "status": "compiled-unsigned",
       "minimum_os": "17.0",
@@ -46,7 +46,7 @@
       "physical_installation_tested": false
     },
     "harmonyos_apk_compatibility_trial": {
-      "artifact": "NodeLift-0.2.13-android-debug.apk",
+      "artifact": "NodeLift-0.2.14-android-debug.apk",
       "status": "unverified-compatibility-trial",
       "requires": [
         "APK support",
@@ -67,18 +67,17 @@
       "build_deferred": "Owner requested postponement due to insufficient free disk space"
     }
   },
-  "verification_scope": "Package identity and IPA payload equivalence; no physical-device installation or performance qualification",
-  "original_build_manifest": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.13/NodeLift-0.2.13-build-manifest.json",
-  "ipa_packaging_manifest": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.13/NodeLift-0.2.13-ios-ipa-manifest.json",
+  "verification_scope": "175 host tests, 28 Android JVM tests, Android lint (0 errors, 18 warnings), unsigned iOS ARM64 build, pairing and localization checks passed. Actual Swift TLS checks on Mac preserved node identity across two endpoints and rejected wrong certificates and DNS names. NWBrowser discovered a real local advertisement on Mac. Physical phone roaming remains untested.",
+  "original_build_manifest": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.14/NodeLift-0.2.14-build-manifest.json",
   "about_and_references": true,
   "update_discovery": "Automatic launch/weekly and manual checks; matching release notes precede direct browser download; explicit OS installation and iOS Apple signing required",
   "qr_pairing": {
-    "desktop": "offline QR; update and restart host",
+    "desktop": "Protocol 2: update and restart host; one QR migration from legacy pairing",
     "android": "native scanner",
     "ios": "native AVFoundation scanner; personal signing required",
     "physical_camera_tested": false
   },
-  "published_at": "2026-11-03T06:50:03Z",
+  "published_at": "2026-11-05T17:27:10Z",
   "local_diagnostics": {
     "platforms": [
       "android",
@@ -90,5 +89,14 @@
     "retention_days": 7,
     "capture_all_crashes": false
   },
-  "brand_identity": "approved blue three-dimensional showcase emblem"
+  "brand_identity": "approved blue three-dimensional showcase emblem",
+  "network_rediscovery": {
+    "protocol": 2,
+    "platforms": [
+      "android",
+      "ios"
+    ],
+    "transport": "private IPv4 and Bonjour/DNS-SD",
+    "physical_roaming_qualified": false
+  }
 }
