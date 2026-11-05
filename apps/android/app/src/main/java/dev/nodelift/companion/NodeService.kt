@@ -80,7 +80,7 @@ class NodeService : Service() {
                 val saved = if (ticketText == null) previous else null
                 val ticket = Pairing.parse(if (ticketText != null) JSONObject(ticketText) else saved?.getJSONObject("pairing") ?: error("Paste an invitation from your computer."))
                 val ownerRun = runId
-                val c = Client(ticket, saved?.optString("token") ?: "", this) { if(generation.get()==ownerRun)lastContactElapsed=SystemClock.elapsedRealtime() }; client = c
+                var c = Client(ticket, saved?.optString("token") ?: "", this) { if(generation.get()==ownerRun)lastContactElapsed=SystemClock.elapsedRealtime() }; client = c
                 if (ticketText != null) {
                     val health = JSONObject(String(c.bytes("/health"), Charsets.UTF_8))
                     val body = Vault.enrollment(this, health.optString("pairing_scope"), ticket.invite, previous)
@@ -157,8 +157,36 @@ class NodeService : Service() {
                         Diagnostics.record(DiagnosticEvent.SESSION_RETRY,e)
                         errors++;connected=false
                         status = ui("Connection interrupted · attempt {0}/3",errors)
-                        if (errors >= 3) throw e
-                        Thread.sleep(1000)
+                        if(c.pairing.protocol==2) {
+                            // A path change invalidates local speculative cache/leases, not the saved model file.
+                            mobileDraft?.close();mobileDraft=null;engineReady=false;lastContactElapsed=0
+                            status=ui("Finding your paired computer on the local network…")
+                            val prior=Vault.load(this) ?: throw e
+                            var recovered:Client?=null
+                            val candidates=try {HostDiscovery(this).candidates(c.pairing){stop.get() || generation.get()!=ownerRun}} catch(_:Exception) {emptyList()}
+                            for(candidate in candidates) {
+                                if(stop.get() || generation.get()!=ownerRun)break
+                                val probe=Client(candidate,"",this){if(generation.get()==ownerRun)lastContactElapsed=SystemClock.elapsedRealtime()}
+                                client=probe
+                                try {
+                                    val health=JSONObject(String(probe.bytes("/health"),Charsets.UTF_8))
+                                    check(health.optString("host_identity")==candidate.sha256){"Computer identity changed"}
+                                    if(stop.get() || generation.get()!=ownerRun)throw InterruptedException()
+                                    probe.token=c.token
+                                    val session=JSONObject(String(probe.bytes("/v1/session"),Charsets.UTF_8))
+                                    check(session.getString("node_id")==prior.getString("node_id")){"Node identity changed"}
+                                    if(stop.get() || generation.get()!=ownerRun)throw InterruptedException()
+                                    Vault.save(this,JSONObject(prior.toString()).put("pairing",candidate.json()))
+                                    recovered=probe;break
+                                }catch(_:Exception){probe.cancel()}
+                            }
+                            if(stop.get() || generation.get()!=ownerRun)break
+                            if(recovered!=null){c.cancel();c=recovered;client=c;errors=0;lastHeartbeat=0;status=ui("Computer found · reconnecting…")}
+                            else {client=c;status=ui("Host not found. Check the local network or discovery permissions.");Thread.sleep((1000L shl errors.coerceAtMost(6)).coerceAtMost(60000L)+java.util.Random().nextInt(1000))}
+                        } else {
+                            if (errors >= 3) throw e
+                            Thread.sleep(1000)
+                        }
                     }
                 }
             } catch (e: Exception) {

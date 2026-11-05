@@ -6,7 +6,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-lightgrey.svg)](LICENSE)
 [![Live project showcase](https://img.shields.io/badge/Showcase-Live-146c6a.svg)](https://www.fabriziodegni.com/NodeLift/)
-[![Companion 0.2.13 prerelease](https://img.shields.io/badge/Companion-0.2.13%20prerelease-b45309.svg)](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.13)
+[![Companion 0.2.14 prerelease](https://img.shields.io/badge/Companion-0.2.14%20prerelease-b45309.svg)](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.14)
 [![Host 0.3.0 preview](https://img.shields.io/badge/Host-0.3.0%20preview-b45309.svg)](docs/INTEGRATIONS.md)
 
 [![Source checks](https://github.com/sev7enITA/NodeLift/actions/workflows/checks.yml/badge.svg?branch=main)](https://github.com/sev7enITA/NodeLift/actions/workflows/checks.yml)
@@ -31,11 +31,13 @@ The current experimental implementation supports phone-assisted drafting: a smal
 
 **[Live project showcase and interactive atlas](https://www.fabriziodegni.com/NodeLift/)** · [55-entry detailed matrix](site/NodeLift/data/comparison.md) · [Assessment and engineering lessons](research/comparison-2026-10-31/ASSESSMENT.md) · [Publication verification](docs/SHOWCASE_DEPLOYMENT.md). The dated atlas distinguishes applications, runtimes, serving systems and research; it is not an exhaustive inventory or a universal performance ranking.
 
-**[0.2.13 experimental prerelease](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.13), 3 November 2026.** Native inference, authenticated mobile work leases, an OpenAI-style text gateway, Android/iOS companion sources and an LM Studio generator adapter are implemented. **Phone inference speedup, pooled RAM, large hybrid-model speculation and sustained mobile operation are not yet qualified.** The first real-weight control experiments found local drafting slower than target-only inference on the small test pair. Negative results are published.
+**[0.2.14 experimental prerelease](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.14), 5 November 2026.** Native inference, authenticated mobile work leases, an OpenAI-style text gateway, Android/iOS companion sources and an LM Studio generator adapter are implemented. **Phone inference speedup, pooled RAM, large hybrid-model speculation and sustained mobile operation are not yet qualified.** The first real-weight control experiments found local drafting slower than target-only inference on the small test pair. Negative results are published.
 
-**Host 0.3.0 integration preview:** public Hugging Face GGUF search/download with SHA-256 verification, direct file/path import, opt-in OpenRouter, and a loopback text bridge for oMLX/LM Studio. English (default), Simplified Chinese and Italian UI. [Setup](docs/INTEGRATIONS.md#model-sources-and-external-engines-host-030-preview) · [Source review and qualification](research/integrations-2026-11-01/ASSESSMENT.md). Companion binaries are 0.2.13/build 16.
+**Network mobility 0.2.14:** Android and iOS can rediscover the paired host after private IPv4 changes, with pinned TLS validation before credentials. One QR migrates legacy pairing. Desktop checks passed; physical phone roaming is unqualified. [Protocol, installation and limits](docs/NETWORK_MOBILITY.md). Mobile engine binaries remain those from 0.2.13; later source-only native corrections are not included.
 
-**Engine controls:** measured adaptive draft control, context lookup without a second model, and greedy argmax caching are available in source and the dashboard. [Optimization study and measured limits](research/optimization-2026-10-31/REPORT.md). The 0.2.13 companions support English (default), Simplified Chinese and Italian, with a saved in-app language choice. [Localization and validation](docs/LOCALIZATION.md).
+**Host 0.3.0 integration preview:** public Hugging Face GGUF search/download with SHA-256 verification, direct file/path import, opt-in OpenRouter, and a loopback text bridge for oMLX/LM Studio. English (default), Simplified Chinese and Italian UI. [Setup](docs/INTEGRATIONS.md#model-sources-and-external-engines-host-030-preview) · [Source review and qualification](research/integrations-2026-11-01/ASSESSMENT.md). Companion binaries are 0.2.14/build 17.
+
+**Engine controls:** measured adaptive draft control, context lookup without a second model, and greedy argmax caching are available in source and the dashboard. [Optimization study and measured limits](research/optimization-2026-10-31/REPORT.md). The 0.2.14 companions support English (default), Simplified Chinese and Italian, with a saved in-app language choice. [Localization and validation](docs/LOCALIZATION.md).
 
 ![NodeLift public showcase in English, captured 3 November 2026](docs/images/showcase-en-2026-11-03.jpg)
 
@@ -50,7 +52,7 @@ The [local Qwen code review](research/qwen-review-2026-11-03/README.md) records 
 | Native core | Locked llama.cpp, greedy block verification, correction/bonus, EOS, KV resynchronization | Real-weight M3 Max/Metal tests; no universal bitwise-equivalence claim |
 | Remote work | Pinned TLS, lease, epoch, prefix/vocabulary/model identities | Real-weight loopback tests including wrong proposals and lost replies; emulated node |
 | Android | ARM64 CPU draft worker, checked LAN model transfer, battery/thermal controls | Xiaomi supplied draft tokens in physical 0.2.8 and 0.2.13 trials; larger-target attempts required fallback, with no qualified speedup |
-| iOS | Native Metal/CPU worker, GGUF import, foreground lifecycle, user limits | Private signed 0.2.12 builds supplied draft tokens on iPhone 15 Pro Max; public 0.2.13 remains unsigned and physically unqualified |
+| iOS | Native Metal/CPU worker, GGUF import, foreground lifecycle, user limits | Private signed 0.2.12 builds supplied draft tokens on iPhone 15 Pro Max; public 0.2.14 remains unsigned and physically unqualified |
 | HarmonyOS NEXT | Separate ArkTS qualification candidate | No HAP or native inference worker |
 | Desktop | [Device graph](docs/DEVICE-GRAPH.md), hardware inspector, run contribution, pairing, diagnostics, model settings | Browser functional checks and accounting tests; contribution is accepted token attribution, not compute share |
 | Integration | Authenticated text chat gateway and LM Studio generator | Real-weight HTTP/adapter-handler tests; LM Studio GUI qualification open |
@@ -59,7 +61,7 @@ This is **not an Ollama backend patch**. Clients with a custom OpenAI-style endp
 
 **About & References:** author attribution, installed component version, official project links, technical references and manual release checking are available inside the desktop and companion apps. [How to find them](docs/ABOUT_AND_UPDATES.md).
 
-[Download Android 0.2.13](https://github.com/sev7enITA/NodeLift/releases/download/v0.2.13/NodeLift-0.2.13-android-debug.apk) · [Source checks](https://github.com/sev7enITA/NodeLift/actions)
+[Download Android 0.2.14](https://github.com/sev7enITA/NodeLift/releases/download/v0.2.14/NodeLift-0.2.14-android-debug.apk) · [Source checks](https://github.com/sev7enITA/NodeLift/actions)
 
 ## Start on the host
 

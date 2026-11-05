@@ -4,6 +4,18 @@
 
 Every published companion build has an entry below. Android packages are laboratory builds; iOS packages require Apple signing and provisioning. Historical validation belongs to the named version and does not establish current physical-device performance.
 
+## [0.2.14](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.14): build 17 · 2026-11-05
+
+**Find the paired computer after a local IP change** · experimental-prerelease
+
+- Add protocol-2 host identity independent of the IP address and native Bonjour/DNS-SD discovery in Android and iOS. Validate the original pinned certificate and logical DNS name before sending credentials.
+- Preserve node identity, downloaded drafts and settings across validated endpoint changes. Bound discovery, retry and cancellation; clear stale in-memory draft state. The host follows its selected private IPv4 route independently of QR creation.
+- One new QR is required to migrate a legacy pairing. Subsequent address changes use rediscovery on reachable local networks. Add English, Simplified Chinese and Italian recovery messages.
+
+**Validation:** 175 host tests, 28 Android JVM tests, Android lint (0 errors, 18 warnings), unsigned iOS ARM64 build, pairing and localization checks passed. Actual Swift TLS checks on Mac preserved node identity across two endpoints and rejected wrong certificates and DNS names. NWBrowser discovered a real local advertisement on Mac.
+
+**Limits:** Physical Android/iPhone roaming is not yet tested. Discovery needs reachable private IPv4 and permitted local multicast; client isolation can block it. The host needs a native DNS-SD publisher. A pinned certificate lasts 365 days; authenticated renewal is not implemented. Android is debug-signed; iOS is unsigned and needs Apple signing. Native engine binaries are unchanged from 0.2.13, including its limitations; later source-only patches are not included. No inference speedup is claimed.
+
 ## [0.2.13](https://github.com/sev7enITA/NodeLift/releases/tag/v0.2.13): build 16 · 2026-11-03
 
 **Native timing and bounded Android lookahead experiments** · experimental-prerelease

@@ -7,15 +7,21 @@ android {
         applicationId = "dev.nodelift.companion"
         minSdk = 26
         targetSdk = 36
-        versionCode = 16
-        versionName = "0.2.13"
+        versionCode = 17
+        versionName = "0.2.14"
         ndk { abiFilters += "arm64-v8a" }
         externalNativeBuild { cmake { arguments += listOf("-DGGML_METAL=OFF","-DGGML_VULKAN=OFF","-DGGML_CPU_ARM_ARCH=armv8-a","-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON") } }
         testInstrumentationRunner = providers.gradleProperty("nodeliftTestRunner").getOrElse("dev.nodelift.companion.ProtocolCheck")
     }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
     kotlinOptions { jvmTarget = "17" }
-    externalNativeBuild { cmake { path = file("../../../native/CMakeLists.txt"); version = "3.22.1" } }
+    val prebuiltJni = providers.gradleProperty("nodeliftPrebuiltJni").orNull
+    if(prebuiltJni != null) {
+        require(file(prebuiltJni).resolve("arm64-v8a/libnodelift.so").isFile) { "Missing prebuilt native library" }
+        sourceSets.getByName("main").jniLibs.srcDir(prebuiltJni)
+    } else {
+        externalNativeBuild { cmake { path = file("../../../native/CMakeLists.txt"); version = "3.22.1" } }
+    }
 }
 
 dependencies {

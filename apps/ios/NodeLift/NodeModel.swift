@@ -250,7 +250,7 @@ import CryptoKit
                     credentials = stored
                 }
                 try Task.checkCancellation()
-                let c = try NodeClient(ticket:credentials.pairing,token:credentials.token); client=c
+                var c = try NodeClient(ticket:credentials.pairing,token:credentials.token); client=c
                 var errors=0
                 var lastHeartbeat=0.0
                 while !Task.isCancelled {
@@ -295,7 +295,37 @@ import CryptoKit
                         try Task.checkCancellation()
                         Diagnostics.shared.record(.sessionRetry,error:error)
                         connected=false; errors += 1; status=Message("Connection interrupted · attempt {0}/3",errors)
-                        if errors>=3 { throw error }
+                        if c.ticket.protocol == 2 {
+                            draft?.cancel();draft=nil
+                            status="Finding your paired computer on the local network…"
+                            var recovered:NodeClient?
+                            for candidate in try await HostDiscovery.candidates(for:c.ticket) {
+                                try Task.checkCancellation()
+                                guard generation == current else {return}
+                                let probe=try NodeClient(ticket:candidate)
+                                client=probe
+                                do {
+                                    let healthData=try await probe.bytes("/health")
+                                    let health=try JSONSerialization.jsonObject(with:healthData) as? [String:Any]
+                                    guard health?["host_identity"] as? String == candidate.sha256 else {throw NodeError.message("Invalid computer identity")}
+                                    probe.cancel()
+                                    try Task.checkCancellation()
+                                    let authenticated=try NodeClient(ticket:candidate,token:credentials.token)
+                                    client=authenticated
+                                    do {
+                                        let sessionData=try await authenticated.bytes("/v1/session")
+                                        let session=try JSONSerialization.jsonObject(with:sessionData) as? [String:Any]
+                                        guard session?["node_id"] as? String == credentials.node_id else {throw NodeError.message("Invalid computer identity")}
+                                        try Task.checkCancellation()
+                                        guard generation == current else {authenticated.cancel();return}
+                                        var updated=credentials;updated.pairing=candidate
+                                        try Vault.save(updated);credentials=updated;recovered=authenticated;break
+                                    }catch {authenticated.cancel();throw error}
+                                }catch {probe.cancel();try Task.checkCancellation()}
+                            }
+                            if let recovered {c.cancel();c=recovered;client=c;errors=0;lastHeartbeat=0;status="Computer found · reconnecting…"}
+                            else {client=c;status="Host not found. Check the local network or discovery permissions.";try await Task.sleep(nanoseconds:UInt64(min(60,1 << min(errors,6)))*1_000_000_000+UInt64.random(in:0...1_000_000_000))}
+                        } else if errors>=3 { throw error }
                     }
                     try await Task.sleep(nanoseconds:3_000_000_000)
                 }

@@ -3,9 +3,13 @@
 const NodeLiftPairing = (() => {
   function encode(ticket) {
     const url = new URL(ticket.url);
-    if(ticket.protocol!==1 || url.protocol!=='https:' || url.username || url.password || url.search || url.hash || !['','/'].includes(url.pathname))throw Error('Invalid invitation');
+    if(![1,2].includes(ticket.protocol) || url.protocol!=='https:' || url.username || url.password || url.search || url.hash || !['','/'].includes(url.pathname))throw Error('Invalid invitation');
     const certificate=ticket.certificate.replace(/-----BEGIN CERTIFICATE-----|-----END CERTIFICATE-----|\s/g,'');
     if(!/^[A-Za-z0-9+/]+={0,2}$/.test(certificate) || !/^[A-Za-z0-9_-]{32}$/.test(ticket.invite) || !Number.isFinite(ticket.expires_at))throw Error('Invalid invitation');
+    if(ticket.protocol===2){
+      if(!/^nodelift-[0-9a-f]{32}\.local$/.test(ticket.tls_name))throw Error('Invalid invitation');
+      return 'nodelift://pair/v2/'+url.hostname+':'+(url.port||443)+'/'+Math.floor(ticket.expires_at)+'/'+ticket.invite+'/'+ticket.tls_name+'/'+certificate.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+    }
     return 'nodelift://pair/v1/'+url.hostname+':'+(url.port||443)+'/'+Math.floor(ticket.expires_at)+'/'+ticket.invite+'/'+certificate.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
   }
   function draw(canvas, value) {

@@ -63,4 +63,63 @@ class NetworkPairingTests(unittest.TestCase):
         self.assertFalse(local_address_available('192.0.2.1'))
         self.assertFalse(local_address_available('not-an-ip'))
 
+    def test_monitor_rebinds_without_a_new_invitation_and_keeps_enrollment(self):
+        first = self.ticket_at('127.0.0.1')
+        paired = self.state.pair(first['invite'], 'Existing companion', {})
+        real_server = Server
+        with patch('nodelift.host.route_address', return_value='127.0.0.2'), patch(
+            'nodelift.host.local_address_available', return_value=True
+        ), patch('nodelift.host.Server', side_effect=lambda address, *a, **kw: real_server(('127.0.0.1', 0), *a, **kw)):
+            self.endpoint.refresh_network()
+            status = self.endpoint.network_status()
+        self.assertTrue(status['ready'])
+        self.assertEqual(status['address'], '127.0.0.2')
+        self.assertEqual(status['changes'], 1)
+        self.assertFalse(status['companion_auto_reconnect'])
+        self.assertEqual(self.state.authenticate(paired['token']), paired['node_id'])
+        with self.state.db() as db:
+            self.assertEqual(db.execute('SELECT COUNT(*) FROM invites').fetchone()[0], 0)
+
+    def test_disconnect_closes_listener_and_same_network_return_reuses_identity(self):
+        first = self.ticket_at('127.0.0.1')
+        paired = self.state.pair(first['invite'], 'Existing companion', {})
+        outstanding = self.ticket_at('127.0.0.1')
+        with patch('nodelift.host.route_address', side_effect=ValueError('offline')):
+            self.endpoint.refresh_network()
+            self.assertFalse(self.endpoint.network_status()['ready'])
+        self.assertIsNone(self.endpoint.api)
+        self.assertFalse(self.state.invitation(outstanding['invite'])['pending'])
+        with patch('nodelift.host.route_address', return_value='127.0.0.1'):
+            self.endpoint.refresh_network()
+            self.assertTrue(self.endpoint.network_status()['ready'])
+        self.assertEqual(self.endpoint.identity[1], first['sha256'])
+        self.assertEqual(self.endpoint.network_changes, 0)
+        self.assertEqual(self.state.authenticate(paired['token']), paired['node_id'])
+
+    def test_unavailable_explicit_address_does_not_follow_another_network(self):
+        self.ticket_at('127.0.0.1')
+        self.endpoint.requested = '127.0.0.1'
+        with patch('nodelift.host.local_address_available', return_value=False), patch('nodelift.host.route_address') as route:
+            self.endpoint.refresh_network()
+            route.assert_not_called()
+        self.assertIsNone(self.endpoint.api)
+
+    def test_failed_rebind_closes_old_listener_and_can_retry(self):
+        first = self.ticket_at('127.0.0.1')
+        paired = self.state.pair(first['invite'], 'Existing companion', {})
+        with patch('nodelift.host.route_address', return_value='127.0.0.2'), patch(
+            'nodelift.host.local_address_available', return_value=True
+        ), patch(
+            'nodelift.host.Server', side_effect=OSError('port unavailable')
+        ) as server:
+            self.endpoint.refresh_network()
+            server.assert_called_once()
+        self.assertIsNone(self.endpoint.api)
+        self.assertEqual(self.endpoint.last_error, 'network_unavailable')
+        with patch('nodelift.host.route_address', return_value='127.0.0.1'):
+            self.endpoint.refresh_network()
+        self.assertIsNotNone(self.endpoint.api)
+        self.assertIsNone(self.endpoint.last_error)
+        self.assertEqual(self.state.authenticate(paired['token']), paired['node_id'])
+
 if __name__ == '__main__': unittest.main()

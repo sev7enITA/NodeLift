@@ -21,6 +21,7 @@ targets:
         CFBundleURLTypes:
           - CFBundleURLName: dev.nodelift.pairing
             CFBundleURLSchemes: [nodelift]
+        NSBonjourServices: [_nodelift._tcp]
         NSCameraUsageDescription: Scan the pairing QR code shown by NodeLift on your computer.
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
         UISupportedInterfaceOrientations~ipad: [UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
@@ -31,8 +32,8 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.nodelift.companion
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-        MARKETING_VERSION: 0.2.13
-        CURRENT_PROJECT_VERSION: 16
+        MARKETING_VERSION: 0.2.14
+        CURRENT_PROJECT_VERSION: 17
         SWIFT_OBJC_BRIDGING_HEADER: NodeLift/Bridge.h
         TARGETED_DEVICE_FAMILY: '1,2'
         GENERATE_INFOPLIST_FILE: YES

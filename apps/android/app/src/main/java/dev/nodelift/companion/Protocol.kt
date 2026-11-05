@@ -24,12 +24,17 @@ import java.io.ByteArrayOutputStream
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
 
-data class Pairing(val url: String, val certificate: String, val sha256: String, val invite: String = "") {
-    fun json(): JSONObject = JSONObject().put("url", url).put("certificate", certificate).put("sha256", sha256)
+data class Pairing(val url: String, val certificate: String, val sha256: String, val invite: String = "", val protocol: Int = 1, val tlsName: String? = null) {
+    fun json(): JSONObject = JSONObject().put("url", url).put("certificate", certificate).put("sha256", sha256).put("protocol", protocol).put("tls_name", tlsName)
     companion object {
         fun parse(o: JSONObject): Pairing {
+            val protocol = o.optInt("protocol",1)
+            require(protocol in 1..2) { "Unsupported pairing protocol" }
+            val tlsName = if(protocol==2) o.getString("tls_name") else null
+            require(tlsName==null || tlsName.matches(Regex("nodelift-[0-9a-f]{32}\\.local"))) { "Invalid computer identity." }
             val url = URL(o.getString("url"))
             require(url.protocol == "https" && url.userInfo == null && url.query == null && url.ref == null && (url.path.isEmpty() || url.path == "/")) { "Invalid invitation: HTTPS is required." }
+            require(url.port == -1 || url.port in 1..65535) { "Invalid port" }
             val parts = url.host.split('.').map { it.toIntOrNull() ?: -1 }
             require(parts.size == 4 && parts.all { it in 0..255 } && (parts[0] == 10 || parts[0] == 127 || parts[0] == 192 && parts[1] == 168 || parts[0] == 172 && parts[1] in 16..31)) { "Use a computer on your local network." }
             val certificate = o.getString("certificate")
@@ -38,7 +43,7 @@ data class Pairing(val url: String, val certificate: String, val sha256: String,
             cert.checkValidity()
             val hash = MessageDigest.getInstance("SHA-256").digest(cert.encoded).joinToString("") { "%02x".format(it) }
             require(hash == o.getString("sha256").lowercase()) { "Invalid computer identity." }
-            return Pairing(url.toString().trimEnd('/'), certificate, hash, o.optString("invite"))
+            return Pairing(url.toString().trimEnd('/'), certificate, hash, o.optString("invite"), protocol, tlsName)
         }
     }
 }
@@ -66,6 +71,12 @@ class Client(val pairing: Pairing, var token: String = "", private val context: 
         }
         SSLContext.getInstance("TLS").apply { init(null, arrayOf(pinned), null) }.socketFactory
     }
+    private fun verifyRoamingName(expected:String,session:javax.net.ssl.SSLSession):Boolean = try {
+        val leaf=session.peerCertificates.first() as X509Certificate
+        leaf.checkValidity()
+        val names=leaf.subjectAlternativeNames.orEmpty().filter {it.size>=2 && it[0]==2}.mapNotNull {it[1] as? String}
+        RoamingIdentity.matchesName(expected,names) && MessageDigest.getInstance("SHA-256").digest(leaf.encoded).joinToString(""){"%02x".format(it)}==pairing.sha256
+    } catch(_:Exception) {false}
     private fun openLocalConnection(url: URL): HttpsURLConnection {
         val cm = context?.getSystemService(android.net.ConnectivityManager::class.java)
         val destination = java.net.InetAddress.getByName(url.host) // Validated literal IPv4; no DNS lookup.
@@ -101,7 +112,8 @@ class Client(val pairing: Pairing, var token: String = "", private val context: 
         active = connection
         var completed = false
         try {
-            connection.sslSocketFactory = factory // Hostname verification remains enabled.
+            connection.sslSocketFactory = factory
+            pairing.tlsName?.let { expected -> connection.hostnameVerifier = javax.net.ssl.HostnameVerifier { _, session -> verifyRoamingName(expected,session) } }
             connection.instanceFollowRedirects = false
             connection.connectTimeout = 6000; connection.readTimeout = 10000
             connection.setRequestProperty("Accept-Encoding", "identity")
@@ -139,7 +151,9 @@ class Client(val pairing: Pairing, var token: String = "", private val context: 
         active=connection
         val temporary=File(destination.parentFile,"draft.partial")
         try {
-            connection.sslSocketFactory=factory;connection.instanceFollowRedirects=false
+            connection.sslSocketFactory=factory
+            pairing.tlsName?.let { expected -> connection.hostnameVerifier = javax.net.ssl.HostnameVerifier { _, session -> verifyRoamingName(expected,session) } }
+            connection.instanceFollowRedirects=false
             connection.connectTimeout=6000;connection.readTimeout=15000
             connection.setRequestProperty("Authorization","Bearer $token")
             connection.setRequestProperty("Accept-Encoding","identity")

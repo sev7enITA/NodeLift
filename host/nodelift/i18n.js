@@ -1176,7 +1176,15 @@ const NodeLiftChinese = {
   "● CONNECTED": "● 已连接",
   "● Session active": "● 会话已启用",
   "✓ Draft ready": "✓ 草稿模型已就绪",
-  "✓ Session active": "✓ 会话已启用"
+  "✓ Session active": "✓ 会话已启用",
+  "Local network unavailable. NodeLift will retry automatically; paired devices are preserved.": "本地网络不可用。NodeLift 将自动重试；已配对设备会保留。",
+  "The computer network address changed. The host is ready at {0}. Current companions may need a new QR code; automatic rediscovery is not available in this version.": "计算机的网络地址已更改。主机已在 {0} 就绪。当前配套应用可能需要新的二维码；此版本尚不支持自动重新发现主机。",
+  "Finding your paired computer on the local network…": "正在本地网络中查找已配对的计算机…",
+  "Computer found · reconnecting…": "已找到计算机 · 正在重新连接…",
+  "Host not found. Check the local network or discovery permissions.": "未找到主机。请检查本地网络或发现权限。",
+  "The network address changed. Paired companions will search for this computer at {0}.": "网络地址已更改。已配对的应用将搜索位于 {0} 的此计算机。",
+  "Automatic discovery is unavailable on this computer. Check Bonjour or Avahi; QR pairing still works on the current address.": "此计算机无法使用自动发现。请检查 Bonjour 或 Avahi；仍可通过当前地址的二维码配对。",
+  "Requires companion 0.2.14 or later. The invitation is private, single-use and valid for 5 minutes.": "需要 0.2.14 或更高版本的配套应用。邀请为私密、一次性使用，有效期为 5 分钟。"
 };
 const NodeLiftItalian = {
   "0 layers uses CPU. 999 requests the maximum GPU offload supported by the backend. Compatibility depends on the model.": "0 livelli usa la CPU. 999 richiede il massimo numero di livelli sulla GPU supportato dal backend. La compatibilità dipende dal modello.",
@@ -2354,7 +2362,15 @@ const NodeLiftItalian = {
   "● CONNECTED": "● CONNESSO",
   "● Session active": "● Sessione attiva",
   "✓ Draft ready": "✓ Draft pronto",
-  "✓ Session active": "✓ Sessione attiva"
+  "✓ Session active": "✓ Sessione attiva",
+  "Local network unavailable. NodeLift will retry automatically; paired devices are preserved.": "Rete locale non disponibile. NodeLift riproverà automaticamente; i dispositivi abbinati sono conservati.",
+  "The computer network address changed. The host is ready at {0}. Current companions may need a new QR code; automatic rediscovery is not available in this version.": "L’indirizzo di rete del computer è cambiato. L’host è pronto su {0}. Le companion attuali potrebbero richiedere un nuovo QR; questa versione non supporta la ricerca automatica del computer.",
+  "Finding your paired computer on the local network…": "Ricerca del computer abbinato sulla rete locale…",
+  "Computer found · reconnecting…": "Computer trovato · riconnessione…",
+  "Host not found. Check the local network or discovery permissions.": "Host non trovato. Controlla la rete locale o i permessi di ricerca.",
+  "The network address changed. Paired companions will search for this computer at {0}.": "L’indirizzo di rete è cambiato. Le companion abbinate cercheranno questo computer su {0}.",
+  "Automatic discovery is unavailable on this computer. Check Bonjour or Avahi; QR pairing still works on the current address.": "Ricerca automatica non disponibile su questo computer. Controlla Bonjour o Avahi; il QR funziona ancora sull’indirizzo attuale.",
+  "Requires companion 0.2.14 or later. The invitation is private, single-use and valid for 5 minutes.": "Richiede la companion 0.2.14 o successiva. L’invito è privato, monouso e valido per 5 minuti."
 };
 const NodeLiftCatalogs = {"zh-Hans": NodeLiftChinese, it: NodeLiftItalian};
 'use strict';

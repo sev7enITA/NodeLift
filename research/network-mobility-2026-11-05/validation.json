@@ -1,0 +1,39 @@
+{
+  "version": "0.2.14",
+  "build": 17,
+  "built_at": "2026-11-05T17:24:39.693094+00:00",
+  "assets": {
+    "NodeLift-0.2.14-ios-unsigned.ipa": {
+      "bytes": 5507518,
+      "sha256": "ad3da6359211e56264b848b86e01f9fa768044757d1aa1bd3ceff163a7abc951",
+      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.14/NodeLift-0.2.14-ios-unsigned.ipa"
+    },
+    "NodeLift-0.2.14-ios-unsigned.zip": {
+      "bytes": 5507294,
+      "sha256": "5dc75985304fa450bb5b75697c5e49aa1305c93861ffe21fae4bdaf36a2bedda",
+      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.14/NodeLift-0.2.14-ios-unsigned.zip"
+    },
+    "NodeLift-0.2.14-android-debug.apk": {
+      "bytes": 14180481,
+      "sha256": "2dc503f750529608ee2a4ba2bb0ba96c9ff0f486bb5f624dceb3551de041dc35",
+      "url": "https://github.com/sev7enITA/NodeLift/releases/download/v0.2.14/NodeLift-0.2.14-android-debug.apk"
+    }
+  },
+  "native_libraries": {
+    "android_sha256": "98c73264b18631ace7129a4308391c84026b83e8993a387e30b9b2c4b9990297",
+    "ios_sha256": "1a5d548beb3cde3ac48e49edc4455804fabe1e93db26dbec9d465acc1d5d205c",
+    "provenance": "Unchanged binaries extracted from the published 0.2.13 packages. This release changes transport and discovery; it does not incorporate later native source-only patches."
+  },
+  "android_signer_sha256": "80322431dee7cbce87601a4ef232706ea0717e0890721823ad15a8272b6e9a46",
+  "ios_signing": "unsigned",
+  "verification": {
+    "host_tests": 175,
+    "android_jvm_tests": 28,
+    "android_lint_errors": 0,
+    "android_lint_warnings": 18,
+    "ios_arm64_build": "passed",
+    "swift_tls_on_mac": "passed: two endpoints, same identity and node, wrong certificate and DNS name rejected",
+    "bonjour_on_mac": "passed: actual NWBrowser discovery",
+    "physical_phone_roaming": "not tested"
+  }
+}
