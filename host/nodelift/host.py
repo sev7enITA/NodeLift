@@ -52,13 +52,14 @@ class Server(http.server.ThreadingHTTPServer):
     daemon_threads = True
     allow_reuse_address = True
 
-    def __init__(self, address, state, context=None, admin_token=None, ticket_factory=None, engine=None, client_token=None, pairing_network=None, host_address=None):
+    def __init__(self, address, state, context=None, admin_token=None, ticket_factory=None, engine=None, client_token=None, pairing_network=None, host_address=None, network_status=None):
         self.state = state
         self.context = context
         self.admin_token = admin_token
         self.ticket_factory = ticket_factory
         self.pairing_network = pairing_network
         self.host_address = host_address
+        self.network_status = network_status
         self.engine = engine
         self.client_token = client_token
         self.slots = threading.BoundedSemaphore(32)
@@ -278,7 +279,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
             if method == 'POST' and path == '/admin/engine/run':return self.send(200,self.server.engine.start(self.body()))
             if method == 'POST' and path == '/admin/engine/stop':return self.send(200,self.server.engine.stop(self.body().get('run_id')))
         if method == "GET" and path == "/admin/status":
-            return self.send(200, {**self.server.state.snapshot(), "host": host_inventory(self.server.host_address() if self.server.host_address else None)})
+            return self.send(200, {**self.server.state.snapshot(), "host": host_inventory(self.server.host_address() if self.server.host_address else None),
+                                   "network": self.server.network_status() if self.server.network_status else None})
         if method == "POST" and path == "/admin/invite":
             self.body()
             return self.send(200, self.server.ticket_factory())
@@ -345,6 +347,36 @@ class PairingEndpoint:
         self.address = None
         self.identity = None
         self.lock = threading.RLock()
+        self.last_error = None
+        self.network_changes = 0
+        self.last_address = None
+
+    def refresh_network(self):
+        """Follow route changes independently of QR creation; fail closed when offline.
+
+        This maintains the listener, not companion endpoint discovery. Protocol-1
+        credentials still require a new invitation after an address change.
+        """
+        with self.lock:
+            try:
+                self.ensure()
+                self.last_error = None
+            except (ValueError, OSError, subprocess.SubprocessError):
+                # Do not keep an endpoint advertised as usable on a departed LAN.
+                self.close()
+                with self.state.db() as db:
+                    db.execute("DELETE FROM invites")
+                self.last_error = "network_unavailable"
+
+    def watch_network(self, stop, interval=2.0):
+        while not stop.wait(interval):
+            self.refresh_network()
+
+    def network_status(self):
+        with self.lock:
+            return {"ready": self.network_ready(), "address": self.address if self.api else None,
+                    "automatic_address": self.requested == "auto", "changes": self.network_changes,
+                    "companion_auto_reconnect": False, "error": self.last_error}
 
     def desired_address(self):
         address = route_address() if self.requested == "auto" else self.requested
@@ -380,6 +412,9 @@ class PairingEndpoint:
             threading.Thread(target=candidate.serve_forever, daemon=True).start()
             previous = self.api
             self.api, self.address = candidate, address
+            if self.last_address is not None and self.last_address != address:
+                self.network_changes += 1
+            self.last_address = address
             self.identity = (pem, fingerprint, public_key_pin(cert))
             if previous:
                 previous.shutdown()
@@ -434,7 +469,7 @@ def main():
     else:
         client_token=secrets.token_urlsafe(32)
         with open(client_file,'w',opener=lambda p,f:os.open(p,f,0o600)) as stream:stream.write(client_token)
-    admin = Server(("127.0.0.1", args.dashboard_port), state, admin_token=admin_token, ticket_factory=endpoint.ticket, engine=engine,client_token=client_token, pairing_network=endpoint.network_ready,host_address=lambda: endpoint.address if endpoint.network_ready() else None)
+    admin = Server(("127.0.0.1", args.dashboard_port), state, admin_token=admin_token, ticket_factory=endpoint.ticket, engine=engine,client_token=client_token, pairing_network=endpoint.network_ready,host_address=lambda: endpoint.address if endpoint.network_ready() else None, network_status=endpoint.network_status)
     threads = [threading.Thread(target=s.serve_forever, daemon=True) for s in (admin,)]
     for t in threads:
         t.start()
@@ -446,9 +481,12 @@ def main():
             print("Bonjour unavailable; pairing ticket still works.")
     print(f"NodeLift 0.3.0: experimental native inference; mobile speedup unqualified.\nDashboard (local, private link): http://127.0.0.1:{admin.server_port}/#{admin_token}", flush=True)
     stop = threading.Event()
+    network_monitor = threading.Thread(target=endpoint.watch_network, args=(stop,), daemon=True)
+    network_monitor.start()
     signal.signal(signal.SIGINT, lambda *_: stop.set())
     signal.signal(signal.SIGTERM, lambda *_: stop.set())
     stop.wait()
+    network_monitor.join(timeout=15)
     engine.stop()
     endpoint.close()
     for s in (admin,):

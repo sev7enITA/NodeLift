@@ -1,0 +1,36 @@
+{
+  "scope": "Host listener mobility source change, not physical companion roaming",
+  "tests": {
+    "network_pairing": 9,
+    "startup": 1,
+    "session_recovery": 4,
+    "protocol": 21,
+    "total_passed": 35
+  },
+  "javascript_syntax": "passed",
+  "localization_generation": "passed in isolated checkout",
+  "test_checkout": "Materialized from the existing Git mirror, with all changed host sources and catalogs overlaid; avoids iCloud placeholder reads.",
+  "not_validated": [
+    "Physical Wi-Fi switching",
+    "Android or iOS automatic rediscovery",
+    "Rendered dashboard warning",
+    "Production deployment of network monitor"
+  ],
+  "files": {
+    "host/nodelift/host.py": "337883d9b6275f2bd42c7ef6e8f9c8bc3a5ac8ee5465f51a5c27dbb16fc26856",
+    "host/nodelift/dashboard.js": "244b1d751f58d06f20802ef000748a54a2b8021a4df0e0368ddeb6ba5abb19e9",
+    "host/nodelift/dashboard.html": "482e5cd40e1cfec024ff98812a8dbc8f36fc30645b1e3eff6af96ca71577c690",
+    "host/tests/test_network_pairing.py": "a4a466d74369e18518a92011aa7ece794abdcb1b8baa5be7e1a4ae59616e0f53",
+    "docs/NETWORK_MOBILITY.md": "83ae98e2bfe4025bdee7e9cfee51211154fc218a78534f8021663abe24880f24",
+    "localization/en.json": "e42c4fc5ab6a93e508162a1ceb5d584a117b96d21d47a01b1a91928c42a83d17",
+    "localization/it.json": "1cd3880826544982c376835f11dcd17d7f9ce6651fa71548a1ad3e25f33809ed",
+    "localization/zh-Hans.json": "9f047c5ae005a2584b81682baeeb2af217382ba1783fde80afa7bb7d05a52c27",
+    "host/nodelift/i18n.js": "7b2f862a55a6a12c4bbc83365b00d31b0363260f7e8d4507a4073ad830afd738",
+    "apps/android/app/src/main/assets/zh-Hans.json": "9f047c5ae005a2584b81682baeeb2af217382ba1783fde80afa7bb7d05a52c27",
+    "apps/ios/NodeLift/ChineseMessages.swift": "830cc34bd451acb8cfb178acb55964db8c2565e6f2e292648a1bff5b40d6ce30",
+    "apps/harmony/entry/src/main/ets/pages/ChineseMessages.ets": "6047108054c1868c3e2042f99f8ea7e56bf83efefdd84984b3dc0e8b91361f4d",
+    "apps/android/app/src/main/assets/it.json": "1cd3880826544982c376835f11dcd17d7f9ce6651fa71548a1ad3e25f33809ed",
+    "apps/ios/NodeLift/ItalianMessages.swift": "08cdbea2fa637fd824634d8e286fa3b8541860b32d54fa332bb208c8f4e27179",
+    "apps/harmony/entry/src/main/ets/pages/ItalianMessages.ets": "34dd0913c05c835ffaff8d22f053b9457177450edfaedd53d83de273291c2bd3"
+  }
+}

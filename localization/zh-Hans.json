@@ -1174,5 +1174,7 @@
   "● CONNECTED": "● 已连接",
   "● Session active": "● 会话已启用",
   "✓ Draft ready": "✓ 草稿模型已就绪",
-  "✓ Session active": "✓ 会话已启用"
+  "✓ Session active": "✓ 会话已启用",
+  "Local network unavailable. NodeLift will retry automatically; paired devices are preserved.": "本地网络不可用。NodeLift 将自动重试；已配对设备会保留。",
+  "The computer network address changed. The host is ready at {0}. Current companions may need a new QR code; automatic rediscovery is not available in this version.": "计算机的网络地址已更改。主机已在 {0} 就绪。当前配套应用可能需要新的二维码；此版本尚不支持自动重新发现主机。"
 }

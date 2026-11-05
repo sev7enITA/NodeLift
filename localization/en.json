@@ -1174,5 +1174,7 @@
   "● CONNECTED": "● CONNECTED",
   "● Session active": "● Session active",
   "✓ Draft ready": "✓ Draft ready",
-  "✓ Session active": "✓ Session active"
+  "✓ Session active": "✓ Session active",
+  "Local network unavailable. NodeLift will retry automatically; paired devices are preserved.": "Local network unavailable. NodeLift will retry automatically; paired devices are preserved.",
+  "The computer network address changed. The host is ready at {0}. Current companions may need a new QR code; automatic rediscovery is not available in this version.": "The computer network address changed. The host is ready at {0}. Current companions may need a new QR code; automatic rediscovery is not available in this version."
 }

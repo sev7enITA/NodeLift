@@ -1175,5 +1175,7 @@ let italianMessages: [String: String] = [
     "● CONNECTED": "● CONNESSO",
     "● Session active": "● Sessione attiva",
     "✓ Draft ready": "✓ Draft pronto",
-    "✓ Session active": "✓ Sessione attiva"
+    "✓ Session active": "✓ Sessione attiva",
+    "Local network unavailable. NodeLift will retry automatically; paired devices are preserved.": "Rete locale non disponibile. NodeLift riproverà automaticamente; i dispositivi abbinati sono conservati.",
+    "The computer network address changed. The host is ready at {0}. Current companions may need a new QR code; automatic rediscovery is not available in this version.": "L’indirizzo di rete del computer è cambiato. L’host è pronto su {0}. Le companion attuali potrebbero richiedere un nuovo QR; questa versione non supporta la ricerca automatica del computer."
 ]

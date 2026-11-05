@@ -151,7 +151,7 @@ function sessionReady(ready) {
     nodeProbeReport=null;if($('node-probe-details'))$('node-probe-details').hidden=true;if($('node-probe-output'))$('node-probe-output').textContent='';
     hideClientAccess();nodeActionFeedback.clear();announceNodeAction(null,null);engineActionFeedback=null;configurationActionFeedback=null;
     aboutMetadata=null;aboutVersionRequested=false;aboutVersionLoading=false;aboutVersionEpoch++;
-    pairing.clear();snapshot=null;engineSnapshot=null;
+    pairing.clear();snapshot=null;engineSnapshot=null;renderNetworkStatus();
     $('online').textContent='-';$('registered-label').textContent=t("Session unavailable");
     $('engine-summary').textContent=t("Access required");$('engine-backend').textContent=t("Local session required");
     $('engine-state').textContent=t("ACCESS REQUIRED");$('engine-state').className='chip neutral';
@@ -418,9 +418,17 @@ async function refreshAboutVersion() {
   }catch(_){if(epoch===aboutVersionEpoch)aboutMetadata=null;}
   finally{if(epoch===aboutVersionEpoch){aboutVersionLoading=false;renderAboutVersion();}}
 }
+function renderNetworkStatus() {
+  const notice=$('network-notice'), network=snapshot?.network;
+  notice.hidden=!authenticated || !network || (network.ready && !network.changes);
+  if(notice.hidden){notice.textContent='';return;}
+  notice.textContent=!network.ready
+    ? t('Local network unavailable. NodeLift will retry automatically; paired devices are preserved.')
+    : t('The computer network address changed. The host is ready at {0}. Current companions may need a new QR code; automatic rediscovery is not available in this version.', network.address);
+}
 async function refresh() {
   if(refreshing)return;refreshing=true;
-  try{snapshot=await api('status');sessionReady(true);refreshAboutVersion();renderNodes();renderJobs();NodeLiftGraph.update(snapshot,engineSnapshot,true);$('updated-at').textContent=new Date().toLocaleTimeString(NodeLiftI18n.locale,{hour:'2-digit',minute:'2-digit',second:'2-digit'});await refreshEngine();}
+  try{snapshot=await api('status');sessionReady(true);renderNetworkStatus();refreshAboutVersion();renderNodes();renderJobs();NodeLiftGraph.update(snapshot,engineSnapshot,true);$('updated-at').textContent=new Date().toLocaleTimeString(NodeLiftI18n.locale,{hour:'2-digit',minute:'2-digit',second:'2-digit'});await refreshEngine();}
   catch(e){if(authenticated)NodeLiftGraph.disconnected();$('session-label').textContent=authenticated?t("Connection needs checking"):t("Access required");$('session-dot').className='status-dot error';showError(e);}
   finally{refreshing=false;}
 }
@@ -555,7 +563,7 @@ document.addEventListener('nodelift-languagechange',()=>{
   hideClientAccess();
   if(window.renderModelLibrary)renderModelLibrary();
   nodeSignature='';jobSignature='';engineSignature='';
-  sessionReady(authenticated);
+  sessionReady(authenticated);renderNetworkStatus();
   if(snapshot){renderNodes();renderJobs();NodeLiftGraph.update(snapshot,engineSnapshot);if(nodeAnnouncement)announceNodeAction(nodeAnnouncement.nodeId,nodeAnnouncement.message);}
   if(engineSnapshot){renderRuns(engineSnapshot.runs||[]);}
   for(const id of ['error','engine-error'])if($(id).dataset.message)$(id).textContent=t($(id).dataset.message);

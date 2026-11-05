@@ -1176,7 +1176,9 @@ const NodeLiftChinese = {
   "● CONNECTED": "● 已连接",
   "● Session active": "● 会话已启用",
   "✓ Draft ready": "✓ 草稿模型已就绪",
-  "✓ Session active": "✓ 会话已启用"
+  "✓ Session active": "✓ 会话已启用",
+  "Local network unavailable. NodeLift will retry automatically; paired devices are preserved.": "本地网络不可用。NodeLift 将自动重试；已配对设备会保留。",
+  "The computer network address changed. The host is ready at {0}. Current companions may need a new QR code; automatic rediscovery is not available in this version.": "计算机的网络地址已更改。主机已在 {0} 就绪。当前配套应用可能需要新的二维码；此版本尚不支持自动重新发现主机。"
 };
 const NodeLiftItalian = {
   "0 layers uses CPU. 999 requests the maximum GPU offload supported by the backend. Compatibility depends on the model.": "0 livelli usa la CPU. 999 richiede il massimo numero di livelli sulla GPU supportato dal backend. La compatibilità dipende dal modello.",
@@ -2354,7 +2356,9 @@ const NodeLiftItalian = {
   "● CONNECTED": "● CONNESSO",
   "● Session active": "● Sessione attiva",
   "✓ Draft ready": "✓ Draft pronto",
-  "✓ Session active": "✓ Sessione attiva"
+  "✓ Session active": "✓ Sessione attiva",
+  "Local network unavailable. NodeLift will retry automatically; paired devices are preserved.": "Rete locale non disponibile. NodeLift riproverà automaticamente; i dispositivi abbinati sono conservati.",
+  "The computer network address changed. The host is ready at {0}. Current companions may need a new QR code; automatic rediscovery is not available in this version.": "L’indirizzo di rete del computer è cambiato. L’host è pronto su {0}. Le companion attuali potrebbero richiedere un nuovo QR; questa versione non supporta la ricerca automatica del computer."
 };
 const NodeLiftCatalogs = {"zh-Hans": NodeLiftChinese, it: NodeLiftItalian};
 'use strict';
