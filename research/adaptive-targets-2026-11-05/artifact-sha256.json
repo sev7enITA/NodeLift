@@ -24,6 +24,7 @@
   "policy-checks.json": "9af226326f49e0b44de8ab015ccc85228600212462e8ad823c8d6b8e61748649",
   "policy.py": "45004f2478aacc5b92003c2f36895eaa918e1d7a808616cc5cb3c31c955b3c46",
   "prompts.json": "76f9253a2484f98bf8ac2b235fdb0df09e72365e31c0a383113fd9e78ac27336",
+  "publication.json": "c4753318dc784f2b4566430336da2c6a7c7c3323f752aba42e7d15952a0887da",
   "render.py": "d133dafff3fb08dbd3b734e58d2ae865157f7c9e6cf5fe1b02419973b98e8da1",
   "results/raw/14B-fp32-screen/admission.json": "819a0ac62ebf1a27a51188a74bf4c2ec1e9207de3e8ad2bdd1f3befbee975fe6",
   "results/raw/14B-fp32-screen/calibration.json": "ccdd20b56979d86f5813a9f73a385226b37d1c900af28916b9daba09e93dac52",

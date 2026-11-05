@@ -1,0 +1,28 @@
+{
+  "published_at": "2026-11-05T04:00:06.178012+00:00",
+  "previous_index_sha256": "46fea8759a0c2b3b1f51f2b80e4c2b0374f6c4dbfeafddf2a035e279bd8dae81",
+  "assets": [
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/assets/adaptive-results-20261105.png",
+      "bytes": 177607,
+      "sha256": "56e14cc04a1cc6c48efc286a90248f430fdc013bd63bae75d30c90e9bdd1562a",
+      "https_verified": true
+    },
+    {
+      "url": "https://www.fabriziodegni.com/NodeLift/index.html",
+      "bytes": 186102,
+      "sha256": "6a1c7b606596fe18653e08b0dd458894245a4c239c771fb741121b93e54aac03",
+      "https_verified": true
+    }
+  ],
+  "browser_verification": {
+    "languages": [
+      "en",
+      "zh-Hans",
+      "it"
+    ],
+    "new_section_rendered": true,
+    "final_language": "en",
+    "scope": "New research section text checked in the live browser; no full-site regression claim"
+  }
+}
