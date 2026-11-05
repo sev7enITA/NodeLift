@@ -1,0 +1,2 @@
+{"unix": 1793856242.3964522, "cpu_percent": 33.7, "available_bytes": 16265445376, "swap_used_bytes": 26779910144, "swap_in_bytes": 29793096876032, "swap_out_bytes": 17147248640, "disk_free_bytes": 25160454144, "thermal": "nominal", "low_power_mode": true}
+{"unix": 1793856247.4220219, "cpu_percent": 84.9, "available_bytes": 11626643456, "swap_used_bytes": 27656716288, "swap_in_bytes": 29800836628480, "swap_out_bytes": 17205870592, "disk_free_bytes": 24084561920, "thermal": "nominal", "low_power_mode": true}

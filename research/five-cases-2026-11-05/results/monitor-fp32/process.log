@@ -1,0 +1,27 @@
+reference bounded-parser 128
+reference italian-cache 128
+reference structured-control 36
+1 24 fp32 bounded-parser 8 5.204 True
+2 24 fp32 bounded-parser 1 6.591 True
+3 24 fp32 bounded-parser 4 5.906 True
+4 24 fp32 bounded-parser 2 6.072 True
+5 24 fp32 italian-cache 4 6.942 True
+6 24 fp32 italian-cache 8 6.042 True
+7 24 fp32 italian-cache 2 5.851 True
+8 24 fp32 italian-cache 1 6.775 True
+9 24 fp32 structured-control 4 2.239 True
+10 24 fp32 structured-control 1 2.096 True
+11 24 fp32 structured-control 2 1.949 True
+12 24 fp32 structured-control 8 2.542 True
+13 24 fp32 bounded-parser 1 6.62 True
+14 24 fp32 bounded-parser 2 6.859 True
+15 24 fp32 bounded-parser 4 5.396 True
+16 24 fp32 bounded-parser 8 5.418 True
+17 24 fp32 italian-cache 8 5.398 True
+18 24 fp32 italian-cache 4 5.77 True
+19 24 fp32 italian-cache 1 7.986 True
+20 24 fp32 italian-cache 2 6.398 True
+21 24 fp32 structured-control 1 2.378 True
+22 24 fp32 structured-control 8 1.749 True
+23 24 fp32 structured-control 2 2.047 True
+24 24 fp32 structured-control 4 1.804 True

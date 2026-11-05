@@ -1,0 +1,55 @@
+{
+  "samples": [
+    {
+      "unix": 1793855924.266079,
+      "cpu_percent": 30.9,
+      "available_bytes": 14690713600,
+      "swap_used_bytes": 22528196608,
+      "swap_in_bytes": 29765957566464,
+      "swap_out_bytes": 17095163904,
+      "disk_free_bytes": 29556981760,
+      "thermal": "nominal",
+      "low_power_mode": true
+    },
+    {
+      "unix": 1793855925.284378,
+      "cpu_percent": 39.9,
+      "available_bytes": 14727856128,
+      "swap_used_bytes": 22528196608,
+      "swap_in_bytes": 29765966708736,
+      "swap_out_bytes": 17095163904,
+      "disk_free_bytes": 29556281344,
+      "thermal": "nominal",
+      "low_power_mode": true
+    },
+    {
+      "unix": 1793855926.302647,
+      "cpu_percent": 31.7,
+      "available_bytes": 13856686080,
+      "swap_used_bytes": 22528196608,
+      "swap_in_bytes": 29766035816448,
+      "swap_out_bytes": 17095245824,
+      "disk_free_bytes": 29555134464,
+      "thermal": "nominal",
+      "low_power_mode": true
+    }
+  ],
+  "gate": {
+    "admit_bounded_diagnostic": true,
+    "isolated_performance_qualification": false,
+    "reasons": [
+      "low_power_mode_enabled",
+      "background_cpu_load",
+      "preexisting_swap_not_attributed"
+    ],
+    "scope": "Preflight only; thermal/energy and resource behavior during inference require separate evidence"
+  },
+  "command": [
+    "/tmp/nodelift-mlx-env/bin/python",
+    "research/five-cases-2026-11-05/envelope.py",
+    "--precision",
+    "native",
+    "--out",
+    "artifacts/five-cases-2026-11-05/envelope-native"
+  ]
+}

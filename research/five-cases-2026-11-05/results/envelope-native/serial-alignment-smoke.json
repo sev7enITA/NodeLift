@@ -1,0 +1,263 @@
+{
+  "width": 1,
+  "seconds": 1.179931375081651,
+  "prefill_seconds": 0.2180853340541944,
+  "decode_seconds": 0.9618460410274565,
+  "ttft_seconds": 0.2455922090448439,
+  "predictions": [
+    32,
+    6500,
+    374,
+    264,
+    11773,
+    476,
+    3162,
+    3692,
+    429,
+    10533,
+    10993,
+    315,
+    821,
+    476,
+    3482,
+    6816,
+    311,
+    4628,
+    705,
+    3853,
+    7388,
+    13,
+    1084,
+    25271
+  ],
+  "raw_argmax_predictions": [
+    32,
+    6500,
+    374,
+    264,
+    11773,
+    476,
+    3162,
+    3692,
+    429,
+    10533,
+    10993,
+    315,
+    821,
+    476,
+    3482,
+    6816,
+    311,
+    4628,
+    705,
+    3853,
+    7388,
+    13,
+    1084,
+    25271
+  ],
+  "reference_tokens": [
+    32,
+    6500,
+    374,
+    264,
+    11773,
+    476,
+    3162,
+    3692,
+    429,
+    10533,
+    10993,
+    315,
+    821,
+    476,
+    3482,
+    6816,
+    311,
+    4628,
+    705,
+    3853,
+    7388,
+    13,
+    1084,
+    25271
+  ],
+  "exact": true,
+  "matches": 24,
+  "logprob_argmax_differs_from_raw": 0,
+  "blocks": [
+    {
+      "offset": 0,
+      "width": 1,
+      "seconds": 0.027496541966684163,
+      "matches": 1
+    },
+    {
+      "offset": 1,
+      "width": 1,
+      "seconds": 0.02663829189259559,
+      "matches": 1
+    },
+    {
+      "offset": 2,
+      "width": 1,
+      "seconds": 0.026246124994941056,
+      "matches": 1
+    },
+    {
+      "offset": 3,
+      "width": 1,
+      "seconds": 0.029746290994808078,
+      "matches": 1
+    },
+    {
+      "offset": 4,
+      "width": 1,
+      "seconds": 0.031695457990281284,
+      "matches": 1
+    },
+    {
+      "offset": 5,
+      "width": 1,
+      "seconds": 0.03309291694313288,
+      "matches": 1
+    },
+    {
+      "offset": 6,
+      "width": 1,
+      "seconds": 0.03798779204953462,
+      "matches": 1
+    },
+    {
+      "offset": 7,
+      "width": 1,
+      "seconds": 0.04620191699359566,
+      "matches": 1
+    },
+    {
+      "offset": 8,
+      "width": 1,
+      "seconds": 0.06873770896345377,
+      "matches": 1
+    },
+    {
+      "offset": 9,
+      "width": 1,
+      "seconds": 0.05238958296831697,
+      "matches": 1
+    },
+    {
+      "offset": 10,
+      "width": 1,
+      "seconds": 0.050258749979548156,
+      "matches": 1
+    },
+    {
+      "offset": 11,
+      "width": 1,
+      "seconds": 0.03853504208382219,
+      "matches": 1
+    },
+    {
+      "offset": 12,
+      "width": 1,
+      "seconds": 0.037748832954093814,
+      "matches": 1
+    },
+    {
+      "offset": 13,
+      "width": 1,
+      "seconds": 0.03704754204954952,
+      "matches": 1
+    },
+    {
+      "offset": 14,
+      "width": 1,
+      "seconds": 0.038901958032511175,
+      "matches": 1
+    },
+    {
+      "offset": 15,
+      "width": 1,
+      "seconds": 0.03944745799526572,
+      "matches": 1
+    },
+    {
+      "offset": 16,
+      "width": 1,
+      "seconds": 0.04158508300315589,
+      "matches": 1
+    },
+    {
+      "offset": 17,
+      "width": 1,
+      "seconds": 0.03858320799190551,
+      "matches": 1
+    },
+    {
+      "offset": 18,
+      "width": 1,
+      "seconds": 0.04187816602643579,
+      "matches": 1
+    },
+    {
+      "offset": 19,
+      "width": 1,
+      "seconds": 0.04530220804736018,
+      "matches": 1
+    },
+    {
+      "offset": 20,
+      "width": 1,
+      "seconds": 0.04427154106087983,
+      "matches": 1
+    },
+    {
+      "offset": 21,
+      "width": 1,
+      "seconds": 0.039807167020626366,
+      "matches": 1
+    },
+    {
+      "offset": 22,
+      "width": 1,
+      "seconds": 0.042389582959003747,
+      "matches": 1
+    },
+    {
+      "offset": 23,
+      "width": 1,
+      "seconds": 0.044975708005949855,
+      "matches": 1
+    }
+  ],
+  "resources_before": {
+    "unix": 1793855935.946611,
+    "available_bytes": 12444991488,
+    "swap_used_bytes": 26855407616,
+    "swap_in_bytes": 29773795917824,
+    "swap_out_bytes": 17103847424,
+    "load_average": [
+      12.45263671875,
+      10.720703125,
+      13.7958984375
+    ],
+    "mlx_active_bytes": 7860439142,
+    "mlx_peak_bytes": 8034072880
+  },
+  "resources_after": {
+    "unix": 1793855937.1267068,
+    "available_bytes": 12417597440,
+    "swap_used_bytes": 26855407616,
+    "swap_in_bytes": 29773796196352,
+    "swap_out_bytes": 17103847424,
+    "load_average": [
+      12.45263671875,
+      10.720703125,
+      13.7958984375
+    ],
+    "mlx_active_bytes": 7888566292,
+    "mlx_peak_bytes": 8034072880
+  },
+  "scope": "Teacher-forced replay, zero candidate producer and transport cost; not free generation"
+}

@@ -1,0 +1,91 @@
+NodeLift five-case critical review, 5 November 2026. Reply in English, about 1000 words. You have only the supplied source excerpt and observations; do not claim repository or hardware execution. Treat speculative ideas as hypotheses, not novel inventions or guaranteed speedups.
+
+Observed last experiment: same Mac M3 Max 64 GiB, official pinned Qwen3 MLX 4-bit 14B target, 0.6B/1.7B drafts, MLX 0.32.4 / MLX-LM 0.32.2. Native screening fixed k4 about1.307x but all eight configurations differed from serial on1/3 prompts. Separate FP32 floating-parameter lane kept packed integer quantized weights; validation had eight held-out prompts x two reps x two fresh processes, cap128/EOS respected. Adaptive0.6B exact32/32 with median duration+5.28%, selected fixedk2 exact32/32 with+19.78%; adaptive disabled drafting29/32. This was a busy shared Mac, not an isolated thermal trial. All weights resident; load excluded; full request timer includes prefill, fallback and cleanup. No cross-precision paired validation baseline. Exact tokens remain a gate, no empirical-margin exemption.
+
+Analyze each case independently:
+C1 Placement: current draft then verify on one Mac is sequential. Physical phone currently offline. Proposed candidate-arrival simulation and suffix salvage are protocol experiments, not distributed gains. Identify a useful bounded overlap design without free resynchronization, double-counted host work or accepting unverified tokens.
+C2 Cost: controller sees block wall elapsed before later cache rewind; startup target/draft prefill is not charged to the per-block control signal (but IS included in request timing). It uses serial token cost from an independent short calibration prompt. Draft-prefill currently precedes target-prefill. Propose a full-cost, bounded admission and fallback design; no stale draft KV resume.
+C3 Ceiling: build immutable reference tokens with upstream serial first. Fresh target caches, identical prefill, teacher-force [last prompt token]+reference[:-1] in widths1,2,4,8, score all predictions. Candidate producer/network free by construction. Measure this only as an optimistic verifier envelope, including its mismatches; it cannot qualify free-running inference. Two repeats of three new diagnostic prompts per precision lane; not broad validation.
+C4 Correctness: cross current width1/4 with serial/batched history on an identical frozen failing prefix, compare uninstrumented forward with layer/component tracing first. Compare KV effects and raw-logit versus normalized-logprob argmax. Do not call FP32 or a previous-token margin a proof. Need first-divergence attribution and a falsifiable kernel/state hypothesis.
+C5 Quality: idle admission checks, thermal-pressure/low-power telemetry, no concurrent agent browser/download/inference during timings, fresh processes, all failures retained, workload clustering. Current Mac low-power mode is enabled; do not assume it caused previous outcomes. Need explicit diagnostic versus qualification labels.
+
+For EACH case give: strongest alternative explanation, one cheap falsifier, one practical implementation step and one unconventional but bounded experiment. Name prior art when confident, otherwise label source unverified. Flag invalid assumptions in our plan. Keep single-request latency, aggregate throughput and split-model capacity distinct. We will not change paradigm before the five-case evidence matrix is complete.
+
+Actual current source excerpt:
+"""Per-request bounded scheduling from measured cost; never a correctness gate."""
+import math
+class CostPolicy:
+ version='cost-bounded-mlx-v1'
+ def __init__(self,host_seconds_per_token):
+  if not math.isfinite(host_seconds_per_token) or host_seconds_per_token<=0:raise ValueError('Invalid serial calibration')
+  self.host=host_seconds_per_token;self.k=2;self.losses=0;self.disabled=False;self.decisions=[]
+ def choose(self):return 0 if self.disabled else self.k
+ def observe(self,row):
+  if row['k']==0:return
+  elapsed=row['wall_seconds'];emitted=row['emitted']
+  if emitted<1 or not math.isfinite(elapsed) or elapsed<=0:raise ValueError('Invalid block observation')
+  margin=self.host*emitted/elapsed
+  self.losses=self.losses+1 if margin<1.1 else 0
+  if self.losses>=3:self.disabled=True
+  elif row['accepted']/row['k']>=.75 and margin>=1.1:self.k=min(8,self.k+1)
+  elif row['accepted']/row['k']<.5 or margin<1:self.k=max(1,self.k-1)
+  self.decisions.append({'observed_k':row['k'],'cost_ratio':margin,'consecutive_losses':self.losses,'next_k':self.choose()})
+        n = 0
+        try:
+            while True:
+                num_draft = min(max_tokens - ntoks, policy.choose() if policy else num_draft_tokens)
+                block_started = time.perf_counter()
+                draft_tokens = _draft_generate(draft_y, num_draft)
+                mx.eval(draft_tokens)
+                drafted_at = time.perf_counter()
+                if prev_tokens is not None:
+                    prev_tokens = prev_tokens[
+                        : prev_tokens.size - y.size - num_draft + 1
+                    ]
+                y = mx.concatenate([y, draft_tokens])
+                tokens, logprobs = _step(model, model_cache, y, num_draft + 1)
+                mx.eval(tokens, draft_tokens)
+                draft_tokens = draft_tokens.tolist()
+                tokens = tokens.tolist()
+                verified_at = time.perf_counter()
+                row = {"k": num_draft, "accepted": 0, "emitted": 0, "draft_seconds": drafted_at-block_started, "verify_seconds": verified_at-drafted_at}
+                if trace is not None: trace.append(row)
+                n = 0
+                while n < num_draft:
+                    tn, dtn, lpn = tokens[n], draft_tokens[n], logprobs[n]
+                    if tn != dtn:
+                        break
+                    n += 1
+                    ntoks += 1
+                    row["accepted"] += 1
+                    row["emitted"] += 1
+                    yield tn, lpn, True
+                    if ntoks == max_tokens:
+                        break
+                if ntoks < max_tokens:
+                    ntoks += 1
+                    row["emitted"] += 1
+                    yield tokens[n], logprobs[n], False
+
+                row["wall_seconds"] = time.perf_counter()-block_started
+                if policy: policy.observe(row)
+
+                if ntoks == max_tokens:
+                    break
+
+                y = mx.array([tokens[n]], mx.uint32)
+                draft_y = y
+
+                # If we accepted all the draft tokens, include the last
+                # draft token in the next draft step since it hasn't been
+                # processed yet by the draft model
+                if n == num_draft:
+                    draft_y = mx.concatenate(
+                        [mx.array(draft_tokens[-1:], mx.uint32), draft_y]
+                    )
+
+                if prev_tokens is not None:
+                    prev_tokens = prev_tokens[: -max(num_draft - n, 1)]
+                _rewind_cache(num_draft, n)
+        finally:
+

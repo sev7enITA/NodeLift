@@ -1,0 +1,5 @@
+[
+  {"id":"bounded-parser","prompt":"Describe a deterministic parser for lines of the form key=value. Explain handling duplicate keys, empty values and malformed input in six concise points."},
+  {"id":"italian-cache","prompt":"Spiega in italiano, con un esempio concreto, quando riutilizzare una cache può far risparmiare tempo e quando invece ricostruirla costa meno."},
+  {"id":"structured-control","prompt":"Return one JSON object with keys policy, retries and reasons. Describe a worker policy allowing at most two retries, with reasons for timeout and stale response rejection. Do not use Markdown."}
+]

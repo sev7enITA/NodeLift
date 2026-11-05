@@ -1,0 +1,53 @@
+{
+  "checks": [
+    {
+      "name": "healthy bounded diagnostic admitted",
+      "passed": true
+    },
+    {
+      "name": "missing samples",
+      "passed": true
+    },
+    {
+      "name": "unknown thermal",
+      "passed": true
+    },
+    {
+      "name": "thermal pressure",
+      "passed": true
+    },
+    {
+      "name": "invalid CPU",
+      "passed": true
+    },
+    {
+      "name": "memory floor",
+      "passed": true
+    },
+    {
+      "name": "disk reserve",
+      "passed": true
+    },
+    {
+      "name": "low-power never qualifies isolated performance",
+      "passed": true
+    },
+    {
+      "name": "free candidates pay all verifier work",
+      "passed": true
+    },
+    {
+      "name": "slower producer bounded schedule",
+      "passed": true
+    },
+    {
+      "name": "delivery paid and overlap bounded",
+      "passed": true
+    },
+    {
+      "name": "negative production cost refused",
+      "passed": true
+    }
+  ],
+  "scope": "Helper negative controls; not LLM correctness or speed validation"
+}

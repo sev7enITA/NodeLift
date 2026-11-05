@@ -1,0 +1,749 @@
+{
+  "checks": [
+    {
+      "name": "native planned replay count",
+      "passed": true
+    },
+    {
+      "name": "native unique tasks",
+      "passed": true
+    },
+    {
+      "name": "native 0 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 0 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 0 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 1 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 1 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 1 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 2 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 2 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 2 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 3 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 3 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 3 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 4 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 4 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 4 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 5 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 5 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 5 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 6 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 6 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 6 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 7 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 7 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 7 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 8 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 8 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 8 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 9 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 9 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 9 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 10 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 10 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 10 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 11 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 11 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 11 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 12 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 12 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 12 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 13 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 13 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 13 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 14 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 14 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 14 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 15 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 15 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 15 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 16 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 16 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 16 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 17 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 17 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 17 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 18 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 18 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 18 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 19 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 19 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 19 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 20 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 20 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 20 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 21 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 21 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 21 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 22 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 22 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 22 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native 23 token alignment",
+      "passed": true
+    },
+    {
+      "name": "native 23 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "native 23 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "native width-one reference alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 planned replay count",
+      "passed": true
+    },
+    {
+      "name": "fp32 unique tasks",
+      "passed": true
+    },
+    {
+      "name": "fp32 0 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 0 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 0 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 1 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 1 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 1 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 2 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 2 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 2 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 3 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 3 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 3 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 4 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 4 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 4 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 5 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 5 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 5 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 6 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 6 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 6 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 7 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 7 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 7 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 8 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 8 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 8 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 9 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 9 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 9 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 10 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 10 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 10 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 11 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 11 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 11 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 12 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 12 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 12 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 13 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 13 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 13 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 14 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 14 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 14 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 15 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 15 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 15 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 16 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 16 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 16 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 17 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 17 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 17 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 18 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 18 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 18 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 19 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 19 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 19 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 20 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 20 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 20 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 21 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 21 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 21 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 22 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 22 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 22 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 23 token alignment",
+      "passed": true
+    },
+    {
+      "name": "fp32 23 honest exact flag",
+      "passed": true
+    },
+    {
+      "name": "fp32 23 positive measured timing",
+      "passed": true
+    },
+    {
+      "name": "fp32 width-one reference alignment",
+      "passed": true
+    },
+    {
+      "name": "planned complete request count",
+      "passed": true
+    },
+    {
+      "name": "0 no stale-state resume",
+      "passed": true
+    },
+    {
+      "name": "1 phase balance",
+      "passed": true
+    },
+    {
+      "name": "1 nonnegative unattributed overhead",
+      "passed": true
+    },
+    {
+      "name": "1 no stale-state resume",
+      "passed": true
+    },
+    {
+      "name": "3 no stale-state resume",
+      "passed": true
+    },
+    {
+      "name": "5 phase balance",
+      "passed": true
+    },
+    {
+      "name": "5 nonnegative unattributed overhead",
+      "passed": true
+    },
+    {
+      "name": "5 no stale-state resume",
+      "passed": true
+    },
+    {
+      "name": "6 phase balance",
+      "passed": true
+    },
+    {
+      "name": "6 nonnegative unattributed overhead",
+      "passed": true
+    },
+    {
+      "name": "6 no stale-state resume",
+      "passed": true
+    },
+    {
+      "name": "8 no stale-state resume",
+      "passed": true
+    },
+    {
+      "name": "10 phase balance",
+      "passed": true
+    },
+    {
+      "name": "10 nonnegative unattributed overhead",
+      "passed": true
+    },
+    {
+      "name": "10 no stale-state resume",
+      "passed": true
+    },
+    {
+      "name": "11 no stale-state resume",
+      "passed": true
+    },
+    {
+      "name": "12 phase balance",
+      "passed": true
+    },
+    {
+      "name": "12 nonnegative unattributed overhead",
+      "passed": true
+    },
+    {
+      "name": "12 no stale-state resume",
+      "passed": true
+    },
+    {
+      "name": "13 no stale-state resume",
+      "passed": true
+    },
+    {
+      "name": "16 no stale-state resume",
+      "passed": true
+    },
+    {
+      "name": "17 phase balance",
+      "passed": true
+    },
+    {
+      "name": "17 nonnegative unattributed overhead",
+      "passed": true
+    },
+    {
+      "name": "17 no stale-state resume",
+      "passed": true
+    },
+    {
+      "name": "localization instrumentation equivalence",
+      "passed": true
+    },
+    {
+      "name": "localization-attention instrumentation equivalence",
+      "passed": true
+    },
+    {
+      "name": "projection-probe instrumentation equivalence",
+      "passed": true
+    },
+    {
+      "name": "monitor-accounting retained exit status",
+      "passed": true
+    },
+    {
+      "name": "monitor-attention retained exit status",
+      "passed": true
+    },
+    {
+      "name": "monitor-attention-attempt2 retained exit status",
+      "passed": true
+    },
+    {
+      "name": "monitor-fp32 retained exit status",
+      "passed": true
+    },
+    {
+      "name": "monitor-localization retained exit status",
+      "passed": true
+    },
+    {
+      "name": "monitor-localization-attempt2 retained exit status",
+      "passed": true
+    },
+    {
+      "name": "monitor-native retained exit status",
+      "passed": true
+    },
+    {
+      "name": "monitor-projection retained exit status",
+      "passed": true
+    }
+  ],
+  "scope": "Artifact consistency, not broad model correctness or physical acceleration"
+}

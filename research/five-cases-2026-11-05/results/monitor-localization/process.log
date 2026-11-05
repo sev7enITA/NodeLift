@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "<WORKSPACE>/research/five-cases-2026-11-05/localize.py", line 68, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "<WORKSPACE>/research/five-cases-2026-11-05/localize.py", line 52, in main
+    states[key]=[(c.state[0][...,:c.offset,:].copy(),c.state[1][...,:c.offset,:].copy()) for c in cache];mx.eval(states[key])
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'mlx.core.array' object has no attribute 'copy'

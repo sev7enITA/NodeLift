@@ -1,0 +1,11 @@
+{
+  "source": "../adaptive-targets-2026-11-05/adaptive_mlx.py",
+  "source_sha256": "f842bd0ccf94da01ade97d7f89804aef72a66175001ad48eb4fcd6a0331f92b7",
+  "changes": [
+    "prefill phase trace",
+    "rewind and final-close trace",
+    "controller observes after rewind",
+    "initial draft-prefill charge available to controller"
+  ],
+  "license": "MIT, Apple MLX-LM and NodeLift attribution retained"
+}

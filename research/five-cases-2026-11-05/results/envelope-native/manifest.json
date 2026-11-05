@@ -1,0 +1,130 @@
+{
+  "target": "Qwen/Qwen3-14B-MLX-4bit",
+  "revision": "ba63a5141812f9870287df53341123a71ba41433",
+  "precision": "native",
+  "order": [
+    {
+      "prompt": 0,
+      "rep": 0,
+      "width": 8
+    },
+    {
+      "prompt": 0,
+      "rep": 0,
+      "width": 1
+    },
+    {
+      "prompt": 0,
+      "rep": 0,
+      "width": 4
+    },
+    {
+      "prompt": 0,
+      "rep": 0,
+      "width": 2
+    },
+    {
+      "prompt": 1,
+      "rep": 0,
+      "width": 4
+    },
+    {
+      "prompt": 1,
+      "rep": 0,
+      "width": 8
+    },
+    {
+      "prompt": 1,
+      "rep": 0,
+      "width": 2
+    },
+    {
+      "prompt": 1,
+      "rep": 0,
+      "width": 1
+    },
+    {
+      "prompt": 2,
+      "rep": 0,
+      "width": 4
+    },
+    {
+      "prompt": 2,
+      "rep": 0,
+      "width": 1
+    },
+    {
+      "prompt": 2,
+      "rep": 0,
+      "width": 2
+    },
+    {
+      "prompt": 2,
+      "rep": 0,
+      "width": 8
+    },
+    {
+      "prompt": 0,
+      "rep": 1,
+      "width": 1
+    },
+    {
+      "prompt": 0,
+      "rep": 1,
+      "width": 2
+    },
+    {
+      "prompt": 0,
+      "rep": 1,
+      "width": 4
+    },
+    {
+      "prompt": 0,
+      "rep": 1,
+      "width": 8
+    },
+    {
+      "prompt": 1,
+      "rep": 1,
+      "width": 8
+    },
+    {
+      "prompt": 1,
+      "rep": 1,
+      "width": 4
+    },
+    {
+      "prompt": 1,
+      "rep": 1,
+      "width": 1
+    },
+    {
+      "prompt": 1,
+      "rep": 1,
+      "width": 2
+    },
+    {
+      "prompt": 2,
+      "rep": 1,
+      "width": 1
+    },
+    {
+      "prompt": 2,
+      "rep": 1,
+      "width": 8
+    },
+    {
+      "prompt": 2,
+      "rep": 1,
+      "width": 2
+    },
+    {
+      "prompt": 2,
+      "rep": 1,
+      "width": 4
+    }
+  ],
+  "source_sha256": "a52a9643e87a97f2e6d95f37f25fd0f3bb07085fa827e00a1064048a7a2191ad",
+  "claim": "diagnostic envelope only",
+  "concurrent_agent_browser_or_download_work": false
+}

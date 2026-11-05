@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "<WORKSPACE>/research/five-cases-2026-11-05/localize_attention.py", line 69, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "<WORKSPACE>/research/five-cases-2026-11-05/localize_attention.py", line 34, in main
+    out=ROOT/'artifacts/five-cases-2026-11-05/localization';out.mkdir(exist_ok=False)
+                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<USER_HOME>/.local/share/uv/python/cpython-3.12.16-macos-aarch64-none/lib/python3.12/pathlib.py", line 1311, in mkdir
+    os.mkdir(self, mode)
+FileExistsError: [Errno 17] File exists: '<WORKSPACE>/artifacts/five-cases-2026-11-05/localization'

@@ -1,0 +1,156 @@
+{
+  "precision": "fp32-floating-parameters-packed-integers-preserved",
+  "order": [
+    {
+      "rep": 0,
+      "prompt": {
+        "id": "bounded-parser",
+        "prompt": "Describe a deterministic parser for lines of the form key=value. Explain handling duplicate keys, empty values and malformed input in six concise points."
+      },
+      "arm": "old-adaptive"
+    },
+    {
+      "rep": 0,
+      "prompt": {
+        "id": "bounded-parser",
+        "prompt": "Describe a deterministic parser for lines of the form key=value. Explain handling duplicate keys, empty values and malformed input in six concise points."
+      },
+      "arm": "charged"
+    },
+    {
+      "rep": 0,
+      "prompt": {
+        "id": "bounded-parser",
+        "prompt": "Describe a deterministic parser for lines of the form key=value. Explain handling duplicate keys, empty values and malformed input in six concise points."
+      },
+      "arm": "host"
+    },
+    {
+      "rep": 0,
+      "prompt": {
+        "id": "italian-cache",
+        "prompt": "Spiega in italiano, con un esempio concreto, quando riutilizzare una cache può far risparmiare tempo e quando invece ricostruirla costa meno."
+      },
+      "arm": "old-adaptive"
+    },
+    {
+      "rep": 0,
+      "prompt": {
+        "id": "italian-cache",
+        "prompt": "Spiega in italiano, con un esempio concreto, quando riutilizzare una cache può far risparmiare tempo e quando invece ricostruirla costa meno."
+      },
+      "arm": "host"
+    },
+    {
+      "rep": 0,
+      "prompt": {
+        "id": "italian-cache",
+        "prompt": "Spiega in italiano, con un esempio concreto, quando riutilizzare una cache può far risparmiare tempo e quando invece ricostruirla costa meno."
+      },
+      "arm": "charged"
+    },
+    {
+      "rep": 0,
+      "prompt": {
+        "id": "structured-control",
+        "prompt": "Return one JSON object with keys policy, retries and reasons. Describe a worker policy allowing at most two retries, with reasons for timeout and stale response rejection. Do not use Markdown."
+      },
+      "arm": "charged"
+    },
+    {
+      "rep": 0,
+      "prompt": {
+        "id": "structured-control",
+        "prompt": "Return one JSON object with keys policy, retries and reasons. Describe a worker policy allowing at most two retries, with reasons for timeout and stale response rejection. Do not use Markdown."
+      },
+      "arm": "host"
+    },
+    {
+      "rep": 0,
+      "prompt": {
+        "id": "structured-control",
+        "prompt": "Return one JSON object with keys policy, retries and reasons. Describe a worker policy allowing at most two retries, with reasons for timeout and stale response rejection. Do not use Markdown."
+      },
+      "arm": "old-adaptive"
+    },
+    {
+      "rep": 1,
+      "prompt": {
+        "id": "bounded-parser",
+        "prompt": "Describe a deterministic parser for lines of the form key=value. Explain handling duplicate keys, empty values and malformed input in six concise points."
+      },
+      "arm": "host"
+    },
+    {
+      "rep": 1,
+      "prompt": {
+        "id": "bounded-parser",
+        "prompt": "Describe a deterministic parser for lines of the form key=value. Explain handling duplicate keys, empty values and malformed input in six concise points."
+      },
+      "arm": "charged"
+    },
+    {
+      "rep": 1,
+      "prompt": {
+        "id": "bounded-parser",
+        "prompt": "Describe a deterministic parser for lines of the form key=value. Explain handling duplicate keys, empty values and malformed input in six concise points."
+      },
+      "arm": "old-adaptive"
+    },
+    {
+      "rep": 1,
+      "prompt": {
+        "id": "italian-cache",
+        "prompt": "Spiega in italiano, con un esempio concreto, quando riutilizzare una cache può far risparmiare tempo e quando invece ricostruirla costa meno."
+      },
+      "arm": "charged"
+    },
+    {
+      "rep": 1,
+      "prompt": {
+        "id": "italian-cache",
+        "prompt": "Spiega in italiano, con un esempio concreto, quando riutilizzare una cache può far risparmiare tempo e quando invece ricostruirla costa meno."
+      },
+      "arm": "old-adaptive"
+    },
+    {
+      "rep": 1,
+      "prompt": {
+        "id": "italian-cache",
+        "prompt": "Spiega in italiano, con un esempio concreto, quando riutilizzare una cache può far risparmiare tempo e quando invece ricostruirla costa meno."
+      },
+      "arm": "host"
+    },
+    {
+      "rep": 1,
+      "prompt": {
+        "id": "structured-control",
+        "prompt": "Return one JSON object with keys policy, retries and reasons. Describe a worker policy allowing at most two retries, with reasons for timeout and stale response rejection. Do not use Markdown."
+      },
+      "arm": "host"
+    },
+    {
+      "rep": 1,
+      "prompt": {
+        "id": "structured-control",
+        "prompt": "Return one JSON object with keys policy, retries and reasons. Describe a worker policy allowing at most two retries, with reasons for timeout and stale response rejection. Do not use Markdown."
+      },
+      "arm": "old-adaptive"
+    },
+    {
+      "rep": 1,
+      "prompt": {
+        "id": "structured-control",
+        "prompt": "Return one JSON object with keys policy, retries and reasons. Describe a worker policy allowing at most two retries, with reasons for timeout and stale response rejection. Do not use Markdown."
+      },
+      "arm": "charged"
+    }
+  ],
+  "cap": 128,
+  "host_cost": 0.04650409407951238,
+  "scope": "Same Mac, diagnostic only",
+  "source_hashes": {
+    "accounted_mlx.py": "b619aca7692944412119c176a38b0102d21e7813a55d4fc2780eb8012db424bf",
+    "accounting_run.py": "c115d107b6fc34e5622345692e6a1340613c97ecfd539fd483273827eb5a02bb"
+  }
+}

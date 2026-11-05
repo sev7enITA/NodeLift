@@ -1,0 +1,14 @@
+{
+  "unix": 1793856043.096726,
+  "available_bytes": 19360432128,
+  "swap_used_bytes": 26847019008,
+  "swap_in_bytes": 29775330164736,
+  "swap_out_bytes": 17110630400,
+  "load_average": [
+    10.732421875,
+    10.783203125,
+    13.4677734375
+  ],
+  "mlx_active_bytes": 8,
+  "mlx_peak_bytes": 8
+}
